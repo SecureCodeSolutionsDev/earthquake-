@@ -1,0 +1,233 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Ø§Ù„Ù„Ù‡ Ø³Ø¨Ø­Ø§Ù†</title><script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script><style>:root{--bg:#030305;--panel:#0a0a12;--acc:#00f2ff;--win:#00ff88;--loss:#ff4466;--draw:#ffbb00;--txt:#e0e0f0}#lockScreen{position:fixed;inset:0;background:#030305;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:99999}#lockScreen h1{color:#00f2ff;font-family:monospace;font-size:1.4rem;letter-spacing:4px;margin-bottom:30px}.lock-icon{font-size:3rem;margin-bottom:20px;animation:pulse 2s infinite}@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}#codeInput{background:#000;border:2px solid #00f2ff;color:#0f8;font-size:1.8rem;font-family:monospace;letter-spacing:8px;text-align:center;padding:14px 24px;border-radius:8px;outline:0;width:280px}#lockMsg{margin-top:16px;font-family:monospace;font-size:.9rem;color:#f46;min-height:20px;letter-spacing:2px}.shake{animation:shake .4s;border-color:#f46!important}@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-10px)}75%{transform:translateX(10px)}}#dots{display:flex;gap:8px;margin-top:12px}.dot{width:12px;height:12px;border-radius:50%;background:#0f8}.dot.gone{background:#f46}#enterBtn{margin-top:16px;padding:10px 40px;background:#00f2ff;color:#000;font-family:monospace;font-size:1rem;font-weight:700;border:none;border-radius:6px;cursor:pointer;letter-spacing:3px}#enterBtn:hover{background:#0f8}body{background:var(--bg);color:var(--txt);font-family:Inter,sans-serif;margin:0;padding:10px}#mainContainer{max-width:1400px;margin:auto;display:none}.panel{background:var(--panel);border:1px solid #1a1a25;border-radius:6px;padding:10px;margin-bottom:10px}h2{margin:0 0 5px 0;font-size:.75rem;color:var(--acc);text-transform:uppercase;border-bottom:1px solid #222;padding-bottom:3px}.header{display:grid;grid-template-columns:1fr 420px;gap:10px;margin-bottom:10px}.score-output{text-align:center;border:2px solid var(--win);background:rgba(0,255,136,.05)}.score-val{font-size:3.2rem;font-weight:900;color:var(--win);margin:0;line-height:1}.chart-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.chart-box{height:200px;position:relative;background:#000;border-radius:4px;overflow:hidden}textarea{width:100%;height:70px;background:#000;color:var(--win);border:1px solid #333;padding:5px;border-radius:4px;resize:none;font-family:monospace;font-size:11px;box-sizing:border-box}.controls{display:flex;gap:5px;margin-top:5px}button{flex:1;padding:8px;border-radius:4px;border:none;font-weight:700;cursor:pointer;background:var(--acc);font-size:.75rem}.proj-label{font-size:.65rem;color:#888;display:grid;grid-template-columns:1.2fr 1fr;gap:5px;padding:5px;background:#0c0c16;border-radius:0 0 4px 4px;align-items:center}.proj-group{display:flex;align-items:center;gap:3px}input{background:#000;border:1px solid #333;color:#fff;padding:1px 3px;border-radius:2px;font-size:.7rem;text-align:center}.sma-pref{width:30px!important;color:var(--acc)}.btn-hide{background:#222;color:#888;padding:2px 6px;font-size:.6rem;border:1px solid #444;margin-left:auto}.btn-hide.active{background:var(--loss);color:#fff}</style></head><body><div id="lockScreen"><div class="lock-icon">ðŸ”</div><h1>ENTER ACCESS CODE</h1><input id="codeInput" type="password" maxlength="30" autocomplete="off" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"><button id="enterBtn" onclick="checkCode()">ENTER</button><div id="lockMsg"></div><div id="dots"></div></div><div id="mainContainer"><div class="header"><div class="panel"><h2>ðŸ“¥ H2H/All Advanced Score Parser</h2><textarea id="rawInput" placeholder="Paste scores (3-1, 1:2, 0 1, 0_0)..."></textarea><div class="controls"><button onclick="runAnalysis()">GENERATE PERFECT PREDICTION</button><button style="background:#222;color:#fff" onclick="loadDemo()">LOAD EL CLÃSICO</button></div></div><div class="panel score-output"><div id="winPerspective" style="font-weight:900;color:#fff;font-size:.8rem;margin-bottom:5px">PERSPECTIVE WINNER</div><div id="finalScore" class="score-val">?-?</div><div id="confidence" style="color:var(--draw);font-size:.7rem;letter-spacing:1px">STABILITY: --%</div></div></div><div class="chart-grid"><div class="panel"><div style="display:flex"><h2>Step 2: W/L/D Binary Momentum</h2><button id="hideBinaryBars" class="btn-hide" onclick="toggleBars()">HIDE BARS</button></div><div class="chart-box"><canvas id="cWLD"></canvas></div><div class="proj-label"><div class="proj-group">Winner: <input type="text" id="pWin" style="width:80px;color:var(--win);font-weight:700"></div><div class="proj-group">SMA: <input type="number" id="sWLD" class="sma-pref" value="3" onchange="runAnalysis()"></div></div></div><div class="panel"><h2>Step 4: Goal Difference (Fake-out Filter)</h2><div class="chart-box"><canvas id="cDiff"></canvas></div><div class="proj-label"><div class="proj-group">Projected GD: <input type="number" id="pGD" value="0"></div><div class="proj-group">SMA: <input type="number" id="sDiff" class="sma-pref" value="4" onchange="runAnalysis()"></div></div></div><div class="panel"><h2>Team A Price Action</h2><div class="chart-box"><canvas id="cTeamA"></canvas></div><div class="proj-label"><div class="proj-group">Proj Goal A: <input type="number" id="pGA" value="0"></div><div class="proj-group">SMA: <input type="number" id="sA" class="sma-pref" value="5" onchange="runAnalysis()"></div></div></div><div class="panel"><h2>Team B Price Action</h2><div class="chart-box"><canvas id="cTeamB"></canvas></div><div class="proj-label"><div class="proj-group">Proj Goal B: <input type="number" id="pGB" value="0"></div><div class="proj-group">SMA: <input type="number" id="sB" class="sma-pref" value="5" onchange="runAnalysis()"></div></div></div><div class="panel" style="grid-column:span 2"><h2>Step 3: Total Combined Scores (1:2 BB Volatility)</h2><div class="chart-box" style="height:140px"><canvas id="cTotal"></canvas></div><div class="proj-label"><div class="proj-group">Combined Score: <input type="number" id="pTotal" value="0"></div><div class="proj-group">SMA: <input type="number" id="sTotal" class="sma-pref" value="4" onchange="runAnalysis()"><span style="margin-left:5px;opacity:.5">BB 1:2 + SMA Min 0 ACTIVE</span></div></div></div></div></div><script>/* â”€â”€ YOUR HASH SPLIT INTO 8 PIECES â”€â”€ */
+const _c1 = () => "b0537bb5";
+const _c2 = () => "cb76893d";
+const _c3 = () => "c80a11fd";
+const _c4 = () => "b6c6f95c";
+const _c5 = () => "d221ed23";
+const _c6 = () => "46889fb8";
+const _c7 = () => "a1bb6a0f";
+const _c8 = () => "751a5164";
+
+function _getRef() {
+    return _c1()+_c2()+_c3()+_c4()+_c5()+_c6()+_c7()+_c8();
+}
+
+/* â”€â”€ LOCK SYSTEM â”€â”€ */
+const MAX_TRIES = 5;
+let tries   = 0;
+let blocked = false;
+
+for (let i = 0; i < MAX_TRIES; i++) {
+    const d = document.createElement('div');
+    d.className = 'dot';
+    d.id = 'dot' + i;
+    document.getElementById('dots').appendChild(d);
+}
+
+async function sha256(text) {
+    const bytes  = new TextEncoder().encode(text);
+    const digest = await crypto.subtle.digest('SHA-256', bytes);
+    return Array.from(new Uint8Array(digest))
+                .map(b => b.toString(16).padStart(2, '0'))
+                .join('');
+}
+
+document.getElementById('codeInput').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') checkCode();
+});
+
+async function checkCode() {
+    if (blocked) return;
+    const input = document.getElementById('codeInput');
+    const typed = input.value.trim();
+    if (!typed) return;
+
+    const typedHash = await sha256(typed);
+    const ref       = _getRef();
+
+    if (typedHash === ref) {
+
+        /* âœ… CORRECT */
+        const lock = document.getElementById('lockScreen');
+        lock.style.transition = 'opacity 0.5s';
+        lock.style.opacity    = '0';
+        setTimeout(() => {
+            lock.remove();
+            document.getElementById('mainContainer').style.display = 'block';
+        }, 500);
+
+    } else {
+
+        /* âŒ WRONG */
+        tries++;
+        document.getElementById('dot' + (tries - 1)).classList.add('gone');
+        document.getElementById('lockMsg').innerText =
+            'âŒ WRONG  â€”  ' + (MAX_TRIES - tries) + ' attempts left';
+
+        input.classList.add('shake');
+        setTimeout(() => input.classList.remove('shake'), 400);
+
+        if (tries >= MAX_TRIES) {
+            blocked = true;
+            document.getElementById('lockScreen').innerHTML =
+                `<div style="text-align:center;font-family:monospace;">
+                    <div style="font-size:4rem;">ðŸ’€</div>
+                    <div style="color:#ff4466;font-size:1.2rem;
+                                letter-spacing:4px;margin-top:20px;">
+                        ACCESS PERMANENTLY DENIED
+                    </div>
+                    <div style="color:#444;font-size:0.7rem;margin-top:10px;">
+                        Reload page to try again.
+                    </div>
+                </div>`;
+            document.getElementById('mainContainer').remove();
+            return;
+        }
+
+        blocked = true;
+        setTimeout(() => {
+            input.value = '';
+            document.getElementById('lockMsg').innerText = '';
+            blocked = false;
+        }, 1000);
+    }
+}
+
+/* ================================================
+   APP LOGIC
+================================================ */
+let charts    = {};
+let barHidden = false;
+
+function toggleBars() {
+    barHidden = !barHidden;
+    const btn = document.getElementById('hideBinaryBars');
+    btn.innerText = barHidden ? "SHOW BARS" : "HIDE BARS";
+    btn.classList.toggle('active', barHidden);
+    runAnalysis();
+}
+
+function getTechnicals(data, period) {
+    let sma = [], upper = [], lower = [];
+    for (let i = 0; i < data.length; i++) {
+        let slice = data.slice(Math.max(0, i - period + 1), i + 1);
+        let avg   = slice.reduce((a, b) => a + b, 0) / slice.length;
+        let std   = Math.sqrt(
+            slice.reduce((a, b) => a + Math.pow(b - avg, 2), 0) / slice.length
+        );
+        sma.push(  +Math.max(0, avg).toFixed(2));
+        upper.push(+Math.max(0, avg + 2 * std).toFixed(2));
+        lower.push(+Math.max(0, avg - 2 * std).toFixed(2));
+    }
+    return { sma, upper, lower };
+}
+
+function parseData(text) {
+    const scores = [];
+    text.split('\n').forEach(line => {
+        const m = line.match(/(\d+)\s*[-:_\s]\s*(\d+)/);
+        if (m) scores.push({ a: +m[1], b: +m[2] });
+    });
+    return scores;
+}
+
+function render(id, label, data, color, type, smaP) {
+    if (charts[id]) charts[id].destroy();
+    const tech = getTechnicals(data, smaP);
+    const ctx  = document.getElementById(id).getContext('2d');
+
+    const datasets = [
+        {
+            label: 'SMA', data: tech.sma,
+            borderColor: '#fff', borderDash: [4,2],
+            borderWidth: 1.5, pointRadius: 0, fill: false, order: 1
+        },
+        {
+            label: 'Upper BB', data: tech.upper,
+            borderColor: 'rgba(255,255,255,0.05)', borderWidth: 1,
+            pointRadius: 0, fill: 2,
+            backgroundColor: 'rgba(255,255,255,0.04)', order: 3
+        },
+        {
+            label: 'Lower BB', data: tech.lower,
+            borderColor: 'rgba(255,255,255,0.05)', borderWidth: 1,
+            pointRadius: 0, fill: false, order: 3
+        }
+    ];
+
+    if (!(id === 'cWLD' && barHidden)) {
+        datasets.unshift({
+            label, data,
+            borderColor: color,
+            backgroundColor: type === 'bar' ? color+'66' : color+'33',
+            borderWidth: 2, pointRadius: 2,
+            fill: type !== 'bar', tension: 0.3, order: 2
+        });
+    }
+
+    charts[id] = new Chart(ctx, {
+        type,
+        data: { labels: data.map((_, i) => i + 1), datasets },
+        options: {
+            responsive: true, maintainAspectRatio: false, animation: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: {
+                    grid: { color: '#1a1a1a' },
+                    ticks: { color: '#555', font: { size: 9 } },
+                    beginAtZero: true
+                },
+                x: { display: false }
+            }
+        }
+    });
+}
+
+function runAnalysis() {
+    const scores = parseData(document.getElementById('rawInput').value);
+    if (scores.length < 2) return;
+
+    render('cWLD',   'Binary',
+        scores.map(s => s.a > s.b ? 1 : s.a < s.b ? -1 : 0),
+        '#ffbb00', 'bar',  +document.getElementById('sWLD').value);
+    render('cTeamA', 'Team A',
+        scores.map(s => s.a),
+        '#00d4ff', 'line', +document.getElementById('sA').value);
+    render('cTeamB', 'Team B',
+        scores.map(s => s.b),
+        '#ff00ff', 'line', +document.getElementById('sB').value);
+    render('cTotal', 'Total',
+        scores.map(s => s.a + s.b),
+        '#ffffff', 'line', +document.getElementById('sTotal').value);
+    render('cDiff',  'Goal Diff',
+        scores.map(s => s.a - s.b),
+        '#00ff88', 'line', +document.getElementById('sDiff').value);
+
+    const aAvg = +getTechnicals(
+        scores.map(s => s.a), +document.getElementById('sA').value
+    ).sma.at(-1);
+    const bAvg = +getTechnicals(
+        scores.map(s => s.b), +document.getElementById('sB').value
+    ).sma.at(-1);
+
+    const fA = Math.round(aAvg);
+    const fB = Math.round(bAvg);
+
+    document.getElementById('finalScore').innerText     = `${fA} - ${fB}`;
+    document.getElementById('winPerspective').innerText =
+        fA > fB ? "WINNER: TEAM A" : fB > fA ? "WINNER: TEAM B" : "DRAW";
+    document.getElementById('pWin').value  =
+        fA > fB ? "TEAM A"         : fB > fA ? "TEAM B"          : "DRAW";
+    document.getElementById('pGA').value    = fA;
+    document.getElementById('pGB').value    = fB;
+    document.getElementById('pTotal').value = fA + fB;
+    document.getElementById('pGD').value    = fA - fB;
+    document.getElementById('confidence').innerText =
+        `STABILITY: ${Math.min(98, 40 + scores.length * 2)}%`;
+}
+
+function loadDemo() {
+    document.getElementById('rawInput').value =
+        "2-1\n0-4\n2-1\n1-1\n2-3\n0-3\n2-2\n1-5\n0-1\n0-0\n2-0";
+    runAnalysis();
+}</script></body></html>

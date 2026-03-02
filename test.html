@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>on</title>
+    <style>
+        body {
+              background-image: url('https://raw.githubusercontent.com/SecureCodeSolutionsDev/M/refs/heads/main/p.jpg');
+    background-size: cover; /* Ensures the image covers the entire area */
+    background-position: center; /* Centers the image */
+    background-repeat: no-repeat; /* Prevents the image from repeating */
+    height: 100vh; /* Sets the height to fill the viewport */
+    margin: 0; /* Removes default margin */
+    padding: 0; /* Removes default padding */
+    text-align: center; /* Center text */
+    font-family: 'Montserrat', sans-serif; /* Consistent font */
+    background-color: #121212; /* Dark background for a modern look */
+}
+            margin: 0;
+            padding: 0;
+            text-align: center; /* Center text */
+            font-family: 'Montserrat', sans-serif; /* Consistent font */
+        }
+        h1 {
+            font-size: 48px;
+            font-weight: bold;
+            color: #FFD700; /* Gold text color */
+            margin-top: 20px;
+            margin-bottom: 30px;
+        }
+        .button-container {
+            display: flex;
+            flex-direction: column; /* Arrange in a column for pyramid shape */
+            align-items: center; /* Center items horizontally */
+            margin-top: 20px;
+        }
+        .row {
+            display: flex;
+            justify-content: center; /* Center items in each row */
+            width: fit-content; /* Fit to content width */
+        }
+        .button {
+            background-color: transparent; /* Transparent background */
+            border: 2px solid rgba(0, 255, 255, 0.8); /* Cyan border */
+            color: rgba(0, 255, 255, 0.8); /* Cyan text color */
+            padding: 15px 30px; /* Increased padding for larger buttons */
+            font-size: 18px; /* Increased font size for better readability */
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            width: 150px; /* Fixed width for uniform button size */
+            margin: 10px; /* Add margin for spacing between buttons */
+            cursor: pointer;
+            border-radius: 10px; /* Rounded corners for buttons */
+            transition: all .3s ease-in-out; /* Transition for hover effect */
+        }
+        .button:hover {
+            color: white; /* Change text color on hover */
+            border-color: white; /* Change border color on hover */
+        }
+        .glow {
+            box-shadow: 0 0 5px rgba(0, 255, 255, .8), 
+                        0 0 10px rgba(0, 255, 255, .8), 
+                        0 0 15px rgba(0, 255, 255, .8); /* Glowing effect */
+        }
+        .popup {
+            width:auto ; 
+            height:auto ; 
+            max-width: 600px; /* Set a maximum width for popups */
+            max-height: calc(80vh - 40px); /* Set a maximum height for popups */
+            position :fixed ; 
+            top :50%; 
+            left :50%; 
+            transform: translate(-50%, -50%); /* Center the popup */
+            background-color :rgba(30 ,30 ,30 ,.95); 
+            display :flex ; 
+            justify-content :center ; 
+            align-items :center ; 
+            z-index :2 ; 
+            opacity:.9 ; 
+            visibility:hidden ; 
+            transition:.3s ease-in-out ; 
+        }
+
+        .popup.active {
+           opacity:.9 ; 
+           visibility :visible ; 
+       }
+
+       .popup-content {
+           width :calc(100% -40px); 
+           height:auto ; 
+           border-radius :10px ; 
+           box-shadow :rgba(255 ,255 ,255 ,.2) -1px -1px ,rgba(255 ,255 ,255 ,.2) -2px -2px ,rgba(255 ,255 ,255 ,.2) -3px -3px ; 
+           padding :20px ; 
+           text-align :justify ; 
+           overflow-y:auto ;
+           background-color: rgba(50, 50, 50, 0.9); /* Darker background for popup content */
+       }
+
+       .close {
+           position:absolute ; 
+           top :20px ; 
+           right :20px ; 
+           font-size :24px ; 
+           color :#FFD700; /* Gold close button color */
+           cursor:pointer ; 
+           transition :all .3s ease-in-out ; 
+       }
+
+       .close:hover { 
+           color:#FF4500; /* Change close button color on hover */
+       }
+       
+@keyframes moveRight {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(20px); } /* Adjust distance as needed */
+}
+
+       @keyframes flashGlow {
+           from {
+               text-shadow:
+                   none;
+               color: rgba(0,255,255,1);
+           }
+           to {
+               text-shadow:
+                   0 0 5px rgba(135,206,250,1),
+                   0 0 10px rgba(135,206,250,1),
+                   0 0 15px rgba(135,206,250,.7);
+               color:white;
+           }
+       }
+
+       #chartToggleButton {
+           margin-top:20px;
+       }
+
+       .popup-content p {
+           font-size: 20px; /* Making the analysis text larger */
+           color: white; /* Changing analysis text color to white */
+       }
+
+       .popup-content strong {
+           color: rgba(0, 255, 255, .8); /* Match button text color for analysis titles */
+       }
+
+       .artistic-text {
+           font-size: 18px; /* Match font size with other texts */
+           color: #FFD700; /* Gold text color */
+           text-shadow: 0 0 5px rgba(255,215,0,.7), 
+                        0 0 10px rgba(255,215,0,.5), 
+                        0 0 15px rgba(255,215,0,.3); /* Glowing effect for artistic text */
+           animation: flashText 1s infinite alternate; /* Flashing animation for artistic text */
+           cursor: pointer; /* Pointer cursor on hover */
+           background-color: transparent; /* Background color for button style */
+           border: none; /* No border for button style */
+       }
+
+       @keyframes flashText {
+           from {
+               opacity: 1;
+           }
+           to {
+               opacity: 0.5;
+           }
+       }
+
+.bitcoin-button:hover {
+    animation: moveRight 0.5s forwards; /* Adjust duration as needed */
+}
+
+.bitcoin-button:hover {
+    animation: moveRight 0.5s forwards;
+}
+.eur-button:hover {
+    animation: moveRight 0.5s forwards; /* Adjust duration as needed */
+}
+
+.gbp-button:hover {
+    animation: moveRight 0.5s forwards; /* Adjust duration as needed */
+}
+
+.usd-button:hover {
+    animation: moveRight 0.5s forwards; /* Adjust duration as needed */
+}
+
+.gold-button:hover {
+    animation: moveRight 0.5s forwards; /* Adjust duration as needed */
+}
+
+.aud-button:hover {
+    animation: moveRight 0.5s forwards; /* Adjust duration as needed */
+}
+
+.nzd-button:hover {
+    animation: moveRight 0.5s forwards; /* Adjust duration as needed */
+}
+
+.silver-button:hover {
+    animation: moveRight 0.7s forwards; /* Adjust duration as needed */
+}
+    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Automatic Button Animation</title>
+    <style>
+        /* Style for the button container */
+        #chartToggleButton {
+            position: relative; /* Needed for absolute positioning */
+            margin: 20px; /* Add some margin for visual spacing */
+        }
+
+        /* Style for the button */
+        .button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 5s ease; /* Smooth transition */
+        }
+
+        /* Class to move the button down */
+        .move-down {
+            transform: translateY(120px); /* Move down by 120 pixels */
+        }
+    </style>
+</head>
+<body>
+<div id="offline-message" style="display: none; background-color: #f44336; color: white; padding: 20px; text-align: center;">
+    SignalSharp / It seems you are offline. Please check your internet connection.
+</div>
+    <h1 style="display:none;">Forex Signals</h1> <!-- Hidden title -->
+
+    <div class="button-container">
+<!-- TradingView Widget BEGIN -->
+<div class="tradingview-widget-container">
+  <div class="tradingview-widget-container__widget"></div>
+  <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+  {
+    "symbols": [
+      {
+        "proName": "FOREXCOM:SPXUSD",
+        "title": "S&P 500 Index"
+      },
+      {
+        "proName": "FOREXCOM:NSXUSD",
+        "title": "US 100 Cash CFD"
+      },
+      {
+        "proName": "FX_IDC:EURUSD",
+        "title": "EUR to USD"
+      },
+      {
+        "proName": "BITSTAMP:BTCUSD",
+        "title": "Bitcoin"
+      },
+      {
+        "proName": "BITSTAMP:ETHUSD",
+        "title": "Ethereum"
+      },
+      {
+        "description": "Gold",
+        "proName": "OANDA:XAUUSD"
+      },
+      {
+        "description": "Dollar",
+        "proName": "CAPITALCOM:DXY"
+      },
+      {
+        "description": "Tesla",
+        "proName": "NASDAQ:TSLA"
+      },
+      {
+        "description": "NVDA",
+        "proName": "NASDAQ:NVDA"
+      },
+      {
+        "description": "Facebook",
+        "proName": "NASDAQ:META"
+      }
+    ],
+    "showSymbolLogo": true,
+    "isTransparent": true,
+    "displayMode": "adaptive",
+    "colorTheme": "dark",
+    "locale": "en"
+  }
+  </script>
+</div>
+<!-- TradingView Widget END -->
+      <div class="row">
+        <button class="button eur-button" onclick="showPopup('EUR/USD', this)">EUR</button>
+      </div>
+      <div class="row">
+        <button class="button gbp-button" onclick="showPopup('GBP/USD', this)">GBP</button>
+        <button class="button usd-button" onclick="showPopup('USD/JPY', this)">USD/JPY</button>
+      </div>
+      <div class="row">
+        <button class="button gold-button" onclick="showPopup('Gold', this)">XAUUSD</button>
+        <button class="button aud-button" onclick="showPopup('AUD/USD', this)">AUD</button>
+        <button class="button nzd-button" onclick="showPopup('NZD/USD', this)">NZD</button>
+      </div>
+      <div class="row">
+		<button class="button silver-button" onclick="showPopup('Silver', this)">Silver/USD</button>
+		<button class="button bitcoin-button" onclick="showPopup('Bitcoin', this)">BTCUSD</button>
+      </div>
+    </div>
+
+    <div style="margin-top:20px;">
+      <!-- Removed analysis title -->
+    </div>
+
+    <div class="popup" id="signalPopup">
+      <div class="popup-content">
+		<span class="close" onclick="closePopup()">×</span> <!-- Close button -->
+		<h2 id="popup-title" style="color:#FFD700;">Trading Signals for </h2> <!-- Gold title -->
+		<p><strong style="color:#FFD700;">Fundamental Analysis:</strong></p>
+		<p>[Insert your fundamental analysis here]</p>
+
+		<p><strong style="color:#FFD700;">Technical Analysis:</strong></p>
+		<p>[Insert your technical analysis here]</p>
+
+      </div>
+    </div>
+
+<!-- Chart Popup -->
+<div class="popup" id="chartPopup" onmousedown="startDrag(event)">
+  <div class="popup-content">
+    <span class="close" onclick="closeChartPopup()">×</span> <!-- Close button -->
+    <h2 style="color:#FFD700;">Chart Analysis</h2> <!-- Chart title -->
+    
+
+    <!-- Button to enable keyboard -->
+    <button class="button glow" id="enableKeyboardButton" onclick="enableKeyboard()">on</button>
+    
+    <!-- Button to disable keyboard -->
+    <button class="button glow" id="disableKeyboardButton" onclick="disableKeyboard()">off</button>
+
+    <div id="chartContent" onclick="preventKeyboard(event)">
+        <!-- Text Input Area -->
+   <textarea id="userNotes" placeholder="On': Launches the keyboard (click back, in the navigation bar if the chart obscures the input text.);  'X' Icon: Exit the chart. Swipe the top bar of the chart to the left to add indicators. ." rows="4" style="height: 60px; width: 100%; border: none; border-radius: 10px; padding: 10px; font-size: 16px; color: #FFD700; background-color: rgba(50, 50, 50, 0.9); box-shadow: 0 0 10px rgba(255, 215, 0, 0.5); resize: none;" readonly></textarea>
+    
+      <!-- Insert your chart images or HTML here -->
+      <!-- TradingView Widget BEGIN -->
+   </script>
+</div><div class="tradingview-widget-container">
+  <div class="tradingview-widget-container__widget"></div>
+  <div class="tradingview-widget-copyright">
+    <span class="blue-text">SignalSharp</span>
+  </div>
+  <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js" async>
+  {
+    "width": "400",
+    "height": "550",
+    "symbol": "FX:EURUSD",
+    "timezone": "Etc/UTC",
+    "theme": "dark",
+    "style": "1",
+    "locale": "en",
+    "withdateranges": true,
+    "range": "1D",
+    "hide_side_toolbar": false,
+    "allow_symbol_change": true,
+    "details": true,
+    "hotlist": true,
+    "calendar": false,
+    "studies": [
+      "STD;Bollinger_Bands"
+    ],
+    "show_popup_button": true,
+    "popup_width": "1000",
+    "popup_height": "1000",
+    "support_host": "#"
+  }
+  </script></div>
+      <!-- TradingView Widget END -->
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Additional styles for glowing buttons and textarea */
+  
+  .button-container {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr); /* Three buttons per row */
+      gap: 10px; /* Space between buttons */
+      margin-top: 20px;
+  }
+
+  @media (max-width: 600px) {
+      .button-container {
+          grid-template-columns: repeat(2, 1fr); /* Two buttons per row on smaller screens */
+      }
+  }
+
+  @media (max-width: 400px) {
+      .button-container {
+          grid-template-columns: 1fr; /* One button per row on very small screens */
+      }
+  }
+
+  .button {
+      background-color: transparent; /* Transparent background */
+      border: 2px solid rgba(0, 255, 255, 0.8); /* Cyan border */
+      color: rgba(0, 255, 255, 0.8); /* Cyan text color */
+      padding: 15px; /* Adjust padding for consistent button height */
+      font-size: 18px; /* Increased font size for better readability */
+      text-align: center;
+      text-decoration: none;
+      width: auto; /* Allow width to be determined by content */
+      max-width: 150px; /* Limit button width */
+      margin: auto; /* Center buttons in their grid cell */
+      cursor: pointer;
+      border-radius: 10px; /* Rounded corners for buttons */
+      transition: all .3s ease-in-out; /* Transition for hover effect */
+      box-shadow: 0 0 5px rgba(0,255,255,.8), 
+                  0 0 10px rgba(0,255,255,.8), 
+                  inset 0 0 5px rgba(135,206,250,.7); /* Inner glow effect */
+      animation: flashGlow .5s infinite alternate; /* Flashing animation */
+  }
+
+  .button:hover {
+      color: white; /* Change text color on hover */
+      border-color: white; /* Change border color on hover */
+      box-shadow: 
+          0 0 20px rgba(135,206,250,.8), 
+          inset 0 0 20px rgba(135,206,250,.5); /* Enhanced glow on hover */
+  }
+
+  @keyframes flashGlow {
+      from {
+          text-shadow:
+              none;
+          color: rgba(0,255,255,1);
+      }
+      to {
+          text-shadow:
+              0 0 5px rgba(135,206,250,1),
+              0 0 10px rgba(135,206,250,1),
+              0 0 15px rgba(135,206,250,.7);
+          color:white;
+      }
+   }
+
+   textarea {
+       transition: all .3s ease-in-out; /* Smooth transition for textarea focus */
+   }
+
+   textarea:focus {
+       outline: none; /* Remove default outline */
+       box-shadow: 
+           inset 0 0 5px rgba(135,206,250,.8), 
+           inset 0 0 10px rgba(135,206,250,.5); /* Inner glow effect on focus */
+   }
+</style>
+
+<script>
+    function enableKeyboard() {
+        const textArea = document.getElementById('userNotes');
+        textArea.removeAttribute('readonly'); // Allow input
+        textArea.focus(); // Focus on the text area
+    }
+
+    function disableKeyboard() {
+        const textArea = document.getElementById('userNotes');
+        textArea.setAttribute('readonly', 'readonly'); // Disable input
+        textArea.blur(); // Remove focus from the textarea
+    }
+
+    function preventKeyboard(event) {
+        event.stopPropagation(); // Prevent click events from bubbling up
+    }
+
+    // Optional: Reapply readonly after focus is lost to prevent keyboard
+    document.getElementById('userNotes').addEventListener('blur', function() {
+        if (!this.hasAttribute('readonly')) {
+            this.setAttribute('readonly', 'readonly');
+        }
+    });
+</script>
+    </div>
+  </div>
+</div>
+
+<script>
+// Dragging functionality
+let isDragging = true;
+let offsetX, offsetY;
+
+function startDrag(e) {
+  isDragging = true;
+  offsetX = e.clientX - chartPopup.getBoundingClientRect().left;
+  offsetY = e.clientY - chartPopup.getBoundingClientRect().top;
+  document.addEventListener('mousemove', dragPopup);
+  document.addEventListener('mouseup', stopDrag);
+}
+
+function dragPopup(e) {
+  if (isDragging) {
+    chartPopup.style.left = (e.clientX - offsetX) + 'px';
+    chartPopup.style.top = (e.clientY - offsetY) + 'px';
+  }
+}
+
+function stopDrag() {
+  isDragging = false;
+  document.removeEventListener('mousemove', dragPopup);
+  document.removeEventListener('mouseup', stopDrag);
+}
+</script>
+
+<style>
+.popup {
+  position: absolute; /* Make sure the popup can be positioned anywhere */
+  cursor: move; /* Change cursor to indicate draggable */
+}
+</style>
+    </div>
+  </div>
+</div>
+
+
+
+    <!-- Chart Toggle Button -->
+    <div id="chartToggleButton">
+      <button class="button" id="toggleChartBtn" onclick="toggleChart(this)">Show Chart</button>
+    </div>
+    <!-- Contact Information Button -->
+    <div style="margin-top:30px;" id="contactInfo">
+      <button class='artistic-text' onclick="showContactPopup()">CONTACT </button>
+    </div>
+
+    <script>
+        // Function to move the button down automatically
+        function moveButton() {
+            const button = document.getElementById('toggleChartBtn');
+            button.classList.add('move-down'); // Add the class to move the button
+        }
+
+        // Call the moveButton function with a delay when the window loads
+        window.onload = function() {
+            setTimeout(moveButton, 5); // Delay of 5 milliseconds 
+        };
+    </script>
+
+    <!-- Contact Popup -->
+    <div class='popup' id='authorPopup'>
+      <div class='popup-content'>
+          <span class='close' onclick="closeContactPopup()">×</span> <!-- Close button -->
+          <h2 style='color:#FFD700;'>Developer : </h2>
+          <p>Email: <strong>Live@signalsharp.com  Personal: oitache123@gmail.com</strong></p>
+      </div>
+    </div>
+
+<script>
+         let chartVisible = false;
+
+         function showPopup(instrument, button) {
+             const popupTitle = document.getElementById('popup-title');
+             popupTitle.textContent = `Trading Signals for ${instrument}`;
+             
+             const signalPopup = document.getElementById('signalPopup');
+             const buttons = document.querySelectorAll('.button');
+
+             // Hide contact information
+             document.getElementById('contactInfo').style.display = 'none';
+
+             // Remove glow from all buttons
+             buttons.forEach(btn => btn.classList.remove('glow'));
+
+             // Hide all buttons and show only the clicked button
+             buttons.forEach(button => {
+                 button.style.display = 'none';
+                 button.style.opacity = '0'; // Fade out buttons
+                 button.style.transition = 'opacity .3s ease-in-out'; // Add transition for smooth appearance
+              });
+              
+              // Show only the clicked button
+              button.style.display = 'inline-block';
+              button.style.opacity = '1'; // Fade in clicked button
+              button.classList.add('glow'); // Add glow effect
+
+              signalPopup.classList.add('active');
+
+              // Flashing glow effect on title
+              popupTitle.style.animation = 'flashGlow .5s forwards';
+              setTimeout(() => {
+                  popupTitle.style.animation = ''; // Reset the animation
+              },500);
+
+              // Hide chart toggle button when signal popup is active
+              document.getElementById('toggleChartBtn').style.display = 'none';
+         }
+
+         function closePopup() {
+             const signalPopup = document.getElementById('signalPopup');
+             
+             // Hide the signal popup
+             signalPopup.classList.remove('active');
+             
+             const buttons = document.querySelectorAll('.button');
+
+             // Show all buttons again and remove glow effect
+             buttons.forEach(button => {
+                 button.style.display = 'inline-block';
+                 button.style.opacity = '1'; // Ensure opacity is reset
+                 button.classList.remove('glow'); // Remove glow effect
+                 button.style.transition = 'opacity .3s ease-in-out'; // Add transition for smooth appearance
+                 setTimeout(() => { button.style.opacity = '1'; },100); // Reset opacity after a short delay
+              });
+
+              // Flashing glow effect on title after closing
+              const popupTitle = document.getElementById('popup-title');
+              popupTitle.style.animation = 'flashGlow .5s forwards';
+              setTimeout(() => {
+                  popupTitle.style.animation = ''; // Reset the animation
+              },500);
+
+              // Show chart toggle button when signal popup is closed
+              document.getElementById('toggleChartBtn').style.display = 'inline-block';
+
+              // Show contact information again
+              document.getElementById('contactInfo').style.display = 'block';
+         }
+
+       function toggleChart(button) {
+    const chartPopup = document.getElementById('chartPopup');
+    const buttons = document.querySelectorAll('.button'); // Select all buttons except keyboard buttons
+
+    if (!chartVisible) { // If chart is not visible yet
+        chartVisible = true; // Set to visible
+        chartPopup.classList.add('active'); // Show chart popup
+        button.textContent = 'Hide Chart'; // Change button text to Hide Chart
+        button.classList.add('glow'); // Add glow effect on click
+
+        // Hide all buttons except keyboard buttons
+        buttons.forEach(btn => {
+            if (!btn.id.includes('enableKeyboard') && !btn.id.includes('disableKeyboard')) {
+                btn.style.display = 'none'; // Hide each button
+            }
+        });
+    } else { // If chart is already visible
+        chartVisible = false; // Set to not visible
+        chartPopup.classList.remove('active'); // Hide chart popup
+        button.textContent = 'Show Chart'; // Change back to Show Chart
+        button.classList.remove('glow'); // Remove glow effect when hiding chart
+    }
+}
+
+function closeChartPopup() {
+    const chartPopup = document.getElementById('chartPopup');
+
+    // Hide the chart popup
+    chartPopup.classList.remove('active');
+
+    const toggleButton = document.getElementById('toggleChartBtn');
+    toggleButton.textContent = 'Show Chart'; // Reset toggle button text
+
+    chartVisible = false; // Reset visibility state of the chart
+
+    const buttons = document.querySelectorAll('.button'); // Select all buttons
+
+    // Show all buttons again except keyboard buttons
+    buttons.forEach(btn => {
+        if (!btn.id.includes('enableKeyboard') && !btn.id.includes('disableKeyboard')) {
+            btn.style.display = 'inline-block'; // Show each button
+        }
+    });
+
+    // Show contact information again after closing chart popup
+    document.getElementById('contactInfo').style.display = 'block';
+}
+         function showContactPopup() {
+             const contactPopup = document.getElementById('authorPopup');
+             contactPopup.classList.add('active');
+         }
+
+         function closeContactPopup() {
+             const contactPopup = document.getElementById('authorPopup');
+             contactPopup.classList.remove('active');
+
+             // Show contact information again after closing contact popup
+             document.getElementById('contactInfo').style.display = 'block';
+         }
+</script>
+<script>
+    function updateOnlineStatus() {
+        const offlineMessage = document.getElementById('offline-message');
+        if (navigator.onLine) {
+            offlineMessage.style.display = 'none'; // Hide message when online
+        } else {
+            offlineMessage.style.display = 'block'; // Show message when offline
+        }
+    }
+
+    // Check initial status
+    updateOnlineStatus();
+
+    // Listen for online and offline events
+    window.addEventListener('online', updateOnlineStatus);
+    window.addEventListener('offline', updateOnlineStatus);
+</script>
+
+</body>
+</html>
