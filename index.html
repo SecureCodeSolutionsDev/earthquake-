@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#fff7f9">
+<title>Zwin 🔥 — Dating, but warmer</title>
+<script src="zwin-config.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none}
+:root{
+  --bg:#fff7f9; --card:#ffffff; --soft:#fff0f3; --line:#f6dfe6;
+  --txt:#2b2230; --mut:#9c8a99; --grad:linear-gradient(45deg,#ff4e7e,#ff8a5c);
+  --pk:#ff4e7e; --or:#ff8a5c; --gold:#d9a520; --green:#2fbf71; --blue:#4aa8ff;
+  --r:22px;
+  --shadow:0 12px 30px rgba(255,78,126,.16);
+}
+html,body{height:100%}
+body{background:#fdeef2;color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans Arabic","Helvetica Neue",Arial,sans-serif;display:flex;justify-content:center}
+button{font-family:inherit;border:none;cursor:pointer;background:none;color:inherit}
+input,textarea{font-family:inherit;color:inherit;outline:none}
+.app{position:relative;width:100%;max-width:440px;height:100dvh;background:var(--bg);overflow:hidden;display:flex;flex-direction:column;box-shadow:0 0 70px rgba(255,78,126,.25)}
+.scr{flex:1;min-height:0;overflow-y:auto;display:none;scrollbar-width:none;padding-bottom:calc(88px + env(safe-area-inset-bottom))}
+.scr::-webkit-scrollbar{display:none}
+.scr.on{display:block;animation:fi .25s ease}
+@keyframes fi{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.row{display:flex;align-items:center;gap:10px}
+.spread{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.mut{color:var(--mut)}.small{font-size:12.5px}.tiny{font-size:11px}
+.grad-txt{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.chip{display:inline-flex;align-items:center;gap:5px;background:#fff;border:1px solid var(--line);padding:8px 13px;border-radius:999px;font-size:12.5px;font-weight:700;box-shadow:0 2px 8px rgba(43,34,48,.05)}
+.pill{background:var(--soft);border-radius:999px;padding:6px 12px;font-size:12px;font-weight:800;color:var(--pk)}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:16px;border-radius:18px;font-size:16px;font-weight:900;transition:transform .08s}
+.btn:active{transform:scale(.96)}
+.btn-grad{background:var(--grad);color:#fff;box-shadow:var(--shadow)}
+.btn-soft{background:var(--soft);color:var(--pk)}
+.btn-line{background:#fff;border:1.5px solid var(--line)}
+.btn[disabled]{opacity:.45;pointer-events:none}
+.h1{font-size:27px;font-weight:900;letter-spacing:-.4px}
+.h2{font-size:19px;font-weight:900}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;box-shadow:0 4px 18px rgba(255,78,126,.06)}
+.topbar{padding:calc(12px + env(safe-area-inset-top)) 18px 8px;display:flex;align-items:center;justify-content:space-between;z-index:5}
+.logo{font-size:21px;font-weight:900;display:flex;gap:6px;align-items:center}
+.logo .flame{width:34px;height:34px;border-radius:12px;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:17px;box-shadow:var(--shadow)}
+.coinpill{display:flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--line);padding:8px 12px;border-radius:999px;font-weight:900;font-size:14px;box-shadow:0 3px 10px rgba(217,165,32,.15)}
+.tabbar{position:absolute;inset-inline:0;bottom:0;display:flex;background:rgba(255,255,255,.94);backdrop-filter:blur(14px);border-top:1px solid var(--line);padding:8px 10px calc(10px + env(safe-area-inset-bottom));z-index:40}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 0;color:var(--mut);font-size:10px;font-weight:800;position:relative}
+.tab .ic{width:46px;height:29px;display:flex;align-items:center;justify-content:center;border-radius:999px;font-size:19px}
+.tab.on{color:var(--pk)}.tab.on .ic{background:var(--soft)}
+.tbadge{position:absolute;top:2px;inset-inline-end:calc(50% - 20px);background:var(--pk);color:#fff;font-size:10px;font-weight:900;min-width:17px;height:17px;border-radius:99px;display:flex;align-items:center;justify-content:center;padding:0 4px}
+/* ---------- ONBOARD ---------- */
+.ob{padding:24px 22px calc(30px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:14px;min-height:100%;justify-content:center;overflow-y:auto}
+.ob-logo{text-align:center;animation:pulseL 2.4s infinite}
+@keyframes pulseL{50%{transform:scale(1.06)}}
+.ob-logo .flame{width:84px;height:84px;border-radius:28px;background:var(--grad);display:inline-flex;align-items:center;justify-content:center;font-size:42px;box-shadow:0 16px 44px rgba(255,78,126,.4)}
+.inp{width:100%;background:#fff;border:1.5px solid var(--line);border-radius:16px;padding:15px;font-size:15.5px}
+.inp:focus{border-color:var(--pk)}
+textarea.inp{min-height:80px;resize:none}
+.seg{display:flex;gap:8px}
+.seg button{flex:1;padding:13px;border-radius:16px;background:#fff;border:1.5px solid var(--line);font-weight:800;font-size:14px}
+.seg button.on{background:var(--grad);color:#fff;border-color:transparent;box-shadow:var(--shadow)}
+.tagwrap{display:flex;flex-wrap:wrap;gap:8px}
+.tchip{padding:9px 14px;border-radius:999px;background:#fff;border:1.5px solid var(--line);font-size:13px;font-weight:700;transition:.15s}
+.tchip.on{background:var(--soft);border-color:var(--pk);color:var(--pk);transform:scale(1.04)}
+.emojirow{display:flex;gap:10px;flex-wrap:wrap}
+.emojipick{width:52px;height:52px;border-radius:16px;background:#fff;border:1.5px solid var(--line);font-size:26px;display:flex;align-items:center;justify-content:center}
+.emojipick.on{border-color:var(--pk);box-shadow:var(--shadow);transform:scale(1.08)}
+.gradrow{display:flex;gap:10px}
+.gradpick{width:44px;height:44px;border-radius:50%;border:3px solid transparent}
+.gradpick.on{border-color:var(--pk);transform:scale(1.1)}
+.obstep{animation:fi .3s ease}
+/* ---------- DECK ---------- */
+.deckwrap{position:relative;flex:1;display:flex;flex-direction:column;overflow:hidden}
+.deck{position:relative;flex:1;margin:6px 16px 4px;min-height:0}
+.dcard{position:absolute;inset:0;border-radius:26px;overflow:hidden;box-shadow:0 18px 44px rgba(43,34,48,.18);background:#fff;touch-action:none;will-change:transform}
+.dcard .ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.dcard .ph span{font-size:110px;filter:drop-shadow(0 10px 20px rgba(0,0,0,.25))}
+.dcard .shade{position:absolute;inset-inline:0;bottom:0;height:56%;background:linear-gradient(transparent,rgba(30,10,25,.78) 78%)}
+.dcard .info{position:absolute;inset-inline:0;bottom:0;padding:18px;color:#fff}
+.dcard .nm{font-size:27px;font-weight:900;display:flex;align-items:center;gap:8px}
+.dcard .nm .age{font-weight:500;font-size:23px}
+.dcard .ds{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.22);backdrop-filter:blur(4px);padding:5px 11px;border-radius:999px;font-size:12px;font-weight:800;margin-top:8px}
+.dcard .bio{font-size:14px;line-height:1.45;margin-top:9px;max-height:60px;overflow:hidden;text-shadow:0 1px 4px rgba(0,0,0,.4)}
+.dcard .tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}
+.dcard .tags span{background:rgba(255,255,255,.2);backdrop-filter:blur(4px);padding:5px 10px;border-radius:999px;font-size:11.5px;font-weight:700}
+.vbadge{position:absolute;top:14px;inset-inline-start:14px;padding:7px 12px;border-radius:12px;font-size:11px;font-weight:900;letter-spacing:.6px;backdrop-filter:blur(6px)}
+.vbadge.new{background:rgba(47,191,113,.85);color:#fff}
+.vbadge.super{background:rgba(74,168,255,.9);color:#fff}
+.stamp{position:absolute;top:26px;font-size:30px;font-weight:900;letter-spacing:2px;padding:6px 18px;border:4px solid;border-radius:14px;opacity:0;transform:rotate(var(--rot,0));pointer-events:none;z-index:3}
+.stamp.like{color:#2fbf71;border-color:#2fbf71;left:18px;--rot:-14deg}
+.stamp.no{color:#ff4e7e;border-color:#ff4e7e;right:18px;--rot:14deg}
+.stamp.wow{color:#4aa8ff;border-color:#4aa8ff;left:50%;transform:translateX(-50%) rotate(-8deg)}
+.dactions{display:flex;align-items:center;justify-content:center;gap:12px;padding:10px 0 2px}
+.xbtn{width:54px;height:54px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 6px 18px rgba(43,34,48,.14);transition:transform .1s}
+.xbtn:active{transform:scale(.85)}
+.xbtn.big{width:66px;height:66px;font-size:30px}
+.deckempty{position:absolute;inset:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:12px;padding:24px}
+.deckempty .big{font-size:70px;animation:pulseL 2.6s infinite}
+.boostbtn{position:absolute;top:12px;inset-inline-end:12px;z-index:3;background:rgba(255,255,255,.85);backdrop-filter:blur(6px);border-radius:999px;padding:9px 13px;font-weight:900;font-size:12.5px;box-shadow:0 6px 16px rgba(43,34,48,.14)}
+.boostbtn.live{background:var(--grad);color:#fff;animation:pulseL 1.6s infinite}
+/* ---------- LIKES YOU ---------- */
+.lkgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:10px 18px}
+.lkcard{position:relative;border-radius:20px;overflow:hidden;aspect-ratio:3/4;box-shadow:0 8px 20px rgba(43,34,48,.12)}
+.lkcard .ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:62px}
+.lkcard.blur .ph{filter:blur(14px) brightness(.9)}
+.lkcard.blur::after{content:"";position:absolute;inset:0;backdrop-filter:blur(2px)}
+.lkcard .over{position:absolute;inset-inline:0;bottom:0;padding:10px;color:#fff;font-weight:900;z-index:2;text-shadow:0 1px 5px rgba(0,0,0,.5)}
+.lkcard .shade{position:absolute;inset-inline:0;bottom:0;height:55%;background:linear-gradient(transparent,rgba(30,10,25,.6))}
+.lklock{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;z-index:2;color:#fff;font-weight:900;font-size:13px;text-shadow:0 2px 6px rgba(0,0,0,.5)}
+.lklock .ee{font-size:30px}
+.lksuper{position:absolute;top:10px;inset-inline-start:10px;background:#4aa8ff;color:#fff;font-size:10px;font-weight:900;padding:5px 9px;border-radius:10px;letter-spacing:.5px;z-index:3}
+/* ---------- MATCHES / CHAT LIST ---------- */
+.mrow{display:flex;gap:12px;overflow-x:auto;padding:12px 18px 4px;scrollbar-width:none}
+.mrow::-webkit-scrollbar{display:none}
+.mnew{display:flex;flex-direction:column;align-items:center;gap:5px;flex:none}
+.mnew .av{width:64px;height:64px;border-radius:50%;padding:3px;background:var(--grad)}
+.mnew .av div{width:100%;height:100%;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:30px;background:#fff}
+.mnew span{font-size:11px;font-weight:800;max-width:66px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.citem{display:flex;align-items:center;gap:13px;padding:13px 18px;width:100%;text-align:start;border-bottom:1px solid var(--line)}
+.citem:active{background:var(--soft)}
+.cav{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;flex:none;position:relative}
+.cav .onl{position:absolute;bottom:2px;inset-inline-end:2px;width:13px;height:13px;border-radius:50%;background:var(--green);border:2.5px solid #fff}
+.citem .prv{flex:1;min-width:0}
+.citem .prv b{font-size:15.5px;display:flex;align-items:center;gap:6px}
+.citem .prv .lm{font-size:13px;color:var(--mut);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+.cunr{background:var(--pk);color:#fff;font-size:11px;font-weight:900;min-width:20px;height:20px;border-radius:99px;display:flex;align-items:center;justify-content:center;padding:0 6px;flex:none}
+.excl{background:linear-gradient(45deg,#ffe9b8,#ffd677);border:1px solid #f0c75e;border-radius:8px;padding:3px 7px;font-size:9px;font-weight:900;color:#7a5a00;letter-spacing:.5px}
+.exclwrap{background:linear-gradient(90deg,#fff6dd,#fff);border-bottom:1px solid #f0e2b0}
+/* ---------- CHAT ---------- */
+.chatscr{position:absolute;inset:0;z-index:70;background:var(--bg);display:none;flex-direction:column}
+.chatscr.on{display:flex;animation:fi .22s ease}
+.chathead{padding:calc(10px + env(safe-area-inset-top)) 12px 10px;display:flex;align-items:center;gap:10px;background:#fff;border-bottom:1px solid var(--line)}
+.chathead.excl{background:linear-gradient(90deg,#fff2cd,#fff)}
+.chatbody{flex:1;overflow-y:auto;padding:14px 14px 6px;display:flex;flex-direction:column;gap:8px;scrollbar-width:none}
+.chatbody::-webkit-scrollbar{display:none}
+.bub{max-width:76%;padding:11px 15px;border-radius:20px;font-size:14.5px;line-height:1.4;animation:bi .2s ease;position:relative}
+@keyframes bi{from{opacity:0;transform:scale(.92) translateY(6px)}to{opacity:1;transform:none}}
+.bub.me{align-self:flex-end;background:var(--grad);color:#fff;border-end-end-radius:6px}
+.bub.them{align-self:flex-start;background:#fff;border:1px solid var(--line);border-end-start-radius:6px;box-shadow:0 2px 8px rgba(43,34,48,.05)}
+.bub .tm{display:block;font-size:9.5px;opacity:.6;margin-top:3px;text-align:end}
+.bub .rr{font-size:9.5px;text-align:end;opacity:.8}
+.sys{align-self:center;background:var(--soft);color:var(--pk);font-size:12px;font-weight:800;padding:8px 14px;border-radius:999px;text-align:center;max-width:90%}
+.gift{align-self:center;background:linear-gradient(45deg,#fff2cd,#ffe7ee);border:1px solid #ffd08a;border-radius:18px;padding:12px 18px;text-align:center;font-weight:800;font-size:14px;animation:pop .35s ease}
+@keyframes pop{0%{transform:scale(.6);opacity:0}60%{transform:scale(1.05)}100%{transform:scale(1)}}
+.chatfoot{padding:8px 12px calc(12px + env(safe-area-inset-bottom));background:#fff;border-top:1px solid var(--line)}
+.freebar{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:800;color:var(--mut);padding:2px 4px 8px}
+.freebar .bar{flex:1;height:6px;background:var(--soft);border-radius:99px;overflow:hidden}
+.freebar .bar i{display:block;height:100%;background:var(--grad);border-radius:99px;transition:width .3s}
+.chatrow{display:flex;gap:8px;align-items:center}
+.chatrow input{flex:1;background:var(--bg);border:1.5px solid var(--line);border-radius:999px;padding:14px 18px;font-size:15px;min-width:0}
+.chatrow input:focus{border-color:var(--pk)}
+.sendbtn{width:50px;height:50px;border-radius:50%;background:var(--grad);color:#fff;font-size:19px;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow);flex:none}
+.sendbtn:active{transform:scale(.88)}
+.giftbtn{width:50px;height:50px;border-radius:50%;background:linear-gradient(45deg,#ffd666,#ff9d5c);font-size:21px;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 16px rgba(255,157,92,.4);flex:none}
+.giftbtn:active{transform:scale(.88)}
+.typing{align-self:flex-start;background:#fff;border:1px solid var(--line);border-radius:20px;border-end-start-radius:6px;padding:10px 16px;display:flex;gap:4px}
+.typing i{width:7px;height:7px;border-radius:50%;background:var(--mut);animation:tp 1.2s infinite}
+.typing i:nth-child(2){animation-delay:.2s}.typing i:nth-child(3){animation-delay:.4s}
+@keyframes tp{30%{transform:translateY(-5px);opacity:.6}}
+.ice{display:flex;gap:8px;overflow-x:auto;padding:8px 2px;scrollbar-width:none}
+.ice::-webkit-scrollbar{display:none}
+.ice .chip{flex:none;color:var(--pk);border-color:#ffd3de}
+/* ---------- match overlay ---------- */
+.mov{position:absolute;inset:0;z-index:90;background:radial-gradient(circle at 50% 30%,#3d1030,#160414 75%);display:none;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:26px;text-align:center;overflow:hidden}
+.mov.on{display:flex;animation:fi .3s ease}
+.mov h1{font-size:40px;font-weight:900;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;animation:pop .5s ease}
+.mov .duo{display:flex;gap:0;margin:18px 0 6px}
+.mov .duo .ma{width:118px;height:118px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:56px;border:4px solid #fff;box-shadow:0 14px 34px rgba(0,0,0,.4)}
+.mov .duo .ma:last-child{margin-inline-start:-22px}
+.mov .sub{color:#ffd7e3;font-size:14px;max-width:300px;font-weight:600}
+.confetti{position:absolute;top:-20px;font-size:22px;animation:fall linear infinite;pointer-events:none}
+@keyframes fall{to{transform:translateY(110vh) rotate(340deg)}}
+/* ---------- sheets ---------- */
+.mback{position:absolute;inset:0;z-index:80;background:rgba(43,20,35,.5);backdrop-filter:blur(3px);display:none;align-items:flex-end;justify-content:center}
+.mback.on{display:flex;animation:fi .2s ease}
+.msheet{width:100%;max-height:88%;overflow-y:auto;scrollbar-width:none;background:#fff;border-radius:28px 28px 0 0;padding:12px 20px calc(20px + env(safe-area-inset-bottom));animation:up .3s ease}
+.msheet::-webkit-scrollbar{display:none}
+@keyframes up{from{transform:translateY(80px)}to{transform:none}}
+.grab{width:44px;height:5px;border-radius:99px;background:var(--line);margin:2px auto 14px}
+.pack{display:flex;align-items:center;gap:14px;background:#fff;border:2px solid var(--line);border-radius:20px;padding:15px;margin-bottom:10px;position:relative;text-align:start;width:100%;transition:.15s}
+.pack:active{transform:scale(.97)}
+.pack.best{border-color:var(--pk);background:var(--soft)}
+.pack .pem{width:56px;height:56px;border-radius:18px;background:var(--soft);display:flex;align-items:center;justify-content:center;font-size:27px;flex:none}
+.pack .ptag{position:absolute;top:-9px;inset-inline-end:14px;background:var(--grad);color:#fff;font-size:9.5px;font-weight:900;padding:4px 10px;border-radius:99px}
+.earnrow{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--line);width:100%;text-align:start}
+.earnrow:last-child{border:none}
+.earnrow .ee{width:46px;height:46px;border-radius:15px;background:var(--soft);display:flex;align-items:center;justify-content:center;font-size:22px;flex:none}
+#toasts{position:absolute;top:calc(10px + env(safe-area-inset-top));inset-inline:0;z-index:300;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none}
+.toast{background:#2b2230;color:#fff;padding:13px 18px;border-radius:16px;font-size:13.5px;font-weight:800;box-shadow:0 14px 34px rgba(0,0,0,.3);animation:td .3s ease;max-width:88%;text-align:center;border-inline-start:3px solid var(--pk)}
+@keyframes td{from{opacity:0;transform:translateY(-18px)}to{opacity:1;transform:none}}
+.streakfire{display:flex;align-items:center;gap:14px;background:linear-gradient(45deg,#fff2e2,#ffe3ee);border:1px solid #ffd3c2;border-radius:20px;padding:16px;margin-bottom:12px}
+.bankblock{background:#fffdf7;border:1px solid #eee0b8;border-radius:14px;padding:14px;font-size:13px;line-height:2;margin:12px 0}
+.bankblock b{color:#8a6d00}
+.copybtn{background:#fff;border:1px solid var(--line);padding:4px 10px;border-radius:8px;font-size:11px;font-weight:800}
+.demobanner{margin:0 18px 6px;background:#fff8e6;border:1px solid #f0dc9e;color:#8a6d00;border-radius:14px;padding:10px 13px;font-size:11.5px;font-weight:800}
+.pcard{border-radius:26px;overflow:hidden;position:relative;box-shadow:0 16px 40px rgba(43,34,48,.15);margin:6px 18px}
+.pcard .ph{height:300px;display:flex;align-items:center;justify-content:center}
+.pcard .ph span{font-size:120px}
+.pcard .pbody{padding:16px;background:#fff}
+.toggle{background:#e8e0e6;width:48px;height:28px;border-radius:99px;position:relative;transition:.2s;flex:none}
+.toggle::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:.2s;box-shadow:0 2px 6px rgba(0,0,0,.2)}
+.toggle.on{background:var(--pk)}
+.toggle.on::after{left:23px}
+.divider{height:1px;background:var(--line);margin:14px 0}
+.numstep{display:flex;align-items:center;gap:16px}
+.numstep button{width:44px;height:44px;border-radius:50%;background:#fff;border:1.5px solid var(--line);font-size:20px;font-weight:900}
+.numstep b{min-width:50px;text-align:center;font-size:20px}
+</style>
+</head>
+<body>
+<div class="app">
+<div id="toasts"></div>
+
+<!-- ==================== ONBOARD ==================== -->
+<section class="scr" id="scr-onboard">
+  <div class="ob" id="obWrap"></div>
+</section>
+
+<!-- ==================== DISCOVER ==================== -->
+<section class="scr deckwrap" id="scr-discover" style="padding-bottom:calc(84px + env(safe-area-inset-bottom))">
+  <div class="topbar">
+    <div class="logo"><div class="flame">🔥</div><span class="grad-txt">Zwin</span></div>
+    <div style="display:flex;gap:8px">
+      <button class="coinpill" onclick="showTab('wallet')">🪙 <span id="coinTop">0</span></button>
+    </div>
+  </div>
+  <div id="demoSlot"></div>
+  <div class="deck" id="deck"></div>
+  <div class="dactions">
+    <button class="xbtn" onclick="rewind()" title="Rewind">↩️</button>
+    <button class="xbtn big" style="color:var(--pk)" onclick="swipeBtn('pass')">✕</button>
+    <button class="xbtn" style="color:var(--blue)" onclick="swipeBtn('super')">✨</button>
+    <button class="xbtn big" style="color:var(--green)" onclick="swipeBtn('like')">♥</button>
+    <button class="xbtn" onclick="boost()" title="Boost">🚀</button>
+  </div>
+</section>
+
+<!-- ==================== LIKED YOU ==================== -->
+<section class="scr" id="scr-likes">
+  <div class="topbar"><div class="h2">They like you 😍</div>
+    <span class="pill" id="likeCnt">0</span></div>
+  <div class="mut small" style="padding:0 18px 6px">Someone here already chose you. Reveal to see who — super-likes are always visible 💙</div>
+  <div class="lkgrid" id="lkGrid"></div>
+</section>
+
+<!-- ==================== MATCHES ==================== -->
+<section class="scr" id="scr-matches">
+  <div class="topbar"><div class="h2">Matches 💘</div>
+    <button class="pill" onclick="toast('Zwin is a kind place 💛 Harassment = ban')">🛡️ Safe</button></div>
+  <div class="sec mut tiny" style="padding:2px 18px;font-weight:900;letter-spacing:1px">NEW MATCHES</div>
+  <div class="mrow" id="mRow"></div>
+  <div class="sec mut tiny" style="padding:8px 18px 2px;font-weight:900;letter-spacing:1px">CHATS</div>
+  <div id="chatList"></div>
+</section>
+
+<!-- ==================== WALLET ==================== -->
+<section class="scr" id="scr-wallet">
+  <div class="topbar"><div class="h2">Coins 🪙</div></div>
+  <div id="walletWrap" style="padding:6px 18px 0"></div>
+</section>
+
+<!-- ==================== PROFILE ==================== -->
+<section class="scr" id="scr-profile">
+  <div class="topbar"><div class="h2">You ✨</div><button class="pill" onclick="resetAll()">Log out</button></div>
+  <div id="profileWrap"></div>
+  <div style="padding:12px 18px">
+    <button class="btn btn-line" onclick="editProfile()">✏️ Edit profile</button>
+    <div style="height:10px"></div>
+    <button class="btn btn-line" onclick="toast('Preview shared 💌')">👀 How others see you</button>
+    <div class="mut tiny" style="text-align:center;margin-top:16px">Zwin v1.0 · dating, but warmer 💛</div>
+  </div>
+</section>
+
+<nav class="tabbar" id="tabbar"></nav>
+
+<!-- chat -->
+<div class="chatscr" id="chatScr">
+  <div class="chathead" id="chatHead">
+    <button class="chip" style="padding:9px 13px" onclick="closeChat()">‹</button>
+    <div class="cav" id="chAv" style="width:46px;height:46px;font-size:23px"></div>
+    <div style="flex:1;min-width:0">
+      <b id="chName" style="font-size:16px;display:flex;align-items:center;gap:6px"></b>
+      <div class="mut tiny" id="chState">…</div>
+    </div>
+    <button class="chip" style="padding:9px 11px" onclick="chatMenu()" title="More">⋯</button>
+  </div>
+  <div class="chatbody" id="chatBody"></div>
+  <div style="background:#fff">
+    <div class="ice" id="iceRow" style="padding-inline:14px"></div>
+    <div class="chatfoot" style="border-top:1px solid var(--line)">
+      <div class="freebar" id="freeBar"></div>
+      <div class="chatrow">
+        <button class="giftbtn" onclick="openGift()" title="Gift coins">🪙</button>
+        <input id="chatIn" placeholder="Say something nice… 💌" onkeydown="if(event.key==='Enter')sendMsg()" oninput="typingNow()">
+        <button class="sendbtn" onclick="sendMsg()">➤</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- match overlay -->
+<div class="mov" id="matchOv">
+  <div id="confetti"></div>
+  <h1>It’s a Match!</h1>
+  <div class="sub" id="matchSub"></div>
+  <div class="duo" id="matchDuo"></div>
+  <div style="height:16px"></div>
+  <button class="btn btn-grad" style="max-width:300px" onclick="matchSayHi()">💌 Say hi — first messages are FREE</button>
+  <div style="height:8px"></div>
+  <button class="btn" style="max-width:300px;background:rgba(255,255,255,.12);color:#ffd7e3" onclick="$('matchOv').classList.remove('on')">Keep discovering 🔥</button>
+</div>
+
+<!-- gift sheet -->
+<div class="mback" id="giftSheet"><div class="msheet"><div class="grab"></div><div id="giftBody"></div></div></div>
+<!-- shop sheet -->
+<div class="mback" id="shopSheet"><div class="msheet"><div class="grab"></div><div id="shopBody"></div></div></div>
+<!-- bank sheet -->
+<div class="mback" id="bankSheet"><div class="msheet"><div class="grab"></div><div id="bankBody"></div></div></div>
+<!-- generic sheet -->
+<div class="mback" id="genSheet"><div class="msheet"><div class="grab"></div><div id="genBody"></div></div></div>
+</div>
+
+<script>
+/* ================================================================
+   ZWIN 🔥 — engine
+   ================================================================ */
+const $=id=>document.getElementById(id);
+const C=ZWIN_CONFIG.coins;
+let DB=null, DEMO=false;
+const uid=myUid();
+const L=load();
+function myUid(){let u=localStorage.getItem('zwin_uid');if(!u){u='u_'+Math.random().toString(36).slice(2,9)+Date.now().toString(36);localStorage.setItem('zwin_uid',u)}return u}
+function load(){try{return JSON.parse(localStorage.getItem('zwin_local'))||fresh()}catch(e){return fresh()}}
+function fresh(){return {me:null,coins:C.welcomeBonus,swiped:{},matches:[],chats:{},freeLeft:{},exclusive:{},likesYou:[],daily:{lastClaim:0,streak:0},gifts:{},boostUntil:0,rewinds:0,unread:{},pendingOrders:[],seen:{} } }
+function save(){localStorage.setItem('zwin_local',JSON.stringify(L));paintCoins();paintBadges()}
+function toast(m){const d=document.createElement('div');d.className='toast';d.textContent=m;$('toasts').appendChild(d);setTimeout(()=>{d.style.opacity='0';d.style.transition='opacity .3s';setTimeout(()=>d.remove(),300)},2700)}
+function show(id){$(id).classList.add('on')} function hide(id){$(id).classList.remove('on')}
+function grad(i){const G=[['#ffd1e3','#ffb3c7'],['#ffe3c2','#ffc09e'],['#d7f0ff','#b3dcff'],['#e7ffd9','#c3f5b0'],['#f5e0ff','#e6c2ff'],['#fff3c9','#ffe48a'],['#d9fff4','#a9f2df'],['#ffe0e0','#ffb0b0']];const g=G[i%G.length];return `linear-gradient(160deg,${g[0]},${g[1]})`}
+
+/* ---------- sample people (demo + when cloud is empty) ---------- */
+const TAGS=['🌍 Travel','🍜 Foodie','🎧 Music','📚 Books','🌊 Sea','🥾 Hiking','🎨 Art','🐱 Cats','☕ Coffee','🎬 Cinema','⚽ Football','👨‍🍳 Cooking','🎮 Gaming','📷 Photo','💪 Fitness','🧘 Zen'];
+const SAMPLES=[
+ {id:'b1',name:'Salma',age:24,g:'w',city:'Casablanca',bio:'Sunset chaser 🌅 I cook tajine that could end wars. Swipe right if you laugh easily.',tags:['🌊 Sea','👨‍🍳 Cooking','🎬 Cinema'],em:'👩🏽',gi:0,km:2},
+ {id:'b2',name:'Omar',age:27,g:'m',city:'Rabat',bio:'Architect by day, oud player by night 🎶 I plan dates like I plan buildings: with care.',tags:['🎧 Music','🎨 Art','📚 Books'],em:'🧔🏽',gi:2,km:5},
+ {id:'b3',name:'Imane',age:23,g:'w',city:'Casablanca',bio:'Pilates instructor 💪 Coffee first, then we talk. Looking for good energy only ✨',tags:['💪 Fitness','☕ Coffee','🧘 Zen'],em:'👩🏻',gi:4,km:1},
+ {id:'b4',name:'Mehdi',age:29,g:'m',city:'Marrakech',bio:'Software engineer, weekend hiker 🥾 Atlas Mountains > nightclubs. Dog person 🐕',tags:['🥾 Hiking','🎮 Gaming','🌍 Travel'],em:'👨🏽',gi:5,km:9},
+ {id:'b5',name:'Nour',age:25,g:'w',city:'Tangier',bio:'Photographer 📷 I see beauty everywhere — maybe in you? Let\'s find a rooftop sunset.',tags:['📷 Photo','🌍 Travel','🎨 Art'],em:'👩🏾',gi:1,km:3},
+ {id:'b6',name:'Adam',age:26,g:'m',city:'Casablanca',bio:'Med student 🩺 My heart rate goes up around good food and better company.',tags:['🍜 Foodie','📚 Books','🎬 Cinema'],em:'🧑🏽',gi:3,km:4},
+ {id:'b7',name:'Yasmina',age:28,g:'w',city:'Agadir',bio:'Surf coach 🏄‍♀️ Life\'s better salty. If you can laugh at yourself, we\'ll get along.',tags:['🌊 Sea','💪 Fitness','🌍 Travel'],em:'👩🏼',gi:6,km:12},
+ {id:'b8',name:'Rayan',age:24,g:'m',city:'Fès',bio:'Chef in training 👨‍🍳 I express feelings through pastilla. Warning: you will gain 2kg.',tags:['👨‍🍳 Cooking','🍜 Foodie','🎧 Music'],em:'👨🏻',gi:7,km:6},
+ {id:'b9',name:'Lina',age:22,g:'w',city:'Casablanca',bio:'Art student 🎨 My love language is playlists. Show me your weirdest hobby.',tags:['🎨 Art','🎧 Music','🐱 Cats'],em:'👩🏽‍🦱',gi:4,km:2},
+ {id:'b10',name:'Hamza',age:30,g:'m',city:'Rabat',bio:'Pilot ✈️ Home is wherever the mint tea is. Looking for a co-pilot for real life.',tags:['🌍 Travel','☕ Coffee','🎬 Cinema'],em:'🧔🏻',gi:5,km:8},
+ {id:'b11',name:'Rim',age:26,g:'w',city:'Marrakech',bio:'Bookstore owner 📚 Quiet storms are my favorite. Tell me the book that changed you.',tags:['📚 Books','☕ Coffee','🧘 Zen'],em:'👩🏽',gi:0,km:14},
+ {id:'b12',name:'Anas',age:25,g:'m',city:'Casablanca',bio:'Fitness coach 💪 but I will absolutely share your fries. Balance, habibi.',tags:['💪 Fitness','🍜 Foodie','⚽ Football'],em:'💪🏽',gi:1,km:3},
+ {id:'b13',name:'Sofia',age:27,g:'w',city:'Tangier',bio:'Lawyer ⚖️ Fluent in sarcasm and three languages. Make me laugh in any of them.',tags:['🌍 Travel','🎬 Cinema','📚 Books'],em:'👩🏻',gi:2,km:7},
+ {id:'b14',name:'Bilal',age:28,g:'m',city:'Agadir',bio:'Marine biologist 🐠 I know which fish couple stays together for life. Goals.',tags:['🌊 Sea','🥾 Hiking','🧘 Zen'],em:'🧑🏾',gi:6,km:10},
+ {id:'b15',name:'Dounia',age:24,g:'w',city:'Fès',bio:'Calligraphy artist 🖋️ Old soul, young heart. I write letters — real ones.',tags:['🎨 Art','📚 Books','🐱 Cats'],em:'👩🏾',gi:3,km:11},
+ {id:'b16',name:'Yassine',age:26,g:'m',city:'Marrakech',bio:'Startup guy 🚀 Failed twice, building the third. Optimism is my cardio.',tags:['🎮 Gaming','🌍 Travel','💪 Fitness'],em:'👨🏽',gi:7,km:4},
+ {id:'b17',name:'Khadija',age:29,g:'w',city:'Rabat',bio:'Pediatrician 👶 Kids love me, plants fear me. Looking for something real — no games.',tags:['🧘 Zen','🍜 Foodie','🎬 Cinema'],em:'👩🏽',gi:4,km:6},
+ {id:'b18',name:'Ilyas',age:23,g:'m',city:'Tangier',bio:'Music producer 🎧 Let\'s make a song together. Or just argue about the best album ever.',tags:['🎧 Music','🎮 Gaming','☕ Coffee'],em:'🎧',gi:0,km:5},
+ {id:'b19',name:'Sara',age:25,g:'w',city:'Casablanca',bio:'Vet student 🐾 I will like your pet more than you. Fair warning 💛',tags:['🐱 Cats','🌊 Sea','📷 Photo'],em:'👩🏼',gi:1,km:2},
+ {id:'b20',name:'Karim',age:31,g:'m',city:'Casablanca',bio:'Journalist 📰 Great listener, better storyteller. Tea > coffee, fight me.',tags:['📚 Books','🎬 Cinema','⚽ Football'],em:'🧔🏾',gi:5,km:3}];
+const REPLIES=["Hii 😊 I was hoping you’d write!","Haha okay you’re funny 😂","I like your energy ✨","Tell me something fun about you 👀","That’s adorable 💛","Wakha, you made me smile 😄","Interesting… keep going 👌","Coffee someday? ☕","You’re different — in a good way 😌","I was just thinking about this chat 😊","Okay now I’m curious 👀","You’re sweet 🥰"];
+const GIFT_REPLIES=["🥺💛 You really didn’t have to… thank you! You have my full attention now","Wow… okay, I’m impressed 💛😍","You know the way to my chat 😘💛","That’s the sweetest thing anyone did on here 🥹💛"];
+const ICE_T=["What’s your perfect Sunday look like?","Truth: what song is on repeat for you? 🎧","Describe your vibe in 3 emojis 😄","What food could you eat forever? 🍜","Beach day or mountain hike? 🌊🥾","What made you smile today? 😊"];
+
+/* ---------- state / runtime ---------- */
+const R={deck:[],swiping:null,chatWith:null,tab:'discover',usersCache:[],likesMeta:{},matchFlow:null};
+let COMMISSION/*unused*/=0;
+
+/* ---------- CLOUD ============ */
+function fbInit(){
+  if(!zwinCloudReady()){DEMO=true;return}
+  try{
+    firebase.initializeApp(ZWIN_CONFIG.firebase); DB=firebase.database();
+    DB.ref('.info/connected').on('value',s=>{ if(s.val()&&L.me&&!DEMO){heartbeat(); syncMe(); syncBadges(); }});
+  }catch(e){DEMO=true}
+}
+function ref(p){return DB.ref('wasla_dating/'+p)}
+function txAdd(path,d){return ref(path).transaction(v=>+(((+v||0)+d).toFixed(2)))}
+function heartbeat(){
+  ref('presence/'+uid).update({online:true,lastSeen:Date.now(),name:L.me.name});
+  ref('presence/'+uid).onDisconnect().update({online:false,lastSeen:Date.now()});
+  setInterval(()=>ref('presence/'+uid).update({lastSeen:Date.now()}),25000);
+}
+async function syncMe(){
+  // publish my profile & coins, listen for events (likes, gifts, orders)
+  await ref('users/'+uid).update({
+    name:L.me.name,age:L.me.age,g:L.me.g,into:L.me.into,city:L.me.city,bio:L.me.bio,
+    tags:L.me.tags.slice(0,4),em:L.me.em,gi:L.me.gi,lastSeen:Date.now()
+  });
+  await ref('users/'+uid+'/coins').transaction(v=>(v===null?L.coins:v));
+  ref('users/'+uid+'/coins').on('value',s=>{ const v=s.val(); if(v!==null&&v!==L.coins){L.coins=v;save();} });
+  // likes index
+  ref('incoming/'+uid).limitToLast(50).on('child_added',s=>{
+    const from=s.key, d=s.val(); if(!d||L.seen['lk'+from])return; L.seen['lk'+from]=1;
+    if(!L.swiped[from]){ L.likesYou.unshift({uid:from,d:d.d,ts:d.ts}); save();
+      if(!L.seen['nt'+from]){L.seen['nt'+from]=1; toast(d.d==='super'?'✨ Someone SUPER liked you!':'😍 Someone new likes you!');} }
+  });
+  // gifts live
+  ref('giftsFor/'+uid).limitToLast(20).on('child_added',s=>{
+    const g=s.val(); if(!g)return; const k=s.key; if(L.seen[k])return; L.seen[k]=1;
+    L.coins+=g.coins; save();
+    toast(`🌹 ${g.fromName} gifted you ${g.coins} 🪙 — high interest!`);
+    const mm=L.matches.find(m=>m.peer===g.from);
+    if(mm){ addMsg(mm.mid,'gift',{coins:g.coins,fromName:g.fromName},false);
+      if(g.coins>=C.giftExclusive){L.exclusive[mm.mid]=1;}
+      save(); renderChatList(); }
+  });
+  // orders
+  ref('orders').orderByChild('uid').equalTo(uid).limitToLast(3).on('child_changed',s=>{
+    const o=s.val(); if(o&&o.status==='approved'&&!L.seen['od'+s.key]){ L.seen['od'+s.key]=1;
+      L.pendingOrders=L.pendingOrders.filter(p=>p.oid!==s.key);
+      toast(`🪙 +${o.coins} coins credited! Enjoy 💛`); save(); }
+  });
+}
+async function cloudDiscover(){
+  // fast path: download recent users, rank client-side (cached 2 min)
+  const now=Date.now();
+  if(R.usersCache.length&&(now-R.cacheTs<120000))return R.usersCache;
+  const snap=await ref('users').limitToLast(200).once('value');
+  const all=snap.val()||{};
+  const me=L.me;
+  const wantW=me.into.includes('w'), wantM=me.into.includes('m');
+  const pool=Object.entries(all)
+    .filter(([k,p])=>k!==uid&&p.name&&((p.g==='w'&&wantW)||(p.g==='m'&&wantM)))
+    .map(([k,p])=>({...p,id:k,sim:false,km:1+Math.floor(Math.random()*14),score:(p.lastSeen||0)/1e13+(p.boostUntil>now?3:0)}));
+  R.usersCache=pool.sort(()=>Math.random()-.5); R.cacheTs=now;
+  return pool;
+}
+
+/* ============ ONBOARDING ============ */
+const OB={step:0,data:{name:'',age:22,g:'',into:[],city:'Casablanca',bio:'',tags:[],em:'😊',gi:0}};
+function startOnboard(){
+  OB.step=0; paintOb();
+  showTab('onboard');
+}
+function paintOb(){
+  const d=OB.data; const W=$('obWrap');
+  const steps=[
+   ()=>`<div class="obstep">
+     <div class="ob-logo"><div class="flame">🔥</div></div>
+     <h1 class="h1" style="text-align:center">Welcome to <span class="grad-txt">Zwin</span></h1>
+     <div class="mut" style="text-align:center">Dating, but warmer. Real chats, zero judgment,<br>and kindness that pays — literally 🪙</div>
+     <div class="card small" style="line-height:1.8">💌 <b>First ${C.freeChatMsgs} messages</b> with every match are free<br>
+     🪙 Daily <b>free coins</b> keep you chatting<br>
+     🌹 <b>Gift coins</b> to show someone they matter<br>
+     ✨ <b>Super likes</b> make sure they see you</div>
+     <button class="btn btn-line">🔞 I’m 18 or older — tap Next confirms</button>
+     <button class="btn btn-grad" onclick="obNext(1)">Create my profile 💛</button></div>`,
+   ()=>`<div class="obstep">
+     <div class="h2">First, the basics 💁</div>
+     <input class="inp" id="obName" placeholder="Your first name" value="${d.name}" maxlength="16">
+     <div class="row"><span class="mut small">Age</span>
+       <div class="numstep"><button onclick="OB.data.age=Math.max(18,OB.data.age-1);paintOb()">−</button><b>${d.age}</b><button onclick="OB.data.age=Math.min(99,OB.data.age+1);paintOb()">+</button></div></div>
+     <div class="mut small" style="margin-top:6px">I am…</div>
+     <div class="seg">
+       <button class="${d.g==='w'?'on':''}" onclick="OB.data.g='w';paintOb()">👩 Woman</button>
+       <button class="${d.g==='m'?'on':''}" onclick="OB.data.g='m';paintOb()">👨 Man</button>
+     </div>
+     <div class="mut small">Show me…</div>
+     <div class="seg">
+       <button class="${d.into.length===2?'on':''}" onclick="OB.data.into=['w','m'];paintOb()">💞 Everyone</button>
+       <button class="${d.into.length===1&&d.into[0]==='w'?'on':''}" onclick="OB.data.into=['w'];paintOb()">👩 Women</button>
+       <button class="${d.into.length===1&&d.into[0]==='m'?'on':''}" onclick="OB.data.into=['m'];paintOb()">👨 Men</button>
+     </div>
+     <div class="mut small">City</div>
+     <div class="seg" style="flex-wrap:wrap">${['Casablanca','Rabat','Marrakech','Tangier'].map(c=>`<button class="${d.city===c?'on':''}" onclick="OB.data.city='${c}';paintOb()">${c}</button>`).join('')}</div>
+     <button class="btn btn-grad" onclick="obStep2()">Continue →</button></div>`,
+   ()=>`<div class="obstep">
+     <div class="h2">Your vibe ✨</div>
+     <textarea class="inp" id="obBio" maxlength="140" placeholder="A line that sounds like you… (funny > perfect)">${d.bio}</textarea>
+     <div class="mut small">Pick 3–4 interests (better matches):</div>
+     <div class="tagwrap">${TAGS.map(t=>`<button class="tchip ${d.tags.includes(t)?'on':''}" onclick="obTag('${t}')">${t}</button>`).join('')}</div>
+     <div class="mut small">Your avatar</div>
+     <div class="emojirow">${['😊','😎','🥰','😌','🤗','😇','🦁','🌸','🦊','🐼','😽','🌟'].map(e=>`<button class="emojipick ${d.em===e?'on':''}" onclick="OB.data.em='${e}';paintOb()">${e}</button>`).join('')}</div>
+     <div class="mut small">Card color</div>
+     <div class="gradrow">${[0,1,2,3,4,5,6,7].map(i=>`<button class="gradpick ${d.gi===i?'on':''}" style="background:${grad(i)}" onclick="OB.data.gi=${i};paintOb()"></button>`).join('')}</div>
+     <button class="btn btn-grad" onclick="obFinish()">Start swiping 🔥</button></div>`
+  ];
+  W.innerHTML=steps[OB.step]();
+}
+function obNext(s){OB.step=s;paintOb()}
+function obTag(t){const d=OB.data; if(d.tags.includes(t))d.tags=d.tags.filter(x=>x!==t); else if(d.tags.length<4)d.tags.push(t); paintOb()}
+function obStep2(){
+  const n=$('obName').value.trim();
+  if(!n)return toast('Tell us your name 💛');
+  if(!OB.data.g)return toast('Pick a gender 💛');
+  if(!OB.data.into.length)return toast('Who should we show you? 💛');
+  OB.data.name=n; obNext(2);
+}
+async function obFinish(){
+  OB.data.bio=$('obBio').value.trim()||'New here — say hi and surprise me 💛';
+  if(OB.data.tags.length<2)return toast('Pick at least 2 interests ✨');
+  L.me={...OB.data,uid}; L.createdAt=Date.now(); save();
+  toast(`Welcome, ${L.me.name} 💛 +${C.welcomeBonus} 🪙 bonus on the house!`);
+  if(!DEMO)syncMe();
+  showTab('discover'); loadDeck();
+}
+function editProfile(){ OB.data={...L.me}; OB.step=1; paintOb(); showTab('onboard'); }
+
+/* ============ TABS ============ */
+const TABS=[['discover','🔥','Discover'],['likes','😍','Liked you'],['matches','💬','Matches'],['wallet','🪙','Coins'],['profile','✨','Me']];
+function renderTabbar(){
+  const unLikes=L.likesYou.filter(x=>!x.seen).length;
+  const unChats=unreadTotal();
+  $('tabbar').innerHTML=TABS.map(([id,em,nm])=>{
+    const b=id==='likes'&&unLikes?`<span class="tbadge">${unLikes}</span>`:id==='matches'&&unChats?`<span class="tbadge">${unChats}</span>`:'';
+    return `<button class="tab ${R.tab===id?'on':''}" onclick="showTab('${id}')">${b}<span class="ic">${em}</span>${nm}</button>`;
+  }).join('');
+}
+function showTab(t){
+  document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));
+  $('scr-'+t).classList.add('on'); R.tab=t; renderTabbar();
+  if(t==='discover'&&!L.me)startOnboard();
+  if(t==='likes')renderLikes();
+  if(t==='matches')renderMatches();
+  if(t==='wallet')renderWallet();
+  if(t==='profile')renderProfile();
+  if(t==='discover')$('demoSlot').innerHTML=DEMO?`<div class="demobanner">⚡ DEMO MODE — Firebase not set up yet (see README.md). Everyone here is a starter profile; connect the free cloud to meet real people.</div>`:'';
+}
+function paintBadges(){renderTabbar(); if(R.tab==='matches')renderMatches();}
+
+/* ============ DISCOVERY DECK ============ */
+async function loadDeck(){
+  if(!L.me){return}
+  const demoPool=SAMPLES.filter(p=>
+    (p.g==='w'&&L.me.into.includes('w'))||(p.g==='m'&&L.me.into.includes('m')));
+  let cloudPool=[];
+  if(!DEMO){ try{ cloudPool=await cloudDiscover(); }catch(e){} }
+  const all=[...cloudPool,...demoPool.filter(p=>!cloudPool.find(c=>c.name===p.name))];
+  // unseen first, and never who swiped me rejected? show fresh + unscored
+  R.deck=all.filter(p=>!L.swiped[p.id]&&!L.matches.find(m=>m.peer===p.id));
+  paintDeck();
+  maybeIncoming();
+}
+function paintDeck(){
+  const dk=$('deck');
+  if(!R.deck.length){
+    dk.innerHTML=`<div class="deckempty"><div class="big">🌅</div>
+      <div class="h2">That’s everyone nearby!</div>
+      <div class="mut small" style="max-width:270px">New hearts join Zwin every day. Boost to be the first face they see, or come back after your daily coins 💛</div>
+      <button class="btn btn-grad" style="max-width:240px;margin-top:8px" onclick="showTab('wallet')">🪙 Get more from coins</button></div>`;
+    return;
+  }
+  boostChip();
+  const show=R.deck.slice(0,3);
+  dk.innerHTML=show.map((p,i)=>cardHtml(p,i)).join('');
+  bindTopCard();
+}
+function boostChip(){
+  const live=L.boostUntil>Date.now();
+  const old=$('boostChip'); if(old)old.remove();
+  const b=document.createElement('button');
+  b.id='boostChip'; b.className='boostbtn'+(live?' live':'');
+  b.innerHTML=live?'🚀 Boosted!':'🚀 Boost';
+  b.onclick=boost; $('deck').appendChild(b);
+}
+function cardHtml(p,i){
+  const isSuper=(L.likesYou.find(x=>x.uid===p.id&&x.d==='super'));
+  const badge=i===0?(isSuper?'<div class="vbadge super">✨ SUPER LIKED YOU</div>':p.fresh?'<div class="vbadge new">NEW HERE</div>':''):'';
+  return `<div class="dcard" data-id="${p.id}" style="z-index:${10-i};transform:scale(${1-i*0.045}) translateY(${i*10}px)">
+    <div class="ph" style="background:${grad(p.gi)}"><span>${p.em}</span></div>
+    ${badge}
+    <div class="shade"></div>
+    <div class="stamp like">LIKE</div><div class="stamp no">NOPE</div><div class="stamp wow">WOW ✨</div>
+    <div class="info">
+      <div class="nm">${p.name} <span class="age">${p.age}</span></div>
+      <div class="ds">📍 ${p.km} km · ${p.city}</div>
+      <div class="bio">${p.bio||''}</div>
+      <div class="tags">${(p.tags||[]).slice(0,3).map(t=>`<span>${t}</span>`).join('')}</div>
+      <button class="chip" style="margin-top:10px;background:rgba(255,255,255,.9);border:none;color:var(--pk);font-weight:900" onclick="event.stopPropagation();openGiftFromCard('${p.id}')">🪙 Gift coins — show real interest</button>
+    </div></div>`;
+}
+function bindTopCard(){
+  const cards=[...document.querySelectorAll('#deck .dcard')].filter(c=>c.dataset.id);
+  const top=cards[0]; if(!top)return;
+  let sx=0,sy=0,dx=0,dy=0,down=false;
+  top.style.cursor='grab';
+  const moveTo=(x,y,r)=>{top.style.transition='none';top.style.transform=`translate(${x}px,${y}px) rotate(${r}deg)`};
+  const stamps=(x,y)=>{const like=top.querySelector('.stamp.like'),no=top.querySelector('.stamp.no'),wow=top.querySelector('.stamp.wow');
+    like.style.opacity=x>40?Math.min(1,(x-40)/70):0; no.style.opacity=x<-40?Math.min(1,(-x-40)/70):0; wow.style.opacity=y<-60&&Math.abs(x)<70?Math.min(1,(-y-60)/70):0;};
+  top.onpointerdown=e=>{down=true;sx=e.clientX;sy=e.clientY;top.setPointerCapture(e.pointerId)};
+  top.onpointermove=e=>{if(!down)return;dx=e.clientX-sx;dy=e.clientY-sy;moveTo(dx,dy,dx/14);stamps(dx,dy)};
+  top.onpointerup=e=>{if(!down)return;down=false;
+    if(dx>110)fly('like');else if(dx<-110)fly('pass');else if(dy<-130&&Math.abs(dx)<140)fly('super');
+    else{top.style.transition='transform .25s';top.style.transform='scale(1)';stamps(0,0)}dx=dy=0};
+  function fly(dir){
+    top.style.transition='transform .45s ease-in';
+    const X=dir==='pass'?-560:dir==='like'?560:0, Y=dir==='super'?-620:dy*1.6;
+    const stamp=top.querySelector(dir==='super'?'.stamp.wow':dir==='like'?'.stamp.like':'.stamp.no');
+    if(stamp)stamp.style.opacity=1;
+    top.style.transform=`translate(${X}px,${Y}px) rotate(${dx/8||8}deg)`;
+    setTimeout(()=>doSwipe(top.dataset.id,dir),200);
+  }
+  R.flyTop=fly;
+}
+function swipeBtn(dir){ if(R.flyTop)R.flyTop(dir); }
+async function doSwipe(pid,dir){
+  const p=R.deck.shift(); L.swiped[pid]={d:dir,ts:Date.now()};
+  if(!R.deck.length||R.deck.length<3)paintDeck(); else paintDeck();
+  R.lastSwipe={p,dir};
+  const cost = dir==='super'?C.superLikeCost:0;
+  if(cost){ if(L.coins<cost){ undoSwipe(); return shop('✨ Super likes cost '+cost+' 🪙 — grab coins first'); } L.coins-=cost; }
+  save();
+  if(!DEMO&&!p.sim){
+    ref('swipes/'+uid+'/'+pid).set({d:dir,ts:Date.now()});
+    if(dir!=='pass'){
+      ref('incoming/'+pid+'/'+uid).set({d:dir,ts:Date.now()});
+      const back=await ref('swipes/'+pid+'/'+uid).once('value');
+      if(back.val()&&back.val().d!=='pass') return makeMatch(p);
+    }
+  } else if(dir==='like'||dir==='super'){
+    // variable reward: supers always feel luckier 💛
+    const likedFirst=L.likesYou.find(x=>x.uid===pid);
+    const chance=dir==='super'?0.9:likedFirst?1:0.42;
+    if(Math.random()<chance)setTimeout(()=>makeMatch(p),350+Math.random()*700);
+  }
+  if(dir==='super')toast('✨ Super like sent — she WILL see you first');
+}
+function undoSwipe(){ R.deck.unshift(R.lastSwipe.p); delete L.swiped[R.lastSwipe.p.id]; paintDeck(); }
+function rewind(){
+  if(!R.lastSwipe)return toast('Nothing to rewind');
+  if(L.coins<C.rewindCost)return shop(`↩️ Rewind costs ${C.rewindCost} 🪙`);
+  L.coins-=C.rewindCost; undoSwipe(); save(); toast('↩️ No judgment — take another look 💛');
+}
+async function boost(){
+  const live=L.boostUntil>Date.now(); if(live)return toast('Already boosted — enjoy the views 🚀');
+  if(L.coins<C.boostCost)return shop(`🚀 Boost (${C.boostCost} 🪙) puts you on top for 30 min`);
+  L.coins-=C.boostCost; L.boostUntil=Date.now()+30*60000;
+  if(!DEMO)ref('users/'+uid).update({boostUntil:L.boostUntil});
+  save(); boostChip(); toast('🚀 Boosted! You’re first in every deck nearby for 30 min');
+  setTimeout(boostChip,1000);
+}
+/* incoming likes generator (demo warmth + later "liked you while away") */
+function maybeIncoming(){
+  const pool=SAMPLES.filter(p=>!L.swiped[p.id]&&!L.likesYou.find(x=>x.uid===p.id));
+  if(DEMO&&pool.length&&Math.random()<0.65){
+    const p=pool[Math.floor(Math.random()*pool.length)];
+    const d=Math.random()<0.25?'super':'like';
+    L.likesYou.unshift({uid:p.id,d,ts:Date.now()});
+    setTimeout(()=>{ toast(d==='super'?`✨ ${p.name} SUPER liked you!`:`😍 ${p.name} likes you!`); paintBadges(); },1500+Math.random()*4000);
+    save();
+  }
+}
+
+/* ============ MATCH ============ */
+function matchIdOf(a,b){return [a,b].sort().join('_')}
+async function makeMatch(p){
+  const mid=matchIdOf(uid,p.id);
+  if(L.matches.find(m=>m.mid===mid))return;
+  L.matches.unshift({mid,peer:p.id,name:p.name,em:p.em,gi:p.gi,ts:Date.now()});
+  L.freeLeft[mid]=C.freeChatMsgs; L.chats[mid]=L.chats[mid]||[];
+  L.likesYou=L.likesYou.filter(x=>x.uid!==p.id);
+  save();
+  if(!DEMO&&!p.sim){
+    await ref('matches/'+mid).set({a:uid,b:p.id,ts:Date.now()});
+    await ref('userMatches/'+uid+'/'+mid).set(1); await ref('userMatches/'+p.id+'/'+mid).set(1);
+    await ref('chatMeta/'+mid).set({freeLeft:C.freeChatMsgs,ts:Date.now()});
+    pushSystem(mid,'match');
+  }
+  R.matchFlow=p;
+  $('matchSub').innerHTML=`You and <b style="color:#fff">${p.name}</b> like each other 💕<br>Chance favors the brave — say something nice!`;
+  $('matchDuo').innerHTML=`<div class="ma" style="background:${grad(L.me.gi)}">${L.me.em}</div><div class="ma" style="background:${grad(p.gi)};z-index:2">${p.em}</div>`;
+  spawnConfetti(); show('matchOv');
+  if(R.tab==='matches')renderMatches();
+}
+function spawnConfetti(){ const c=$('confetti'); c.innerHTML='';
+  const ems=['💛','✨','💖','🌟','💘','🎉','❤️'];
+  for(let i=0;i<26;i++){const s=document.createElement('span');s.className='confetti';
+    s.textContent=ems[i%ems.length];s.style.left=(Math.random()*100)+'%';
+    s.style.animationDuration=(2.2+Math.random()*2)+'s';s.style.animationDelay=(Math.random()*1.4)+'s';
+    s.style.fontSize=(14+Math.random()*16)+'px';c.appendChild(s);} }
+function matchSayHi(){ hide('matchOv'); const pf=R.matchFlow;
+  const m=(pf&&L.matches.find(m=>m.peer===pf.id))||L.matches[0]; if(m)openChat(m.mid); }
+
+/* ============ LIKED YOU ============ */
+function personOf(pid){ return SAMPLES.find(s=>s.id===pid)||(R.usersCache.find(u=>u.id===pid))||{id:pid,name:'Someone',em:'💛',gi:2,age:'',city:'',km:'',tags:[],sim:false}; }
+function renderLikes(){
+  const list=L.likesYou;
+  $('likeCnt').textContent=list.filter(x=>!x.seen).length+' new';
+  if(!list.length){ $('lkGrid').innerHTML=`<div class="deckempty" style="grid-column:1/-1"><div class="big">💌</div>
+    <div class="h2">Your admirers will gather here</div>
+    <div class="mut small" style="max-width:260px">Keep swiping — the like notifications start rolling fast. Boost 🚀 speeds it up 10×</div></div>`; return; }
+  $('lkGrid').innerHTML=list.map((lk,i)=>{
+    const p=personOf(lk.uid); const sup=lk.d==='super'; const blur=!sup&&!lk.seen;
+    return `<button class="lkcard ${blur?'blur':''}" onclick="revealLike(${i})">
+      ${sup?'<div class="lksuper">✨ SUPER LIKE</div>':''}
+      <div class="ph" style="background:${grad(p.gi)}">${p.em}</div>
+      ${blur?`<div class="lklock"><span class="ee">👀</span>Reveal · ${C.revealLikeCost} 🪙</div>`:''}
+      <div class="shade"></div>
+      <div class="over">${blur?'Someone 💛':`${p.name}${p.age?', '+p.age:''}`}<div class="tiny" style="opacity:.85;font-weight:700">${sup?'Super liked you ✨':'Liked you 💗'}</div></div>
+    </button>`}).join('');
+}
+function revealLike(i){
+  const lk=L.likesYou[i]; if(!lk)return;
+  if(lk.d!=='super'&&!lk.seen){
+    if(L.coins<C.revealLikeCost)return shop(`👀 Reveal admirers — ${C.revealLikeCost} 🪙 each`);
+    L.coins-=C.revealLikeCost;
+  }
+  lk.seen=1; save(); renderLikes();
+  const p=personOf(lk.uid);
+  if(DEMO&&Math.random()<0.75){ makeMatch(p); }
+  else { L.deckPrio=lk.uid; }
+}
+
+/* ============ MATCHES LIST ============ */
+function unreadTotal(){ return Object.values(L.unread||{}).reduce((a,b)=>a+b,0); }
+function renderMatches(){
+  const freshMs=L.matches.slice(0,8);
+  $('mRow').innerHTML=freshMs.length? freshMs.map((m,i)=>`<button class="mnew" onclick="openChat('${m.mid}')">
+    <div class="av"><div style="background:${grad(m.gi)}">${m.em}</div></div><span>${m.name}</span></button>`).join('')
+    :`<div class="mut small" style="padding:4px 0 10px">Your next match is one swipe away 🔥</div>`;
+  const chats=L.matches;
+  $('chatList').innerHTML=chats.length?chats.map(m=>{
+    const last=(L.chats[m.mid]||[]).slice(-1)[0];
+    const un=L.unread[m.mid]||0; const excl=L.exclusive[m.mid];
+    const txt=last? (last.who==='sys'?'💕 You matched!':last.who==='gift'?`🌹 ${last.coins} 🪙 gifted`:(last.me?'You: ':'')+last.text) :'Say hi 👋';
+    return `<button class="citem ${excl?'exclwrap':''}" onclick="openChat('${m.mid}')">
+      <div class="cav" style="background:${grad(m.gi)}">${m.em}<span class="onl"></span></div>
+      <div class="prv"><b>${m.name} ${excl?'<span class="excl">✨ EXCLUSIVE</span>':''}</b><div class="lm">${txt}</div></div>
+      ${un?`<span class="cunr">${un}</span>`:''}</button>`;}).join('')
+    :`<div class="deckempty" style="padding:34px 20px"><div class="big">�static</div></div>`;
+  if(!chats.length)$('chatList').innerHTML=`<div class="deckempty" style="padding:34px 20px"><div class="big">💘</div><div class="mut small" style="max-width:260px">When you match, your chats live here.<br>Tip: the first ${C.freeChatMsgs} messages are always free 💌</div></div>`;
+  renderTabbar();
+}
+
+/* ============ CHAT ============ */
+function peerOf(mid){ const m=L.matches.find(m=>m.mid===mid); return m?personOf(m.peer):null; }
+function openChat(mid){
+  const m=L.matches.find(m=>m.mid===mid); if(!m)return;
+  const p=personOf(m.peer); R.chatWith=mid;
+  L.unread[mid]=0; save();
+  $('chAv').style.background=grad(m.gi); $('chAv').textContent=m.em;
+  $('chName').innerHTML=`${m.name}${L.exclusive[mid]?'<span class="excl">✨ EXCLUSIVE</span>':''}`;
+  $('chatHead').classList.toggle('excl',!!L.exclusive[mid]);
+  $('chState').textContent=p?`${p.city||''} · matched ${new Date(m.ts).toLocaleDateString()}`:'';
+  $('chatScr').classList.add('on');
+  paintFreeBar(); paintIce(); paintMsgs();
+  listenChat(mid);
+}
+function closeChat(){ $('chatScr').classList.remove('on'); R.chatWith=null; renderMatches(); }
+function paintFreeBar(){
+  const mid=R.chatWith; const left=L.freeLeft[mid]||0;
+  const pct=left*100/C.freeChatMsgs;
+  $('freeBar').innerHTML= left>0
+    ? `<span>💌 Free messages left</span><div class="bar"><i style="width:${pct}%"></i></div><b>${left}</b>`
+    : `<span>🪙 ${C.msgCost}/message · balance</span><div class="bar"><i style="width:100%;background:var(--gold)"></i></div><b>${L.coins}</b>`;
+}
+function paintIce(){
+  const p=peerOf(R.chatWith); const tags=p?p.tags:[];
+  const sugs=[...(tags.length?[`Ask about ${tags[0]} 💛`]:[]),ICE_T[Math.floor(Math.random()*ICE_T.length)],ICE_T[Math.floor(Math.random()*ICE_T.length)]];
+  const uniq=[...new Set(sugs)].slice(0,3);
+  $('iceRow').innerHTML=(L.chats[R.chatWith]||[]).length<2?uniq.map(s=>`<button class="chip" onclick="useIce('${s.replace(/'/g,"\\'")}')">${s}</button>`).join(''):'';
+}
+function useIce(s){ $('chatIn').value=s; $('chatIn').focus(); }
+function paintMsgs(){
+  const chat=L.chats[R.chatWith]||[];
+  $('chatBody').innerHTML=`<div class="sys">💕 You matched — first ${C.freeChatMsgs} messages are free. Be kind ✨</div>`+chat.map(m=>bubbleHtml(m)).join('');
+  scrollChat();
+}
+function bubbleHtml(m){
+  if(m.who==='sys')return `<div class="sys">${m.text}</div>`;
+  if(m.who==='gift')return `<div class="gift">🌹 ${m.fromName} gifted <b>${m.coins} 🪙</b><div class="tiny mut" style="margin-top:3px">${m.coins>=C.giftExclusive?'✨ This chat is now EXCLUSIVE':'Real interest unlocked your attention'}</div></div>`;
+  const tm=new Date(m.ts).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+  return `<div class="bub ${m.me?'me':'them'}">${m.text}<span class="tm">${m.me&&m.read?'✓✓ read · ':''}${tm}</span></div>`;
+}
+function pushBubble(m){ $('chatBody').insertAdjacentHTML('beforeend',bubbleHtml(m)); scrollChat(); }
+function scrollChat(){ $('chatBody').scrollTop=1e7; }
+function addMsg(mid,who,obj,meFlag){
+  const m= who==='gift'? {who,coins:obj.coins,fromName:obj.fromName,ts:Date.now()} : {who,text:obj,me:!!meFlag,ts:Date.now()};
+  L.chats[mid]=L.chats[mid]||[]; L.chats[mid].push(m); save(); return m;
+}
+async function sendMsg(){
+  const v=$('chatIn').value.trim(); if(!v)return;
+  const mid=R.chatWith; const m=L.matches.find(m=>m.mid===mid); if(!m)return;
+  const p=personOf(m.peer);
+  // cost logic
+  if((L.freeLeft[mid]||0)>0){ L.freeLeft[mid]--; if(L.freeLeft[mid]===0)setTimeout(()=>toast('💌 Free messages used — now 1 🪙/msg, or claim daily coins'),400); }
+  else { if(L.coins<C.msgCost){ return shop(`You’re out of coins 💛 Claim your daily +${C.dailyFree} 🪙 or ask ${m.name} to gift you some`); }
+    L.coins-=C.msgCost; }
+  $('chatIn').value='';
+  const msg={who:'msg',text:v,me:true,ts:Date.now()}; (L.chats[mid]=L.chats[mid]||[]).push(msg);
+  save(); pushBubble(msg); paintFreeBar(); paintIce();
+  if(!DEMO&&!p.sim){
+    ref('chats/'+mid).push({from:uid,fromName:L.me.name,text:v,ts:Date.now()});
+    const left=await ref('chatMeta/'+mid+'/freeLeft').transaction(n=>Math.max(0,(n===null?C.freeChatMsgs:n)-1));
+    ref('chatMeta/'+mid+'/unread_b').transaction(n=>(n||0)+1);
+  }
+  if(p&&p.sim)botReply(mid,p);
+}
+function botReply(mid,p){
+  const gifted=(L.gifts[p.id]||0);
+  setTimeout(()=>{
+    const showTy=()=>{ if(R.chatWith===mid&&!$('chatBody .typing'))$('chatBody').insertAdjacentHTML('beforeend','<div class="typing"><i></i><i></i><i></i></div>'); scrollChat(); };
+    showTy();
+    setTimeout(()=>{
+      document.querySelectorAll('#chatBody .typing').forEach(t=>t.remove());
+      const text=gifted&&Math.random()<0.4? GIFT_REPLIES[Math.floor(Math.random()*GIFT_REPLIES.length)] : REPLIES[Math.floor(Math.random()*REPLIES.length)];
+      const msg={who:'msg',text,me:false,read:true,ts:Date.now()};
+      (L.chats[mid]=L.chats[mid]||[]).push(msg);
+      if(R.chatWith===mid){ pushBubble(msg); } else { L.unread[mid]=(L.unread[mid]||0)+1; toast(`💬 ${p.name}: ${text.slice(0,40)}…`); paintBadges(); }
+      save();
+    },900+Math.random()*1400);
+  },600+Math.random()*1200);
+}
+/* live chat for real users */
+let chatListener=null;
+function listenChat(mid){
+  if(chatListener){chatListener.off();chatListener=null}
+  if(DEMO)return;
+  const p=peerOf(mid);
+  chatListener=ref('chats/'+mid).limitToLast(30).on('child_added',s=>{
+    const m=s.val(); if(!m)return;
+    if(m.from&&m.from!==uid){
+      const key=s.key; if(L.seen['cm'+key])return; L.seen['cm'+key]=1;
+      const msg={who:'msg',text:m.text,me:false,ts:m.ts||Date.now()};
+      (L.chats[mid]=L.chats[mid]||[]).push(msg); save();
+      if(R.chatWith===mid)pushBubble(msg);
+      else { L.unread[mid]=(L.unread[mid]||0)+1; toast(`💬 ${peerOf(mid)?peerOf(mid).name:'Match'}: ${m.text.slice(0,40)}…`); paintBadges(); }
+    }
+    if(m.fromName&&!m.from){ /* system */ }
+  });
+  // freeLeft sync
+  ref('chatMeta/'+mid+'/freeLeft').on('value',s=>{ if(s.val()!==null&&s.val()!==L.freeLeft[mid]){L.freeLeft[mid]=s.val();save();if(R.chatWith===mid)paintFreeBar();} });
+  // exclusive sync
+  ref('chatMeta/'+mid+'/exclusive').on('value',s=>{ if(s.val()&&!L.exclusive[mid]){L.exclusive[mid]=1;save();} });
+}
+let lastType=0;
+function typingNow(){ if(DEMO)return; const now=Date.now(); if(now-lastType>2000){ lastType=now;
+  ref('typing/'+R.chatWith+'/'+uid).set(now); ref('typing/'+R.chatWith+'/'+uid).onDisconnect().remove(); } }
+function chatMenu(){
+  $('genBody').innerHTML=`<div class="h2" style="margin-bottom:10px">Options</div>
+    <button class="btn btn-line" onclick="openGift();hide('genSheet')">🪙 Gift coins — turn this chat gold</button>
+    <div style="height:8px"></div>
+    <button class="btn btn-line" onclick="toast('Profile viewed 👀');hide('genSheet')">👀 View profile</button>
+    <div style="height:8px"></div>
+    <button class="btn btn-line" style="color:#c0392b" onclick="unmatch()">🚫 Unmatch & report</button>`;
+  show('genSheet');
+}
+function unmatch(){ const mid=R.chatWith; hide('genSheet');
+  if(confirm('Unmatch? This can’t be undone.')){
+    if(!DEMO){ const p=peerOf(mid); ref('reports').push({from:uid,against:p?p.id:'?',ts:Date.now()}); }
+    L.matches=L.matches.filter(m=>m.mid!==mid); delete L.chats[mid];
+    save(); closeChat(); toast('Unmatched. Onwards to better 💛'); } }
+
+/* ============ GIFT COINS ============ */
+function openGiftFromCard(pid){ R.giftTarget={type:'card',pid};
+  const p=personOf(pid);
+  $('giftBody').innerHTML=giftHtml(p,'from their card'); show('giftSheet'); }
+function openGift(){ const mid=R.chatWith; const m=L.matches.find(m=>m.mid===mid); if(!m)return;
+  R.giftTarget={type:'chat',mid};
+  const p=personOf(m.peer);
+  $('giftBody').innerHTML=giftHtml(p,'in chat'); show('giftSheet'); }
+function giftHtml(p,where){
+  return `<div style="text-align:center;padding:4px 0 10px">
+    <div style="font-size:52px">${p.em}</div>
+    <div class="h2">Gift coins to ${p.name}</div>
+    <div class="mut small" style="margin-top:4px">She gets them instantly, with a golden note that it was you 🌹<br>Gift <b>${C.giftExclusive}+</b> and your chat turns <b style="color:var(--gold)">✨ EXCLUSIVE</b> — the loudest “I’m serious” on Zwin.</div></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      ${[10,25,50,100].map(n=>`<button class="pack ${n>=C.giftExclusive?'best':''}" style="margin:0" onclick="doGift(${n})">
+        ${n>=C.giftExclusive?'<div class="ptag">EXCLUSIVE ✨</div>':''}
+        <div class="pem">${n>=C.giftExclusive?'👑':'🌹'}</div>
+        <div><b>${n} 🪙</b><div class="mut tiny">${n>=C.giftExclusive?'Chat goes gold + note':'Sweet gesture'}</div></div></button>`).join('')}
+    </div>
+    <div class="mut tiny" style="text-align:center;margin-top:8px">Your balance: <b>${L.coins} 🪙</b> · Gifts never expire, her coins are 100% hers</div>`;
+}
+async function doGift(n){
+  const t=R.giftTarget; if(!t)return;
+  if(L.coins<n)return shop(`You need ${n} 🪙 — grab coins first`);
+  L.coins-=n; hide('giftSheet');
+  const pid=t.type==='chat'? (L.matches.find(m=>m.mid===t.mid)||{}).peer : t.pid;
+  const p=personOf(pid); const mid=t.type==='chat'?t.mid:matchIdOf(uid,pid);
+  if(!DEMO&&!p.sim){
+    await txAdd('users/'+pid+'/coins',n);
+    ref('giftsFor/'+pid).push({from:uid,fromName:L.me.name,coins:n,ts:Date.now()});
+    ref('chats/'+mid).push({gift:1,from:uid,fromName:L.me.name,coins:n,ts:Date.now()});
+    if(n>=C.giftExclusive){ ref('chatMeta/'+mid+'/exclusive').set(1); }
+  } else { L.gifts[p.id]=(L.gifts[p.id]||0)+n; }
+  if(t.type==='chat'){
+    const gm=addMsg(t.mid,'gift',{coins:n,fromName:'You'},false);
+    if(R.chatWith===t.mid)pushBubble(gm);
+    if(n>=C.giftExclusive){ L.exclusive[t.mid]=1;
+      if(R.chatWith===t.mid){$('chatHead').classList.add('excl');
+        $('chName').innerHTML=`${p.name}<span class="excl">✨ EXCLUSIVE</span>`;}
+      toast('✨ Your chat is now EXCLUSIVE — she’ll feel it 💛');
+    } else toast(`🌹 ${n} 🪙 to ${p.name} — smooth.`);
+    if(p.sim)setTimeout(()=>botReply(t.mid,p),900);
+  } else {
+    toast(`🌹 ${n} 🪙 sent to ${p.name} — when you match, she’ll know who spoils her 💛`);
+  }
+  save(); renderTabbar();
+}
+
+/* ============ WALLET / SHOP ============ */
+function renderWallet(){
+  const d=L.daily; const lastC=d.lastClaim?new Date(d.lastClaim).toDateString():null;
+  const canClaim=lastC!==new Date().toDateString();
+  const streak=d.streak||0;
+  const bonus=Math.round(C.dailyFree*(1+Math.min(streak,10)*C.streakBonusPct/100));
+  const pend=L.pendingOrders||[];
+  $('walletWrap').innerHTML=`
+    <div class="streakfire">
+      <div style="font-size:44px">🪙</div>
+      <div style="flex:1"><b class="h1" style="font-size:30px">${L.coins}</b>
+        <div class="mut small">coins · claim free daily below</div></div>
+    </div>
+    <div class="card" style="margin-bottom:12px">
+      <div class="spread"><b>Daily free coins 🔥</b><span class="pill">Streak: ${streak} day${streak===1?'':'s'}</span></div>
+      <div class="mut small" style="margin:6px 0 10px">Come back daily — your streak grows the gift (+${C.streakBonusPct}%/day, up to 2×)</div>
+      <button class="btn ${canClaim?'btn-grad':'btn-line'}" ${canClaim?'':'disabled'} onclick="claimDaily()">
+        ${canClaim?`Claim +${bonus} 🪙 now`:'✅ Claimed today — see you tomorrow!'}</button>
+    </div>
+    <div class="sec mut tiny" style="font-weight:900;letter-spacing:1px;padding:6px 2px">EARN FREE COINS</div>
+    <div class="card">
+      <button class="earnrow" onclick="toast('📹 Ad breaks come when coins are 0 — claimed +10 for now (demo)'); L.coins+=10; save(); renderWallet()">
+        <div class="ee">📹</div><div style="flex:1"><b class="small">Watch a video</b><div class="mut tiny">+10 🪙</div></div><span class="pill">Watch</span></button>
+      <button class="earnrow" onclick="toast('💌 Invite link copied — +50 🪙 when they join!')">
+        <div class="ee">💌</div><div style="flex:1"><b class="small">Invite a friend</b><div class="mut tiny">+50 🪙 when they join</div></div><span class="pill">Invite</span></button>
+      <button class="earnrow" onclick="toast('💛 Complete your bio & interests — people love details!'); L.coins+=15; save(); renderWallet()">
+        <div class="ee">✨</div><div style="flex:1"><b class="small">Complete profile 100%</b><div class="mut tiny">+15 🪙 one time</div></div><span class="pill">Do it</span></button>
+    </div>
+    <div class="sec mut tiny" style="font-weight:900;letter-spacing:1px;padding:16px 2px 8px">BUY COINS</div>
+    ${ZWIN_CONFIG.packs.map(p=>`<button class="pack ${p.tag?'best':''}" onclick="buyPack('${p.id}')">
+      ${p.tag?`<div class="ptag">${p.tag}</div>`:''}<div class="pem">${p.em}</div>
+      <div style="flex:1"><b>${p.coins} 🪙</b><div class="mut tiny">${p.label} pack</div></div><b class="grad-txt" style="font-size:18px">${p.priceDH} DH</b></button>`).join('')}
+    ${pend.length?`<div class="card small" style="margin-top:6px;color:#8a6d00;background:#fffdf7;border-color:#eee0b8">⏳ ${pend.map(o=>o.coins+' 🪙 ('+o.ref+')').join(', ')} — waiting for bank validation</div>`:''}
+    <div class="mut tiny" style="text-align:center;padding:14px">Secure Al Barid/CMI checkout coming soon — now via bank transfer 🏦</div>`;
+}
+function claimDaily(){
+  const d=L.daily; const yest=new Date(Date.now()-86400000).toDateString();
+  d.streak=(d.lastClaim&&new Date(d.lastClaim).toDateString()===yest)?(d.streak||0)+1:1;
+  d.lastClaim=Date.now();
+  const bonus=Math.round(C.dailyFree*(1+Math.min(d.streak,10)*C.streakBonusPct/100));
+  L.coins+=bonus; save(); renderWallet();
+  spawnConfettiOn('walletWrap');
+  toast(`🪙 +${bonus} free coins! Streak day ${d.streak} 🔥`);
+}
+function spawnConfettiOn(){ /* subtle: reuse toast celebration */ }
+function shop(msg){ showTab('wallet'); if(msg)toast(msg); }
+function buyPack(pid){
+  const pack=ZWIN_CONFIG.packs.find(p=>p.id===pid);
+  const c=ZWIN_CONFIG.company; const refid='ZW-'+uid.slice(-4).toUpperCase()+'-'+Date.now().toString(36).toUpperCase();
+  $('bankBody').innerHTML=`
+    <div style="text-align:center;padding:4px 0 8px"><div style="font-size:46px">${pack.em}</div>
+      <div class="h2">${pack.coins} 🪙 — ${pack.priceDH} DH</div>
+      <div class="mut small">Bank transfer pack</div></div>
+    <div class="bankblock">
+      🏦 <b>Transfer details</b><br>
+      Bank: <b>${c.bank}</b><br>
+      Beneficiary: <b>${c.accountName}</b><br>
+      RIB: <b>${c.rib}</b> <button class="copybtn" onclick="navigator.clipboard&&navigator.clipboard.writeText('${c.rib.replace(/\s/g,'')}');toast('RIB copied ✅')">COPY</button><br>
+      IBAN: ${c.iban}<br>
+      SWIFT: ${c.swift}<br>
+      <span class="mut" style="font-size:11px">Reference: <b>${refid}</b></span>
+    </div>
+    ${DEMO?`<div class="demobanner" style="margin:0 0 10px">Demo mode: coins arrive instantly.</div>`
+          :`<div class="mut small">Transfer from your bank app, then tap below. ${ZWIN_CONFIG.appName} validates (usually &lt; 1h) and coins drop in 🪙</div>`}
+    <button class="btn btn-grad" onclick="confirmPack('${pid}','${refid}')">${DEMO?'Instant buy (demo)':'I have transferred ✅'}</button>
+    <div style="height:8px"></div>
+    <button class="btn btn-line" onclick="hide('bankSheet')">Not now</button>`;
+  hide('shopSheet'); show('bankSheet');
+}
+function confirmPack(pid,refid){
+  const pack=ZWIN_CONFIG.packs.find(p=>p.id===pid);
+  hide('bankSheet');
+  if(DEMO){ L.coins+=pack.coins; save(); toast(`🪙 +${pack.coins} coins — have fun! 💛`); }
+  else { const order={uid,name:L.me.name,pack:pid,coins:pack.coins,price:pack.priceDH,status:'pending',ref:refid,ts:Date.now()};
+    const k=ref('orders').push(order).key;
+    L.pendingOrders.push({oid:k,coins:pack.coins,ref:refid}); save();
+    toast('⏳ Order sent — coins land after validation'); }
+  renderWallet();
+}
+
+/* ============ PROFILE ============ */
+function renderProfile(){
+  if(!L.me){ $('profileWrap').innerHTML=''; return; }
+  $('profileWrap').innerHTML=`
+    <div class="pcard">
+      <div class="ph" style="background:${grad(L.me.gi)}"><span>${L.me.em}</span></div>
+      <div class="pbody">
+        <div class="nm h2">${L.me.name}, ${L.me.age} <span class="tag" style="background:var(--soft);color:var(--pk);font-size:10px;font-weight:900;padding:4px 8px;border-radius:8px">✓ VERIFIED SELFIE SOON</span></div>
+        <div class="mut small" style="margin:4px 0">📍 ${L.me.city}</div>
+        <div class="small">${L.me.bio}</div>
+        <div class="row" style="flex-wrap:wrap;gap:6px;margin-top:8px">${L.me.tags.map(t=>`<span class="chip" style="font-size:11px">${t}</span>`).join('')}</div>
+      </div>
+    </div>
+    <div style="padding:4px 18px">
+      <div class="card">
+        <div class="spread"><b class="small">My stats this week</b>💛</div>
+        <div class="divider" style="margin:10px 0"></div>
+        <div class="row" style="justify-content:space-around;text-align:center">
+          <div><b style="font-size:20px">${L.matches.length}</b><div class="mut tiny">Matches</div></div>
+          <div><b style="font-size:20px">${Object.keys(L.likesYou).length||L.likesYou.length}</b><div class="mut tiny">Admirers</div></div>
+          <div><b style="font-size:20px">${Object.values(L.gifts).reduce((a,b)=>a+b,0)}</b><div class="mut tiny">🪙 gifted</div></div>
+          <div><b style="font-size:20px">${L.daily.streak||0}</b><div class="mut tiny">Streak 🔥</div></div>
+        </div>
+      </div>
+      <div style="height:10px"></div>
+      <div class="card">
+        <button class="earnrow" onclick="toggleNotif()"><div class="ee">🔔</div><div style="flex:1"><b class="small">Match notifications</b><div class="mut tiny">Toasts when someone likes/messages you</div></div><div class="toggle ${L.notif===false?'':'on'}" id="notifT"></div></button>
+        <button class="earnrow" onclick="toast('🛡️ Blocked list is private & permanent. You are safe here.')"><div class="ee">🛡️</div><div style="flex:1"><b class="small">Safety center</b><div class="mut tiny">Block, report, dating-tips</div></div></button>
+        <button class="earnrow" onclick="toast('💌 Contact: ${ZWIN_CONFIG.company.supportEmail}')"><div class="ee">💬</div><div style="flex:1"><b class="small">Help & support</b></div></button>
+      </div>
+    </div>`;
+}
+function toggleNotif(){ L.notif=L.notif===false?true:false; $('notifT').classList.toggle('on',L.notif!==false); save(); }
+function resetAll(){ if(confirm('Log out and wipe this device profile?')){ localStorage.removeItem('zwin_local'); location.reload(); } }
+function paintCoins(){ const el=$('coinTop'); if(el)el.textContent=L.coins; }
+
+/* ============ INIT ============ */
+fbInit();
+paintCoins();
+if(L.me){ showTab('discover');
+  if(!DEMO){ try{ syncBadges(); }catch(e){} }
+  loadDeck();
+} else { startOnboard(); }
+async function syncBadges(){
+  if(DEMO||!L.me)return;
+  // pull my cloud matches to render chats
+  const snap=await ref('userMatches/'+uid).once('value'); const map=snap.val()||{};
+  for(const mid of Object.keys(map)){
+    if(L.matches.find(m=>m.mid===mid))continue;
+    const m=(await ref('matches/'+mid).once('value')).val(); if(!m)continue;
+    const peer=m.a===uid?m.b:m.a;
+    const p=(await ref('users/'+peer).once('value')).val()||{name:'Match',em:'💛',gi:1};
+    L.matches.unshift({mid,peer,name:p.name,em:p.em,gi:p.gi,ts:m.ts});
+    const fl=(await ref('chatMeta/'+mid+'/freeLeft').once('value')).val();
+    L.freeLeft[mid]=fl===null?C.freeChatMsgs:fl;
+    L.chats[mid]=L.chats[mid]||[];
+  }
+  save();
+}
+setInterval(()=>{ save(); },30000);
+</script>
+</body>
+</html>
