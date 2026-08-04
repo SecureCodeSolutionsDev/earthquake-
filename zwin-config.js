@@ -19,7 +19,7 @@ const ZWIN_CONFIG = {
      Firebase console → App Check → Register app → reCAPTCHA v3 → paste the SITE
      KEY here. App works without it, but bots could spam your cloud.           */
   appCheck: {
-    recaptchaSiteKey: ""   // leave empty to skip
+    recaptchaSiteKey: "6LfF73QtAAAAAAS5_QpF8M15_5ohqA3B8XA4IfDq"   // leave empty to skip
   },
 
   /* ---------- 📸 REAL PHOTOS (free start, scales later) ----------
