@@ -5,9 +5,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#fff7f9">
 <title>Zwin 🔥 — Dating, but warmer</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" href="icon.png">
+<link rel="apple-touch-icon" href="icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Zwin">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <script src="zwin-config.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-check-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none}
 :root{
@@ -207,11 +216,42 @@ textarea.inp{min-height:80px;resize:none}
 .numstep{display:flex;align-items:center;gap:16px}
 .numstep button{width:44px;height:44px;border-radius:50%;background:#fff;border:1.5px solid var(--line);font-size:20px;font-weight:900}
 .numstep b{min-width:50px;text-align:center;font-size:20px}
+/* ---------- 📸 real photos + 📲 push ---------- */
+.dcard .ph img,.lkcard .ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;animation:fi .4s ease}
+.cav img{width:100%;height:100%;border-radius:50%;object-fit:cover}
+.mov .duo .ma img{width:100%;height:100%;border-radius:50%;object-fit:cover}
+.pcard .ph img{width:100%;height:100%;object-fit:cover}
+.photogrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.phslot{position:relative;aspect-ratio:3/4;border-radius:16px;overflow:hidden;background:var(--soft);border:1.5px dashed #f3b7c6;display:flex;align-items:center;justify-content:center;font-size:26px;color:var(--pk);cursor:pointer;transition:transform .1s}
+.phslot:active{transform:scale(.95)}
+.phslot.full{border:1.5px solid var(--line);cursor:default}
+.phslot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.phslot .del{position:absolute;top:4px;inset-inline-end:4px;width:22px;height:22px;border-radius:50%;background:rgba(43,34,48,.72);color:#fff;font-size:11px;display:flex;align-items:center;justify-content:center;z-index:2}
+.phslot .main{position:absolute;bottom:4px;inset-inline-start:4px;background:var(--grad);color:#fff;font-size:8.5px;font-weight:900;padding:3px 7px;border-radius:8px;z-index:2;letter-spacing:.5px}
 </style>
 </head>
 <body>
 <div class="app">
 <div id="toasts"></div>
+
+<!-- ==================== AUTH (phone verify) ==================== -->
+<section class="scr" id="scr-auth">
+  <div class="ob">
+    <div class="obstep">
+      <div class="ob-logo"><div class="flame">🔥</div></div>
+      <h1 class="h1" style="text-align:center">Real people only 💛</h1>
+      <div class="mut" style="text-align:center">Verify your number to enter Zwin —<br>no bots, no fakes, no catfish farms.<br><b>We never show your number to anyone.</b></div>
+      <input class="inp" id="phNum" inputmode="tel" value="+212" placeholder="+212 6 12 34 56 78">
+      <button class="btn btn-grad" id="btnSendCode" onclick="sendCode()">Send code 📲</button>
+      <div id="codeWrap" style="display:none">
+        <input class="inp" id="phCode" inputmode="numeric" maxlength="8" placeholder="••••••" style="text-align:center;letter-spacing:8px;font-size:22px;font-weight:900">
+        <button class="btn btn-grad" onclick="verifyCode()">Verify & enter ✅</button>
+      </div>
+      <div id="recap-slot"></div>
+      <div class="mut tiny" style="text-align:center">Free SMS verification by Google Firebase · 18+</div>
+    </div>
+  </div>
+</section>
 
 <!-- ==================== ONBOARD ==================== -->
 <section class="scr" id="scr-onboard">
@@ -328,13 +368,15 @@ textarea.inp{min-height:80px;resize:none}
    ================================================================ */
 const $=id=>document.getElementById(id);
 const C=ZWIN_CONFIG.coins;
-let DB=null, DEMO=false;
-const uid=myUid();
+let DB=null, AUTH=null, DEMO=false;
+let uid=myUid();
 const L=load();
 function myUid(){let u=localStorage.getItem('zwin_uid');if(!u){u='u_'+Math.random().toString(36).slice(2,9)+Date.now().toString(36);localStorage.setItem('zwin_uid',u)}return u}
 function load(){try{return JSON.parse(localStorage.getItem('zwin_local'))||fresh()}catch(e){return fresh()}}
 function fresh(){return {me:null,coins:C.welcomeBonus,swiped:{},matches:[],chats:{},freeLeft:{},exclusive:{},likesYou:[],daily:{lastClaim:0,streak:0},gifts:{},boostUntil:0,rewinds:0,unread:{},pendingOrders:[],seen:{} } }
-function save(){localStorage.setItem('zwin_local',JSON.stringify(L));paintCoins();paintBadges()}
+function save(){localStorage.setItem('zwin_local',JSON.stringify(L));
+  try{ if(!DEMO&&AUTH&&AUTH.currentUser){ ref('users/'+AUTH.currentUser.uid+'/coins').set(Math.max(0,Math.round(L.coins))); } }catch(e){}
+  paintCoins();paintBadges()}
 function toast(m){const d=document.createElement('div');d.className='toast';d.textContent=m;$('toasts').appendChild(d);setTimeout(()=>{d.style.opacity='0';d.style.transition='opacity .3s';setTimeout(()=>d.remove(),300)},2700)}
 function show(id){$(id).classList.add('on')} function hide(id){$(id).classList.remove('on')}
 function grad(i){const G=[['#ffd1e3','#ffb3c7'],['#ffe3c2','#ffc09e'],['#d7f0ff','#b3dcff'],['#e7ffd9','#c3f5b0'],['#f5e0ff','#e6c2ff'],['#fff3c9','#ffe48a'],['#d9fff4','#a9f2df'],['#ffe0e0','#ffb0b0']];const g=G[i%G.length];return `linear-gradient(160deg,${g[0]},${g[1]})`}
@@ -371,14 +413,71 @@ const R={deck:[],swiping:null,chatWith:null,tab:'discover',usersCache:[],likesMe
 let COMMISSION/*unused*/=0;
 
 /* ---------- CLOUD ============ */
+/* 🔐 LOCK 3 — App Check: activates only if you put a real site key in zwin-config.js */
+/* 🔐 LOCK 1 — Phone sign-in: every user is a verified auth.uid before touching the DB */
 function fbInit(){
   if(!zwinCloudReady()){DEMO=true;return}
   try{
-    firebase.initializeApp(ZWIN_CONFIG.firebase); DB=firebase.database();
-    DB.ref('.info/connected').on('value',s=>{ if(s.val()&&L.me&&!DEMO){heartbeat(); syncMe(); syncBadges(); }});
+    firebase.initializeApp(ZWIN_CONFIG.firebase);
+    try{ const k=(ZWIN_CONFIG.appCheck&&ZWIN_CONFIG.appCheck.recaptchaSiteKey)||'';
+      if(k&&!/^PASTE|^$/.test(k)&&firebase.appCheck){ firebase.appCheck().activate(k,true); console.log('✅ App Check active'); }
+    }catch(e){ console.warn('App Check skipped:',e); }
+    DB=firebase.database(); AUTH=firebase.auth();
+    AUTH.onAuthStateChanged(u=>{ if(u){ onAuthed(u); } else if(!DEMO){ showAuth(); } });
   }catch(e){DEMO=true}
 }
-function ref(p){return DB.ref('wasla_dating/'+p)}
+let AUTHED=false;
+function onAuthed(u){
+  if(AUTHED)return; AUTHED=true;
+  uid=u.uid; // identity IS the verified phone user from now on
+  $('scr-auth').classList.remove('on'); $('tabbar').style.display='flex';
+  toast('✅ Verified — real people only in here 💛');
+  initPush();
+  DB.ref('.info/connected').on('value',s=>{ if(s.val()&&L.me){heartbeat(); syncMe(); syncBadges();} });
+  if(L.me){ showTab('discover'); loadDeck(); }
+  else { startOnboard(); }
+}
+/* ---- phone sign-in screen ---- */
+function showAuth(){
+  document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));
+  $('scr-auth').classList.add('on'); $('tabbar').style.display='none';
+}
+let confirmRes=null, lastPhone='';
+function sendCode(){
+  const raw=$('phNum').value.replace(/[\s\-\.]/g,'');
+  if(!/^\+[0-9]{8,15}$/.test(raw))return toast('Enter with country code, e.g. +212612345678','err');
+  if($('codeWrap').style.display!=='none'&&$('phCode').value.trim()){ verifyCode(); return; } // 2nd tap = verify
+  lastPhone=raw;
+  const btn=$('btnSendCode'); btn.disabled=true; btn.textContent='Sending…';
+  if(rvVerifier){ try{rvVerifier.clear()}catch(e){} rvVerifier=null; }
+  renderRecaptcha();
+  AUTH.signInWithPhoneNumber(lastPhone,rvVerifier).then(cr=>{
+    confirmRes=cr; $('codeWrap').style.display=''; btn.disabled=false;
+    btn.textContent='Verify & enter ✅ ↻'; toast('📲 Code sent by SMS!');
+  }).catch(e=>{
+    btn.disabled=false; btn.textContent='Send code 📲';
+    try{ if(rvVerifier){rvVerifier.clear();} rvVerifier=null; }catch(_){/*noop*/}
+    const msg={ 'auth/unauthorized-domain':'🌐 Add your GitHub Pages domain in Firebase → Auth → Settings → Authorized domains',
+      'auth/invalid-phone-number':'That number looks wrong — format +212XXXXXXXXX',
+      'auth/too-many-requests':'Too many tries — wait a few minutes',
+      'auth/invalid-app-credential':'Domain not authorized (Auth → Settings → Authorized domains)' }[e.code];
+    toast(msg||('Send failed: '+e.code),'err');
+  });
+}
+function verifyCode(){
+  const code=$('phCode').value.trim();
+  if(!confirmRes)return toast('Request a code first');
+  if(code.length<4)return toast('Type the 6-digit SMS code');
+  confirmRes.confirm(code).then(()=>{ /* onAuthStateChanged handles the rest */ })
+    .catch(e=>toast(e.code==='auth/invalid-verification-code'?'Wrong code — check the SMS':'Verify failed: '+e.code,'err'));
+}
+let rvVerifier=null;
+function renderRecaptcha(){
+  if(rvVerifier)return;
+  try{ rvVerifier=new firebase.auth.RecaptchaVerifier('recap-slot',{size:'invisible'}); }catch(e){ console.warn(e); }
+}
+
+function ref(p){return DB.ref('wasla_dating/'+p)} // root kept as chosen — rules must match this word
 function txAdd(path,d){return ref(path).transaction(v=>+(((+v||0)+d).toFixed(2)))}
 function heartbeat(){
   ref('presence/'+uid).update({online:true,lastSeen:Date.now(),name:L.me.name});
@@ -389,8 +488,15 @@ async function syncMe(){
   // publish my profile & coins, listen for events (likes, gifts, orders)
   await ref('users/'+uid).update({
     name:L.me.name,age:L.me.age,g:L.me.g,into:L.me.into,city:L.me.city,bio:L.me.bio,
-    tags:L.me.tags.slice(0,4),em:L.me.em,gi:L.me.gi,lastSeen:Date.now()
+    tags:L.me.tags.slice(0,4),em:L.me.em,gi:L.me.gi,lastSeen:Date.now(),
+    hasPhoto:(L.me.photos&&L.me.photos.length)?Date.now():0
   });
+  // restore my photos if I log in from a new device (they live in their own table)
+  ref('photos/'+uid).once('value').then(s=>{ const m=s.val()||{};
+    const arr=['p0','p1','p2','p3','p4','p5'].map(k=>m[k]).filter(Boolean);
+    if(arr.length&&!(L.me.photos||[]).length){ L.me.photos=arr; delete photoCache[uid]; save();
+      if(R.tab==='profile')renderProfile(); }
+  }).catch(()=>{});
   await ref('users/'+uid+'/coins').transaction(v=>(v===null?L.coins:v));
   ref('users/'+uid+'/coins').on('value',s=>{ const v=s.val(); if(v!==null&&v!==L.coins){L.coins=v;save();} });
   // likes index
@@ -398,6 +504,12 @@ async function syncMe(){
     const from=s.key, d=s.val(); if(!d||L.seen['lk'+from])return; L.seen['lk'+from]=1;
     if(!L.swiped[from]){ L.likesYou.unshift({uid:from,d:d.d,ts:d.ts}); save();
       if(!L.seen['nt'+from]){L.seen['nt'+from]=1; toast(d.d==='super'?'✨ Someone SUPER liked you!':'😍 Someone new likes you!');} }
+    // 🔐 mutual like? Build MY side of the match myself — locks never cross-write
+    if(d.d!=='pass'&&L.swiped[from]&&L.swiped[from].d!=='pass'&&!L.matches.find(m=>m.peer===from)){
+      ref('users/'+from).once('value').then(snap=>{
+        makeMatch(Object.assign({id:from,name:'Someone',em:'💛',gi:2},snap.val()||{}));
+      }).catch(()=>{});
+    }
   });
   // gifts live
   ref('giftsFor/'+uid).limitToLast(20).on('child_added',s=>{
@@ -410,7 +522,8 @@ async function syncMe(){
       save(); renderChatList(); }
   });
   // orders
-  ref('orders').orderByChild('uid').equalTo(uid).limitToLast(3).on('child_changed',s=>{
+  // 🔐 orders live under MY OWN node — no one else can touch them
+  ref('orders/'+uid).limitToLast(5).on('child_changed',s=>{
     const o=s.val(); if(o&&o.status==='approved'&&!L.seen['od'+s.key]){ L.seen['od'+s.key]=1;
       L.pendingOrders=L.pendingOrders.filter(p=>p.oid!==s.key);
       toast(`🪙 +${o.coins} coins credited! Enjoy 💛`); save(); }
@@ -429,6 +542,108 @@ async function cloudDiscover(){
     .map(([k,p])=>({...p,id:k,sim:false,km:1+Math.floor(Math.random()*14),score:(p.lastSeen||0)/1e13+(p.boostUntil>now?3:0)}));
   R.usersCache=pool.sort(()=>Math.random()-.5); R.cacheTs=now;
   return pool;
+}
+
+/* ============ 📸 REAL PHOTOS ============ */
+/* Photos live in their OWN table (photos/{uid}/p0..p3) so user profiles stay light:
+   discover downloads 200 light profiles, then photos only for the visible cards. */
+const photoCache={};
+function meFirstPhoto(){ const a=(L.me&&L.me.photos)||[]; return a.find(x=>typeof x==='string'&&x.length>50)||null; }
+function firstPhotoOf(p){ if(!p)return null; if(p.photos){ const a=Array.isArray(p.photos)?p.photos:Object.values(p.photos);
+  const f=a.find(x=>typeof x==='string'&&x.length>50); if(f){ photoCache[p.id]=f; return f; } } return photoCache[p.id]||null; }
+function ensurePhoto(p,cb){
+  if(!p){ cb&&cb(null); return; }
+  if(p.id===uid){ const mine=meFirstPhoto(); if(mine){ cb&&cb(mine); return; } }
+  const local=firstPhotoOf(p); if(local){ cb&&cb(local); return; }
+  if(p.id in photoCache){ cb&&cb(photoCache[p.id]); return; }
+  if(DEMO||p.sim||!p.hasPhoto){ photoCache[p.id]=null; cb&&cb(null); return; }
+  photoCache[p.id]=null;
+  ref('photos/'+p.id+'/p0').once('value').then(s=>{ const v=s.val()||null; photoCache[p.id]=v; cb&&cb(v); }).catch(()=>cb&&cb(null));
+}
+function putImg(el,url){ if(!el)return; el.innerHTML=''; const im=document.createElement('img'); im.src=url; im.alt=''; el.appendChild(im); }
+function compressImage(file){
+  const maxSide=(ZWIN_CONFIG.photos&&ZWIN_CONFIG.photos.maxSize)||640;
+  const q=(ZWIN_CONFIG.photos&&ZWIN_CONFIG.photos.quality)||0.75;
+  return new Promise((res,rej)=>{ const img=new Image();
+    img.onload=()=>{ let w=img.naturalWidth,h=img.naturalHeight; const sc=Math.min(1,maxSide/Math.max(w,h));
+      w=Math.max(1,Math.round(w*sc)); h=Math.max(1,Math.round(h*sc));
+      const cv=document.createElement('canvas'); cv.width=w; cv.height=h;
+      cv.getContext('2d').drawImage(img,0,0,w,h); URL.revokeObjectURL(img.src);
+      res(cv.toDataURL('image/jpeg',q)); };
+    img.onerror=()=>rej(new Error('bad image'));
+    img.src=URL.createObjectURL(file); });
+}
+async function cloudUpload(dataUrl){ /* optional Cloudinary (free 25GB) — else store compressed JPEG in Firebase (free 1GB) */
+  const cl=(ZWIN_CONFIG.photos&&ZWIN_CONFIG.photos.cloudinary)||{};
+  if(cl.cloudName&&cl.uploadPreset){
+    try{ const fd=new FormData(); fd.append('file',dataUrl); fd.append('upload_preset',cl.uploadPreset);
+      const r=await fetch('https://api.cloudinary.com/v1_1/'+cl.cloudName+'/image/upload',{method:'POST',body:fd});
+      const j=await r.json(); if(j.secure_url)return j.secure_url;
+    }catch(e){ console.warn('cloudinary failed — firebase fallback',e); }
+  }
+  return dataUrl;
+}
+function pickPhoto(){
+  if(!L.me)return;
+  const inp=document.createElement('input'); inp.type='file'; inp.accept='image/*';
+  inp.onchange=async()=>{ const f=inp.files&&inp.files[0]; if(!f)return;
+    toast('📸 Polishing your photo…');
+    try{ const data=await compressImage(f); const url=await cloudUpload(data);
+      L.me.photos=L.me.photos||[]; const maxPh=(ZWIN_CONFIG.photos&&ZWIN_CONFIG.photos.maxPhotos)||4;
+      if(L.me.photos.length>=maxPh)L.me.photos.pop();
+      L.me.photos.unshift(url); delete photoCache[uid];
+      save(); await syncPhotos();
+      if(!L.photoBonusDone){ L.photoBonusDone=1; L.coins+=25; save(); toast('🎁 +25 🪙 — photo quest complete!'); }
+      toast('📸 Photo live — profiles with photos match 3× more 💛');
+      renderProfile();
+    }catch(e){ toast('That photo didn’t work — try another one'); }
+  };
+  inp.click();
+}
+function delPhoto(i){ if(!L.me||!L.me.photos)return; if(!confirm('Delete this photo?'))return;
+  L.me.photos.splice(i,1); delete photoCache[uid]; save(); syncPhotos(); renderProfile(); }
+async function syncPhotos(){
+  if(DEMO||!AUTH||!AUTH.currentUser)return;
+  const map={}; (L.me.photos||[]).forEach((u,i)=>{ if(u)map['p'+i]=u; });
+  try{ await ref('photos/'+uid).set(Object.keys(map).length?map:null);
+    await ref('users/'+uid).update({hasPhoto:Object.keys(map).length?Date.now():0}); }catch(e){}
+}
+function hydrateDeckPhotos(){ /* photos only for visible cards — bandwidth stays tiny */
+  document.querySelectorAll('#deck .dcard[data-id]').forEach(card=>{
+    const pr=R.deck.find(x=>x.id===card.dataset.id); if(!pr)return;
+    ensurePhoto(pr,url=>{ if(!url)return; const el=card.querySelector('.ph'); if(el&&!el.querySelector('img'))putImg(el,url); });
+  });
+}
+function photoQuestRow(){ if(!L.me)return''; if((L.me.photos||[]).length||L.photoBonusDone)return'';
+  return `<button class="earnrow" onclick="showTab('profile');toast('📸 Tap ＋ to add your first photo — +25 🪙 waiting')"><div class="ee">📸</div><div style="flex:1"><b class="small">Add your first photo</b><div class="mut tiny">+25 🪙 one-time gift</div></div><span class="pill">Add</span></button>`; }
+
+/* ============ 📲 PUSH NOTIFICATIONS ============ */
+/* Two layers, both FREE: in-app toasts (always) + lock-screen FCM (needs vapidKey + SW file). */
+let MSG=null;
+function pushSupported(){ return !DEMO&&typeof firebase!=='undefined'&&!!firebase.messaging&&'serviceWorker' in navigator&&'Notification' in window; }
+async function initPush(){ if(!pushSupported()||Notification.permission!=='granted'||!L.pushOn)return;
+  try{ await startPush(false); }catch(e){} }
+async function enablePush(){
+  if(DEMO)return toast('Connect the free Firebase cloud first (README) 📲');
+  if(!pushSupported())return toast('This browser can’t do lock-screen alerts 😢 (On iPhone: Share → Add to Home Screen first)');
+  try{ const perm=await Notification.requestPermission();
+    if(perm!=='granted'){ toast('Notifications blocked — allow them in your browser settings 🔔'); return; }
+  }catch(e){ return toast('Notifications are not available in this browser'); }
+  await startPush(true);
+}
+async function startPush(announce){
+  const vk=(ZWIN_CONFIG.fcm&&ZWIN_CONFIG.fcm.vapidKey)||'';
+  if(!vk||vk.startsWith('PASTE')){ if(announce)toast('🔔 In-app alerts ON. Lock-screen needs the Web Push key — see PHOTOS-PUSH-GUIDE.md'); L.pushOn=1; save(); renderProfile(); return; }
+  try{
+    const reg=await navigator.serviceWorker.register('firebase-messaging-sw.js');
+    if(!MSG)MSG=firebase.messaging();
+    const tok=await MSG.getToken({vapidKey:vk,serviceWorkerRegistration:reg});
+    if(tok&&L.pushTok!==tok){ L.pushTok=tok; ref('fcmTokens/'+uid).push(tok); }
+    MSG.onMessage(pl=>{ const n=(pl&&pl.notification)||{}; toast('🔔 '+((n.title?n.title+' — ':'')+(n.body||'New on Zwin 💛'))); });
+    L.pushOn=1; save();
+    if(announce){ toast('🔔 Lock-screen alerts ON — you’ll know the second someone likes you 💛'); }
+    renderProfile();
+  }catch(e){ console.warn('push failed',e); if(announce)toast('Push setup hiccup — try again in a moment'); }
 }
 
 /* ============ ONBOARDING ============ */
@@ -527,7 +742,7 @@ function paintBadges(){renderTabbar(); if(R.tab==='matches')renderMatches();}
 async function loadDeck(){
   if(!L.me){return}
   const demoPool=SAMPLES.filter(p=>
-    (p.g==='w'&&L.me.into.includes('w'))||(p.g==='m'&&L.me.into.includes('m')));
+    (p.g==='w'&&L.me.into.includes('w'))||(p.g==='m'&&L.me.into.includes('m'))).map(p=>({...p,sim:true}));
   let cloudPool=[];
   if(!DEMO){ try{ cloudPool=await cloudDiscover(); }catch(e){} }
   const all=[...cloudPool,...demoPool.filter(p=>!cloudPool.find(c=>c.name===p.name))];
@@ -549,6 +764,7 @@ function paintDeck(){
   const show=R.deck.slice(0,3);
   dk.innerHTML=show.map((p,i)=>cardHtml(p,i)).join('');
   bindTopCard();
+  hydrateDeckPhotos();
 }
 function boostChip(){
   const live=L.boostUntil>Date.now();
@@ -609,7 +825,8 @@ async function doSwipe(pid,dir){
     ref('swipes/'+uid+'/'+pid).set({d:dir,ts:Date.now()});
     if(dir!=='pass'){
       ref('incoming/'+pid+'/'+uid).set({d:dir,ts:Date.now()});
-      const back=await ref('swipes/'+pid+'/'+uid).once('value');
+      // 🔐 read my OWN incoming box to know (s)he liked me — peers' swipes are private under the locks
+      const back=await ref('incoming/'+uid+'/'+pid).once('value');
       if(back.val()&&back.val().d!=='pass') return makeMatch(p);
     }
   } else if(dir==='like'||dir==='super'){
@@ -657,13 +874,16 @@ async function makeMatch(p){
   save();
   if(!DEMO&&!p.sim){
     await ref('matches/'+mid).set({a:uid,b:p.id,ts:Date.now()});
-    await ref('userMatches/'+uid+'/'+mid).set(1); await ref('userMatches/'+p.id+'/'+mid).set(1);
+    await ref('userMatches/'+uid+'/'+mid).set(1); // peer mirrors their own side when their app sees the mutual like (locks)
     await ref('chatMeta/'+mid).set({freeLeft:C.freeChatMsgs,ts:Date.now()});
-    pushSystem(mid,'match');
+    ref('chats/'+mid).push({sys:1,text:'💕 You matched — be kind ✨',ts:Date.now()}).catch(()=>{});
   }
   R.matchFlow=p;
   $('matchSub').innerHTML=`You and <b style="color:#fff">${p.name}</b> like each other 💕<br>Chance favors the brave — say something nice!`;
   $('matchDuo').innerHTML=`<div class="ma" style="background:${grad(L.me.gi)}">${L.me.em}</div><div class="ma" style="background:${grad(p.gi)};z-index:2">${p.em}</div>`;
+  const duoMas=document.querySelectorAll('#matchDuo .ma'); const myPh=meFirstPhoto();
+  if(myPh&&duoMas[0])putImg(duoMas[0],myPh);
+  ensurePhoto(p,url=>{ const mas=document.querySelectorAll('#matchDuo .ma'); if(url&&mas[1])putImg(mas[1],url); });
   spawnConfetti(); show('matchOv');
   if(R.tab==='matches')renderMatches();
 }
@@ -686,13 +906,16 @@ function renderLikes(){
     <div class="mut small" style="max-width:260px">Keep swiping — the like notifications start rolling fast. Boost 🚀 speeds it up 10×</div></div>`; return; }
   $('lkGrid').innerHTML=list.map((lk,i)=>{
     const p=personOf(lk.uid); const sup=lk.d==='super'; const blur=!sup&&!lk.seen;
-    return `<button class="lkcard ${blur?'blur':''}" onclick="revealLike(${i})">
+    return `<button class="lkcard ${blur?'blur':''}" data-lk="${i}" onclick="revealLike(${i})">
       ${sup?'<div class="lksuper">✨ SUPER LIKE</div>':''}
       <div class="ph" style="background:${grad(p.gi)}">${p.em}</div>
       ${blur?`<div class="lklock"><span class="ee">👀</span>Reveal · ${C.revealLikeCost} 🪙</div>`:''}
       <div class="shade"></div>
       <div class="over">${blur?'Someone 💛':`${p.name}${p.age?', '+p.age:''}`}<div class="tiny" style="opacity:.85;font-weight:700">${sup?'Super liked you ✨':'Liked you 💗'}</div></div>
     </button>`}).join('');
+  // real photos on revealed / super-like cards (blurred admirers stay blurred — privacy first)
+  list.forEach((lk,i)=>{ if(lk.d==='super'||lk.seen){ ensurePhoto(personOf(lk.uid),url=>{ if(!url)return;
+    const el=document.querySelector('.lkcard[data-lk="'+i+'"] .ph'); if(el)putImg(el,url); }); } });
 }
 function revealLike(i){
   const lk=L.likesYou[i]; if(!lk)return;
@@ -734,6 +957,7 @@ function openChat(mid){
   const p=personOf(m.peer); R.chatWith=mid;
   L.unread[mid]=0; save();
   $('chAv').style.background=grad(m.gi); $('chAv').textContent=m.em;
+  ensurePhoto(p,url=>{ if(url&&R.chatWith===mid){ $('chAv').style.background='none'; putImg($('chAv'),url); } });
   $('chName').innerHTML=`${m.name}${L.exclusive[mid]?'<span class="excl">✨ EXCLUSIVE</span>':''}`;
   $('chatHead').classList.toggle('excl',!!L.exclusive[mid]);
   $('chState').textContent=p?`${p.city||''} · matched ${new Date(m.ts).toLocaleDateString()}`:'';
@@ -874,7 +1098,7 @@ async function doGift(n){
   const pid=t.type==='chat'? (L.matches.find(m=>m.mid===t.mid)||{}).peer : t.pid;
   const p=personOf(pid); const mid=t.type==='chat'?t.mid:matchIdOf(uid,pid);
   if(!DEMO&&!p.sim){
-    await txAdd('users/'+pid+'/coins',n);
+    // 🔐 sender canNOT write the peer's wallet — we only drop a gift note; their app credits their own coins
     ref('giftsFor/'+pid).push({from:uid,fromName:L.me.name,coins:n,ts:Date.now()});
     ref('chats/'+mid).push({gift:1,from:uid,fromName:L.me.name,coins:n,ts:Date.now()});
     if(n>=C.giftExclusive){ ref('chatMeta/'+mid+'/exclusive').set(1); }
@@ -921,6 +1145,7 @@ function renderWallet(){
         <div class="ee">💌</div><div style="flex:1"><b class="small">Invite a friend</b><div class="mut tiny">+50 🪙 when they join</div></div><span class="pill">Invite</span></button>
       <button class="earnrow" onclick="toast('💛 Complete your bio & interests — people love details!'); L.coins+=15; save(); renderWallet()">
         <div class="ee">✨</div><div style="flex:1"><b class="small">Complete profile 100%</b><div class="mut tiny">+15 🪙 one time</div></div><span class="pill">Do it</span></button>
+      ${photoQuestRow()}
     </div>
     <div class="sec mut tiny" style="font-weight:900;letter-spacing:1px;padding:16px 2px 8px">BUY COINS</div>
     ${ZWIN_CONFIG.packs.map(p=>`<button class="pack ${p.tag?'best':''}" onclick="buyPack('${p.id}')">
@@ -968,7 +1193,7 @@ function confirmPack(pid,refid){
   hide('bankSheet');
   if(DEMO){ L.coins+=pack.coins; save(); toast(`🪙 +${pack.coins} coins — have fun! 💛`); }
   else { const order={uid,name:L.me.name,pack:pid,coins:pack.coins,price:pack.priceDH,status:'pending',ref:refid,ts:Date.now()};
-    const k=ref('orders').push(order).key;
+    const k=ref('orders/'+uid).push(order).key; // 🔐 my orders live in MY box
     L.pendingOrders.push({oid:k,coins:pack.coins,ref:refid}); save();
     toast('⏳ Order sent — coins land after validation'); }
   renderWallet();
@@ -977,17 +1202,29 @@ function confirmPack(pid,refid){
 /* ============ PROFILE ============ */
 function renderProfile(){
   if(!L.me){ $('profileWrap').innerHTML=''; return; }
+  const maxPh=(ZWIN_CONFIG.photos&&ZWIN_CONFIG.photos.maxPhotos)||4;
+  const photos=(L.me.photos||[]).filter(Boolean);
+  const mp=photos[0]||null;
+  const pushOn=!!L.pushOn&&('Notification' in window)&&Notification.permission==='granted';
   $('profileWrap').innerHTML=`
     <div class="pcard">
-      <div class="ph" style="background:${grad(L.me.gi)}"><span>${L.me.em}</span></div>
+      <div class="ph" style="background:${grad(L.me.gi)}">${mp?`<img src="${mp}" alt="my photo">`:`<span>${L.me.em}</span>`}</div>
       <div class="pbody">
-        <div class="nm h2">${L.me.name}, ${L.me.age} <span class="tag" style="background:var(--soft);color:var(--pk);font-size:10px;font-weight:900;padding:4px 8px;border-radius:8px">✓ VERIFIED SELFIE SOON</span></div>
+        <div class="nm h2">${L.me.name}, ${L.me.age} <span style="background:var(--soft);color:var(--pk);font-size:10px;font-weight:900;padding:4px 8px;border-radius:8px">${mp?'📸 PHOTO PROFILE':'✓ PHONE VERIFIED'}</span></div>
         <div class="mut small" style="margin:4px 0">📍 ${L.me.city}</div>
         <div class="small">${L.me.bio}</div>
         <div class="row" style="flex-wrap:wrap;gap:6px;margin-top:8px">${L.me.tags.map(t=>`<span class="chip" style="font-size:11px">${t}</span>`).join('')}</div>
       </div>
     </div>
     <div style="padding:4px 18px">
+      <div class="card" style="margin-bottom:10px">
+        <div class="spread"><b class="small">My photos 📸</b><span class="mut tiny">${photos.length}/${maxPh} · first = main</span></div>
+        <div class="mut tiny" style="margin:4px 0 10px">Real photos get ~3× more matches 💛 Auto-compressed & synced — free.</div>
+        <div class="photogrid">
+          ${photos.map((u,i)=>`<div class="phslot full"><button class="del" onclick="delPhoto(${i})">✕</button>${i===0?'<span class="main">MAIN</span>':''}<img src="${u}" alt=""></div>`).join('')}
+          ${photos.length<maxPh?`<button class="phslot" onclick="pickPhoto()">＋</button>`:''}
+        </div>
+      </div>
       <div class="card">
         <div class="spread"><b class="small">My stats this week</b>💛</div>
         <div class="divider" style="margin:10px 0"></div>
@@ -1000,23 +1237,22 @@ function renderProfile(){
       </div>
       <div style="height:10px"></div>
       <div class="card">
-        <button class="earnrow" onclick="toggleNotif()"><div class="ee">🔔</div><div style="flex:1"><b class="small">Match notifications</b><div class="mut tiny">Toasts when someone likes/messages you</div></div><div class="toggle ${L.notif===false?'':'on'}" id="notifT"></div></button>
+        <button class="earnrow" onclick="enablePush()"><div class="ee">📲</div><div style="flex:1"><b class="small">Lock-screen alerts</b><div class="mut tiny">Get pinged the second someone likes or texts you</div></div><span class="pill">${pushOn?'ON 🔔':'Turn on'}</span></button>
+        <button class="earnrow" onclick="toggleNotif()"><div class="ee">🔔</div><div style="flex:1"><b class="small">In-app notifications</b><div class="mut tiny">Toasts while the app is open</div></div><div class="toggle ${L.notif===false?'':'on'}" id="notifT"></div></button>
         <button class="earnrow" onclick="toast('🛡️ Blocked list is private & permanent. You are safe here.')"><div class="ee">🛡️</div><div style="flex:1"><b class="small">Safety center</b><div class="mut tiny">Block, report, dating-tips</div></div></button>
         <button class="earnrow" onclick="toast('💌 Contact: ${ZWIN_CONFIG.company.supportEmail}')"><div class="ee">💬</div><div style="flex:1"><b class="small">Help & support</b></div></button>
       </div>
     </div>`;
 }
 function toggleNotif(){ L.notif=L.notif===false?true:false; $('notifT').classList.toggle('on',L.notif!==false); save(); }
-function resetAll(){ if(confirm('Log out and wipe this device profile?')){ localStorage.removeItem('zwin_local'); location.reload(); } }
+function resetAll(){ if(confirm('Log out and wipe this device profile?')){ localStorage.removeItem('zwin_local'); try{firebase.auth().signOut()}catch(e){} location.reload(); } }
 function paintCoins(){ const el=$('coinTop'); if(el)el.textContent=L.coins; }
 
 /* ============ INIT ============ */
 fbInit();
 paintCoins();
-if(L.me){ showTab('discover');
-  if(!DEMO){ try{ syncBadges(); }catch(e){} }
-  loadDeck();
-} else { startOnboard(); }
+if(DEMO){ if(L.me){ showTab('discover'); loadDeck(); } else { startOnboard(); } }
+/* live mode: AUTH.onAuthStateChanged drives the boot — phone verify first, 🔐 locks on */
 async function syncBadges(){
   if(DEMO||!L.me)return;
   // pull my cloud matches to render chats

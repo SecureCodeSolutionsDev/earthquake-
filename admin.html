@@ -8,6 +8,8 @@
 <script src="zwin-config.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-check-compat.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{--bg:#160d12;--card:#1f1219;--card2:#291722;--line:#37202e;--txt:#fff2f7;--mut:#b193a3;--pk:#ff4e7e;--or:#ff8a5c;--green:#2fbf71;--warn:#ffb020;--red:#ff6b6b;--r:16px}
@@ -55,13 +57,25 @@ tr:last-child td{border-bottom:none}
 <div id="toasts"></div>
 
 <div id="gate">
-  <div class="card">
+  <div class="card" id="gatePin">
     <div class="logo" style="margin:0 auto 12px">🔥</div>
     <div class="h2">Zwin HQ</div>
     <div class="mut small" style="margin:6px 0 14px">Company dashboard — enter admin PIN<br>(set in <b>zwin-config.js</b>, default 1234)</div>
     <input class="inp" id="pinIn" type="password" inputmode="numeric" placeholder="••••" style="text-align:center;font-size:22px;letter-spacing:6px;width:160px" onkeydown="if(event.key==='Enter')tryPin()">
     <div style="height:12px"></div>
-    <button class="btn btn-g" style="width:100%;padding:14px;font-size:15px;font-weight:900" onclick="tryPin()">Open dashboard</button>
+    <button class="btn btn-g" style="width:100%;padding:14px;font-size:15px;font-weight:900" onclick="tryPin()">Continue</button>
+  </div>
+  <div class="card" id="gatePhone" style="display:none">
+    <div class="logo" style="margin:0 auto 12px">🛡️</div>
+    <div class="h2">Verify it's you</div>
+    <div class="mut small" style="margin:6px 0 14px">🔐 Sign in with the OWNER'S phone number.<br>Your UID will be your admin key.</div>
+    <input class="inp" id="aPh" inputmode="tel" value="+212" placeholder="+212 6 12 34 56 78" style="margin-bottom:10px">
+    <button class="btn btn-g" id="aBtn" onclick="sendAdminCode()">Send code 📲</button>
+    <div id="aCodeWrap" style="display:none;margin-top:10px">
+      <input class="inp" id="aCode" inputmode="numeric" maxlength="8" placeholder="SMS code" style="text-align:center;letter-spacing:6px;font-size:20px;margin-bottom:10px">
+      <button class="btn btn-g" onclick="verifyAdminCode()">Verify 🛡️</button>
+    </div>
+    <div id="arecap"></div>
   </div>
 </div>
 
@@ -119,9 +133,40 @@ let DB=null, DEMO=false, D={};
 const C=ZWIN_CONFIG.coins;
 function toast(m,k){const d=document.createElement('div');d.className='toast';d.textContent=m;$('toasts').appendChild(d);setTimeout(()=>d.remove(),2600)}
 function fmt(n){return `${(+n).toFixed(0)} DH`}
-function ref(p){return DB.ref('wasla_dating/'+p)}
+function ref(p){return DB.ref('wasla_dating/'+p)} // matches firebase-rules.json root
 function ts(t){return t?new Date(t).toLocaleString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}):''}
-function tryPin(){ if($('pinIn').value===ZWIN_CONFIG.adminPin){$('gate').style.display='none';$('dash').style.display='';boot();} else {toast('Wrong PIN','err');$('pinIn').value='';} }
+let PIN_OK=false;
+function tryPin(){
+  if($('pinIn').value!==ZWIN_CONFIG.adminPin){toast('Wrong PIN','err');$('pinIn').value='';return}
+  PIN_OK=true;
+  if(!zwinCloudReady()){ enter(); return; }
+  // 🔐 second lock: phone sign-in as owner — Firebase must be initialized first
+  if(!window.firebase.apps.length){
+    firebase.initializeApp(ZWIN_CONFIG.firebase);
+    try{ const k=(ZWIN_CONFIG.appCheck&&ZWIN_CONFIG.appCheck.recaptchaSiteKey)||'';
+      if(k&&!/^PASTE|^$/.test(k)&&firebase.appCheck){ firebase.appCheck().activate(k,true); } }catch(e){}
+  }
+  $('gatePin').style.display='none'; $('gatePhone').style.display='block';
+}
+function sendAdminCode(){
+  const btn=$('aBtn');
+  const raw=$('aPh').value.replace(/[\s\-.]/g,'');
+  if(!/^\+[0-9]{8,15}$/.test(raw)){toast('Format: +212XXXXXXXXX','err');return}
+  if($('aCodeWrap').style.display!=='none'&&$('aCode').value.trim()){ verifyAdminCode(); return; }
+  btn.disabled=true; btn.textContent='Sending…';
+  if(window.arec){ try{window.arec.clear()}catch(e){} window.arec=null; }
+  try{ window.arec=new firebase.auth.RecaptchaVerifier('arecap',{size:'invisible'}); }catch(e){console.warn(e)}
+  firebase.auth().signInWithPhoneNumber(raw,window.arec)
+    .then(cr=>{ window.acr=cr; $('aCodeWrap').style.display='block'; btn.disabled=false; btn.textContent='↻ Resend'; toast('📲 Code sent'); })
+    .catch(e=>{ btn.disabled=false; btn.textContent='Send code 📲';
+      try{window.arec&&window.arec.clear();window.arec=null}catch(_){/*noop*/}
+      toast('Send failed: '+e.code,'err'); });
+}
+function verifyAdminCode(){
+  const code=$('aCode').value.trim(); if(!code)return;
+  window.acr.confirm(code).then(u=>{ enter(); }).catch(e=>toast('Wrong code','err'));
+}
+function enter(){ $('gate').style.display='none'; $('dash').style.display=''; boot(); }
 function tab(p,el){ ['ov','or','rp','us','st'].forEach(x=>$('pg-'+x).style.display=x===p?'':'none');
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on')); el.classList.add('on'); }
 
@@ -130,16 +175,25 @@ function boot(){
   if(!zwinCloudReady()){ DEMO=true;
     $('demoSlot').innerHTML=`<div class="banner">⚠️ Firebase not configured — edit <b>zwin-config.js</b> (README.md, 5-min free setup) to go live.</div>`;
     $('connState').textContent='DEMO — offline'; return; }
-  firebase.initializeApp(ZWIN_CONFIG.firebase); DB=firebase.database();
+  if(!window.firebase.apps.length){
+    firebase.initializeApp(ZWIN_CONFIG.firebase);
+    try{ const k=(ZWIN_CONFIG.appCheck&&ZWIN_CONFIG.appCheck.recaptchaSiteKey)||'';
+      if(k&&!/^PASTE|^$/.test(k)&&firebase.appCheck){ firebase.appCheck().activate(k,true); } }catch(e){}
+  }
+  DB=firebase.database();
   DB.ref('.info/connected').on('value',s=>{$('connState').textContent=s.val()?'🟢 live':'🔴 offline'});
-  ref('').on('value',s=>{ D=s.val()||{}; paintAll(); });
+  // 🔐 read pieces separately — locked rules don't allow root reads
+  ['users','presence','matches','chats','orders','giftsFor','reports'].forEach(k=>{
+    ref(k).on('value',s=>{ D[k]=s.val()||{}; paintAll(); });
+  });
 }
 function paintAll(){
   const users=Object.entries(D.users||{});
   const pres=Object.values(D.presence||{}).filter(p=>p.online).length;
   const matches=Object.keys(D.matches||{}).length;
   const msgs=Object.values(D.chats||{}).reduce((a,c)=>a+Object.keys(c||{}).length,0);
-  const orders=Object.entries(D.orders||{});
+  // orders are nested: orders/{uid}/{oid} — flatten for display
+  const orders=Object.entries(D.orders||{}).flatMap(([uid,os])=>Object.entries(os||{}).map(([oid,o])=>[oid,{...o,uid}]));
   const gifts=Object.values(D.giftsFor||{}).reduce((a,m)=>a+Object.values(m||{}).reduce((x,g)=>x+(g.coins||0),0),0);
   const rev=orders.filter(([k,o])=>o.status==='approved').reduce((a,[k,o])=>a+(+o.price||0),0);
   const pendOr=orders.filter(([k,o])=>o.status==='pending');
@@ -167,16 +221,16 @@ function paintOr(pend,all){
    rows.map(([id,o])=>`<tr><td class="tiny">${o.ref}<div class="mut tiny">${ts(o.ts)}</div></td>
     <td>${o.name}</td><td>${o.coins} 🪙</td><td><b>${fmt(o.price)}</b></td>
     <td><span class="badge ${o.status==='pending'?'b-live':o.status==='approved'?'b-done':'b-x'}">${o.status}</span></td>
-    <td style="text-align:end">${o.status==='pending'?`<button class="btn btn-g" onclick="approve('${id}')">✓ Credit coins</button> <button class="btn btn-r" onclick="reject('${id}')">✗</button>`:''}</td></tr>`).join('')
+    <td style="text-align:end">${o.status==='pending'?`<button class="btn btn-g" onclick="approve('${id}','${o.uid}')">✓ Credit coins</button> <button class="btn btn-r" onclick="reject('${id}','${o.uid}')">✗</button>`:''}</td></tr>`).join('')
    :'<tr><td class="mut">No coin orders yet.</td></tr>')+'</tbody>';
 }
-function approve(id){
-  const o=(D.orders||{})[id]; if(!o||o.status!=='pending')return;
-  ref('orders/'+id).update({status:'approved',handledAt:Date.now()});
-  ref('users/'+o.uid+'/coins').transaction(v=>+(((+v||0)+o.coins).toFixed(2)));
-  toast(`+${o.coins} 🪙 credited to ${o.name}`);
+function approve(id,ouid){
+  const o=(D.orders||{})[ouid]?.[id]; if(!o||o.status!=='pending')return;
+  ref('orders/'+ouid+'/'+id).update({status:'approved',handledAt:Date.now()});
+  ref('users/'+ouid+'/coins').transaction(v=>+(((+v||0)+o.coins).toFixed(2)));
+  toast(`+${o.coins} 🪙 credited to ${o.name} — their app updates instantly`);
 }
-function reject(id){ ref('orders/'+id).update({status:'rejected'}); toast('Rejected'); }
+function reject(id,ouid){ ref('orders/'+ouid+'/'+id).update({status:'rejected'}); toast('Rejected'); }
 function paintRp(rows){
   $('tblRp').innerHTML='<tbody>'+(rows.length?`<tr><th>Report</th><th>When</th><th></th></tr>`+
    rows.sort((a,b)=>b[1].ts-a[1].ts).slice(0,30).map(([id,r])=>`<tr>

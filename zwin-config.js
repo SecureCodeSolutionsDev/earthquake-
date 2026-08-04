@@ -8,11 +8,38 @@ const ZWIN_CONFIG = {
      console.firebase.google.com → project → Realtime Database (europe-west1,
      test mode) → Project settings → Web app </> → paste the 5 keys below.   */
   firebase: {
-    apiKey:      "AIzaSyCefjPeoakEOUg9mjI_lLwU80dka0lNkEc",
-    authDomain:  "zwin-270c4.firebaseapp.com",
-    databaseURL: "https://zwin-270c4-default-rtdb.europe-west1.firebasedatabase.app",
-    projectId:   "zwin-270c4",
-    appId:       "1:231744808339:web:a6be044023f256f9c93466"
+    apiKey:      "PASTE_API_KEY_HERE",
+    authDomain:  "PASTE_PROJECT.firebaseapp.com",
+    databaseURL: "https://PASTE_PROJECT-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId:   "PASTE_PROJECT",
+    appId:       "1:PASTE:web:PASTE"
+  },
+
+  /* ---------- 🔐 LOCK 3 (optional but recommended): App Check against bots.
+     Firebase console → App Check → Register app → reCAPTCHA v3 → paste the SITE
+     KEY here. App works without it, but bots could spam your cloud.           */
+  appCheck: {
+    recaptchaSiteKey: ""   // leave empty to skip
+  },
+
+  /* ---------- 📸 REAL PHOTOS (free start, scales later) ----------
+     Photos self-compress in the browser (max px below) and save into your
+     FREE Firebase (Spark: 1GB — thousands of users). At big scale, flip to
+     Cloudinary free (25GB, no card): create account → Settings → Upload →
+     add "unsigned" upload preset → paste the 2 values below.               */
+  photos: {
+    maxPhotos:  4,       // per user
+    maxSize:    640,     // px, longest side after compression (keeps DB light)
+    quality:    0.75,    // JPEG quality
+    cloudinary: { cloudName: "", uploadPreset: "" }   // optional scale path
+  },
+
+  /* ---------- 📲 PUSH NOTIFICATIONS (Firebase Cloud Messaging = 100% FREE)
+     Firebase console → ⚙️ Project settings → Cloud Messaging → scroll to
+     "Web Push certificates" → Generate key pair → paste the KEY here.
+     Without a key: in-app toasts still work. With it: lock-screen alerts.   */
+  fcm: {
+    vapidKey: ""         // leave empty to skip lock-screen push for now
   },
 
   /* ---------- 2. COMPANY BANK (⚠️ RANDOM DEMO DATA — EDIT BEFORE LAUNCH)
