@@ -39,7 +39,7 @@ const ZWIN_CONFIG = {
      "Web Push certificates" → Generate key pair → paste the KEY here.
      Without a key: in-app toasts still work. With it: lock-screen alerts.   */
   fcm: {
-    vapidKey: ""         // leave empty to skip lock-screen push for now
+    vapidKey: "BGcLqf4irpZLSsHzAu76-5uU2U8seU3zWcv5bOE0c8i5mvBlCjm5qx2Bzq8rcmpv9xcMOuwbcTMxda2XbxiMoIc"         // leave empty to skip lock-screen push for now
   },
 
   /* ---------- 🎨 PRO MEDIA (aura pack — images live in the img/ folder)
