@@ -1,12 +1,12 @@
 /* =====================================================================
-   ZWIN 🔥 — GLOBAL CONFIG (🔧 edit here — shared by all apps)
+   MELT — GLOBAL CONFIG (edit here — shared by all apps)
    Used by: index.html (dating app) · admin.html (company dashboard)
+   Keys are pre-filled for project zwin-270c4 (DB instance name in Firebase
+   keeps this id; the BRAND is Melt everywhere users look).
    ===================================================================== */
 const ZWIN_CONFIG = {
 
-  /* ---------- 1. FREE CLOUD (Firebase Spark = $0, no card — see README.md)
-     console.firebase.google.com → project → Realtime Database (europe-west1,
-     test mode) → Project settings → Web app </> → paste the 5 keys below.   */
+  /* ---------- 1. CLOUD (Firebase) ---------- */
   firebase: {
     apiKey:      "AIzaSyCefjPeoakEOUg9mjI_lLwU80dka0lNkEc",
     authDomain:  "zwin-270c4.firebaseapp.com",
@@ -15,93 +15,60 @@ const ZWIN_CONFIG = {
     appId:       "1:231744808339:web:a6be044023f256f9c93466"
   },
 
-  /* ---------- 🔐 LOCK 3 (optional but recommended): App Check against bots.
-     Firebase console → App Check → Register app → reCAPTCHA v3 → paste the SITE
-     KEY here. App works without it, but bots could spam your cloud.           */
+  /* ---------- App Check (reCAPTCHA v3 SITE key) ---------- */
   appCheck: {
-    recaptchaSiteKey: "6LfF73QtAAAAAAS5_QpF8M15_5ohqA3B8XA4IfDq"   // leave empty to skip
+    recaptchaSiteKey: "6LfF73QtAAAAAAS5_QpF8M15_5ohqA3B8XA4IfDq"
   },
 
-  /* ---------- 📸 REAL PHOTOS (free start, scales later) ----------
-     Photos self-compress in the browser (max px below) and save into your
-     FREE Firebase (Spark: 1GB — thousands of users). At big scale, flip to
-     Cloudinary free (25GB, no card): create account → Settings → Upload →
-     add "unsigned" upload preset → paste the 2 values below.               */
+  /* ---------- REAL PHOTOS ---------- */
   photos: {
-    maxPhotos:  4,       // per user
-    maxSize:    640,     // px, longest side after compression (keeps DB light)
-    quality:    0.75,    // JPEG quality
+    maxPhotos:  4,
+    maxSize:    640,
+    quality:    0.75,
     cloudinary: { cloudName: "", uploadPreset: "" }   // optional scale path
   },
 
-  /* ---------- 📲 PUSH NOTIFICATIONS (Firebase Cloud Messaging = 100% FREE)
-     Firebase console → ⚙️ Project settings → Cloud Messaging → scroll to
-     "Web Push certificates" → Generate key pair → paste the KEY here.
-     Without a key: in-app toasts still work. With it: lock-screen alerts.   */
+  /* ---------- PUSH (FCM VAPID key — active once the referee ships) ---------- */
   fcm: {
-    vapidKey: "BGcLqf4irpZLSsHzAu76-5uU2U8seU3zWcv5bOE0c8i5mvBlCjm5qx2Bzq8rcmpv9xcMOuwbcTMxda2XbxiMoIc"         // leave empty to skip lock-screen push for now
+    vapidKey: "BGcLqf4irpZLSsHzAu76-5uU2U8seU3zWcv5bOE0c8i5mvBlCjm5qx2Bzq8rcmpv9xcMOuwbcTMxda2XbxiMoIc"
   },
 
-  /* ---------- 🎨 PRO MEDIA (aura pack — images live in the img/ folder)
-     base = where images load from. Default "img/" = the img folder NEXT to
-     index.html in your GitHub repo → just upload the img folder, done.
-     Hosting elsewhere? Paste the full https:// link in any slot to override.
-     Any empty slot = cute emoji fallback, so the app can never look broken. */
+  /* ---------- PRO MEDIA (art packs load first; these are only overrides) */
   media: {
     base: "img/",
-    authBg:"",   // auth-bg.jpg — wedding couple, sign-in page background
-    flame:"",    // flame.png   — brand flame-heart (logo, Discover tab, empty states)
-    like:"",     // like.png    — glossy heart (♥ like button)
-    nope:"",     // nope.png    — red X (✕ pass button)
-    super:"",    // super.png   — sparkle star (✨ super like + Me tab)
-    rewind:"",   // rewind.png  — rewind arrow (↩️ button)
-    boost:"",    // boost.png   — rocket (🚀 boost button + chip)
-    coin:"",     // coin.png    — gold heart coin (🪙 coin pill, wallet)
-    gift:"",     // gift.png    — gift box (🎁 gift button + gift packs)
-    send:"",     // send.png    — paper plane (➤ send button)
-    loveface:"", // loveface.png— Liked-You tab + empty state
-    chat:""      // chat.svg    — Matches tab + empty chats
+    authBg:"", flame:"", like:"", nope:"", super:"", rewind:"", boost:"",
+    coin:"", gift:"", send:"", loveface:"", chat:""
   },
 
-  /* ---------- 2. COMPANY BANK (⚠️ RANDOM DEMO DATA — EDIT BEFORE LAUNCH)
-     Shown to users when they buy coin packs by bank transfer.              */
+  /* ---------- 2. COMPANY BANK (RANDOM DEMO DATA — edit before real launch) */
   company: {
-    name:        "Zwin Dating SARL",
-    accountName: "ZWIN DATING SARL AU",
+    name:        "Melt Dating SARL",
+    accountName: "MELT DATING SARL AU",
     bank:        "CIH Bank — Agence Mohammed V, Casablanca",
-    rib:         "230 780 0000192900511477 52",   // 24-digit RIB (random)
+    rib:         "230 780 0000192900511477 52",
     iban:        "MA52 2307 8000 0019 2900 5114 7752",
     swift:       "CEMAMAMC",
     ice:         "001746559000091",
-    supportEmail:"love@zwin.ma",
+    supportEmail:"love@melt.ma",
     supportPhone:"+212 6 62 00 00 00"
   },
 
-  /* ---------- 3. COIN ECONOMY (🪙 tune freely — live-balanced in admin) --- */
-  coins: {
-    welcomeBonus:  50,    // new users start rich → great first session
-    dailyFree:     10,    // claim every day (streak habit loop)
-    streakBonusPct:10,    // +10%/day of consecutive claims, caps at 2×
-    freeChatMsgs:  10,    // every new match starts with 10 FREE messages
-    msgCost:        1,    // 🪙 per message after free ones are used
-    superLikeCost:  5,    // "Wow ✨" — guarantees she sees you first
-    giftExclusive: 50,    // gifting ≥ this turns the chat EXCLUSIVE (gold)
-    revealLikeCost:20,    // unblur one "Liked You" card
-    boostCost:     15,    // 30 min top-of-stack in your city
-    rewindCost:     3,    // undo last swipe (regret = purchasable emotion)
+  /* ---------- 3. MELT GOLD — one-time pass, unlimited forever (no coins)
+     Free users: capped daily so they feel the wall and convert; counters reset
+     after midnight so they always come back. GOLD: flip in admin after the
+     bank transfer lands. Tune freely — admin Settings shows these live.    */
+  gold: {
+    priceDH:      99,   // one-time. Never a subscription.
+    likesPerDay:  20,   // free likes every day, reset after midnight
+    msgsPerMatch: 10,   // free messages per new match (the spark stays free)
+    superPerDay:   1,   // free Super Likes per day
+    superGold:     5    // Super Likes per day for GOLD members
   },
 
-  /* ---------- 4. COIN SHOP PACKS (real money → bank transfer → validate) - */
-  packs: [
-    { id:"p1", coins:120, priceDH: 60, label:"Starter",  em:"🌱" },
-    { id:"p2", coins:300, priceDH:120, label:"Popular",  em:"💘", tag:"BEST VALUE" },
-    { id:"p3", coins:700, priceDH:250, label:"Casanova", em:"👑" }
-  ],
-
-  /* ---------- 5. ADMIN PIN for admin.html (change it!) ---------- */
+  /* ---------- 4. ADMIN PIN for admin.html ---------- */
   adminPin: "VidaAdmin123###_",
 
-  appName: "Zwin",
-  tagline: "Dating, but warmer."
+  appName: "Melt",
+  tagline: "Love that melts doubts away."
 };
 function zwinCloudReady(){ return !ZWIN_CONFIG.firebase.apiKey.startsWith("PASTE"); }

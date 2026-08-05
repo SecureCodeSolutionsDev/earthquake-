@@ -66,7 +66,7 @@ activation guide (auth + per-user rules + App Check).
 7. 🌹 Gift 50 coins → chat turns **GOLD EXCLUSIVE** on both screens
 8. Layla buys the 60 DH pack → **`admin.html`** (your PIN) shows the order →
    tap **✓ Credit coins** → coins land in her app instantly
-9. Watch **Zwin HQ** KPIs: 2 users · 1 match · messages flowing 📊
+9. Watch **Melt HQ** KPIs: 2 users · 1 match · messages flowing 📊
 
 If all that works — **you own a live dating platform.** 🚀
 

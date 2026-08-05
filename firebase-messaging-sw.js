@@ -1,5 +1,5 @@
 /* =====================================================================
-   ZWIN 🔥 — PUSH SERVICE WORKER (lock-screen alerts)
+   MELT — PUSH SERVICE WORKER (lock-screen alerts)
    Lives next to index.html on GitHub Pages. 100% free with Firebase Spark.
    Nothing to edit here — it reads your keys from zwin-config.js.
    ===================================================================== */
@@ -15,9 +15,9 @@ try {
     messaging.onBackgroundMessage((payload) => {
       const n = (payload && payload.notification) || {};
       const d = (payload && payload.data) || {};
-      const title = n.title || d.title || 'Zwin 🔥';
+      const title = n.title || d.title || 'Melt';
       const options = {
-        body: n.body || d.body || 'Something warm happened — open Zwin 💛',
+        body: n.body || d.body || 'Someone likes you — open Melt 💛',
         icon: 'icon.png',
         badge: 'icon.png',
         vibrate: [80, 40, 80],

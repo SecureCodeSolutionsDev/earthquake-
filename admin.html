@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#160d12">
-<title>Zwin HQ — Company Dashboard</title>
+<title>Melt HQ — Company Dashboard</title>
 <script src="zwin-config.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
@@ -59,7 +59,7 @@ tr:last-child td{border-bottom:none}
 <div id="gate">
   <div class="card" id="gatePin">
     <div class="logo" style="margin:0 auto 12px">🔥</div>
-    <div class="h2">Zwin HQ</div>
+    <div class="h2">Melt HQ</div>
     <div class="mut small" style="margin:6px 0 14px">Company dashboard — enter admin PIN<br>(set in <b>zwin-config.js</b>, default 1234)</div>
     <input class="inp" id="pinIn" type="password" inputmode="numeric" placeholder="••••" style="text-align:center;font-size:22px;letter-spacing:6px;width:160px" onkeydown="if(event.key==='Enter')tryPin()">
     <div style="height:12px"></div>
@@ -77,7 +77,7 @@ tr:last-child td{border-bottom:none}
   <div class="top">
     <div style="display:flex;align-items:center;gap:10px">
       <div class="logo">🔥</div>
-      <div><b style="font-size:18px">Zwin HQ</b><div class="mut tiny" id="connState">connecting…</div></div>
+      <div><b style="font-size:18px">Melt HQ</b><div class="mut tiny" id="connState">connecting…</div></div>
     </div>
     <div class="mut small">💰 Revenue (orders): <b class="grn" id="topRev" style="font-size:16px">0 DH</b></div>
   </div>
@@ -85,7 +85,7 @@ tr:last-child td{border-bottom:none}
   <div class="kpis" id="kpis"></div>
   <div class="tabs">
     <button class="tab on" onclick="tab('ov',this)">📊 Overview</button>
-    <button class="tab" onclick="tab('or',this)">🪙 Coin orders <span id="cntOr"></span></button>
+    <button class="tab" onclick="tab('or',this)">👑 GOLD orders <span id="cntOr"></span></button>
     <button class="tab" onclick="tab('rp',this)">🛡️ Reports <span id="cntRp"></span></button>
     <button class="tab" onclick="tab('vf',this)">✅ Verify <span id="cntVf"></span></button>
     <button class="tab" onclick="tab('us',this)">👥 Users</button>
@@ -95,9 +95,8 @@ tr:last-child td{border-bottom:none}
   <div id="pg-ov">
     <div class="sec">Business notes</div>
     <div class="card small mut" style="line-height:1.9">
-      🪙 <b>Coins</b> are bought via bank transfer to the company RIB (Settings). You validate orders in the <b>Coin orders</b> tab → coins credit instantly to the user's app.<br>
-      🌹 <b>Gifts</b> (user→user) drive engagement + desire. The economy only grows when YOU sell coins — gifts just recirculate them.<br>
-      🚀 <b>Viral loop</b>: “Invite a friend +50 🪙” costs you nothing and brings free users.<br>
+      👑 <b>GOLD pass</b> is a one-time bank transfer (price in Settings). You validate orders in <b>GOLD orders</b> → the user's app unlocks everything instantly.<br>
+      🚀 <b>Viral hook</b>: free users get 20 likes/day + 10 free messages per match — sweet enough to stay, short enough to convert.<br>
       🧠 First ${10} messages are free on purpose: the spark moment is never paywalled (Tinder's biggest complaint — we fixed it).
     </div>
     <div class="sec">Recent activity</div>
@@ -110,10 +109,10 @@ tr:last-child td{border-bottom:none}
   <div id="pg-us" style="display:none"><div class="card"><table id="tblUs"><tbody></tbody></table></div></div>
 
   <div id="pg-st" style="display:none">
-    <div class="sec">Company bank account (shown when users buy coins)</div>
+    <div class="sec">Company bank account (shown when users activate GOLD)</div>
     <div class="card bankgrid" id="bankGrid"></div>
     <div class="banner">✏️ Edit these in <b>zwin-config.js</b> — everything updates everywhere instantly.</div>
-    <div class="sec">Coin economy (live from config)</div>
+    <div class="sec">GOLD pass (live from config)</div>
     <div class="card small" id="econList"></div>
     <div class="sec">Danger zone</div>
     <div class="card" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
@@ -126,7 +125,7 @@ tr:last-child td{border-bottom:none}
 <script>
 const $=id=>document.getElementById(id);
 let DB=null, DEMO=false, D={};
-const C=ZWIN_CONFIG.coins;
+const G=ZWIN_CONFIG.gold;
 function toast(m,k){const d=document.createElement('div');d.className='toast';d.textContent=m;$('toasts').appendChild(d);setTimeout(()=>d.remove(),2600)}
 function fmt(n){return `${(+n).toFixed(0)} DH`}
 function ref(p){return DB.ref('wasla_dating/'+p)} // matches firebase-rules.json root
@@ -170,7 +169,7 @@ function boot(){
   DB=firebase.database();
   DB.ref('.info/connected').on('value',s=>{$('connState').textContent=s.val()?'🟢 live':'🔴 offline'});
   // 🔐 read pieces separately — locked rules don't allow root reads
-  ['users','presence','matches','chats','orders','giftsFor','reports','wallets','verifyReq','photos','verified'].forEach(k=>{
+  ['users','presence','matches','chats','orders','reports','gold','verifyReq','photos','verified'].forEach(k=>{
     ref(k).on('value',s=>{ D[k]=s.val()||{}; paintAll(); });
   });
 }
@@ -181,14 +180,14 @@ function paintAll(){
   const msgs=Object.values(D.chats||{}).reduce((a,c)=>a+Object.keys(c||{}).length,0);
   // orders are nested: orders/{uid}/{oid} — flatten for display
   const orders=Object.entries(D.orders||{}).flatMap(([uid,os])=>Object.entries(os||{}).map(([oid,o])=>[oid,{...o,uid}]));
-  const gifts=Object.values(D.giftsFor||{}).reduce((a,m)=>a+Object.values(m||{}).reduce((x,g)=>x+(g.coins||0),0),0);
+  const goldCnt=Object.keys(D.gold||{}).length; // giftsFor retired with the coin era
   const rev=orders.filter(([k,o])=>o.status==='approved').reduce((a,[k,o])=>a+(+o.price||0),0);
   const pendOr=orders.filter(([k,o])=>o.status==='pending');
   const reports=Object.entries(D.reports||{});
   $('topRev').textContent=fmt(rev);
   $('kpis').innerHTML=[
     ['👥 Users',users.length],['🟢 Online now',pres],['💘 Matches',matches],
-    ['💬 Messages',msgs],['🌹 Coins gifted',gifts.toLocaleString()+' 🪙'],
+    ['💬 Messages',msgs],['👑 GOLD members',goldCnt],
     ['💰 Coin revenue',fmt(rev),'grn'],['⏳ Pending orders',pendOr.length,'wrn'],['🛡️ Reports',reports.length,reports.length?'wrn':'']
   ].map(([l,v,c])=>`<div class="kpi"><div class="in"><b class="${c||''}">${v}</b><span>${l}</span></div></div>`).join('');
   $('cntOr').textContent=pendOr.length?`(${pendOr.length})`:'';
@@ -196,7 +195,7 @@ function paintAll(){
   paintVf();
   // activity = latest 40 things across orders/matches
   const acts=[
-    ...orders.map(([k,o])=>({ts:o.ts,txt:`🪙 Coin order · ${o.name} · ${o.coins} 🪙 / ${o.price} DH · <span class="badge ${o.status==='pending'?'b-live':o.status==='approved'?'b-done':'b-x'}">${o.status}</span>`})),
+    ...orders.map(([k,o])=>({ts:o.ts,txt:`👑 GOLD pass · ${o.name} · ${o.price} DH · <span class="badge ${o.status==='pending'?'b-live':o.status==='approved'?'b-done':'b-x'}">${o.status}</span>`})),
     ...Object.entries(D.matches||{}).map(([k,m])=>({ts:m.ts,txt:`💘 New match created`})),
     ...reports.map(([k,r])=>({ts:r.ts,txt:`🛡️ Report filed`}))
   ].sort((a,b)=>b.ts-a.ts).slice(0,40);
@@ -205,18 +204,18 @@ function paintAll(){
 }
 function paintOr(pend,all){
   const rows=all.sort((a,b)=>b[1].ts-a[1].ts).slice(0,40);
-  $('tblOr').innerHTML='<tbody>'+(rows.length?`<tr><th>Ref</th><th>User</th><th>Pack</th><th>Amount</th><th>Status</th><th></th></tr>`+
+  $('tblOr').innerHTML='<tbody>'+(rows.length?`<tr><th>Ref</th><th>User</th><th>Pass</th><th>Amount</th><th>Status</th><th></th></tr>`+
    rows.map(([id,o])=>`<tr><td class="tiny">${o.ref}<div class="mut tiny">${ts(o.ts)}</div></td>
-    <td>${o.name}</td><td>${o.coins} 🪙</td><td><b>${fmt(o.price)}</b></td>
+    <td>${o.name}</td><td>👑 GOLD</td><td><b>${fmt(o.price)}</b></td>
     <td><span class="badge ${o.status==='pending'?'b-live':o.status==='approved'?'b-done':'b-x'}">${o.status}</span></td>
-    <td style="text-align:end">${o.status==='pending'?`<button class="btn btn-g" onclick="approve('${id}','${o.uid}')">✓ Credit coins</button> <button class="btn btn-r" onclick="reject('${id}','${o.uid}')">✗</button>`:''}</td></tr>`).join('')
-   :'<tr><td class="mut">No coin orders yet.</td></tr>')+'</tbody>';
+    <td style="text-align:end">${o.status==='pending'?`<button class="btn btn-g" onclick="approve('${id}','${o.uid}')">✓ Activate GOLD</button> <button class="btn btn-r" onclick="reject('${id}','${o.uid}')">✗</button>`:''}</td></tr>`).join('')
+   :'<tr><td class="mut">No GOLD orders yet.</td></tr>')+'</tbody>';
 }
 function approve(id,ouid){
   const o=(D.orders||{})[ouid]?.[id]; if(!o||o.status!=='pending')return;
   ref('orders/'+ouid+'/'+id).update({status:'approved',handledAt:Date.now()});
-  ref('wallets/'+ouid+'/coins').transaction(v=>+(((+v||0)+o.coins).toFixed(2)));
-  toast(`+${o.coins} 🪙 credited to ${o.name} — their app updates instantly`);
+  ref('gold/'+ouid).set({at:Date.now(),by:'admin',price:o.price||0,ref:o.ref||''});
+  toast(`👑 GOLD activated for ${o.name} — their app unlocks instantly`);
 }
 function reject(id,ouid){ ref('orders/'+ouid+'/'+id).update({status:'rejected'}); toast('Rejected'); }
 function paintRp(rows){
@@ -243,7 +242,7 @@ function paintVf(){
         <div style="flex:1;text-align:center"><div class="mut tiny" style="font-weight:800">SELFIE ✌️</div><img src="${r.img}" style="width:100%;border-radius:12px;max-height:300px;object-fit:cover"></div>
         <div style="flex:1;text-align:center"><div class="mut tiny" style="font-weight:800">PROFILE PHOTO</div>${ph?`<img src="${ph}" style="width:100%;border-radius:12px;max-height:300px;object-fit:cover">`:'<div class="mut" style="padding:30px 0">no photo yet</div>'}</div>
       </div>
-      <button class="btn btn-g" onclick="verifyUser('${id}')">✅ Verify (+30 🪙 reward)</button>
+      <button class="btn btn-g" onclick="verifyUser('${id}')">✅ Verify (blue badge)</button>
       <div style="height:6px"></div>
       <button class="btn btn-r" onclick="ref('verifyReq/${id}').remove();toast('Rejected — user can retry with a clearer selfie')">❌ Reject</button>
     </div>`;}).join(''):'<div class="card mut">No pending verifications ✅ all clear!</div>';
@@ -251,14 +250,13 @@ function paintVf(){
 function verifyUser(id){
   ref('verified/'+id).set({at:Date.now(),by:'admin'});
   ref('verifyReq/'+id).remove();
-  ref('wallets/'+id+'/coins').transaction(v=>+(((+v||0)+30).toFixed(2)));
-  toast('✅ Verified — badge live + 30 🪙 sent');
+  toast('✅ Verified — badge live');
 }
 function paintUs(rows){
-  $('tblUs').innerHTML='<tbody>'+(rows.length?`<tr><th>User</th><th>City</th><th>Coins</th><th>Last seen</th></tr>`+
+  $('tblUs').innerHTML='<tbody>'+(rows.length?`<tr><th>User</th><th>City</th><th>Plan</th><th>Last seen</th></tr>`+
    rows.sort((a,b)=>(b[1].lastSeen||0)-(a[1].lastSeen||0)).slice(0,50).map(([id,u])=>`<tr>
     <td class="small"><b>${u.em||'💛'} ${u.name||'?'}</b> <span class="mut tiny">${u.age||''} · ${u.g==='w'?'♀':'♂'}</span></td>
-    <td class="small">${u.city||'—'}</td><td><b>${(((D.wallets||{})[id]||{}).coins||0).toFixed(0)} 🪙</b></td>
+    <td class="small">${u.city||'—'}</td><td><b>${(D.gold||{})[id]?'👑 GOLD':'free'}</b></td>
     <td class="mut tiny">${ts(u.lastSeen)}</td></tr>`).join('')
    :'<tr><td class="mut">No users yet — share the app link!</td></tr>')+'</tbody>';
 }
@@ -269,12 +267,10 @@ function paintBank(){
 }
 function paintEcon(){
   $('econList').innerHTML=[
-    ['Welcome bonus',C.welcomeBonus+' 🪙'],['Daily free',C.dailyFree+' 🪙 (+'+C.streakBonusPct+'%/streak)'],
-    ['Free messages per match',C.freeChatMsgs],['Message cost',C.msgCost+' 🪙'],
-    ['Super like',C.superLikeCost+' 🪙'],['Exclusive at gift ≥',C.giftExclusive+' 🪙'],
-    ['Reveal admirer',C.revealLikeCost+' 🪙'],['Boost 30 min',C.boostCost+' 🪙'],['Rewind',C.rewindCost+' 🪙']
+    ['GOLD price (one-time)',G.priceDH+' DH'],['Free likes per day',G.likesPerDay],
+    ['Free messages per match',G.msgsPerMatch],['Free Super Like per day',G.superPerDay],['GOLD Super Likes per day',G.superGold]
   ].map(([k,v])=>`<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line)"><span class="mut">${k}</span><b>${v}</b></div>`).join('')
-  + `<div class="mut tiny" style="margin-top:8px">Packs: ${ZWIN_CONFIG.packs.map(p=>p.coins+'🪙/'+p.priceDH+'DH').join(' · ')} — edit in zwin-config.js</div>`;
+  + `<div class="mut tiny" style="margin-top:8px">Edit in zwin-config.js — everything updates instantly.</div>`;
 }
 function wipe(){ if(!confirm('Really delete ALL data?'))return; ref('').remove().then(()=>toast('Database wiped')); }
 </script>

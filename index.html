@@ -4,12 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#fff7f9">
-<title>Zwin 🔥 — Dating, but warmer</title>
+<title>Melt — Love that melts doubts away</title>
 <link rel="manifest" href="manifest.json">
 <link rel="icon" type="image/png" href="icon.png">
 <link rel="apple-touch-icon" href="icon.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Zwin">
+<meta name="apple-mobile-web-app-title" content="Melt">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <script src="zwin-config.js"></script>
 <script src="img-pack-1.js"></script>
@@ -22,17 +22,17 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none}
 :root{
-  --bg:#fff7f9; --card:#ffffff; --soft:#fff0f3; --line:#f6dfe6;
-  --txt:#2b2230; --mut:#9c8a99; --grad:linear-gradient(45deg,#ff4e7e,#ff8a5c);
-  --pk:#ff4e7e; --or:#ff8a5c; --gold:#d9a520; --green:#2fbf71; --blue:#4aa8ff;
+  --bg:#100610; --card:#1b0d18; --soft:#2a1322; --line:#3a1f31;
+  --txt:#f8eef4; --mut:#b48ba2; --grad:linear-gradient(45deg,#ff5e8a,#ffb15c);
+  --pk:#ff5e8a; --or:#ffb15c; --gold:#f2c14e; --green:#2fbf71; --blue:#4aa8ff;
   --r:22px;
-  --shadow:0 12px 30px rgba(255,78,126,.16);
+  --shadow:0 14px 34px rgba(255,94,138,.22);
 }
 html,body{height:100%}
-body{background:#fdeef2;color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans Arabic","Helvetica Neue",Arial,sans-serif;display:flex;justify-content:center}
+body{background:#08030a;color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans Arabic","Helvetica Neue",Arial,sans-serif;display:flex;justify-content:center}
 button{font-family:inherit;border:none;cursor:pointer;background:none;color:inherit}
 input,textarea{font-family:inherit;color:inherit;outline:none}
-.app{position:relative;width:100%;max-width:440px;height:100dvh;background:var(--bg);overflow:hidden;display:flex;flex-direction:column;box-shadow:0 0 70px rgba(255,78,126,.25)}
+.app{position:relative;width:100%;max-width:440px;height:100dvh;background:var(--bg);overflow:hidden;display:flex;flex-direction:column;box-shadow:0 0 70px rgba(255,94,138,.30)}
 .scr{flex:1;min-height:0;overflow-y:auto;display:none;scrollbar-width:none;padding-bottom:calc(88px + env(safe-area-inset-bottom))}
 .scr::-webkit-scrollbar{display:none}
 .scr.on{display:block;animation:fi .25s ease}
@@ -234,6 +234,71 @@ textarea.inp{min-height:80px;resize:none}
 .mimg{display:inline-block;vertical-align:middle;object-fit:contain}
 .mslot{display:inline-flex;align-items:center;justify-content:center;line-height:1}
 .vchk{display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;border-radius:50%;background:linear-gradient(45deg,#4aa8ff,#2f8fe0);color:#fff;font-size:10px;font-weight:900;box-shadow:0 2px 6px rgba(74,168,255,.45);flex:none}
+
+/* ---------- MELT DARK-LUXURY SKIN (override layer — stays at the end) ---------- */
+html{background:#08030a}
+::selection{background:rgba(255,94,138,.35)}
+.chip{background:var(--card);border-color:var(--line);color:var(--txt);box-shadow:0 4px 14px rgba(0,0,0,.25)}
+.btn-line{background:var(--card);border-color:var(--line);color:var(--txt)}
+.btn-soft{background:var(--soft);color:var(--pk)}
+.card{background:var(--card);border-color:var(--line);box-shadow:0 10px 28px rgba(0,0,0,.35)}
+.tabbar{background:rgba(16,6,16,.9);border-top-color:var(--line);backdrop-filter:blur(18px)}
+.tab{color:var(--mut)}.tab.on{color:var(--pk)}.tab.on .ic{background:var(--soft)}
+.inp{background:var(--card);border-color:var(--line);color:var(--txt)}.inp::placeholder{color:var(--mut)}
+.seg button{background:var(--card);border-color:var(--line);color:var(--txt)}
+.tchip{background:var(--card);border-color:var(--line);color:var(--txt)}
+.tchip.on{background:var(--soft);border-color:var(--pk);color:var(--pk)}
+.emojipick{background:var(--card);border-color:var(--line)}
+.mnew .av div{background:var(--card)}
+.citem{border-bottom-color:var(--line)}.citem:active{background:var(--soft)}
+.chathead{background:var(--card);border-bottom-color:var(--line)}
+.chathead.excl{background:linear-gradient(90deg,#33240c,#1b0d18)}
+.bub.them{background:var(--card);border-color:var(--line);box-shadow:0 2px 10px rgba(0,0,0,.25)}
+.sys{background:var(--soft);color:var(--pk)}
+.chatfoot{background:var(--card);border-top-color:var(--line)}
+.chatrow input{background:var(--bg);border-color:var(--line);color:var(--txt)}
+.freebar .bar{background:var(--soft)}
+.msheet{background:var(--card);color:var(--txt)}
+.grab{background:var(--line)}
+.pack{background:var(--card);border-color:var(--line)}
+.pack.best{border-color:var(--pk);background:var(--soft)}
+.pack .pem{background:var(--soft)}
+.earnrow{border-bottom-color:var(--line)}
+.earnrow .ee{background:var(--soft);color:var(--pk)}
+.streakfire{background:linear-gradient(45deg,#3a2607,#241019);border-color:#7a5514;box-shadow:0 14px 34px rgba(242,193,78,.10)}
+.bankblock{background:#241a08;border-color:#7a5514;color:#e8cf9a}.bankblock b{color:var(--gold)}
+.copybtn{background:var(--card);border-color:var(--line);color:var(--gold)}
+.demobanner{background:#2a2008;border-color:#7a651a;color:#e8c96e}
+.pcard .pbody{background:var(--card)}
+.toggle{background:#3a2433}
+.phslot{background:var(--soft);border-color:#5a2f47;color:var(--pk)}
+.ice .chip{border-color:#5a2f47}
+.gift{background:linear-gradient(45deg,#33240c,#2a1220);border-color:#8a6a1a;color:#f6e3b0}
+.excl{background:linear-gradient(45deg,#4a3508,#33240a);border-color:#8a6a1a;color:#ffd98a}
+.dcard{background:#241019}
+.toast{background:#241019;border-inline-start-color:var(--pk);border:1px solid var(--line)}
+.typing{background:var(--card);border-color:var(--line)}
+.xbtn{background:var(--card);box-shadow:0 8px 22px rgba(0,0,0,.45);border:1px solid var(--line)}
+.boostbtn{background:rgba(27,13,24,.88);color:var(--txt);border:1px solid var(--line)}
+.cav img,.mov .duo .ma img{object-fit:cover}
+/* ---- GOLD system ---- */
+.icnsvg{display:inline-block;vertical-align:-3px}
+.gldtxt{color:var(--gold);font-weight:900}
+.goldlink{color:var(--gold);cursor:pointer}
+.goldpill{background:linear-gradient(45deg,#3a2607,#241a08);border:1px solid #7a5514;color:var(--gold)}
+.gcr{width:76px;height:76px;border-radius:26px;background:linear-gradient(45deg,#5a3c0a,#33240a);color:var(--gold);display:flex;align-items:center;justify-content:center;box-shadow:0 16px 40px rgba(242,193,78,.25);flex:none}
+.gcr.big{width:92px;height:92px;margin:0 auto;box-shadow:0 20px 52px rgba(242,193,78,.35)}
+.goldhero{align-items:center}
+.perkrow{display:flex;align-items:center;gap:12px;padding:11px 2px;border-bottom:1px solid var(--line);font-size:14px;font-weight:700}
+.perkrow:last-child{border:none}
+.perkrow>svg,.perkrow>.icnsvg{color:var(--gold);flex:none}
+.perkrow>span{flex:1}
+.goldcta{background:linear-gradient(45deg,#f2c14e,#ff9d5c);color:#2a1500;box-shadow:0 14px 34px rgba(242,178,78,.35);letter-spacing:.3px}
+.pkline{margin:6px 0 2px;color:var(--pk);font-weight:900;font-size:14px}
+.quota{padding:0 18px 6px;font-size:11.5px;font-weight:800;color:var(--mut);display:flex;justify-content:flex-end;gap:6px;align-items:center}
+.quota svg{color:var(--pk)}
+.streakfire .h1{color:var(--gold)}
+
 </style>
 </head>
 <body>
@@ -245,8 +310,8 @@ textarea.inp{min-height:80px;resize:none}
   <div class="ob">
     <div class="obstep">
       <div class="ob-logo"><div class="flame"><span class="mslot" data-m="flame" data-em="🔥" data-px="42">🔥</span></div></div>
-      <h1 class="h1" style="text-align:center" data-t="Real people only 💛">Real people only 💛</h1>
-      <div class="mut" style="text-align:center" data-t="One tap with your Google account to enter Zwin —<br>no bots, no fakes, no catfish farms.<br><b>We never see your emails or post anything.</b>">One tap with your Google account to enter Zwin —<br>no bots, no fakes, no catfish farms.<br><b>We never see your emails or post anything.</b></div>
+      <h1 class="h1" style="text-align:center" data-t="Real people only">Real people only</h1>
+      <div class="mut" style="text-align:center" data-t="One tap with your Google account to enter Melt —<br>no bots, no fakes, no catfish farms.<br><b>We never see your emails or post anything.</b>">One tap with your Google account to enter Melt —<br>no bots, no fakes, no catfish farms.<br><b>We never see your emails or post anything.</b></div>
       <button class="btn btn-line" id="btnGoogle" onclick="googleIn()" style="background:#fff;font-size:15.5px">
         <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.1H42V20H24v8h11.3c-1.6 4.7-6.1 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3l5.7-5.7C34 6.1 29.3 4 24 4 13 4 4 13 4 24s9 20 20 20 20-9 20-20c0-1.3-.1-2.7-.4-3.9z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.9 1.2 8 3l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.1H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C41 35.4 44 30.2 44 24c0-1.3-.1-2.7-.4-3.9z"/></svg>
         <span data-t="Continue with Google">Continue with Google</span>
@@ -269,14 +334,15 @@ textarea.inp{min-height:80px;resize:none}
 <!-- ==================== DISCOVER ==================== -->
 <section class="scr deckwrap" id="scr-discover" style="padding-bottom:calc(84px + env(safe-area-inset-bottom))">
   <div class="topbar">
-    <div class="logo"><div class="flame"><span class="mslot" data-m="flame" data-em="🔥" data-px="19">🔥</span></div><span class="grad-txt">Zwin</span></div>
+    <div class="logo"><div class="flame"><span class="mslot" data-m="flame" data-em="🔥" data-px="19">🔥</span></div><span class="grad-txt">Melt</span></div>
     <div style="display:flex;gap:8px">
-      <button class="chip" id="nearChip" style="font-size:11px;padding:9px 11px" onclick="toggleNear()" title="People near you">📍</button>
-      <button class="coinpill" onclick="showTab('wallet')"><span class="mslot" data-m="coin" data-em="🪙" data-px="16">🪙</span> <span id="coinTop">0</span></button>
+      <button class="chip" id="nearChip" style="font-size:11px;padding:9px 11px" onclick="toggleNear()" title="People near you"><svg class="icnsvg" width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.6a2.6 2.6 0 1 1 0-5.2 2.6 2.6 0 0 1 0 5.2z"/></svg></button>
+      <button class="coinpill goldpill" onclick="showTab('wallet')"><svg class="icnsvg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M2.7 6.8 7.6 10.4 12 4.6l4.4 5.8 4.9-3.6-1.6 10.2H4.3L2.7 6.8z"/></svg> <span id="goldTop">GOLD</span></button>
     </div>
   </div>
   <div id="demoSlot"></div>
   <div id="geoSlot"></div>
+  <div id="quotaSlot" class="quota"></div>
   <div class="deck" id="deck"></div>
   <div class="dactions">
     <button class="xbtn" onclick="rewind()" title="Rewind"><span class="mslot" data-m="rewind" data-em="↩️" data-px="24">↩️</span></button>
@@ -289,16 +355,16 @@ textarea.inp{min-height:80px;resize:none}
 
 <!-- ==================== LIKED YOU ==================== -->
 <section class="scr" id="scr-likes">
-  <div class="topbar"><div class="h2" data-t="They like you 😍">They like you 😍</div>
+  <div class="topbar"><div class="h2" data-t="They like you">They like you</div>
     <span class="pill" id="likeCnt">0</span></div>
-  <div class="mut small" style="padding:0 18px 6px" data-t="Someone here already chose you. Reveal to see who — super-likes are always visible 💙">Someone here already chose you. Reveal to see who — super-likes are always visible 💙</div>
+  <div class="mut small" style="padding:0 18px 6px" data-t="Someone here already chose you. GOLD members see everyone instantly.">Someone here already chose you. GOLD members see everyone instantly.</div>
   <div class="lkgrid" id="lkGrid"></div>
 </section>
 
 <!-- ==================== MATCHES ==================== -->
 <section class="scr" id="scr-matches">
-  <div class="topbar"><div class="h2" data-t="Matches 💘">Matches 💘</div>
-    <button class="pill" onclick="toast('Zwin is a kind place 💛 Harassment = ban')">🛡️ Safe</button></div>
+  <div class="topbar"><div class="h2" data-t="Matches">Matches</div>
+    <button class="pill" onclick="toast('Melt is a kind place. Harassment = ban')">Safe</button></div>
   <div class="sec mut tiny" style="padding:2px 18px;font-weight:900;letter-spacing:1px" data-t="NEW MATCHES">NEW MATCHES</div>
   <div class="mrow" id="mRow"></div>
   <div class="sec mut tiny" style="padding:8px 18px 2px;font-weight:900;letter-spacing:1px" data-t="CHATS">CHATS</div>
@@ -307,19 +373,19 @@ textarea.inp{min-height:80px;resize:none}
 
 <!-- ==================== WALLET ==================== -->
 <section class="scr" id="scr-wallet">
-  <div class="topbar"><div class="h2" data-t="Coins 🪙">Coins 🪙</div></div>
+  <div class="topbar"><div class="h2" data-t="Melt GOLD">Melt GOLD</div></div>
   <div id="walletWrap" style="padding:6px 18px 0"></div>
 </section>
 
 <!-- ==================== PROFILE ==================== -->
 <section class="scr" id="scr-profile">
-  <div class="topbar"><div class="h2" data-t="You ✨">You ✨</div><button class="pill" onclick="resetAll()" data-t="Log out">Log out</button></div>
+  <div class="topbar"><div class="h2" data-t="You">You</div><button class="pill" onclick="resetAll()" data-t="Log out">Log out</button></div>
   <div id="profileWrap"></div>
   <div style="padding:12px 18px">
-    <button class="btn btn-line" onclick="editProfile()" data-t="✏️ Edit profile">✏️ Edit profile</button>
+    <button class="btn btn-line" onclick="editProfile()" data-t="Edit profile">Edit profile</button>
     <div style="height:10px"></div>
-    <button class="btn btn-line" onclick="toast('Preview shared 💌')" data-t="👀 How others see you">👀 How others see you</button>
-    <div class="mut tiny" style="text-align:center;margin-top:16px" data-t="Zwin v1.0 · dating, but warmer 💛">Zwin v1.0 · dating, but warmer 💛</div>
+    <button class="btn btn-line" onclick="toast('Preview shared')" data-t="Preview my card">Preview my card</button>
+    <div class="mut tiny" style="text-align:center;margin-top:16px" data-t="Melt v1.0 · love that melts doubts away">Melt v1.0 · love that melts doubts away</div>
   </div>
 </section>
 
@@ -342,8 +408,7 @@ textarea.inp{min-height:80px;resize:none}
     <div class="chatfoot" style="border-top:1px solid var(--line)">
       <div class="freebar" id="freeBar"></div>
       <div class="chatrow">
-        <button class="giftbtn" onclick="openGift()" title="Gift coins"><span class="mslot" data-m="gift" data-em="🪙" data-px="24">🪙</span></button>
-        <input id="chatIn" data-tph="Say something nice… 💌" placeholder="Say something nice… 💌" onkeydown="if(event.key==='Enter')sendMsg()" oninput="typingNow()">
+        <input id="chatIn" data-tph="Say something nice…" placeholder="Say something nice…" onkeydown="if(event.key==='Enter')sendMsg()" oninput="typingNow()">
         <button class="sendbtn" onclick="sendMsg()"><span class="mslot" data-m="send" data-em="➤" data-px="19">➤</span></button>
       </div>
     </div>
@@ -357,9 +422,9 @@ textarea.inp{min-height:80px;resize:none}
   <div class="sub" id="matchSub"></div>
   <div class="duo" id="matchDuo"></div>
   <div style="height:16px"></div>
-  <button class="btn btn-grad" style="max-width:300px" onclick="matchSayHi()" data-t="💌 Say hi — first messages are FREE">💌 Say hi — first messages are FREE</button>
+  <button class="btn btn-grad" style="max-width:300px" onclick="matchSayHi()" data-t="Say hi — first messages are FREE">Say hi — first messages are FREE</button>
   <div style="height:8px"></div>
-  <button class="btn" style="max-width:300px;background:rgba(255,255,255,.12);color:#ffd7e3" onclick="$('matchOv').classList.remove('on')" data-t="Keep discovering 🔥">Keep discovering 🔥</button>
+  <button class="btn" style="max-width:300px;background:rgba(255,255,255,.12);color:#ffd7e3" onclick="$('matchOv').classList.remove('on')" data-t="Keep discovering">Keep discovering</button>
 </div>
 
 <!-- gift sheet -->
@@ -377,18 +442,94 @@ textarea.inp{min-height:80px;resize:none}
    ZWIN 🔥 — engine
    ================================================================ */
 const $=id=>document.getElementById(id);
-const C=ZWIN_CONFIG.coins;
+const G=ZWIN_CONFIG.gold; const C={freeChatMsgs:(G&&G.msgsPerMatch)||10}; // per-match free messages kept; coins are gone
 let DB=null, AUTH=null, DEMO=false;
 let uid=myUid();
 const L=load();
 function myUid(){let u=localStorage.getItem('zwin_uid');if(!u){u='u_'+Math.random().toString(36).slice(2,9)+Date.now().toString(36);localStorage.setItem('zwin_uid',u)}return u}
 function load(){try{return JSON.parse(localStorage.getItem('zwin_local'))||fresh()}catch(e){return fresh()}}
-function fresh(){return {me:null,coins:C.welcomeBonus,swiped:{},matches:[],chats:{},freeLeft:{},exclusive:{},likesYou:[],daily:{lastClaim:0,streak:0},gifts:{},boostUntil:0,rewinds:0,unread:{},pendingOrders:[],seen:{} } }
+function fresh(){return {me:null,gold:0,swiped:{},matches:[],chats:{},freeLeft:{},exclusive:{},likesYou:[],likesDay:{d:'',n:0},superDay:{d:'',n:0},boostDay:'',boostUntil:0,unread:{},pendingOrders:[],seen:{},gifts:{} } }
 function save(){localStorage.setItem('zwin_local',JSON.stringify(L));
-  // 🔒 server referee: the client NEVER writes coins — wallets/ vault is server-only
-  paintCoins();paintBadges()}
-function earnTap(t){ if(DEMO){ L.coins+=(t==='video'?10:15); save(); renderWallet(); toast('+'+(t==='video'?10:15)+' 🪙 (demo)'); return; }
-  ref('coinReq/'+uid).push({type:t,ts:Date.now()}); toast('⏳ The vault is checking your reward…'); }
+  paintGold();paintBadges()}
+
+/* ============ 🖤 MELT ICON ENGINE — inline SVG, zero emoji chrome */
+function IC(n,px){ const P={
+  crown:'M2.7 6.8 7.6 10.4 12 4.6l4.4 5.8 4.9-3.6-1.6 10.2H4.3L2.7 6.8z',
+  pin:'M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.6a2.6 2.6 0 1 1 0-5.2 2.6 2.6 0 0 1 0 5.2z',
+  lock:'M12 3a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2h-1V8a5 5 0 0 0-5-5zm-3 8V8a3 3 0 1 1 6 0v3H9z',
+  bell:'M12 2a6 6 0 0 0-6 6c0 4.42-1.5 5.9-2.05 6.86-.28.49.06 1.14.65 1.14h14.8c.59 0 .93-.65.65-1.14C19.5 13.9 18 12.42 18 8a6 6 0 0 0-6-6zm0 20a2.2 2.2 0 0 0 2.2-2.2H9.8A2.2 2.2 0 0 0 12 22z',
+  shield:'M12 2 4.5 4.8v6.1c0 4.9 3.2 9.5 7.5 11.1 4.3-1.6 7.5-6.2 7.5-11.1V4.8L12 2z',
+  chat:'M4 3h16a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H8.4L4.4 21a.9.9 0 0 1-1.4-.74V5a2 2 0 0 1 2-2z',
+  camera:'M9.2 4 8 6H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-4l-1.2-2H9.2zM12 9a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9z',
+  heart:'M12 21S3.6 15.5 3.6 9.8C3.6 6.7 5.9 4.5 8.6 4.5c1.5 0 2.8.75 3.4 1.9.6-1.15 1.9-1.9 3.4-1.9 2.7 0 5 2.2 5 5.3C20.4 15.5 12 21 12 21z',
+  spark:'M12 2l2.1 6.7L21 11l-6.9 2.3L12 20l-2.1-6.7L3 11l6.9-2.3L12 2z',
+  rew:'M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z',
+  check:'M9.55 16.7 4.85 12l-1.41 1.41 6.11 6.11L20.6 8.47l-1.41-1.41z',
+  globe:'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 2c1.62 2.05 2.55 4.9 2.55 8s-.93 5.95-2.55 8c-1.62-2.05-2.55-4.9-2.55-8S10.38 6.05 12 4zM4.3 11h15.4M4.3 15h15.4'
+}[n]||''; return '<svg class="icnsvg" width="'+(px||20)+'" height="'+(px||20)+'" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="'+P+'"/></svg>'; }
+function shop(){ openGold(); } // legacy shim
+
+/* ============ 👑 MELT GOLD — one-time pass, unlimited forever (no coins) */
+function paintGold(){ const el=$('goldTop'); if(el)el.textContent=L.gold?T('GOLD'):T('GO GOLD'); }
+function goldPerks(){ return [
+  [T('Unlimited likes — swipe all day'),'heart'],
+  [T('Unlimited chat with every match'),'chat'],
+  [T('See everyone who likes you'),'spark'],
+  [G.superGold+' '+T('Super Likes every day'),'spark'],
+  [T('Rewind your last swipe'),'rew'],
+  [T('1 free Boost every day'),'spark']]; }
+function paintLikesPill(){ const el=$('quotaSlot'); if(!el)return;
+  if(!L.me||!L.me.name){ el.innerHTML=''; return; }
+  if(L.gold){ el.innerHTML='<span class="gldtxt">'+IC('crown',13)+' GOLD · '+T('unlimited')+'</span>'; return; }
+  const today=new Date().toDateString(); const n=L.likesDay.d===today?(L.likesDay.n||0):0;
+  const left=Math.max(0,G.likesPerDay-n);
+  el.innerHTML=IC('heart',13)+' <b>'+left+'</b> '+T('likes left today')+' · <span class="goldlink" onclick="openGold(\'likes\')">'+T('GO GOLD')+'</span>'; }
+function openGold(why){
+  const W={likes:T('Your free likes for today are used'),chat:T('Your free messages with this match are used'),
+    super:T('Your free Super Like for today is used'),rewind:T('Rewind is a GOLD superpower'),
+    boost:T('Boost is a GOLD superpower'),likesYou:T('GOLD members see instantly who likes them')}[why]||'';
+  $('shopBody').innerHTML='<div style="text-align:center;padding:6px 0 4px">'
+    +'<div class="gcr big">'+IC('crown',54)+'</div>'
+    +'<div class="h1" style="margin-top:8px">Melt GOLD</div>'
+    +(W?'<div class="pkline">'+W+'</div>':'')
+    +'<div class="mut small" style="margin-top:4px">'+T('Tomorrow you get fresh free likes after midnight.<br>GOLD members never wait.')+'</div></div>'
+    +'<div class="card" style="margin:12px 0">'
+    +goldPerks().map(p=>'<div class="perkrow">'+IC(p[1],18)+'<span>'+p[0]+'</span><span class="vchk" style="background:linear-gradient(45deg,#f2c14e,#c98a12)">'+IC('check',11)+'</span></div>').join('')
+    +'</div>'
+    +'<button class="btn btn-grad goldcta" onclick="buyGold()">'+IC('crown',18)+' '+T('Unlock GOLD')+' · '+G.priceDH+' DH — '+T('once, forever')+'</button>'
+    +'<div style="height:8px"></div>'
+    +'<button class="btn btn-line" onclick="hide(\'shopSheet\')">'+T('Maybe tomorrow')+'</button>';
+  show('shopSheet');
+}
+function buyGold(){
+  hide('shopSheet');
+  const c=ZWIN_CONFIG.company; const refid='MLT-'+uid.slice(-4).toUpperCase()+'-'+Date.now().toString(36).toUpperCase();
+  $('bankBody').innerHTML='<div style="text-align:center;padding:4px 0 8px"><div class="gcr">'+IC('crown',40)+'</div>'
+    +'<div class="h2" style="margin-top:8px">Melt GOLD — '+G.priceDH+' DH</div>'
+    +'<div class="mut small">'+T('One-time bank transfer — unlimited forever')+'</div></div>'
+    +'<div class="bankblock">'+T('Transfer details')+'<br>'
+    +T('Bank')+': <b>'+c.bank+'</b><br>'
+    +T('Beneficiary')+': <b>'+c.accountName+'</b><br>'
+    +'RIB: <b>'+c.rib+'</b> <button class="copybtn" onclick="navigator.clipboard&&navigator.clipboard.writeText(\''+c.rib.replace(/\s/g,'')+'\');toast(\'RIB copied\')">'+T('COPY')+'</button><br>'
+    +'IBAN: '+c.iban+'<br>SWIFT: '+c.swift+'<br>'
+    +'<span class="mut" style="font-size:11px">'+T('Reference')+': <b>'+refid+'</b></span></div>'
+    +(DEMO?'<div class="demobanner" style="margin:0 0 10px">'+T('Demo mode: GOLD activates instantly.')+'</div>'
+         :'<div class="mut small">'+T('Transfer from your bank app, then tap below. We validate (usually under 1h) and GOLD turns on by itself.')+'</div>')
+    +'<button class="btn btn-grad goldcta" style="margin-top:10px" onclick="confirmGold(\''+refid+'\')">'+(DEMO?T('Activate (demo)'):T('I have transferred'))+'</button>'
+    +'<div style="height:8px"></div>'
+    +'<button class="btn btn-line" onclick="hide(\'bankSheet\')">'+T('Not now')+'</button>';
+  show('bankSheet');
+}
+function confirmGold(refid){
+  hide('bankSheet');
+  if(DEMO){ L.gold=1; save(); paintGold(); paintLikesPill(); toast('👑 '+T('GOLD active — enjoy unlimited')); renderWallet(); return; }
+  const order={uid,name:L.me.name,type:'gold',price:G.priceDH,status:'pending',ref:refid,ts:Date.now()};
+  const k=ref('orders/'+uid).push(order).key;
+  L.pendingOrders.push({oid:k,ref:refid}); save();
+  toast('⏳ '+T('Order sent — GOLD turns on after validation'));
+  renderWallet();
+}
+
 function toast(m){const d=document.createElement('div');d.className='toast';d.textContent=m;$('toasts').appendChild(d);setTimeout(()=>{d.style.opacity='0';d.style.transition='opacity .3s';setTimeout(()=>d.remove(),300)},2700)}
 function show(id){$(id).classList.add('on')} function hide(id){$(id).classList.remove('on')}
 function grad(i){const G=[['#ffd1e3','#ffb3c7'],['#ffe3c2','#ffc09e'],['#d7f0ff','#b3dcff'],['#e7ffd9','#c3f5b0'],['#f5e0ff','#e6c2ff'],['#fff3c9','#ffe48a'],['#d9fff4','#a9f2df'],['#ffe0e0','#ffb0b0']];const g=G[i%G.length];return `linear-gradient(160deg,${g[0]},${g[1]})`}
@@ -443,7 +584,7 @@ function onAuthed(u){
   if(AUTHED)return; AUTHED=true;
   uid=u.uid; // identity IS the verified phone user from now on
   $('scr-auth').classList.remove('on'); $('tabbar').style.display='flex';
-  toast('✅ Verified — real people only in here 💛');
+  toast('Welcome in — real people only');
   initPush();
   DB.ref('.info/connected').on('value',s=>{ if(s.val()&&L.me){heartbeat(); syncMe(); syncBadges();} });
   if(L.me){ showTab('discover'); loadDeck(); }
@@ -494,14 +635,11 @@ async function syncMe(){
     if(arr.length&&!(L.me.photos||[]).length){ L.me.photos=arr; delete photoCache[uid]; save();
       if(R.tab==='profile')renderProfile(); }
   }).catch(()=>{});
-  // 🔒 wallet = server vault — only Cloud Functions + your admin dashboard can change it
-  ref('wallets/'+uid+'/coins').on('value',s=>{ const v=s.val(); if(v!==null&&v!==L.coins){L.coins=v;save();} });
-  // referee receipts → toasts (claim results, failed spends, delivered gifts, undo notices)
-  ref('receipts/'+uid).limitToLast(5).on('child_added',s=>{ const r=s.val(); if(!r||L.seen['rc'+s.key])return; L.seen['rc'+s.key]=1;
-    if(r.daily){ L.daily={lastClaim:r.daily.lastClaim,streak:r.daily.streak}; }
-    if(r.undo==='reveal'&&r.peer){ const lk=L.likesYou.find(x=>x.uid===r.peer); if(lk)lk.seen=0; }
-    save(); if(r.ts>Date.now()-60000)toast(r.text||'🪙 Wallet updated');
-    if(R.tab==='wallet')renderWallet(); if(R.tab==='likes')renderLikes(); });
+  // 👑 GOLD pass — admin flips it after validating your bank transfer
+  ref('gold/'+uid).on('value',s=>{ const v=!!s.val();
+    if(v&&!L.gold){ L.gold=1; save(); paintGold(); paintLikesPill(); toast('👑 '+T('You are GOLD — everything unlocked'));
+      if(R.tab==='wallet')renderWallet(); }
+    else if(!v&&L.gold){ L.gold=0; save(); paintGold(); paintLikesPill(); } });
   // ✅ verified badge live + review outcome
   ref('verified/'+uid).on('value',s=>{ const v=!!s.val();
     if(v&&!L.verified){ L.verified=1; L.verifyPending=0; save();
@@ -521,23 +659,12 @@ async function syncMe(){
       }).catch(()=>{});
     }
   });
-  // gifts live
-  ref('giftsFor/'+uid).limitToLast(20).on('child_added',s=>{
-    const g=s.val(); if(!g)return; const k=s.key; if(L.seen[k])return; L.seen[k]=1;
-    if(DEMO){ L.coins+=g.coins; } // live: the referee transfers the coins vault→vault
-    save();
-    toast(`🌹 ${g.fromName} gifted you ${g.coins} 🪙 — high interest!`);
-    const mm=L.matches.find(m=>m.peer===g.from);
-    if(mm){ addMsg(mm.mid,'gift',{coins:g.coins,fromName:g.fromName},false);
-      if(g.coins>=C.giftExclusive){L.exclusive[mm.mid]=1;}
-      save(); renderChatList(); }
-  });
   // orders
   // 🔐 orders live under MY OWN node — no one else can touch them
   ref('orders/'+uid).limitToLast(5).on('child_changed',s=>{
     const o=s.val(); if(o&&o.status==='approved'&&!L.seen['od'+s.key]){ L.seen['od'+s.key]=1;
       L.pendingOrders=L.pendingOrders.filter(p=>p.oid!==s.key);
-      toast(`🪙 +${o.coins} coins credited! Enjoy 💛`); save(); }
+      toast('👑 '+T('Payment validated — welcome to GOLD')); save(); }
   });
 }
 async function cloudDiscover(){
@@ -630,9 +757,7 @@ function pickPhoto(){
       if(L.me.photos.length>=maxPh)L.me.photos.pop();
       L.me.photos.unshift(url); delete photoCache[uid];
       save(); await syncPhotos();
-      if(!L.photoBonusDone){ L.photoBonusDone=1; save();
-        if(DEMO){ L.coins+=25; save(); toast('🎁 +25 🪙 — photo quest complete!'); }
-        else ref('coinReq/'+uid).push({type:'photoBonus',ts:Date.now()}); }
+      if(!L.photoBonusDone){ L.photoBonusDone=1; save(); }
       toast('📸 Photo live — profiles with photos match 3× more 💛');
       renderProfile();
     }catch(e){ toast('That photo didn’t work — try another one'); }
@@ -653,8 +778,6 @@ function hydrateDeckPhotos(){ /* photos only for visible cards — bandwidth sta
     ensurePhoto(pr,url=>{ if(!url)return; const el=card.querySelector('.ph'); if(el&&!el.querySelector('img'))putImg(el,url); });
   });
 }
-function photoQuestRow(){ if(!L.me)return''; if((L.me.photos||[]).length||L.photoBonusDone)return'';
-  return `<button class="earnrow" onclick="showTab('profile');toast('📸 Tap ＋ to add your first photo — +25 🪙 waiting')"><div class="ee">📸</div><div style="flex:1"><b class="small">Add your first photo</b><div class="mut tiny">+25 🪙 one-time gift</div></div><span class="pill">Add</span></button>`; }
 
 /* ============ 📲 PUSH NOTIFICATIONS ============ */
 /* Two layers, both FREE: in-app toasts (always) + lock-screen FCM (needs vapidKey + SW file). */
@@ -678,7 +801,7 @@ async function startPush(announce){
     if(!MSG)MSG=firebase.messaging();
     const tok=await MSG.getToken({vapidKey:vk,serviceWorkerRegistration:reg});
     if(tok&&L.pushTok!==tok){ L.pushTok=tok; ref('fcmTokens/'+uid).push(tok); }
-    MSG.onMessage(pl=>{ const n=(pl&&pl.notification)||{}; toast('🔔 '+((n.title?n.title+' — ':'')+(n.body||'New on Zwin 💛'))); });
+    MSG.onMessage(pl=>{ const n=(pl&&pl.notification)||{}; toast('🔔 '+((n.title?n.title+' — ':'')+(n.body||'New on Melt 💛'))); });
     L.pushOn=1; save();
     if(announce){ toast('🔔 Lock-screen alerts ON — you’ll know the second someone likes you 💛'); }
     renderProfile();
@@ -689,18 +812,18 @@ async function startPush(announce){
 const I18N={
 fr:{
 'Discover':'Découvrir','Liked you':'Ils t\'aiment','Matches':'Matchs','Coins':'Pièces','Me':'Moi',
+'GOLD':'GOLD','Melt GOLD':'Melt GOLD','GO GOLD':'Passe GOLD','They like you':'Elles t\'aiment','You':'Toi','Real people only':'Uniquement de vraies personnes','Say hi — first messages are FREE':'Dis bonjour — premiers messages GRATUITS','Keep discovering':'Continuer à découvrir','Say something nice…':'Dis quelque chose de gentil…','Edit profile':'Modifier le profil','Preview my card':'Aperçu de ma carte','My photos':'Mes photos','likes left today':'likes restants aujourd\'hui','Free likes':'Likes gratuits','Likes today':'Likes aujourd\'hui','Matches':'Matchs',
 'Real people only 💛':'Uniquement de vraies personnes 💛',
-'One tap with your Google account to enter Zwin —<br>no bots, no fakes, no catfish farms.<br><b>We never see your emails or post anything.</b>':'Un tap avec ton compte Google pour entrer —<br>pas de bots, pas de faux profils.<br><b>On ne lit jamais tes e-mails.</b>',
+'One tap with your Google account to enter Melt —<br>no bots, no fakes, no catfish farms.<br><b>We never see your emails or post anything.</b>':'Un tap avec ton compte Google pour entrer —<br>pas de bots, pas de faux profils.<br><b>On ne lit jamais tes e-mails.</b>',
 'Continue with Google':'Continuer avec Google',
 'Sign-in secured by Google · your identity stays private · 18+':'Connexion sécurisée par Google · identité privée · 18+',
 'They like you 😍':'Ils t\'adorent 😍',
 'Someone here already chose you. Reveal to see who — super-likes are always visible 💙':'Quelqu\'un t\'a déjà choisi(e). Révèle pour voir — les super-likes restent visibles 💙',
 'Matches 💘':'Matchs 💘','NEW MATCHES':'NOUVEAUX MATCHS','CHATS':'DISCUSSIONS',
-'Coins 🪙':'Pièces 🪙','You ✨':'Toi ✨','Log out':'Déconnexion',
+'Log out':'Déconnexion',
 '✏️ Edit profile':'✏️ Modifier le profil','👀 How others see you':'👀 Comment on te voit',
-'Zwin v1.0 · dating, but warmer 💛':'Zwin v1.0 · l\'amour, en plus chaud 💛',
+'Melt v1.0 · dating, but warmer 💛':'Melt v1.0 · l\'amour, en plus chaud 💛',
 'Say something nice… 💌':'Dis quelque chose de gentil… 💌',
-'🪙 Gift coins — show real interest':'🪙 Offrir des pièces — montre ton sérieux',
 'It’s a Match!':'C\'est un Match !',
 '💌 Say hi — first messages are FREE':'💌 Dis bonjour — premiers messages GRATUITS',
 'Keep discovering 🔥':'Continuer à découvrir 🔥',
@@ -711,7 +834,7 @@ fr:{
 'EARN FREE COINS':'GAGNE DES PIÈCES','BUY COINS':'ACHETER DES PIÈCES',
 'My photos 📸':'Mes photos 📸',
 'Real photos get ~3× more matches 💛 Auto-compressed & synced — free.':'Les vraies photos = ~3× plus de matchs 💛 Compressées & synchronisées — gratuit.',
-'My stats this week':'Mes stats cette semaine','Admirers':'Admirateurs','🪙 gifted':'🪙 offerts','Streak 🔥':'Série 🔥',
+'My stats this week':'Mes stats cette semaine','Admirers':'Admirateurs',
 'VERIFIED badge':'Badge VÉRIFIÉ','Real distance (GPS)':'Distance réelle (GPS)',
 'Lock-screen alerts':'Alertes écran verrouillé','In-app notifications':'Notifications dans l\'app',
 'Safety center':'Centre de sécurité','Help & support':'Aide & support','Language':'Langue',
@@ -721,18 +844,18 @@ fr:{
 },
 ar:{
 'Discover':'اكتشف','Liked you':'عجبتهم','Matches':'توافقات','Coins':'كوينز','Me':'أنا',
+'GOLD':'جولد','Melt GOLD':'ميلت جولد','GO GOLD':'دوز جولد','They like you':'بغاوك','You':'نتا','Real people only':'غير ناس حقيقيين','Say hi — first messages are FREE':'سلام — أول رايسالات بالبلاش','Keep discovering':'كمل كنكتاشف','Say something nice…':'قول شي حاجة زوينة…','Edit profile':'بدّل البروفايل','Preview my card':'شوف كارتك','My photos':'الصور ديالي','likes left today':'لايكات باقين اليوم','Free likes':'لايكات بلاص','Likes today':'لايكات اليوم',
 'Real people only 💛':'غير ناس حقيقيين 💛',
-'One tap with your Google account to enter Zwin —<br>no bots, no fakes, no catfish farms.<br><b>We never see your emails or post anything.</b>':'دخل بضغطة وحدة بحساب Google ديالك —<br>بلا بوتات، بلا بروفايلات مزورة.<br><b>ما كنشوفو إيميلاتك أبدا.</b>',
+'One tap with your Google account to enter Melt —<br>no bots, no fakes, no catfish farms.<br><b>We never see your emails or post anything.</b>':'دخل بضغطة وحدة بحساب Google ديالك —<br>بلا بوتات، بلا بروفايلات مزورة.<br><b>ما كنشوفو إيميلاتك أبدا.</b>',
 'Continue with Google':'تواصل مع Google',
 'Sign-in secured by Google · your identity stays private · 18+':'تسجيل آمن عبر Google · هويتك خاصة · +18',
 'They like you 😍':'عجبتييهم 😍',
 'Someone here already chose you. Reveal to see who — super-likes are always visible 💙':'شي حد هنا اختارك ديجا. اكشف باش تعرف شكون — السوبر لايكات دائما ظاهرين 💙',
 'Matches 💘':'توافقات 💘','NEW MATCHES':'توافقات جداد','CHATS':'مراسلات',
-'Coins 🪙':'كوينز 🪙','You ✨':'نتا ✨','Log out':'خرج',
+'Log out':'خرج',
 '✏️ Edit profile':'✏️ بدّل البروفايل','👀 How others see you':'👀 كيف كيبانوك الناس',
-'Zwin v1.0 · dating, but warmer 💛':'Zwin v1.0 · ديتينغ بقلب 💛',
+'Melt v1.0 · dating, but warmer 💛':'Melt v1.0 · ديتينغ بقلب 💛',
 'Say something nice… 💌':'قول شي حاجة زوينة… 💌',
-'🪙 Gift coins — show real interest':'🪙 صيفط كوينز — بيّن الاهتمام ديالك',
 'It’s a Match!':'توافقتو!',
 '💌 Say hi — first messages are FREE':'💌 سلام معاه — أول مساجات بالبلاش',
 'Keep discovering 🔥':'كمل كنكتاشف 🔥',
@@ -743,7 +866,7 @@ ar:{
 'EARN FREE COINS':'ربح كوينز بالبلاص','BUY COINS':'شري الكوينز',
 'My photos 📸':'الصور ديالي 📸',
 'Real photos get ~3× more matches 💛 Auto-compressed & synced — free.':'الصور الحقيقية كتزيد التوافق 3× 💛 كيتضغطو وحداتهم بالبلاش.',
-'My stats this week':'إحصائياتي هاد السيمانة','Admirers':'معجبين','🪙 gifted':'🪙 مهداة','Streak 🔥':'سلسلة 🔥',
+'My stats this week':'إحصائياتي هاد السيمانة','Admirers':'معجبين',
 'VERIFIED badge':'علامة التحقق','Real distance (GPS)':'المسافة الحقيقية',
 'Lock-screen alerts':'إشعارات الشاشة المقفولة','In-app notifications':'إشعارات داخل التطبيق',
 'Safety center':'مركز الأمان','Help & support':'المساعدة','Language':'اللغة',
@@ -769,7 +892,7 @@ function startVerify(){
   $('genBody').innerHTML=`<div style="text-align:center;padding:6px 0 12px">
     <div style="font-size:50px">🤳✌️</div>
     <div class="h2">Get the blue check ✅</div>
-    <div class="mut small" style="margin-top:6px;line-height:1.7">Take a selfie <b>right now</b> doing the ✌️ sign,<br>face clearly visible, no sunglasses.<br>Our team compares it with your profile photo<br>(kept private, deleted after review). Verified people<br>get the badge + <b>30 🪙 reward</b> — and real trust.</div></div>
+    <div class="mut small" style="margin-top:6px;line-height:1.7">Take a selfie <b>right now</b> doing the ✌️ sign,<br>face clearly visible, no sunglasses.<br>Our team compares it with your profile photo<br>(kept private, deleted after review). Verified people<br>get the badge — and real trust.</div></div>
     <button class="btn btn-grad" onclick="pickVerifySelfie()">🤳 Take the selfie</button>
     <div style="height:8px"></div>
     <button class="btn btn-line" onclick="hide('genSheet')">Later</button>`;
@@ -796,7 +919,7 @@ function distKm(la1,lo1,la2,lo2){ const R=6371,dLa=(la2-la1)*Math.PI/180,dLo=(lo
   return Math.max(1,Math.round(R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a)))); }
 function paintGeoSlot(){ const el=$('geoSlot'); if(!el)return;
   if(L.geo||L.geoDenied){ el.innerHTML=''; return; }
-  el.innerHTML=`<div class="demobanner" style="background:#eaf6ff;border-color:#cfe6ff;color:#1d6fb8;display:flex;align-items:center;gap:8px;margin:0 18px 6px">📍 <span style="flex:1">See <b>real distances</b>? Your exact spot is never stored — rounded to ~2 km only.</span><button class="pill" style="background:#dff1ff;color:#1d6fb8" onclick="askGeo()">Turn on</button></div>`; }
+  el.innerHTML=`<div class="demobanner" style="background:#0d2233;border-color:#164a6e;color:#7ec3ff;display:flex;align-items:center;gap:8px;margin:0 18px 6px">${IC('pin',15)} <span style="flex:1">See <b>real distances</b>? Your exact spot is never stored — rounded to ~2 km only.</span><button class="pill" style="background:#123850;color:#9fd6ff" onclick="askGeo()">Turn on</button></div>`; }
 function askGeo(){
   if(!('geolocation' in navigator))return toast('This device has no GPS 😢');
   toast('📍 Locating you (approximate, private)…');
@@ -812,8 +935,8 @@ function toggleNear(){ L.nearOnly=!L.nearOnly; save(); paintNearChip();
   if(L.nearOnly&&!L.geo){ askGeo(); }
   else { toast(L.nearOnly?'📍 Near-you mode: your city + under 80 km first':'🌍 Showing everyone again'); R.cacheTs=0; loadDeck(); } }
 function paintNearChip(){ const b=$('nearChip'); if(!b)return;
-  if(L.nearOnly){ b.style.background='var(--grad)'; b.style.color='#fff'; b.innerHTML='📍 Near'; }
-  else { b.style.background=''; b.style.color=''; b.innerHTML='📍'; } }
+  if(L.nearOnly){ b.style.background='var(--grad)'; b.style.color='#fff'; b.innerHTML=IC('pin',13)+' Near'; }
+  else { b.style.background=''; b.style.color=''; b.innerHTML=IC('pin',15); } }
 
 /* ============ ONBOARDING ============ */
 const OB={step:0,data:{name:'',age:22,g:'',into:[],city:'Casablanca',bio:'',tags:[],em:'😊',gi:0}};
@@ -826,14 +949,14 @@ function paintOb(){
   const steps=[
    ()=>`<div class="obstep">
      <div class="ob-logo"><div class="flame"><span class="mslot" data-m="flame" data-em="🔥" data-px="42">🔥</span></div></div>
-     <h1 class="h1" style="text-align:center">Welcome to <span class="grad-txt">Zwin</span></h1>
-     <div class="mut" style="text-align:center">Dating, but warmer. Real chats, zero judgment,<br>and kindness that pays — literally 🪙</div>
-     <div class="card small" style="line-height:1.8">💌 <b>First ${C.freeChatMsgs} messages</b> with every match are free<br>
-     🪙 Daily <b>free coins</b> keep you chatting<br>
-     🌹 <b>Gift coins</b> to show someone they matter<br>
-     ✨ <b>Super likes</b> make sure they see you</div>
-     <button class="btn btn-line">🔞 I’m 18 or older — tap Next confirms</button>
-     <button class="btn btn-grad" onclick="obNext(1)">Create my profile 💛</button></div>`,
+     <h1 class="h1" style="text-align:center">Welcome to <span class="grad-txt">Melt</span></h1>
+     <div class="mut" style="text-align:center">Love that melts doubts away. Real chats, zero judgment.</div>
+     <div class="card small" style="line-height:1.8">• <b>20 free likes</b> every day, fresh after midnight<br>
+     • <b>First ${C.freeChatMsgs} messages</b> with every match are free<br>
+     • <b>Super Likes</b> make sure they see you first<br>
+     • <b>Melt GOLD</b> unlocks everything — once, forever</div>
+     <button class="btn btn-line">I’m 18 or older — tap Next confirms</button>
+     <button class="btn btn-grad" onclick="obNext(1)">Create my profile</button></div>`,
    ()=>`<div class="obstep">
      <div class="h2">First, the basics 💁</div>
      <input class="inp" id="obName" placeholder="Your first name" value="${d.name}" maxlength="16">
@@ -880,14 +1003,14 @@ async function obFinish(){
   OB.data.bio=$('obBio').value.trim()||'New here — say hi and surprise me 💛';
   if(OB.data.tags.length<2)return toast('Pick at least 2 interests ✨');
   L.me={...OB.data,uid}; L.createdAt=Date.now(); save();
-  toast(`Welcome, ${L.me.name} 💛 +${C.welcomeBonus} 🪙 bonus on the house!`);
+  toast(`Welcome, ${L.me.name} — may you find the one that melts you.`);
   if(!DEMO)syncMe();
   showTab('discover'); loadDeck();
 }
 function editProfile(){ OB.data={...L.me}; OB.step=1; paintOb(); showTab('onboard'); }
 
 /* ============ TABS ============ */
-const TABS=[['discover','🔥','Discover'],['likes','😍','Liked you'],['matches','💬','Matches'],['wallet','🪙','Coins'],['profile','✨','Me']];
+const TABS=[['discover','🔥','Discover'],['likes','😍','Liked you'],['matches','💬','Matches'],['wallet','👑','GOLD'],['profile','✨','Me']];
 function renderTabbar(){
   const unLikes=L.likesYou.filter(x=>!x.seen).length;
   const unChats=unreadTotal();
@@ -906,7 +1029,7 @@ function showTab(t){
   if(t==='wallet')renderWallet();
   if(t==='profile')renderProfile();
   if(t==='discover'){ $('demoSlot').innerHTML=DEMO?`<div class="demobanner">⚡ DEMO MODE — Firebase not set up yet (see README.md). Everyone here is a starter profile; connect the free cloud to meet real people.</div>`:'';
-    paintGeoSlot(); paintNearChip(); }
+    paintGeoSlot(); paintNearChip(); paintLikesPill(); }
 }
 function paintBadges(){renderTabbar(); if(R.tab==='matches')renderMatches();}
 
@@ -928,8 +1051,8 @@ function paintDeck(){
   if(!R.deck.length){
     dk.innerHTML=`<div class="deckempty"><div class="big">${MIMG('flame','🌅',72)}</div>
       <div class="h2">${T('That’s everyone nearby!')}</div>
-      <div class="mut small" style="max-width:270px">New hearts join Zwin every day. Boost to be the first face they see, or come back after your daily coins 💛</div>
-      <button class="btn btn-grad" style="max-width:240px;margin-top:8px" onclick="showTab('wallet')">🪙 Get more from coins</button></div>`;
+      <div class="mut small" style="max-width:270px">New hearts join Melt every day. Fresh free likes arrive after midnight — or go GOLD and never wait.</div>
+      <button class="btn btn-grad" style="max-width:240px;margin-top:8px" onclick="openGold('likes')">${IC('crown',16)} ${T('GO GOLD')}</button></div>`;
     return;
   }
   boostChip();
@@ -956,10 +1079,9 @@ function cardHtml(p,i){
     <div class="stamp like">LIKE</div><div class="stamp no">NOPE</div><div class="stamp wow">WOW ✨</div>
     <div class="info">
       <div class="nm">${p.name} <span class="age">${p.age}</span> ${VB(p.verified)}</div>
-      <div class="ds">📍 ${p.km!=null?`${p.km} km · `:''}${p.city||'Morocco'}</div>
+      <div class="ds">${IC('pin',12)} ${p.km!=null?`${p.km} km · `:''}${p.city||'Morocco'}</div>
       <div class="bio">${p.bio||''}</div>
       <div class="tags">${(p.tags||[]).slice(0,3).map(t=>`<span>${t}</span>`).join('')}</div>
-      <button class="chip" style="margin-top:10px;background:rgba(255,255,255,.9);border:none;color:var(--pk);font-weight:900" onclick="event.stopPropagation();openGiftFromCard('${p.id}')">${T('🪙 Gift coins — show real interest')}</button>
     </div></div>`;
 }
 function bindTopCard(){
@@ -990,9 +1112,12 @@ async function doSwipe(pid,dir){
   const p=R.deck.shift(); L.swiped[pid]={d:dir,ts:Date.now()};
   if(!R.deck.length||R.deck.length<3)paintDeck(); else paintDeck();
   R.lastSwipe={p,dir};
-  const cost = dir==='super'?C.superLikeCost:0;
-  if(cost){ if(L.coins<cost){ undoSwipe(); return shop('✨ Super likes cost '+cost+' 🪙 — grab coins first'); } L.coins-=cost; }
-  save();
+  const _today=new Date().toDateString();
+  if(L.likesDay.d!==_today)L.likesDay={d:_today,n:0};
+  if(L.superDay.d!==_today)L.superDay={d:_today,n:0};
+  if(dir==='like'&&!L.gold){ if(L.likesDay.n>=G.likesPerDay){ undoSwipe(); return openGold('likes'); } L.likesDay.n++; }
+  if(dir==='super'){ const _cap=L.gold?G.superGold:G.superPerDay; if((L.superDay.n||0)>=_cap){ undoSwipe(); return openGold('super'); } L.superDay.n++; }
+  paintLikesPill(); save();
   if(!DEMO&&!p.sim){
     ref('swipes/'+uid+'/'+pid).set({d:dir,ts:Date.now()});
     if(dir!=='pass'){
@@ -1012,13 +1137,14 @@ async function doSwipe(pid,dir){
 function undoSwipe(){ R.deck.unshift(R.lastSwipe.p); delete L.swiped[R.lastSwipe.p.id]; paintDeck(); }
 function rewind(){
   if(!R.lastSwipe)return toast('Nothing to rewind');
-  if(L.coins<C.rewindCost)return shop(`↩️ Rewind costs ${C.rewindCost} 🪙`);
-  L.coins-=C.rewindCost; undoSwipe(); save(); toast('↩️ No judgment — take another look 💛');
+  if(!L.gold)return openGold('rewind');
+  undoSwipe(); save(); paintLikesPill(); toast(''+T('No judgment — take another look'));
 }
 async function boost(){
-  const live=L.boostUntil>Date.now(); if(live)return toast('Already boosted — enjoy the views 🚀');
-  if(L.coins<C.boostCost)return shop(`🚀 Boost (${C.boostCost} 🪙) puts you on top for 30 min`);
-  L.coins-=C.boostCost; L.boostUntil=Date.now()+30*60000;
+  const live=L.boostUntil>Date.now(); if(live)return toast('Already boosted — enjoy the views');
+  if(!L.gold)return openGold('boost');
+  const _tb=new Date().toDateString(); if(L.boostDay===_tb)return toast('GOLD boost: 1 per day — come back tomorrow');
+  L.boostDay=_tb; L.boostUntil=Date.now()+30*60000;
   if(!DEMO)ref('users/'+uid).update({boostUntil:L.boostUntil});
   save(); boostChip(); toast('🚀 Boosted! You’re first in every deck nearby for 30 min');
   setTimeout(boostChip,1000);
@@ -1075,15 +1201,15 @@ function renderLikes(){
   $('likeCnt').textContent=list.filter(x=>!x.seen).length+' new';
   if(!list.length){ $('lkGrid').innerHTML=`<div class="deckempty" style="grid-column:1/-1"><div class="big">${MIMG('loveface','💌',72)}</div>
     <div class="h2">Your admirers will gather here</div>
-    <div class="mut small" style="max-width:260px">Keep swiping — the like notifications start rolling fast. Boost 🚀 speeds it up 10×</div></div>`; return; }
+    <div class="mut small" style="max-width:260px">Keep swiping — the like notifications start rolling fast. GOLD Boost speeds it up 10×</div></div>`; return; }
   $('lkGrid').innerHTML=list.map((lk,i)=>{
     const p=personOf(lk.uid); const sup=lk.d==='super'; const blur=!sup&&!lk.seen;
     return `<button class="lkcard ${blur?'blur':''}" data-lk="${i}" onclick="revealLike(${i})">
       ${sup?'<div class="lksuper">✨ SUPER LIKE</div>':''}
       <div class="ph" style="background:${grad(p.gi)}">${p.em}</div>
-      ${blur?`<div class="lklock"><span class="ee">👀</span>Reveal · ${C.revealLikeCost} 🪙</div>`:''}
+      ${blur?`<div class="lklock">${IC('lock',26)}<span>${T('GOLD members see everyone')}</span></div>`:''}
       <div class="shade"></div>
-      <div class="over">${blur?'Someone 💛':`${p.name}${p.age?', '+p.age:''}`}<div class="tiny" style="opacity:.85;font-weight:700">${sup?'Super liked you ✨':'Liked you 💗'}</div></div>
+      <div class="over">${blur?'Someone':`${p.name}${p.age?', '+p.age:''}`}<div class="tiny" style="opacity:.85;font-weight:700">${sup?'Super liked you':'Liked you'}</div></div>
     </button>`}).join('');
   // real photos on revealed / super-like cards (blurred admirers stay blurred — privacy first)
   list.forEach((lk,i)=>{ if(lk.d==='super'||lk.seen){ ensurePhoto(personOf(lk.uid),url=>{ if(!url)return;
@@ -1091,11 +1217,7 @@ function renderLikes(){
 }
 function revealLike(i){
   const lk=L.likesYou[i]; if(!lk)return;
-  if(lk.d!=='super'&&!lk.seen){
-    if(L.coins<C.revealLikeCost)return shop(`👀 Reveal admirers — ${C.revealLikeCost} 🪙 each`);
-    L.coins-=C.revealLikeCost;
-  }
-  if(!DEMO&&lk.d!=='super')ref('reveals/'+uid+'/'+lk.uid).set({ts:Date.now()}); // referee debits the vault
+  if(lk.d!=='super'&&!lk.seen&&!L.gold)return openGold('likesYou');
   lk.seen=1; save(); renderLikes();
   const p=personOf(lk.uid);
   if(DEMO&&Math.random()<0.75){ makeMatch(p); }
@@ -1113,7 +1235,7 @@ function renderMatches(){
   $('chatList').innerHTML=chats.length?chats.map(m=>{
     const last=(L.chats[m.mid]||[]).slice(-1)[0];
     const un=L.unread[m.mid]||0; const excl=L.exclusive[m.mid];
-    const txt=last? (last.who==='sys'?'💕 You matched!':last.who==='gift'?`🌹 ${last.coins} 🪙 gifted`:(last.me?'You: ':'')+last.text) :'Say hi 👋';
+    const txt=last? (last.who==='sys'?'💕 You matched!':last.who==='gift'?'🌹 A rose for you':(last.me?'You: ':'')+last.text) :'Say hi 👋';
     return `<button class="citem ${excl?'exclwrap':''}" onclick="openChat('${m.mid}')">
       <div class="cav" style="background:${grad(m.gi)}">${m.em}<span class="onl"></span></div>
       <div class="prv"><b>${m.name} ${excl?'<span class="excl">✨ EXCLUSIVE</span>':''}</b><div class="lm">${txt}</div></div>
@@ -1141,10 +1263,12 @@ function openChat(mid){
 function closeChat(){ $('chatScr').classList.remove('on'); R.chatWith=null; renderMatches(); }
 function paintFreeBar(){
   const mid=R.chatWith; const left=L.freeLeft[mid]||0;
-  const pct=left*100/C.freeChatMsgs;
+  const pct=Math.max(0,left*100/C.freeChatMsgs);
   $('freeBar').innerHTML= left>0
     ? `<span>${T('💌 Free messages left')}</span><div class="bar"><i style="width:${pct}%"></i></div><b>${left}</b>`
-    : `<span>🪙 ${C.msgCost}/message · balance</span><div class="bar"><i style="width:100%;background:var(--gold)"></i></div><b>${L.coins}</b>`;
+    : (L.gold
+      ? `<span class="gldtxt">${IC('crown',13)} GOLD · ${T('unlimited messages')}</span>`
+      : `<span>${T('Free messages used')}</span><div class="bar"><i style="width:100%;background:var(--gold)"></i></div><b class="goldlink" onclick="openGold('chat')">${T('GO GOLD')}</b>`);
 }
 function paintIce(){
   const p=peerOf(R.chatWith); const tags=p?p.tags:[];
@@ -1160,7 +1284,7 @@ function paintMsgs(){
 }
 function bubbleHtml(m){
   if(m.who==='sys')return `<div class="sys">${m.text}</div>`;
-  if(m.who==='gift')return `<div class="gift">🌹 ${m.fromName} gifted <b>${m.coins} 🪙</b><div class="tiny mut" style="margin-top:3px">${m.coins>=C.giftExclusive?'✨ This chat is now EXCLUSIVE':'Real interest unlocked your attention'}</div></div>`;
+  if(m.who==='gift')return `<div class="gift">🌹 ${m.fromName} ${T('sent you a rose')}<div class="tiny mut" style="margin-top:3px">${T('Sweet gesture')}</div></div>`;
   const tm=new Date(m.ts).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
   return `<div class="bub ${m.me?'me':'them'}">${m.text}<span class="tm">${m.me&&m.read?'✓✓ read · ':''}${tm}</span></div>`;
 }
@@ -1174,15 +1298,14 @@ async function sendMsg(){
   const v=$('chatIn').value.trim(); if(!v)return;
   const mid=R.chatWith; const m=L.matches.find(m=>m.mid===mid); if(!m)return;
   const p=personOf(m.peer);
-  // cost logic
-  if((L.freeLeft[mid]||0)>0){ L.freeLeft[mid]--; if(L.freeLeft[mid]===0)setTimeout(()=>toast('💌 Free messages used — now 1 🪙/msg, or claim daily coins'),400); }
-  else { if(L.coins<C.msgCost){ return shop(`You’re out of coins 💛 Claim your daily +${C.dailyFree} 🪙 or ask ${m.name} to gift you some`); }
-    L.coins-=C.msgCost; }
+  // first messages free, then GOLD wall (immediate) — no coins anywhere
+  if((L.freeLeft[mid]||0)>0){ L.freeLeft[mid]--; if(L.freeLeft[mid]===0)setTimeout(()=>toast('Free messages used — GOLD = unlimited chat with '+m.name),400); }
+  else if(!L.gold){ return openGold('chat'); }
   $('chatIn').value='';
   const msg={who:'msg',text:v,me:true,ts:Date.now()}; (L.chats[mid]=L.chats[mid]||[]).push(msg);
   save(); pushBubble(msg); paintFreeBar(); paintIce();
   if(!DEMO&&!p.sim){
-    ref('chats/'+mid).push({from:uid,fromName:L.me.name,text:v,ts:Date.now()}); // referee counts frees + debits vault
+    ref('chats/'+mid).push({from:uid,fromName:L.me.name,text:v,ts:Date.now()}); // chat sync only
   }
   if(p&&p.sim)botReply(mid,p);
 }
@@ -1229,13 +1352,11 @@ function typingNow(){ if(DEMO)return; const now=Date.now(); if(now-lastType>2000
 function chatMenu(){
   const m=L.matches.find(m=>m.mid===R.chatWith);
   $('genBody').innerHTML=`<div class="h2" style="margin-bottom:10px">${m?m.name:'Options'}</div>
-    <button class="btn btn-line" onclick="viewPeerProfile()">👀 View profile</button>
+    <button class="btn btn-line" onclick="viewPeerProfile()">View profile</button>
     <div style="height:8px"></div>
-    <button class="btn btn-line" onclick="openGift();hide('genSheet')">🪙 Gift coins — turn this chat gold</button>
+    <button class="btn btn-line" onclick="unmatchAsk()">Unmatch</button>
     <div style="height:8px"></div>
-    <button class="btn btn-line" onclick="unmatchAsk()">💔 Unmatch</button>
-    <div style="height:8px"></div>
-    <button class="btn btn-line" style="color:#c0392b" onclick="reportAsk()">🚩 Report & block</button>`;
+    <button class="btn btn-line" style="color:#ff7a7a" onclick="reportAsk()">Report & block</button>`;
   show('genSheet');
 }
 /* 👀 Tinder-style profile card (with Unmatch at the bottom, just like Tinder) */
@@ -1247,13 +1368,11 @@ function viewPeerProfile(){
       <div style="height:230px;background:${grad(p.gi)};display:flex;align-items:center;justify-content:center;font-size:84px" id="vpPh">${p.em||'💛'}</div>
       <div style="position:absolute;inset-inline:0;bottom:0;padding:12px;background:linear-gradient(transparent,rgba(30,10,25,.78));color:#fff">
         <b style="font-size:20px">${p.name}${p.age?', '+p.age:''}</b>
-        <div class="tiny" style="opacity:.9;font-weight:700">📍 ${p.city||'Morocco'}</div>
+        <div class="tiny" style="opacity:.9;font-weight:700">${IC('pin',12)} ${p.city||'Morocco'}</div>
       </div>
     </div>
     <div class="small" style="line-height:1.55">${p.bio||'No bio yet'}</div>
     <div class="row" style="flex-wrap:wrap;gap:6px;margin:10px 0 14px">${(p.tags||[]).map(t=>`<span class="chip" style="font-size:11px">${t}</span>`).join('')}</div>
-    <button class="btn btn-line" onclick="hide('genSheet');openGift()">🪙 Gift coins</button>
-    <div style="height:8px"></div>
     <button class="btn btn-line" onclick="unmatchAsk()">💔 Unmatch</button>`;
   ensurePhoto(p,url=>{ if(url)putImg($('vpPh'),url); });
   show('genSheet');
@@ -1262,19 +1381,19 @@ function viewPeerProfile(){
 function unmatchAsk(){
   const m=L.matches.find(m=>m.mid===R.chatWith); if(!m)return;
   $('genBody').innerHTML=`<div style="text-align:center;padding:6px 0 12px">
-    <div style="font-size:46px">💔</div>
+    <div style="color:var(--mut)">${IC('heart',44)}</div>
     <div class="h2">Unmatch with ${m.name}?</div>
     <div class="mut small" style="margin-top:6px;line-height:1.6">The match and the whole conversation<br>disappear for <b>both</b> of you.<br>They are never notified.</div></div>
-    <button class="btn btn-grad" onclick="doUnmatch(false)">💔 Yes, unmatch</button>
+    <button class="btn btn-grad" onclick="doUnmatch(false)">Yes, unmatch</button>
     <div style="height:8px"></div>
-    <button class="btn btn-line" onclick="hide('genSheet')">Keep the match 💛</button>`;
+    <button class="btn btn-line" onclick="hide('genSheet')">Keep the match</button>`;
   show('genSheet');
 }
 /* 🚩 REPORT — Tinder-style reasons, also unmatches + flags admin */
 function reportAsk(){
   const m=L.matches.find(m=>m.mid===R.chatWith); if(!m)return;
   const reasons=['💰 Asked for money / scam','🤬 Harassment or hate','🔞 Inappropriate content','🎭 Fake profile / catfish','📵 Something else'];
-  $('genBody').innerHTML=`<div class="h2" style="margin-bottom:4px">Report ${m.name} 🚩</div>
+  $('genBody').innerHTML=`<div class="h2" style="margin-bottom:4px">Report ${m.name}</div>
     <div class="mut small" style="margin-bottom:12px">Our team reviews every report within 24h.<br>They will be unmatched & blocked instantly.</div>
     ${reasons.map(r=>`<button class="btn btn-line" style="margin-bottom:8px;text-align:start" onclick="doUnmatch(true,'${r}')">${r}</button>`).join('')}
     <button class="btn btn-line" onclick="hide('genSheet')">Cancel</button>`;
@@ -1298,137 +1417,34 @@ async function doUnmatch(reported,reason){
   L.matches=L.matches.filter(x=>x.mid!==mid);
   delete L.chats[mid]; delete L.freeLeft[mid]; delete L.unread[mid]; delete L.exclusive[mid];
   save(); closeChat();
-  toast(reported?'🚩 Reported & unmatched — you are safe here 💛':'💔 Unmatched. Onwards to better 💛');
+  toast(reported?'Reported & unmatched — you are safe here':'Unmatched. Onwards to better.');
 }
 
-/* ============ GIFT COINS ============ */
-function openGiftFromCard(pid){ R.giftTarget={type:'card',pid};
-  const p=personOf(pid);
-  $('giftBody').innerHTML=giftHtml(p,'from their card'); show('giftSheet'); }
-function openGift(){ const mid=R.chatWith; const m=L.matches.find(m=>m.mid===mid); if(!m)return;
-  R.giftTarget={type:'chat',mid};
-  const p=personOf(m.peer);
-  $('giftBody').innerHTML=giftHtml(p,'in chat'); show('giftSheet'); }
-function giftHtml(p,where){
-  return `<div style="text-align:center;padding:4px 0 10px">
-    <div style="font-size:52px">${p.em}</div>
-    <div class="h2">Gift coins to ${p.name}</div>
-    <div class="mut small" style="margin-top:4px">She gets them instantly, with a golden note that it was you 🌹<br>Gift <b>${C.giftExclusive}+</b> and your chat turns <b style="color:var(--gold)">✨ EXCLUSIVE</b> — the loudest “I’m serious” on Zwin.</div></div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-      ${[10,25,50,100].map(n=>`<button class="pack ${n>=C.giftExclusive?'best':''}" style="margin:0" onclick="doGift(${n})">
-        ${n>=C.giftExclusive?'<div class="ptag">EXCLUSIVE ✨</div>':''}
-        <div class="pem">${MIMG('gift',n>=C.giftExclusive?'👑':'🌹',27)}</div>
-        <div><b>${n} 🪙</b><div class="mut tiny">${n>=C.giftExclusive?'Chat goes gold + note':'Sweet gesture'}</div></div></button>`).join('')}
-    </div>
-    <div class="mut tiny" style="text-align:center;margin-top:8px">Your balance: <b>${L.coins} 🪙</b> · Gifts never expire, her coins are 100% hers</div>`;
-}
-async function doGift(n){
-  const t=R.giftTarget; if(!t)return;
-  if(L.coins<n)return shop(`You need ${n} 🪙 — grab coins first`);
-  L.coins-=n; hide('giftSheet');
-  const pid=t.type==='chat'? (L.matches.find(m=>m.mid===t.mid)||{}).peer : t.pid;
-  const p=personOf(pid); const mid=t.type==='chat'?t.mid:matchIdOf(uid,pid);
-  if(!DEMO&&!p.sim){
-    // 🔐 sender canNOT write the peer's wallet — we only drop a gift note; their app credits their own coins
-    ref('giftsFor/'+pid).push({from:uid,fromName:L.me.name,coins:n,ts:Date.now()});
-    ref('chats/'+mid).push({gift:1,from:uid,fromName:L.me.name,coins:n,ts:Date.now()});
-    if(n>=C.giftExclusive){ ref('chatMeta/'+mid+'/exclusive').set(1); }
-  } else { L.gifts[p.id]=(L.gifts[p.id]||0)+n; }
-  if(t.type==='chat'){
-    const gm=addMsg(t.mid,'gift',{coins:n,fromName:'You'},false);
-    if(R.chatWith===t.mid)pushBubble(gm);
-    if(n>=C.giftExclusive){ L.exclusive[t.mid]=1;
-      if(R.chatWith===t.mid){$('chatHead').classList.add('excl');
-        $('chName').innerHTML=`${p.name}<span class="excl">✨ EXCLUSIVE</span>`;}
-      toast('✨ Your chat is now EXCLUSIVE — she’ll feel it 💛');
-    } else toast(`🌹 ${n} 🪙 to ${p.name} — smooth.`);
-    if(p.sim)setTimeout(()=>botReply(t.mid,p),900);
-  } else {
-    toast(`🌹 ${n} 🪙 sent to ${p.name} — when you match, she’ll know who spoils her 💛`);
-  }
-  save(); renderTabbar();
-}
-
-/* ============ WALLET / SHOP ============ */
+/* ============ 👑 MELT GOLD SCREEN ============ */
 function renderWallet(){
-  const d=L.daily; const lastC=d.lastClaim?new Date(d.lastClaim).toDateString():null;
-  const canClaim=lastC!==new Date().toDateString();
-  const streak=d.streak||0;
-  const bonus=Math.round(C.dailyFree*(1+Math.min(streak,10)*C.streakBonusPct/100));
   const pend=L.pendingOrders||[];
-  $('walletWrap').innerHTML=`
-    <div class="streakfire">
-      <div style="font-size:44px;line-height:1">${MIMG('coin','🪙',44)}</div>
-      <div style="flex:1"><b class="h1" style="font-size:30px">${L.coins}</b>
-        <div class="mut small">${T('coins · claim free daily below')}</div></div>
+  $('walletWrap').innerHTML= L.gold
+  ? `<div class="streakfire goldhero">
+      <div class="gcr">${IC('crown',42)}</div>
+      <div style="flex:1"><b class="h1" style="font-size:26px">Melt GOLD</b>
+        <div class="mut small">${T('You are GOLD forever — no subscription, no coins, no limits.')}</div></div>
     </div>
-    <div class="card" style="margin-bottom:12px">
-      <div class="spread"><b>${T('Daily free coins 🔥')}</b><span class="pill">${T('Streak: ')}${streak}</span></div>
-      <div class="mut small" style="margin:6px 0 10px">${T('Come back daily — your streak grows the gift (+10%/day, up to 2×)')}</div>
-      <button class="btn ${canClaim?'btn-grad':'btn-line'}" ${canClaim?'':'disabled'} onclick="claimDaily()">
-        ${canClaim?T('Claim +N coins now').replace('N','+'+bonus+' 🪙'):T('✅ Claimed today — see you tomorrow!')}</button>
+    <div class="card"><b class="small">${T('Your superpowers')}</b><div class="divider" style="margin:10px 0"></div>
+      ${goldPerks().map(p=>`<div class="perkrow">${IC(p[1],18)}<span>${p[0]}</span><b class="gldtxt">${T('ON')}</b></div>`).join('')}
     </div>
-    <div class="sec mut tiny" style="font-weight:900;letter-spacing:1px;padding:6px 2px">${T('EARN FREE COINS')}</div>
+    <div class="mut tiny" style="text-align:center;padding:14px">${G.priceDH} DH ${T('one-time')} · ${T('Support:')} ${ZWIN_CONFIG.company.supportEmail}</div>`
+  : `<div class="streakfire goldhero">
+      <div class="gcr">${IC('crown',42)}</div>
+      <div style="flex:1"><b class="h1" style="font-size:26px">Melt GOLD</b>
+        <div class="mut small">${T('One payment. Unlimited everything. Forever.')}</div></div>
+    </div>
     <div class="card">
-      <button class="earnrow" onclick="earnTap('video')">
-        <div class="ee">📹</div><div style="flex:1"><b class="small">Watch a video</b><div class="mut tiny">+10 🪙</div></div><span class="pill">Watch</span></button>
-      <button class="earnrow" onclick="toast('💌 Invite link copied — +50 🪙 when they join!')">
-        <div class="ee">💌</div><div style="flex:1"><b class="small">Invite a friend</b><div class="mut tiny">+50 🪙 when they join</div></div><span class="pill">Invite</span></button>
-      <button class="earnrow" onclick="earnTap('profile')">
-        <div class="ee">✨</div><div style="flex:1"><b class="small">Complete profile 100%</b><div class="mut tiny">+15 🪙 one time</div></div><span class="pill">Do it</span></button>
-      ${photoQuestRow()}
+      ${goldPerks().map(p=>`<div class="perkrow">${IC(p[1],18)}<span>${p[0]}</span><span class="vchk" style="background:linear-gradient(45deg,#f2c14e,#c98a12)">${IC('check',11)}</span></div>`).join('')}
     </div>
-    <div class="sec mut tiny" style="font-weight:900;letter-spacing:1px;padding:16px 2px 8px">${T('BUY COINS')}</div>
-    ${ZWIN_CONFIG.packs.map(p=>`<button class="pack ${p.tag?'best':''}" onclick="buyPack('${p.id}')">
-      ${p.tag?`<div class="ptag">${p.tag}</div>`:''}<div class="pem">${p.em}</div>
-      <div style="flex:1"><b>${p.coins} 🪙</b><div class="mut tiny">${p.label} pack</div></div><b class="grad-txt" style="font-size:18px">${p.priceDH} DH</b></button>`).join('')}
-    ${pend.length?`<div class="card small" style="margin-top:6px;color:#8a6d00;background:#fffdf7;border-color:#eee0b8">⏳ ${pend.map(o=>o.coins+' 🪙 ('+o.ref+')').join(', ')} — waiting for bank validation</div>`:''}
-    <div class="mut tiny" style="text-align:center;padding:14px">${T('Secure Al Barid/CMI checkout coming soon — now via bank transfer 🏦')}</div>`;
-}
-function claimDaily(){
-  if(!DEMO){ ref('coinReq/'+uid).push({type:'daily',ts:Date.now()}); return toast('⏳ The vault is checking your streak…'); }
-  const d=L.daily; const yest=new Date(Date.now()-86400000).toDateString();
-  d.streak=(d.lastClaim&&new Date(d.lastClaim).toDateString()===yest)?(d.streak||0)+1:1;
-  d.lastClaim=Date.now();
-  const bonus=Math.round(C.dailyFree*(1+Math.min(d.streak,10)*C.streakBonusPct/100));
-  L.coins+=bonus; save(); renderWallet();
-  spawnConfettiOn('walletWrap');
-  toast(`🪙 +${bonus} free coins! Streak day ${d.streak} 🔥`);
-}
-function spawnConfettiOn(){ /* subtle: reuse toast celebration */ }
-function shop(msg){ showTab('wallet'); if(msg)toast(msg); }
-function buyPack(pid){
-  const pack=ZWIN_CONFIG.packs.find(p=>p.id===pid);
-  const c=ZWIN_CONFIG.company; const refid='ZW-'+uid.slice(-4).toUpperCase()+'-'+Date.now().toString(36).toUpperCase();
-  $('bankBody').innerHTML=`
-    <div style="text-align:center;padding:4px 0 8px"><div style="font-size:46px">${pack.em}</div>
-      <div class="h2">${pack.coins} 🪙 — ${pack.priceDH} DH</div>
-      <div class="mut small">Bank transfer pack</div></div>
-    <div class="bankblock">
-      🏦 <b>Transfer details</b><br>
-      Bank: <b>${c.bank}</b><br>
-      Beneficiary: <b>${c.accountName}</b><br>
-      RIB: <b>${c.rib}</b> <button class="copybtn" onclick="navigator.clipboard&&navigator.clipboard.writeText('${c.rib.replace(/\s/g,'')}');toast('RIB copied ✅')">COPY</button><br>
-      IBAN: ${c.iban}<br>
-      SWIFT: ${c.swift}<br>
-      <span class="mut" style="font-size:11px">Reference: <b>${refid}</b></span>
-    </div>
-    ${DEMO?`<div class="demobanner" style="margin:0 0 10px">Demo mode: coins arrive instantly.</div>`
-          :`<div class="mut small">Transfer from your bank app, then tap below. ${ZWIN_CONFIG.appName} validates (usually &lt; 1h) and coins drop in 🪙</div>`}
-    <button class="btn btn-grad" onclick="confirmPack('${pid}','${refid}')">${DEMO?'Instant buy (demo)':'I have transferred ✅'}</button>
-    <div style="height:8px"></div>
-    <button class="btn btn-line" onclick="hide('bankSheet')">Not now</button>`;
-  hide('shopSheet'); show('bankSheet');
-}
-function confirmPack(pid,refid){
-  const pack=ZWIN_CONFIG.packs.find(p=>p.id===pid);
-  hide('bankSheet');
-  if(DEMO){ L.coins+=pack.coins; save(); toast(`🪙 +${pack.coins} coins — have fun! 💛`); }
-  else { const order={uid,name:L.me.name,pack:pid,coins:pack.coins,price:pack.priceDH,status:'pending',ref:refid,ts:Date.now()};
-    const k=ref('orders/'+uid).push(order).key; // 🔐 my orders live in MY box
-    L.pendingOrders.push({oid:k,coins:pack.coins,ref:refid}); save();
-    toast('⏳ Order sent — coins land after validation'); }
-  renderWallet();
+    ${pend.length?`<div class="card small" style="margin-top:10px;background:#241a08;border-color:#7a5514;color:#e8c96e">${T('Payment under validation — GOLD activates by itself when approved. Ref:')} <b>${pend.map(o=>o.ref).join(', ')}</b></div>`:''}
+    <div style="height:12px"></div>
+    <button class="btn btn-grad goldcta" onclick="buyGold()">${IC('crown',18)} ${T('Get GOLD')} · ${G.priceDH} DH — ${T('once, forever')}</button>
+    <div class="mut tiny" style="text-align:center;padding:14px">${T('Bank transfer today · Al Barid & CMI cards soon')}</div>`;
 }
 
 /* ============ PROFILE ============ */
@@ -1443,49 +1459,49 @@ function renderProfile(){
       <div class="ph" style="background:${grad(L.me.gi)}">${mp?`<img src="${mp}" alt="my photo">`:`<span>${L.me.em}</span>`}</div>
       <div class="pbody">
         <div class="nm h2">${L.me.name}, ${L.me.age} ${VB(L.verified)} <span style="background:var(--soft);color:var(--pk);font-size:10px;font-weight:900;padding:4px 8px;border-radius:8px">${L.verified?'✅ VERIFIED':(mp?'📸 PHOTO PROFILE':'✓ GOOGLE VERIFIED')}</span></div>
-        <div class="mut small" style="margin:4px 0">📍 ${L.me.city}</div>
+        <div class="mut small" style="margin:4px 0">${IC('pin',13)} ${L.me.city}</div>
         <div class="small">${L.me.bio}</div>
         <div class="row" style="flex-wrap:wrap;gap:6px;margin-top:8px">${L.me.tags.map(t=>`<span class="chip" style="font-size:11px">${t}</span>`).join('')}</div>
       </div>
     </div>
     <div style="padding:4px 18px">
       <div class="card" style="margin-bottom:10px">
-        <div class="spread"><b class="small">${T('My photos 📸')}</b><span class="mut tiny">${photos.length}/${maxPh} · first = main</span></div>
-        <div class="mut tiny" style="margin:4px 0 10px">${T('Real photos get ~3× more matches 💛 Auto-compressed & synced — free.')}</div>
+        <div class="spread"><b class="small">${T('My photos')}</b><span class="mut tiny">${photos.length}/${maxPh} · first = main</span></div>
+        <div class="mut tiny" style="margin:4px 0 10px">${T('Real photos get ~3× more matches. Auto-compressed & synced — free.')}</div>
         <div class="photogrid">
           ${photos.map((u,i)=>`<div class="phslot full"><button class="del" onclick="delPhoto(${i})">✕</button>${i===0?'<span class="main">MAIN</span>':''}<img src="${u}" alt=""></div>`).join('')}
           ${photos.length<maxPh?`<button class="phslot" onclick="pickPhoto()">＋</button>`:''}
         </div>
       </div>
       <div class="card">
-        <div class="spread"><b class="small">${T('My stats this week')}</b>💛</div>
+        <div class="spread"><b class="small">${T('My stats this week')}</b></div>
         <div class="divider" style="margin:10px 0"></div>
         <div class="row" style="justify-content:space-around;text-align:center">
           <div><b style="font-size:20px">${L.matches.length}</b><div class="mut tiny">${T('Matches')}</div></div>
           <div><b style="font-size:20px">${Object.keys(L.likesYou).length||L.likesYou.length}</b><div class="mut tiny">${T('Admirers')}</div></div>
-          <div><b style="font-size:20px">${Object.values(L.gifts).reduce((a,b)=>a+b,0)}</b><div class="mut tiny">${T('🪙 gifted')}</div></div>
-          <div><b style="font-size:20px">${L.daily.streak||0}</b><div class="mut tiny">${T('Streak 🔥')}</div></div>
+          <div><b style="font-size:20px">${L.likesDay.n||0}</b><div class="mut tiny">${T('Likes today')}</div></div>
+          <div><b style="font-size:20px">${L.gold?'∞':Math.max(0,G.likesPerDay-(L.likesDay.d===new Date().toDateString()?(L.likesDay.n||0):0))}</b><div class="mut tiny">${T('Free likes')}</div></div>
         </div>
       </div>
       <div style="height:10px"></div>
       <div class="card">
-        <button class="earnrow" onclick="setLang(L.lang==='en'?'fr':L.lang==='fr'?'ar':'en')"><div class="ee">🌍</div><div style="flex:1"><b class="small">${T('Language')}</b><div class="mut tiny">English · Français · العربية</div></div><span class="pill">${L.lang==='ar'?'عربي':L.lang==='fr'?'FR':'EN'}</span></button>
-        <button class="earnrow" onclick="startVerify()"><div class="ee">✅</div><div style="flex:1"><b class="small">${T('VERIFIED badge')}</b><div class="mut tiny">${L.verified?'You are verified — blue check everywhere 💙':L.verifyPending?'⏳ Selfie under review (usually under 24h)':'Selfie + ✌️ = blue check · +30 🪙 reward · real humans match more'}</div></div><span class="pill" style="${L.verified?'background:#e3f1ff;color:#2f8fe0':''}">${L.verified?'✓ VERIFIED':L.verifyPending?'Reviewing':'Get it'}</span></button>
-        <button class="earnrow" onclick="askGeo()"><div class="ee">📍</div><div style="flex:1"><b class="small">${T('Real distance (GPS)')}</b><div class="mut tiny">${L.geo?'ON — rounded ~2 km, your exact spot is never stored':'Real km like Tinder Gold — free on Zwin'}</div></div><span class="pill">${L.geo?'ON 📍':'Turn on'}</span></button>
-        <button class="earnrow" onclick="enablePush()"><div class="ee">📲</div><div style="flex:1"><b class="small">${T('Lock-screen alerts')}</b><div class="mut tiny">Get pinged the second someone likes or texts you</div></div><span class="pill">${pushOn?'ON 🔔':'Turn on'}</span></button>
-        <button class="earnrow" onclick="toggleNotif()"><div class="ee">🔔</div><div style="flex:1"><b class="small">${T('In-app notifications')}</b><div class="mut tiny">Toasts while the app is open</div></div><div class="toggle ${L.notif===false?'':'on'}" id="notifT"></div></button>
-        <button class="earnrow" onclick="toast('🛡️ Blocked list is private & permanent. You are safe here.')"><div class="ee">🛡️</div><div style="flex:1"><b class="small">${T('Safety center')}</b><div class="mut tiny">Block, report, dating-tips</div></div></button>
-        <button class="earnrow" onclick="toast('💌 Contact: ${ZWIN_CONFIG.company.supportEmail}')"><div class="ee">💬</div><div style="flex:1"><b class="small">${T('Help & support')}</b></div></button>
+        <button class="earnrow" onclick="setLang(L.lang==='en'?'fr':L.lang==='fr'?'ar':'en')"><div class="ee">${IC('globe',22)}</div><div style="flex:1"><b class="small">${T('Language')}</b><div class="mut tiny">English · Français · العربية</div></div><span class="pill">${L.lang==='ar'?'عربي':L.lang==='fr'?'FR':'EN'}</span></button>
+        <button class="earnrow" onclick="startVerify()"><div class="ee">${IC('check',22)}</div><div style="flex:1"><b class="small">${T('VERIFIED badge')}</b><div class="mut tiny">${L.verified?'You are verified — blue check everywhere':L.verifyPending?'Selfie under review (usually under 24h)':'Selfie + peace sign = blue check · real humans match more'}</div></div><span class="pill" style="${L.verified?'background:#e3f1ff;color:#2f8fe0':''}">${L.verified?'✓ VERIFIED':L.verifyPending?'Reviewing':'Get it'}</span></button>
+        <button class="earnrow" onclick="askGeo()"><div class="ee">${IC('pin',22)}</div><div style="flex:1"><b class="small">${T('Real distance (GPS)')}</b><div class="mut tiny">${L.geo?'ON — rounded ~2 km, your exact spot is never stored':'Real km like Tinder Gold — free on Melt'}</div></div><span class="pill">${L.geo?'ON':'Turn on'}</span></button>
+        <button class="earnrow" onclick="enablePush()"><div class="ee">${IC('bell',22)}</div><div style="flex:1"><b class="small">${T('Lock-screen alerts')}</b><div class="mut tiny">Get pinged the second someone likes or texts you</div></div><span class="pill">${pushOn?'ON':'Turn on'}</span></button>
+        <button class="earnrow" onclick="toggleNotif()"><div class="ee">${IC('bell',22)}</div><div style="flex:1"><b class="small">${T('In-app notifications')}</b><div class="mut tiny">Toasts while the app is open</div></div><div class="toggle ${L.notif===false?'':'on'}" id="notifT"></div></button>
+        <button class="earnrow" onclick="toast('🛡️ Blocked list is private & permanent. You are safe here.')"><div class="ee">${IC('shield',22)}</div><div style="flex:1"><b class="small">${T('Safety center')}</b><div class="mut tiny">Block, report, dating-tips</div></div></button>
+        <button class="earnrow" onclick="toast('💌 Contact: ${ZWIN_CONFIG.company.supportEmail}')"><div class="ee">${IC('chat',22)}</div><div style="flex:1"><b class="small">${T('Help & support')}</b></div></button>
       </div>
     </div>`;
 }
 function toggleNotif(){ L.notif=L.notif===false?true:false; $('notifT').classList.toggle('on',L.notif!==false); save(); }
 function resetAll(){ if(confirm('Log out and wipe this device profile?')){ localStorage.removeItem('zwin_local'); try{firebase.auth().signOut()}catch(e){} location.reload(); } }
-function paintCoins(){ const el=$('coinTop'); if(el)el.textContent=L.coins; }
+function paintGold(){ const el=$('goldTop'); if(el)el.textContent=L.gold?T('GOLD'):T('GO GOLD'); }
 
 /* ============ INIT ============ */
 fbInit();
-paintCoins();
+paintGold();
 paintAuthBg();
 skinMedia();
 if(!L.lang)L.lang='en';

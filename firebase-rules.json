@@ -11,45 +11,6 @@
           ".write": "(auth != null && auth.uid === $uid) || root.child('wasla_dating/admins/'+auth.uid).exists()"
         }
       },
-      "wallets": {
-        ".read": "root.child('wasla_dating/admins/'+auth.uid).exists()",
-        "$uid": {
-          ".read": "auth != null && (auth.uid === $uid || root.child('wasla_dating/admins/'+auth.uid).exists())",
-          ".write": "root.child('wasla_dating/admins/'+auth.uid).exists()",
-          "coins": {
-            ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() < 100000000"
-          }
-        }
-      },
-      "coinReq": {
-        ".read": "root.child('wasla_dating/admins/'+auth.uid).exists()",
-        "$uid": {
-          "$rid": {
-            ".write": "auth != null && auth.uid === $uid"
-          }
-        }
-      },
-      "receipts": {
-        ".read": "root.child('wasla_dating/admins/'+auth.uid).exists()",
-        "$uid": {
-          ".read": "auth != null && auth.uid === $uid"
-        }
-      },
-      "reveals": {
-        ".read": "root.child('wasla_dating/admins/'+auth.uid).exists()",
-        "$uid": {
-          ".read": "auth != null && auth.uid === $uid",
-          "$peer": {
-            ".write": "auth != null && auth.uid === $uid"
-          }
-        }
-      },
-      "chatCtl": {
-        ".read": "root.child('wasla_dating/admins/'+auth.uid).exists()",
-        "$mid": {
-          ".read": "auth != null && $mid.contains(auth.uid)"
-        }
-      },
       "verified": {
         ".read": "auth != null",
         ".write": "root.child('wasla_dating/admins/'+auth.uid).exists()"
@@ -85,7 +46,9 @@
       },
       "presence": {
         ".read": "auth != null",
-        "$uid": { ".write": "auth != null && auth.uid === $uid" }
+        "$uid": {
+          ".write": "auth != null && auth.uid === $uid"
+        }
       },
       "swipes": {
         ".read": "root.child('wasla_dating/admins/'+auth.uid).exists()",
@@ -98,14 +61,9 @@
         ".read": "root.child('wasla_dating/admins/'+auth.uid).exists()",
         "$uid": {
           ".read": "auth != null && auth.uid === $uid",
-          "$from": { ".write": "auth != null && auth.uid === $from" }
-        }
-      },
-      "giftsFor": {
-        ".read": "root.child('wasla_dating/admins/'+auth.uid).exists()",
-        "$uid": {
-          ".read": "auth != null && auth.uid === $uid",
-          "$giftId": { ".write": "auth != null && auth.uid != $uid" }
+          "$from": {
+            ".write": "auth != null && auth.uid === $from"
+          }
         }
       },
       "userMatches": {
@@ -154,9 +112,15 @@
       },
       "reports": {
         ".read": "root.child('wasla_dating/admins/'+auth.uid).exists()",
-        "$rid": { ".write": "auth != null" }
+        "$rid": {
+          ".write": "auth != null"
+        }
       },
       "banned": {
+        ".read": "auth != null",
+        ".write": "root.child('wasla_dating/admins/'+auth.uid).exists()"
+      },
+      "gold": {
         ".read": "auth != null",
         ".write": "root.child('wasla_dating/admins/'+auth.uid).exists()"
       }

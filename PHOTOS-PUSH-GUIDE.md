@@ -1,4 +1,4 @@
-# 📸📲 Photos + Push — setup guide (Zwin v2.0)
+# 📸📲 Photos + Push — setup guide (Melt v2.0)
 
 What's new in this version, and the few console clicks each part needs.
 
