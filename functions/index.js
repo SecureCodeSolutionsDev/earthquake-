@@ -21,7 +21,7 @@ initializeApp();
 const ROOT = 'wasla_dating';               // 🔒 same root chosen for your rules
 const TRIGGER = {
   region: 'europe-west1',                  // your Realtime DB location
-  instance: 'PASTE_PROJECT-default-rtdb'   // ← replace PASTE_PROJECT with your project id
+  instance: 'zwin-270c4-default-rtdb'   // ← replace PASTE_PROJECT with your project id
 };
 
 /* Economy — mirror of zwin-config.js coins (keep in sync if you tune prices) */
