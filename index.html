@@ -12,6 +12,8 @@
 <meta name="apple-mobile-web-app-title" content="Zwin">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <script src="zwin-config.js"></script>
+<script src="img-pack-1.js"></script>
+<script src="img-pack-2.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
@@ -566,6 +568,7 @@ async function cloudDiscover(){
 
 /* ============ 🎨 PRO MEDIA ENGINE — images with emoji fallback (never breaks) */
 function MURL(k){ const md=(typeof ZWIN_CONFIG!=='undefined'&&ZWIN_CONFIG.media)||{};
+  const pk=(typeof window!=='undefined'&&window.ZWIN_IMGPACK)||{}; if(pk[k])return pk[k]; /* 📦 mobile pack first */
   if(md[k])return md[k]; if(!md.base)return '';
   const special={authBg:'auth-bg.jpg',chat:'chat.svg'}[k];
   return md.base+(special||(k+'.png')); }
