@@ -99,7 +99,7 @@ const ZWIN_CONFIG = {
   ],
 
   /* ---------- 5. ADMIN PIN for admin.html (change it!) ---------- */
-  adminPin: "1234",
+  adminPin: "VidaAdmin123###_",
 
   appName: "Zwin",
   tagline: "Dating, but warmer."
