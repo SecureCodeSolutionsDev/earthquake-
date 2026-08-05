@@ -1,1 +1,12 @@
-functions/package.json
+{
+  "name": "zwin-push-functions",
+  "description": "Zwin — automatic push notifications (optional, Blaze free allowance)",
+  "version": "1.0.0",
+  "main": "index.js",
+  "private": true,
+  "engines": { "node": "18" },
+  "dependencies": {
+    "firebase-admin": "^12.0.0",
+    "firebase-functions": "^5.0.0"
+  }
+}
