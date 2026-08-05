@@ -52,7 +52,7 @@ Test mode rules **expire after 30 days**. Replace them now so the app never brea
 
 Firebase console → Realtime Database → **Rules** tab → paste the locked rules
 from **`firebase-rules.json`** (included in this repo) → **Publish**.
-Those rules require phone sign-in — see **SECURITY-LOCKS.md** for the 3-lock
+Those rules require a Google sign-in (one tap) — see **SECURITY-LOCKS.md** for the 3-lock
 activation guide (auth + per-user rules + App Check).
 
 ## ✅ Test your live system (needs 2 devices/browsers)

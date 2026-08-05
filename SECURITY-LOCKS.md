@@ -5,18 +5,15 @@ Do them **in this order** — users can't sign in until step 1 is done.
 
 ---
 
-## 🔒 LOCK 1 — Phone sign-in (who is who)
+## 🔒 LOCK 1 — Google sign-in (who is who)
 
 1. Firebase console → **Build → Authentication → Get started**
-2. **Sign-in method** tab → click **Phone** → **Enable** → Save
+2. **Sign-in method** tab → click **Google** → **Enable** → Save
+   (the Google provider needs NO keys — one toggle and it's live)
 3. **Settings** tab → **Authorized domains** → **Add domain** → paste:
    `YOUR-USERNAME.github.io`  ← your GitHub Pages domain (no https://, no /zwin)
-4. Done. Every user now gets a verified `auth.uid` from Google.
-   Their phone number is their identity — exactly like WhatsApp.
-
-> 🧪 **Testing without SMS**: Authentication → Sign-in method → Phone →
-> **"Phone numbers for testing"** → add `+212600000000` with code `123456`.
-> You can verify test accounts instantly, no real SMS needed.
+4. Done. Every user gets a verified `auth.uid` from their Google account —
+   one tap, no SMS costs, no monthly limits, works in every country.
 
 ---
 
@@ -42,15 +39,15 @@ What the rules now guarantee:
 
 The rules check an `admins` list inside the database that only you can edit from the console:
 
-1. Open your dashboard **`admin.html`** → PIN → verify your owner phone
-2. Firebase console → **Authentication → Users** → find your phone user → **copy the UID**
+1. Open your dashboard **`admin.html`** → PIN → sign in with YOUR Google account (the owner's)
+2. Firebase console → **Authentication → Users** → find your Google user → **copy the UID**
    _(it's like `xK9mPq3nVzL...`)_
 3. Firebase console → **Realtime Database → Data tab** → click **`wasla_dating`** → **+** add:
    - key: `admins`  → inside it, **+** add:
      - key: `<paste your UID>`  →  value: `true`
 4. Now `admin.html` can approve orders, ban abusers, see reports. No one else can — ever.
 
-> 🔐 Phone verification only proves ID. The `admins` node is what makes YOU the owner.
+> 🔐 Google sign-in only proves ID. The `admins` node is what makes YOU the owner.
 > Attackers can sign in as users, but they can't get into that list — only console (your Google account) writes it.
 
 ---
@@ -76,8 +73,8 @@ Scripts and bots get dropped before they even read the rules.
 
 | Test | Expected |
 |---|---|
-| Open the app → you get a phone-verify screen | ✅ Lock 1 works |
-| After SMS code → deck loads | ✅ auth passed |
+| Open the app → you get a "Continue with Google" screen | ✅ Lock 1 works |
+| After picking your account → deck loads | ✅ auth passed |
 | In console Data tab, try reading from an *incognito* browser | "Permission denied" until verified |
 | Publish rules → old `now < …` expiry gone | ✅ no Sept-time bomb |
 | App Check enforced + key pasted → app still works | ✅ Lock 3 works |
@@ -87,5 +84,5 @@ Scripts and bots get dropped before they even read the rules.
 
 - The old 30-day test-mode rules (`now < 1788...`) are REPLACED by `firebase-rules.json` — publish it, no more countdown.
 - GitHub Pages domain must match exactly what you paste in Authorized domains.
-- Phone auth free tier: 10,000 verifications/month — way more than your first users need.
+- Google sign-in is FREE and unlimited — no SMS quota to ever think about.
 - If a user quits and you must remove them: **Authentication → Users → delete** (+ optional `banned/{uid}: true` flag via admin).

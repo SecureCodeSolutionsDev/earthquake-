@@ -8,18 +8,18 @@ const ZWIN_CONFIG = {
      console.firebase.google.com → project → Realtime Database (europe-west1,
      test mode) → Project settings → Web app </> → paste the 5 keys below.   */
   firebase: {
-    apiKey:      "AIzaSyCefjPeoakEOUg9mjI_lLwU80dka0lNkEc",
-    authDomain:  "zwin-270c4.firebaseapp.com",
-    databaseURL: "https://zwin-270c4-default-rtdb.europe-west1.firebasedatabase.app",
-    projectId:   "zwin-270c4",
-    appId:       "1:231744808339:web:a6be044023f256f9c93466"
+    apiKey:      "PASTE_API_KEY_HERE",
+    authDomain:  "PASTE_PROJECT.firebaseapp.com",
+    databaseURL: "https://PASTE_PROJECT-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId:   "PASTE_PROJECT",
+    appId:       "1:PASTE:web:PASTE"
   },
 
   /* ---------- 🔐 LOCK 3 (optional but recommended): App Check against bots.
      Firebase console → App Check → Register app → reCAPTCHA v3 → paste the SITE
      KEY here. App works without it, but bots could spam your cloud.           */
   appCheck: {
-    recaptchaSiteKey: "6LfF73QtAAAAAAS5_QpF8M15_5ohqA3B8XA4IfDq"   // leave empty to skip
+    recaptchaSiteKey: ""   // leave empty to skip
   },
 
   /* ---------- 📸 REAL PHOTOS (free start, scales later) ----------
@@ -39,7 +39,28 @@ const ZWIN_CONFIG = {
      "Web Push certificates" → Generate key pair → paste the KEY here.
      Without a key: in-app toasts still work. With it: lock-screen alerts.   */
   fcm: {
-    vapidKey: "BGcLqf4irpZLSsHzAu76-5uU2U8seU3zWcv5bOE0c8i5mvBlCjm5qx2Bzq8rcmpv9xcMOuwbcTMxda2XbxiMoIc"         // leave empty to skip lock-screen push for now
+    vapidKey: ""         // leave empty to skip lock-screen push for now
+  },
+
+  /* ---------- 🎨 PRO MEDIA (aura pack — images live in the img/ folder)
+     base = where images load from. Default "img/" = the img folder NEXT to
+     index.html in your GitHub repo → just upload the img folder, done.
+     Hosting elsewhere? Paste the full https:// link in any slot to override.
+     Any empty slot = cute emoji fallback, so the app can never look broken. */
+  media: {
+    base: "img/",
+    authBg:"",   // auth-bg.jpg — wedding couple, sign-in page background
+    flame:"",    // flame.png   — brand flame-heart (logo, Discover tab, empty states)
+    like:"",     // like.png    — glossy heart (♥ like button)
+    nope:"",     // nope.png    — red X (✕ pass button)
+    super:"",    // super.png   — sparkle star (✨ super like + Me tab)
+    rewind:"",   // rewind.png  — rewind arrow (↩️ button)
+    boost:"",    // boost.png   — rocket (🚀 boost button + chip)
+    coin:"",     // coin.png    — gold heart coin (🪙 coin pill, wallet)
+    gift:"",     // gift.png    — gift box (🎁 gift button + gift packs)
+    send:"",     // send.png    — paper plane (➤ send button)
+    loveface:"", // loveface.png— Liked-You tab + empty state
+    chat:""      // chat.svg    — Matches tab + empty chats
   },
 
   /* ---------- 2. COMPANY BANK (⚠️ RANDOM DEMO DATA — EDIT BEFORE LAUNCH)
@@ -78,7 +99,7 @@ const ZWIN_CONFIG = {
   ],
 
   /* ---------- 5. ADMIN PIN for admin.html (change it!) ---------- */
-  adminPin: "VidaAdmin123###_",
+  adminPin: "1234",
 
   appName: "Zwin",
   tagline: "Dating, but warmer."

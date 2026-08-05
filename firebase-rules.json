@@ -11,6 +11,59 @@
           ".write": "(auth != null && auth.uid === $uid) || root.child('wasla_dating/admins/'+auth.uid).exists()"
         }
       },
+      "wallets": {
+        ".read": "root.child('wasla_dating/admins/'+auth.uid).exists()",
+        "$uid": {
+          ".read": "auth != null && (auth.uid === $uid || root.child('wasla_dating/admins/'+auth.uid).exists())",
+          ".write": "root.child('wasla_dating/admins/'+auth.uid).exists()",
+          "coins": {
+            ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() < 100000000"
+          }
+        }
+      },
+      "coinReq": {
+        ".read": "root.child('wasla_dating/admins/'+auth.uid).exists()",
+        "$uid": {
+          "$rid": {
+            ".write": "auth != null && auth.uid === $uid"
+          }
+        }
+      },
+      "receipts": {
+        ".read": "root.child('wasla_dating/admins/'+auth.uid).exists()",
+        "$uid": {
+          ".read": "auth != null && auth.uid === $uid"
+        }
+      },
+      "reveals": {
+        ".read": "root.child('wasla_dating/admins/'+auth.uid).exists()",
+        "$uid": {
+          ".read": "auth != null && auth.uid === $uid",
+          "$peer": {
+            ".write": "auth != null && auth.uid === $uid"
+          }
+        }
+      },
+      "chatCtl": {
+        ".read": "root.child('wasla_dating/admins/'+auth.uid).exists()",
+        "$mid": {
+          ".read": "auth != null && $mid.contains(auth.uid)"
+        }
+      },
+      "verified": {
+        ".read": "auth != null",
+        ".write": "root.child('wasla_dating/admins/'+auth.uid).exists()"
+      },
+      "verifyReq": {
+        ".read": "root.child('wasla_dating/admins/'+auth.uid).exists()",
+        "$uid": {
+          ".read": "auth != null && auth.uid === $uid",
+          ".write": "(auth != null && auth.uid === $uid) || root.child('wasla_dating/admins/'+auth.uid).exists()",
+          "img": {
+            ".validate": "newData.isString() && newData.val().length < 400000"
+          }
+        }
+      },
       "photos": {
         ".read": "auth != null && !root.child('wasla_dating/banned/'+auth.uid).exists()",
         "$uid": {

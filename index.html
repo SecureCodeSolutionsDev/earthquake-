@@ -228,27 +228,33 @@ textarea.inp{min-height:80px;resize:none}
 .phslot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .phslot .del{position:absolute;top:4px;inset-inline-end:4px;width:22px;height:22px;border-radius:50%;background:rgba(43,34,48,.72);color:#fff;font-size:11px;display:flex;align-items:center;justify-content:center;z-index:2}
 .phslot .main{position:absolute;bottom:4px;inset-inline-start:4px;background:var(--grad);color:#fff;font-size:8.5px;font-weight:900;padding:3px 7px;border-radius:8px;z-index:2;letter-spacing:.5px}
+/* ---------- 🎨 pro media pack ---------- */
+.mimg{display:inline-block;vertical-align:middle;object-fit:contain}
+.mslot{display:inline-flex;align-items:center;justify-content:center;line-height:1}
+.vchk{display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;border-radius:50%;background:linear-gradient(45deg,#4aa8ff,#2f8fe0);color:#fff;font-size:10px;font-weight:900;box-shadow:0 2px 6px rgba(74,168,255,.45);flex:none}
 </style>
 </head>
 <body>
 <div class="app">
 <div id="toasts"></div>
 
-<!-- ==================== AUTH (phone verify) ==================== -->
+<!-- ==================== AUTH (google sign-in) ==================== -->
 <section class="scr" id="scr-auth">
   <div class="ob">
     <div class="obstep">
-      <div class="ob-logo"><div class="flame">🔥</div></div>
-      <h1 class="h1" style="text-align:center">Real people only 💛</h1>
-      <div class="mut" style="text-align:center">Verify your number to enter Zwin —<br>no bots, no fakes, no catfish farms.<br><b>We never show your number to anyone.</b></div>
-      <input class="inp" id="phNum" inputmode="tel" value="+212" placeholder="+212 6 12 34 56 78">
-      <button class="btn btn-grad" id="btnSendCode" onclick="sendCode()">Send code 📲</button>
-      <div id="codeWrap" style="display:none">
-        <input class="inp" id="phCode" inputmode="numeric" maxlength="8" placeholder="••••••" style="text-align:center;letter-spacing:8px;font-size:22px;font-weight:900">
-        <button class="btn btn-grad" onclick="verifyCode()">Verify & enter ✅</button>
+      <div class="ob-logo"><div class="flame"><span class="mslot" data-m="flame" data-em="🔥" data-px="42">🔥</span></div></div>
+      <h1 class="h1" style="text-align:center" data-t="Real people only 💛">Real people only 💛</h1>
+      <div class="mut" style="text-align:center" data-t="One tap with your Google account to enter Zwin —<br>no bots, no fakes, no catfish farms.<br><b>We never see your emails or post anything.</b>">One tap with your Google account to enter Zwin —<br>no bots, no fakes, no catfish farms.<br><b>We never see your emails or post anything.</b></div>
+      <button class="btn btn-line" id="btnGoogle" onclick="googleIn()" style="background:#fff;font-size:15.5px">
+        <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.1H42V20H24v8h11.3c-1.6 4.7-6.1 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3l5.7-5.7C34 6.1 29.3 4 24 4 13 4 4 13 4 24s9 20 20 20 20-9 20-20c0-1.3-.1-2.7-.4-3.9z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.9 1.2 8 3l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.1H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C41 35.4 44 30.2 44 24c0-1.3-.1-2.7-.4-3.9z"/></svg>
+        <span data-t="Continue with Google">Continue with Google</span>
+      </button>
+      <div class="mut tiny" style="text-align:center" data-t="Sign-in secured by Google · your identity stays private · 18+">Sign-in secured by Google · your identity stays private · 18+</div>
+      <div class="seg" style="max-width:280px;margin:6px auto 0">
+        <button onclick="setLang('en')">EN</button>
+        <button onclick="setLang('fr')">FR</button>
+        <button onclick="setLang('ar')">عربي</button>
       </div>
-      <div id="recap-slot"></div>
-      <div class="mut tiny" style="text-align:center">Free SMS verification by Google Firebase · 18+</div>
     </div>
   </div>
 </section>
@@ -261,55 +267,57 @@ textarea.inp{min-height:80px;resize:none}
 <!-- ==================== DISCOVER ==================== -->
 <section class="scr deckwrap" id="scr-discover" style="padding-bottom:calc(84px + env(safe-area-inset-bottom))">
   <div class="topbar">
-    <div class="logo"><div class="flame">🔥</div><span class="grad-txt">Zwin</span></div>
+    <div class="logo"><div class="flame"><span class="mslot" data-m="flame" data-em="🔥" data-px="19">🔥</span></div><span class="grad-txt">Zwin</span></div>
     <div style="display:flex;gap:8px">
-      <button class="coinpill" onclick="showTab('wallet')">🪙 <span id="coinTop">0</span></button>
+      <button class="chip" id="nearChip" style="font-size:11px;padding:9px 11px" onclick="toggleNear()" title="People near you">📍</button>
+      <button class="coinpill" onclick="showTab('wallet')"><span class="mslot" data-m="coin" data-em="🪙" data-px="16">🪙</span> <span id="coinTop">0</span></button>
     </div>
   </div>
   <div id="demoSlot"></div>
+  <div id="geoSlot"></div>
   <div class="deck" id="deck"></div>
   <div class="dactions">
-    <button class="xbtn" onclick="rewind()" title="Rewind">↩️</button>
-    <button class="xbtn big" style="color:var(--pk)" onclick="swipeBtn('pass')">✕</button>
-    <button class="xbtn" style="color:var(--blue)" onclick="swipeBtn('super')">✨</button>
-    <button class="xbtn big" style="color:var(--green)" onclick="swipeBtn('like')">♥</button>
-    <button class="xbtn" onclick="boost()" title="Boost">🚀</button>
+    <button class="xbtn" onclick="rewind()" title="Rewind"><span class="mslot" data-m="rewind" data-em="↩️" data-px="24">↩️</span></button>
+    <button class="xbtn big" style="color:var(--pk)" onclick="swipeBtn('pass')"><span class="mslot" data-m="nope" data-em="✕" data-px="30">✕</span></button>
+    <button class="xbtn" style="color:var(--blue)" onclick="swipeBtn('super')"><span class="mslot" data-m="super" data-em="✨" data-px="26">✨</span></button>
+    <button class="xbtn big" style="color:var(--green)" onclick="swipeBtn('like')"><span class="mslot" data-m="like" data-em="♥" data-px="32">♥</span></button>
+    <button class="xbtn" onclick="boost()" title="Boost"><span class="mslot" data-m="boost" data-em="🚀" data-px="24">🚀</span></button>
   </div>
 </section>
 
 <!-- ==================== LIKED YOU ==================== -->
 <section class="scr" id="scr-likes">
-  <div class="topbar"><div class="h2">They like you 😍</div>
+  <div class="topbar"><div class="h2" data-t="They like you 😍">They like you 😍</div>
     <span class="pill" id="likeCnt">0</span></div>
-  <div class="mut small" style="padding:0 18px 6px">Someone here already chose you. Reveal to see who — super-likes are always visible 💙</div>
+  <div class="mut small" style="padding:0 18px 6px" data-t="Someone here already chose you. Reveal to see who — super-likes are always visible 💙">Someone here already chose you. Reveal to see who — super-likes are always visible 💙</div>
   <div class="lkgrid" id="lkGrid"></div>
 </section>
 
 <!-- ==================== MATCHES ==================== -->
 <section class="scr" id="scr-matches">
-  <div class="topbar"><div class="h2">Matches 💘</div>
+  <div class="topbar"><div class="h2" data-t="Matches 💘">Matches 💘</div>
     <button class="pill" onclick="toast('Zwin is a kind place 💛 Harassment = ban')">🛡️ Safe</button></div>
-  <div class="sec mut tiny" style="padding:2px 18px;font-weight:900;letter-spacing:1px">NEW MATCHES</div>
+  <div class="sec mut tiny" style="padding:2px 18px;font-weight:900;letter-spacing:1px" data-t="NEW MATCHES">NEW MATCHES</div>
   <div class="mrow" id="mRow"></div>
-  <div class="sec mut tiny" style="padding:8px 18px 2px;font-weight:900;letter-spacing:1px">CHATS</div>
+  <div class="sec mut tiny" style="padding:8px 18px 2px;font-weight:900;letter-spacing:1px" data-t="CHATS">CHATS</div>
   <div id="chatList"></div>
 </section>
 
 <!-- ==================== WALLET ==================== -->
 <section class="scr" id="scr-wallet">
-  <div class="topbar"><div class="h2">Coins 🪙</div></div>
+  <div class="topbar"><div class="h2" data-t="Coins 🪙">Coins 🪙</div></div>
   <div id="walletWrap" style="padding:6px 18px 0"></div>
 </section>
 
 <!-- ==================== PROFILE ==================== -->
 <section class="scr" id="scr-profile">
-  <div class="topbar"><div class="h2">You ✨</div><button class="pill" onclick="resetAll()">Log out</button></div>
+  <div class="topbar"><div class="h2" data-t="You ✨">You ✨</div><button class="pill" onclick="resetAll()" data-t="Log out">Log out</button></div>
   <div id="profileWrap"></div>
   <div style="padding:12px 18px">
-    <button class="btn btn-line" onclick="editProfile()">✏️ Edit profile</button>
+    <button class="btn btn-line" onclick="editProfile()" data-t="✏️ Edit profile">✏️ Edit profile</button>
     <div style="height:10px"></div>
-    <button class="btn btn-line" onclick="toast('Preview shared 💌')">👀 How others see you</button>
-    <div class="mut tiny" style="text-align:center;margin-top:16px">Zwin v1.0 · dating, but warmer 💛</div>
+    <button class="btn btn-line" onclick="toast('Preview shared 💌')" data-t="👀 How others see you">👀 How others see you</button>
+    <div class="mut tiny" style="text-align:center;margin-top:16px" data-t="Zwin v1.0 · dating, but warmer 💛">Zwin v1.0 · dating, but warmer 💛</div>
   </div>
 </section>
 
@@ -332,9 +340,9 @@ textarea.inp{min-height:80px;resize:none}
     <div class="chatfoot" style="border-top:1px solid var(--line)">
       <div class="freebar" id="freeBar"></div>
       <div class="chatrow">
-        <button class="giftbtn" onclick="openGift()" title="Gift coins">🪙</button>
-        <input id="chatIn" placeholder="Say something nice… 💌" onkeydown="if(event.key==='Enter')sendMsg()" oninput="typingNow()">
-        <button class="sendbtn" onclick="sendMsg()">➤</button>
+        <button class="giftbtn" onclick="openGift()" title="Gift coins"><span class="mslot" data-m="gift" data-em="🪙" data-px="24">🪙</span></button>
+        <input id="chatIn" data-tph="Say something nice… 💌" placeholder="Say something nice… 💌" onkeydown="if(event.key==='Enter')sendMsg()" oninput="typingNow()">
+        <button class="sendbtn" onclick="sendMsg()"><span class="mslot" data-m="send" data-em="➤" data-px="19">➤</span></button>
       </div>
     </div>
   </div>
@@ -343,13 +351,13 @@ textarea.inp{min-height:80px;resize:none}
 <!-- match overlay -->
 <div class="mov" id="matchOv">
   <div id="confetti"></div>
-  <h1>It’s a Match!</h1>
+  <h1 data-t="It’s a Match!">It’s a Match!</h1>
   <div class="sub" id="matchSub"></div>
   <div class="duo" id="matchDuo"></div>
   <div style="height:16px"></div>
-  <button class="btn btn-grad" style="max-width:300px" onclick="matchSayHi()">💌 Say hi — first messages are FREE</button>
+  <button class="btn btn-grad" style="max-width:300px" onclick="matchSayHi()" data-t="💌 Say hi — first messages are FREE">💌 Say hi — first messages are FREE</button>
   <div style="height:8px"></div>
-  <button class="btn" style="max-width:300px;background:rgba(255,255,255,.12);color:#ffd7e3" onclick="$('matchOv').classList.remove('on')">Keep discovering 🔥</button>
+  <button class="btn" style="max-width:300px;background:rgba(255,255,255,.12);color:#ffd7e3" onclick="$('matchOv').classList.remove('on')" data-t="Keep discovering 🔥">Keep discovering 🔥</button>
 </div>
 
 <!-- gift sheet -->
@@ -375,8 +383,10 @@ function myUid(){let u=localStorage.getItem('zwin_uid');if(!u){u='u_'+Math.rando
 function load(){try{return JSON.parse(localStorage.getItem('zwin_local'))||fresh()}catch(e){return fresh()}}
 function fresh(){return {me:null,coins:C.welcomeBonus,swiped:{},matches:[],chats:{},freeLeft:{},exclusive:{},likesYou:[],daily:{lastClaim:0,streak:0},gifts:{},boostUntil:0,rewinds:0,unread:{},pendingOrders:[],seen:{} } }
 function save(){localStorage.setItem('zwin_local',JSON.stringify(L));
-  try{ if(!DEMO&&AUTH&&AUTH.currentUser){ ref('users/'+AUTH.currentUser.uid+'/coins').set(Math.max(0,Math.round(L.coins))); } }catch(e){}
+  // 🔒 server referee: the client NEVER writes coins — wallets/ vault is server-only
   paintCoins();paintBadges()}
+function earnTap(t){ if(DEMO){ L.coins+=(t==='video'?10:15); save(); renderWallet(); toast('+'+(t==='video'?10:15)+' 🪙 (demo)'); return; }
+  ref('coinReq/'+uid).push({type:t,ts:Date.now()}); toast('⏳ The vault is checking your reward…'); }
 function toast(m){const d=document.createElement('div');d.className='toast';d.textContent=m;$('toasts').appendChild(d);setTimeout(()=>{d.style.opacity='0';d.style.transition='opacity .3s';setTimeout(()=>d.remove(),300)},2700)}
 function show(id){$(id).classList.add('on')} function hide(id){$(id).classList.remove('on')}
 function grad(i){const G=[['#ffd1e3','#ffb3c7'],['#ffe3c2','#ffc09e'],['#d7f0ff','#b3dcff'],['#e7ffd9','#c3f5b0'],['#f5e0ff','#e6c2ff'],['#fff3c9','#ffe48a'],['#d9fff4','#a9f2df'],['#ffe0e0','#ffb0b0']];const g=G[i%G.length];return `linear-gradient(160deg,${g[0]},${g[1]})`}
@@ -414,7 +424,7 @@ let COMMISSION/*unused*/=0;
 
 /* ---------- CLOUD ============ */
 /* 🔐 LOCK 3 — App Check: activates only if you put a real site key in zwin-config.js */
-/* 🔐 LOCK 1 — Phone sign-in: every user is a verified auth.uid before touching the DB */
+/* 🔐 LOCK 1 — Google sign-in: every user is a verified auth.uid before touching the DB */
 function fbInit(){
   if(!zwinCloudReady()){DEMO=true;return}
   try{
@@ -441,40 +451,24 @@ function onAuthed(u){
 function showAuth(){
   document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));
   $('scr-auth').classList.add('on'); $('tabbar').style.display='none';
+  paintAuthBg();
 }
-let confirmRes=null, lastPhone='';
-function sendCode(){
-  const raw=$('phNum').value.replace(/[\s\-\.]/g,'');
-  if(!/^\+[0-9]{8,15}$/.test(raw))return toast('Enter with country code, e.g. +212612345678','err');
-  if($('codeWrap').style.display!=='none'&&$('phCode').value.trim()){ verifyCode(); return; } // 2nd tap = verify
-  lastPhone=raw;
-  const btn=$('btnSendCode'); btn.disabled=true; btn.textContent='Sending…';
-  if(rvVerifier){ try{rvVerifier.clear()}catch(e){} rvVerifier=null; }
-  renderRecaptcha();
-  AUTH.signInWithPhoneNumber(lastPhone,rvVerifier).then(cr=>{
-    confirmRes=cr; $('codeWrap').style.display=''; btn.disabled=false;
-    btn.textContent='Verify & enter ✅ ↻'; toast('📲 Code sent by SMS!');
-  }).catch(e=>{
-    btn.disabled=false; btn.textContent='Send code 📲';
-    try{ if(rvVerifier){rvVerifier.clear();} rvVerifier=null; }catch(_){/*noop*/}
-    const msg={ 'auth/unauthorized-domain':'🌐 Add your GitHub Pages domain in Firebase → Auth → Settings → Authorized domains',
-      'auth/invalid-phone-number':'That number looks wrong — format +212XXXXXXXXX',
-      'auth/too-many-requests':'Too many tries — wait a few minutes',
-      'auth/invalid-app-credential':'Domain not authorized (Auth → Settings → Authorized domains)' }[e.code];
-    toast(msg||('Send failed: '+e.code),'err');
-  });
-}
-function verifyCode(){
-  const code=$('phCode').value.trim();
-  if(!confirmRes)return toast('Request a code first');
-  if(code.length<4)return toast('Type the 6-digit SMS code');
-  confirmRes.confirm(code).then(()=>{ /* onAuthStateChanged handles the rest */ })
-    .catch(e=>toast(e.code==='auth/invalid-verification-code'?'Wrong code — check the SMS':'Verify failed: '+e.code,'err'));
-}
-let rvVerifier=null;
-function renderRecaptcha(){
-  if(rvVerifier)return;
-  try{ rvVerifier=new firebase.auth.RecaptchaVerifier('recap-slot',{size:'invisible'}); }catch(e){ console.warn(e); }
+/* 🔐 LOCK 1 — Google sign-in: one tap, verified auth.uid, zero SMS cost, no limits */
+function googleIn(){
+  if(!AUTH)return toast('Connect the Firebase cloud first (zwin-config.js)');
+  const btn=$('btnGoogle'); btn.disabled=true; btn.style.opacity=.65;
+  const prov=new firebase.auth.GoogleAuthProvider();
+  AUTH.signInWithPopup(prov).then(()=>{ /* onAuthStateChanged drives the rest */ })
+    .catch(e=>{
+      btn.disabled=false; btn.style.opacity=1;
+      if(['auth/popup-blocked','auth/operation-not-supported-in-this-environment','auth/web-storage-unsupported'].includes(e.code)){
+        AUTH.signInWithRedirect(prov); return;   // browsers that block popups (some in-app WebViews)
+      }
+      if(e.code==='auth/popup-closed-by-user'||e.code==='auth/cancelled-popup-request')return;
+      const msg={ 'auth/unauthorized-domain':'🌐 Add YOUR-USERNAME.github.io in Firebase → Auth → Settings → Authorized domains',
+        'auth/operation-not-allowed':'First enable Google sign-in: Firebase → Authentication → Sign-in method → Google → Enable' }[e.code];
+      toast(msg||('Sign-in failed: '+e.code),'err');
+    });
 }
 
 function ref(p){return DB.ref('wasla_dating/'+p)} // root kept as chosen — rules must match this word
@@ -489,7 +483,8 @@ async function syncMe(){
   await ref('users/'+uid).update({
     name:L.me.name,age:L.me.age,g:L.me.g,into:L.me.into,city:L.me.city,bio:L.me.bio,
     tags:L.me.tags.slice(0,4),em:L.me.em,gi:L.me.gi,lastSeen:Date.now(),
-    hasPhoto:(L.me.photos&&L.me.photos.length)?Date.now():0
+    hasPhoto:(L.me.photos&&L.me.photos.length)?Date.now():0,
+    geo:(L.geo&&L.geo.la!=null)?{la:L.geo.la,lo:L.geo.lo}:null
   });
   // restore my photos if I log in from a new device (they live in their own table)
   ref('photos/'+uid).once('value').then(s=>{ const m=s.val()||{};
@@ -497,8 +492,21 @@ async function syncMe(){
     if(arr.length&&!(L.me.photos||[]).length){ L.me.photos=arr; delete photoCache[uid]; save();
       if(R.tab==='profile')renderProfile(); }
   }).catch(()=>{});
-  await ref('users/'+uid+'/coins').transaction(v=>(v===null?L.coins:v));
-  ref('users/'+uid+'/coins').on('value',s=>{ const v=s.val(); if(v!==null&&v!==L.coins){L.coins=v;save();} });
+  // 🔒 wallet = server vault — only Cloud Functions + your admin dashboard can change it
+  ref('wallets/'+uid+'/coins').on('value',s=>{ const v=s.val(); if(v!==null&&v!==L.coins){L.coins=v;save();} });
+  // referee receipts → toasts (claim results, failed spends, delivered gifts, undo notices)
+  ref('receipts/'+uid).limitToLast(5).on('child_added',s=>{ const r=s.val(); if(!r||L.seen['rc'+s.key])return; L.seen['rc'+s.key]=1;
+    if(r.daily){ L.daily={lastClaim:r.daily.lastClaim,streak:r.daily.streak}; }
+    if(r.undo==='reveal'&&r.peer){ const lk=L.likesYou.find(x=>x.uid===r.peer); if(lk)lk.seen=0; }
+    save(); if(r.ts>Date.now()-60000)toast(r.text||'🪙 Wallet updated');
+    if(R.tab==='wallet')renderWallet(); if(R.tab==='likes')renderLikes(); });
+  // ✅ verified badge live + review outcome
+  ref('verified/'+uid).on('value',s=>{ const v=!!s.val();
+    if(v&&!L.verified){ L.verified=1; L.verifyPending=0; save();
+      toast('✅ You are VERIFIED — the badge of real people 💙'); if(R.tab==='profile')renderProfile(); }
+    else if(!v&&L.verified){ L.verified=0; save(); } });
+  ref('verifyReq/'+uid).on('value',s=>{ if(!s.exists()&&L.verifyPending&&!L.verified){ L.verifyPending=0; save();
+    toast('Verification needs a clearer selfie — face + ✌️ visible 💙'); if(R.tab==='profile')renderProfile(); } });
   // likes index
   ref('incoming/'+uid).limitToLast(50).on('child_added',s=>{
     const from=s.key, d=s.val(); if(!d||L.seen['lk'+from])return; L.seen['lk'+from]=1;
@@ -514,7 +522,8 @@ async function syncMe(){
   // gifts live
   ref('giftsFor/'+uid).limitToLast(20).on('child_added',s=>{
     const g=s.val(); if(!g)return; const k=s.key; if(L.seen[k])return; L.seen[k]=1;
-    L.coins+=g.coins; save();
+    if(DEMO){ L.coins+=g.coins; } // live: the referee transfers the coins vault→vault
+    save();
     toast(`🌹 ${g.fromName} gifted you ${g.coins} 🪙 — high interest!`);
     const mm=L.matches.find(m=>m.peer===g.from);
     if(mm){ addMsg(mm.mid,'gift',{coins:g.coins,fromName:g.fromName},false);
@@ -535,14 +544,39 @@ async function cloudDiscover(){
   if(R.usersCache.length&&(now-R.cacheTs<120000))return R.usersCache;
   const snap=await ref('users').limitToLast(200).once('value');
   const all=snap.val()||{};
+  let banned={}; try{ banned=(await ref('banned').once('value')).val()||{}; }catch(e){}
+  let vfd={}; try{ vfd=(await ref('verified').once('value')).val()||{}; }catch(e){}
+  Object.entries(vfd).forEach(([k,v])=>{VD[k]=!!v});
   const me=L.me;
   const wantW=me.into.includes('w'), wantM=me.into.includes('m');
-  const pool=Object.entries(all)
-    .filter(([k,p])=>k!==uid&&p.name&&((p.g==='w'&&wantW)||(p.g==='m'&&wantM)))
-    .map(([k,p])=>({...p,id:k,sim:false,km:1+Math.floor(Math.random()*14),score:(p.lastSeen||0)/1e13+(p.boostUntil>now?3:0)}));
-  R.usersCache=pool.sort(()=>Math.random()-.5); R.cacheTs=now;
+  let pool=Object.entries(all)
+    .filter(([k,p])=>k!==uid&&p.name&&!banned[k]&&((p.g==='w'&&wantW)||(p.g==='m'&&wantM)))
+    .map(([k,p])=>{ const g=((p.geo&&p.geo.la!=null)?p.geo:null);
+      return {...p,id:k,sim:false,
+        km:(g&&L.geo)?distKm(L.geo.la,L.geo.lo,g.la,g.lo):null,
+        fresh:(p.lastSeen||0)>now-3*86400000, verified:!!vfd[k]}; });
+  if(L.nearOnly)pool=pool.filter(p=>p.city===me.city||(p.km!=null&&p.km<=80));
+  // boosted first, then REAL nearest first; random when no geo context (keeps discovery fun)
+  pool=pool.sort((a,b)=>((b.boostUntil>now?1:0)-(a.boostUntil>now?1:0)));
+  if(L.geo)pool=pool.sort((a,b)=>((b.boostUntil>now?1:0)-(a.boostUntil>now?1:0))||((b.verified?1:0)-(a.verified?1:0))||((a.km==null?9999:a.km)-(b.km==null?9999:b.km)));
+  else pool=pool.sort(()=>Math.random()-.5);
+  R.usersCache=pool; R.cacheTs=now;
   return pool;
 }
+
+/* ============ 🎨 PRO MEDIA ENGINE — images with emoji fallback (never breaks) */
+function MURL(k){ const md=(typeof ZWIN_CONFIG!=='undefined'&&ZWIN_CONFIG.media)||{};
+  if(md[k])return md[k]; if(!md.base)return '';
+  const special={authBg:'auth-bg.jpg',chat:'chat.svg'}[k];
+  return md.base+(special||(k+'.png')); }
+function MIMG(k,em,px){ const u=MURL(k); if(!u)return em;
+  return `<img class="mimg" src="${u}" style="height:${px||20}px;width:${px||20}px" onerror="this.outerHTML='${em}'" alt="">`; }
+function skinMedia(){ document.querySelectorAll('.mslot[data-m]').forEach(el=>{ if(el.dataset.done)return; el.dataset.done='1';
+  const u=MURL(el.dataset.m); if(!u)return; const px=el.dataset.px||20;
+  el.innerHTML=`<img class="mimg" src="${u}" style="height:${px}px;width:${px}px" onerror="this.parentNode.textContent=this.parentNode.dataset.em" alt="">`; }); }
+/* 👰🤵 sign-in background — the promise (love that ends in marriage) */
+function paintAuthBg(){ const u=MURL('authBg'); if(!u)return; const s=$('scr-auth'); if(!s||s.dataset.bgdone)return; s.dataset.bgdone='1';
+  s.style.background=`linear-gradient(180deg,rgba(255,247,249,.04) 0%,rgba(255,247,249,.28) 40%,rgba(255,247,249,.84) 66%,#fff7f9 88%),url('${u}') center 30%/cover no-repeat`; }
 
 /* ============ 📸 REAL PHOTOS ============ */
 /* Photos live in their OWN table (photos/{uid}/p0..p3) so user profiles stay light:
@@ -593,7 +627,9 @@ function pickPhoto(){
       if(L.me.photos.length>=maxPh)L.me.photos.pop();
       L.me.photos.unshift(url); delete photoCache[uid];
       save(); await syncPhotos();
-      if(!L.photoBonusDone){ L.photoBonusDone=1; L.coins+=25; save(); toast('🎁 +25 🪙 — photo quest complete!'); }
+      if(!L.photoBonusDone){ L.photoBonusDone=1; save();
+        if(DEMO){ L.coins+=25; save(); toast('🎁 +25 🪙 — photo quest complete!'); }
+        else ref('coinReq/'+uid).push({type:'photoBonus',ts:Date.now()}); }
       toast('📸 Photo live — profiles with photos match 3× more 💛');
       renderProfile();
     }catch(e){ toast('That photo didn’t work — try another one'); }
@@ -646,6 +682,136 @@ async function startPush(announce){
   }catch(e){ console.warn('push failed',e); if(announce)toast('Push setup hiccup — try again in a moment'); }
 }
 
+/* ============ 🌍 LANGUAGE — EN / FR / AR (Darija-friendly) */
+const I18N={
+fr:{
+'Discover':'Découvrir','Liked you':'Ils t\'aiment','Matches':'Matchs','Coins':'Pièces','Me':'Moi',
+'Real people only 💛':'Uniquement de vraies personnes 💛',
+'One tap with your Google account to enter Zwin —<br>no bots, no fakes, no catfish farms.<br><b>We never see your emails or post anything.</b>':'Un tap avec ton compte Google pour entrer —<br>pas de bots, pas de faux profils.<br><b>On ne lit jamais tes e-mails.</b>',
+'Continue with Google':'Continuer avec Google',
+'Sign-in secured by Google · your identity stays private · 18+':'Connexion sécurisée par Google · identité privée · 18+',
+'They like you 😍':'Ils t\'adorent 😍',
+'Someone here already chose you. Reveal to see who — super-likes are always visible 💙':'Quelqu\'un t\'a déjà choisi(e). Révèle pour voir — les super-likes restent visibles 💙',
+'Matches 💘':'Matchs 💘','NEW MATCHES':'NOUVEAUX MATCHS','CHATS':'DISCUSSIONS',
+'Coins 🪙':'Pièces 🪙','You ✨':'Toi ✨','Log out':'Déconnexion',
+'✏️ Edit profile':'✏️ Modifier le profil','👀 How others see you':'👀 Comment on te voit',
+'Zwin v1.0 · dating, but warmer 💛':'Zwin v1.0 · l\'amour, en plus chaud 💛',
+'Say something nice… 💌':'Dis quelque chose de gentil… 💌',
+'🪙 Gift coins — show real interest':'🪙 Offrir des pièces — montre ton sérieux',
+'It’s a Match!':'C\'est un Match !',
+'💌 Say hi — first messages are FREE':'💌 Dis bonjour — premiers messages GRATUITS',
+'Keep discovering 🔥':'Continuer à découvrir 🔥',
+'Daily free coins 🔥':'Pièces gratuites du jour 🔥','Streak: ':'Série : ',
+'Come back daily — your streak grows the gift (+10%/day, up to 2×)':'Reviens chaque jour — ta série augmente le cadeau (+10%/jour, max 2×)',
+'Claim +N coins now':'Récolte +N pièces','✅ Claimed today — see you tomorrow!':'✅ Récolté — à demain !',
+'coins · claim free daily below':'pièces · récolte gratuite chaque jour',
+'EARN FREE COINS':'GAGNE DES PIÈCES','BUY COINS':'ACHETER DES PIÈCES',
+'My photos 📸':'Mes photos 📸',
+'Real photos get ~3× more matches 💛 Auto-compressed & synced — free.':'Les vraies photos = ~3× plus de matchs 💛 Compressées & synchronisées — gratuit.',
+'My stats this week':'Mes stats cette semaine','Admirers':'Admirateurs','🪙 gifted':'🪙 offerts','Streak 🔥':'Série 🔥',
+'VERIFIED badge':'Badge VÉRIFIÉ','Real distance (GPS)':'Distance réelle (GPS)',
+'Lock-screen alerts':'Alertes écran verrouillé','In-app notifications':'Notifications dans l\'app',
+'Safety center':'Centre de sécurité','Help & support':'Aide & support','Language':'Langue',
+'That’s everyone nearby!':'C\'est tout pour le moment !',
+'Secure Al Barid/CMI checkout coming soon — now via bank transfer 🏦':'Paiement CMI/Al Barid bientôt — virement bancaire pour le moment 🏦',
+'💌 Free messages left':'💌 Messages gratuits restants'
+},
+ar:{
+'Discover':'اكتشف','Liked you':'عجبتهم','Matches':'توافقات','Coins':'كوينز','Me':'أنا',
+'Real people only 💛':'غير ناس حقيقيين 💛',
+'One tap with your Google account to enter Zwin —<br>no bots, no fakes, no catfish farms.<br><b>We never see your emails or post anything.</b>':'دخل بضغطة وحدة بحساب Google ديالك —<br>بلا بوتات، بلا بروفايلات مزورة.<br><b>ما كنشوفو إيميلاتك أبدا.</b>',
+'Continue with Google':'تواصل مع Google',
+'Sign-in secured by Google · your identity stays private · 18+':'تسجيل آمن عبر Google · هويتك خاصة · +18',
+'They like you 😍':'عجبتييهم 😍',
+'Someone here already chose you. Reveal to see who — super-likes are always visible 💙':'شي حد هنا اختارك ديجا. اكشف باش تعرف شكون — السوبر لايكات دائما ظاهرين 💙',
+'Matches 💘':'توافقات 💘','NEW MATCHES':'توافقات جداد','CHATS':'مراسلات',
+'Coins 🪙':'كوينز 🪙','You ✨':'نتا ✨','Log out':'خرج',
+'✏️ Edit profile':'✏️ بدّل البروفايل','👀 How others see you':'👀 كيف كيبانوك الناس',
+'Zwin v1.0 · dating, but warmer 💛':'Zwin v1.0 · ديتينغ بقلب 💛',
+'Say something nice… 💌':'قول شي حاجة زوينة… 💌',
+'🪙 Gift coins — show real interest':'🪙 صيفط كوينز — بيّن الاهتمام ديالك',
+'It’s a Match!':'توافقتو!',
+'💌 Say hi — first messages are FREE':'💌 سلام معاه — أول مساجات بالبلاش',
+'Keep discovering 🔥':'كمل كنكتاشف 🔥',
+'Daily free coins 🔥':'كوينز بلاص ديال اليوم 🔥','Streak: ':'سلسلة: ',
+'Come back daily — your streak grows the gift (+10%/day, up to 2×)':'رجع كل نهار — السلسلة كتكبّر الهدية',
+'Claim +N coins now':'خذ +N كوينز دابا','✅ Claimed today — see you tomorrow!':'✅ ربحتي اليوم — تسنا غدا!',
+'coins · claim free daily below':'كوينز · ربح البلاص كل نهار',
+'EARN FREE COINS':'ربح كوينز بالبلاص','BUY COINS':'شري الكوينز',
+'My photos 📸':'الصور ديالي 📸',
+'Real photos get ~3× more matches 💛 Auto-compressed & synced — free.':'الصور الحقيقية كتزيد التوافق 3× 💛 كيتضغطو وحداتهم بالبلاش.',
+'My stats this week':'إحصائياتي هاد السيمانة','Admirers':'معجبين','🪙 gifted':'🪙 مهداة','Streak 🔥':'سلسلة 🔥',
+'VERIFIED badge':'علامة التحقق','Real distance (GPS)':'المسافة الحقيقية',
+'Lock-screen alerts':'إشعارات الشاشة المقفولة','In-app notifications':'إشعارات داخل التطبيق',
+'Safety center':'مركز الأمان','Help & support':'المساعدة','Language':'اللغة',
+'That’s everyone nearby!':'سالينا الناس ديال هنا!',
+'Secure Al Barid/CMI checkout coming soon — now via bank transfer 🏦':'أداء CMI/الباريد قريبا — دابا بالتحويل البنكي 🏦',
+'💌 Free messages left':'💌 باقي مساجات بالبلاش'
+}};
+function T(en){ const m=I18N[L.lang]; return (m&&m[en])||en; }
+function setLang(l){ L.lang=l; save();
+  document.documentElement.dir=(l==='ar')?'rtl':'ltr'; document.documentElement.lang=l;
+  skinLang(); renderTabbar();
+  if(R.tab&&$('scr-'+R.tab))showTab(R.tab);
+  toast(l==='ar'?'اللغة: العربية 🇲🇦':l==='fr'?'Langue : Français 🇫🇷':'Language: English 🇬🇧'); }
+function skinLang(){ document.querySelectorAll('[data-t]').forEach(el=>{ el.innerHTML=T(el.dataset.t); });
+  document.querySelectorAll('[data-tph]').forEach(el=>{ el.placeholder=T(el.dataset.tph); }); }
+
+/* ============ ✅ SELFIE VERIFIED — trust badge (you approve in admin, zero AI cost) */
+const VD={}; // uid -> verified?
+function VB(on){ return on?'<span class="vchk">✓</span>':''; }
+function startVerify(){
+  if(L.verified)return toast('✅ You are already VERIFIED 💙');
+  if(L.verifyPending)return toast('⏳ Your selfie is being reviewed — usually under 24h');
+  $('genBody').innerHTML=`<div style="text-align:center;padding:6px 0 12px">
+    <div style="font-size:50px">🤳✌️</div>
+    <div class="h2">Get the blue check ✅</div>
+    <div class="mut small" style="margin-top:6px;line-height:1.7">Take a selfie <b>right now</b> doing the ✌️ sign,<br>face clearly visible, no sunglasses.<br>Our team compares it with your profile photo<br>(kept private, deleted after review). Verified people<br>get the badge + <b>30 🪙 reward</b> — and real trust.</div></div>
+    <button class="btn btn-grad" onclick="pickVerifySelfie()">🤳 Take the selfie</button>
+    <div style="height:8px"></div>
+    <button class="btn btn-line" onclick="hide('genSheet')">Later</button>`;
+  show('genSheet');
+}
+function pickVerifySelfie(){
+  const inp=document.createElement('input'); inp.type='file'; inp.accept='image/*'; inp.setAttribute('capture','user');
+  inp.onchange=async()=>{ const f=inp.files&&inp.files[0]; if(!f)return;
+    toast('⏳ Sending for review…');
+    try{ const data=await compressImage(f);
+      if(DEMO){ L.verified=1; save(); hide('genSheet'); renderProfile(); toast('✅ VERIFIED (demo)'); return; }
+      await ref('verifyReq/'+uid).set({img:data,ts:Date.now(),name:L.me.name});
+      L.verifyPending=1; save(); hide('genSheet'); renderProfile();
+      toast('⏳ Selfie sent — verification usually under 24h 💙');
+    }catch(e){ toast('Photo failed — try again'); }
+  };
+  inp.click();
+}
+
+/* ============ 📍 REAL DISTANCE (GPS opt-in — Tinder Gold feature, FREE here) */
+/* Privacy by design: coordinates are rounded to ~2 km before saving. Exact spots never stored. */
+function distKm(la1,lo1,la2,lo2){ const R=6371,dLa=(la2-la1)*Math.PI/180,dLo=(lo2-lo1)*Math.PI/180,
+  a=Math.sin(dLa/2)*Math.sin(dLa/2)+Math.cos(la1*Math.PI/180)*Math.cos(la2*Math.PI/180)*Math.sin(dLo/2)*Math.sin(dLo/2);
+  return Math.max(1,Math.round(R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a)))); }
+function paintGeoSlot(){ const el=$('geoSlot'); if(!el)return;
+  if(L.geo||L.geoDenied){ el.innerHTML=''; return; }
+  el.innerHTML=`<div class="demobanner" style="background:#eaf6ff;border-color:#cfe6ff;color:#1d6fb8;display:flex;align-items:center;gap:8px;margin:0 18px 6px">📍 <span style="flex:1">See <b>real distances</b>? Your exact spot is never stored — rounded to ~2 km only.</span><button class="pill" style="background:#dff1ff;color:#1d6fb8" onclick="askGeo()">Turn on</button></div>`; }
+function askGeo(){
+  if(!('geolocation' in navigator))return toast('This device has no GPS 😢');
+  toast('📍 Locating you (approximate, private)…');
+  navigator.geolocation.getCurrentPosition(pos=>{
+    L.geo={la:+pos.coords.latitude.toFixed(2),lo:+pos.coords.longitude.toFixed(2),ts:Date.now()};
+    L.geoDenied=0; save(); paintGeoSlot();
+    if(!DEMO)syncMe();
+    toast('📍 Distance ON — real km, privacy-safe 💛');
+    R.cacheTs=0; loadDeck();
+  },err=>{ L.geoDenied=1; save(); paintGeoSlot(); toast('Location off — city names still show 💛'); },
+  {timeout:9000,maximumAge:600000}); }
+function toggleNear(){ L.nearOnly=!L.nearOnly; save(); paintNearChip();
+  if(L.nearOnly&&!L.geo){ askGeo(); }
+  else { toast(L.nearOnly?'📍 Near-you mode: your city + under 80 km first':'🌍 Showing everyone again'); R.cacheTs=0; loadDeck(); } }
+function paintNearChip(){ const b=$('nearChip'); if(!b)return;
+  if(L.nearOnly){ b.style.background='var(--grad)'; b.style.color='#fff'; b.innerHTML='📍 Near'; }
+  else { b.style.background=''; b.style.color=''; b.innerHTML='📍'; } }
+
 /* ============ ONBOARDING ============ */
 const OB={step:0,data:{name:'',age:22,g:'',into:[],city:'Casablanca',bio:'',tags:[],em:'😊',gi:0}};
 function startOnboard(){
@@ -656,7 +822,7 @@ function paintOb(){
   const d=OB.data; const W=$('obWrap');
   const steps=[
    ()=>`<div class="obstep">
-     <div class="ob-logo"><div class="flame">🔥</div></div>
+     <div class="ob-logo"><div class="flame"><span class="mslot" data-m="flame" data-em="🔥" data-px="42">🔥</span></div></div>
      <h1 class="h1" style="text-align:center">Welcome to <span class="grad-txt">Zwin</span></h1>
      <div class="mut" style="text-align:center">Dating, but warmer. Real chats, zero judgment,<br>and kindness that pays — literally 🪙</div>
      <div class="card small" style="line-height:1.8">💌 <b>First ${C.freeChatMsgs} messages</b> with every match are free<br>
@@ -696,6 +862,7 @@ function paintOb(){
      <button class="btn btn-grad" onclick="obFinish()">Start swiping 🔥</button></div>`
   ];
   W.innerHTML=steps[OB.step]();
+  skinMedia();
 }
 function obNext(s){OB.step=s;paintOb()}
 function obTag(t){const d=OB.data; if(d.tags.includes(t))d.tags=d.tags.filter(x=>x!==t); else if(d.tags.length<4)d.tags.push(t); paintOb()}
@@ -723,7 +890,8 @@ function renderTabbar(){
   const unChats=unreadTotal();
   $('tabbar').innerHTML=TABS.map(([id,em,nm])=>{
     const b=id==='likes'&&unLikes?`<span class="tbadge">${unLikes}</span>`:id==='matches'&&unChats?`<span class="tbadge">${unChats}</span>`:'';
-    return `<button class="tab ${R.tab===id?'on':''}" onclick="showTab('${id}')">${b}<span class="ic">${em}</span>${nm}</button>`;
+    const mic={discover:'flame',likes:'loveface',matches:'chat',wallet:'coin',profile:'super'}[id];
+    return `<button class="tab ${R.tab===id?'on':''}" onclick="showTab('${id}')">${b}<span class="ic">${MIMG(mic,em,19)}</span>${T(nm)}</button>`;
   }).join('');
 }
 function showTab(t){
@@ -734,7 +902,8 @@ function showTab(t){
   if(t==='matches')renderMatches();
   if(t==='wallet')renderWallet();
   if(t==='profile')renderProfile();
-  if(t==='discover')$('demoSlot').innerHTML=DEMO?`<div class="demobanner">⚡ DEMO MODE — Firebase not set up yet (see README.md). Everyone here is a starter profile; connect the free cloud to meet real people.</div>`:'';
+  if(t==='discover'){ $('demoSlot').innerHTML=DEMO?`<div class="demobanner">⚡ DEMO MODE — Firebase not set up yet (see README.md). Everyone here is a starter profile; connect the free cloud to meet real people.</div>`:'';
+    paintGeoSlot(); paintNearChip(); }
 }
 function paintBadges(){renderTabbar(); if(R.tab==='matches')renderMatches();}
 
@@ -754,8 +923,8 @@ async function loadDeck(){
 function paintDeck(){
   const dk=$('deck');
   if(!R.deck.length){
-    dk.innerHTML=`<div class="deckempty"><div class="big">🌅</div>
-      <div class="h2">That’s everyone nearby!</div>
+    dk.innerHTML=`<div class="deckempty"><div class="big">${MIMG('flame','🌅',72)}</div>
+      <div class="h2">${T('That’s everyone nearby!')}</div>
       <div class="mut small" style="max-width:270px">New hearts join Zwin every day. Boost to be the first face they see, or come back after your daily coins 💛</div>
       <button class="btn btn-grad" style="max-width:240px;margin-top:8px" onclick="showTab('wallet')">🪙 Get more from coins</button></div>`;
     return;
@@ -771,7 +940,7 @@ function boostChip(){
   const old=$('boostChip'); if(old)old.remove();
   const b=document.createElement('button');
   b.id='boostChip'; b.className='boostbtn'+(live?' live':'');
-  b.innerHTML=live?'🚀 Boosted!':'🚀 Boost';
+  b.innerHTML=(live?MIMG('boost','🚀',14)+' Boosted!':MIMG('boost','🚀',14)+' Boost');
   b.onclick=boost; $('deck').appendChild(b);
 }
 function cardHtml(p,i){
@@ -783,11 +952,11 @@ function cardHtml(p,i){
     <div class="shade"></div>
     <div class="stamp like">LIKE</div><div class="stamp no">NOPE</div><div class="stamp wow">WOW ✨</div>
     <div class="info">
-      <div class="nm">${p.name} <span class="age">${p.age}</span></div>
-      <div class="ds">📍 ${p.km} km · ${p.city}</div>
+      <div class="nm">${p.name} <span class="age">${p.age}</span> ${VB(p.verified)}</div>
+      <div class="ds">📍 ${p.km!=null?`${p.km} km · `:''}${p.city||'Morocco'}</div>
       <div class="bio">${p.bio||''}</div>
       <div class="tags">${(p.tags||[]).slice(0,3).map(t=>`<span>${t}</span>`).join('')}</div>
-      <button class="chip" style="margin-top:10px;background:rgba(255,255,255,.9);border:none;color:var(--pk);font-weight:900" onclick="event.stopPropagation();openGiftFromCard('${p.id}')">🪙 Gift coins — show real interest</button>
+      <button class="chip" style="margin-top:10px;background:rgba(255,255,255,.9);border:none;color:var(--pk);font-weight:900" onclick="event.stopPropagation();openGiftFromCard('${p.id}')">${T('🪙 Gift coins — show real interest')}</button>
     </div></div>`;
 }
 function bindTopCard(){
@@ -901,7 +1070,7 @@ function personOf(pid){ return SAMPLES.find(s=>s.id===pid)||(R.usersCache.find(u
 function renderLikes(){
   const list=L.likesYou;
   $('likeCnt').textContent=list.filter(x=>!x.seen).length+' new';
-  if(!list.length){ $('lkGrid').innerHTML=`<div class="deckempty" style="grid-column:1/-1"><div class="big">💌</div>
+  if(!list.length){ $('lkGrid').innerHTML=`<div class="deckempty" style="grid-column:1/-1"><div class="big">${MIMG('loveface','💌',72)}</div>
     <div class="h2">Your admirers will gather here</div>
     <div class="mut small" style="max-width:260px">Keep swiping — the like notifications start rolling fast. Boost 🚀 speeds it up 10×</div></div>`; return; }
   $('lkGrid').innerHTML=list.map((lk,i)=>{
@@ -923,6 +1092,7 @@ function revealLike(i){
     if(L.coins<C.revealLikeCost)return shop(`👀 Reveal admirers — ${C.revealLikeCost} 🪙 each`);
     L.coins-=C.revealLikeCost;
   }
+  if(!DEMO&&lk.d!=='super')ref('reveals/'+uid+'/'+lk.uid).set({ts:Date.now()}); // referee debits the vault
   lk.seen=1; save(); renderLikes();
   const p=personOf(lk.uid);
   if(DEMO&&Math.random()<0.75){ makeMatch(p); }
@@ -946,7 +1116,7 @@ function renderMatches(){
       <div class="prv"><b>${m.name} ${excl?'<span class="excl">✨ EXCLUSIVE</span>':''}</b><div class="lm">${txt}</div></div>
       ${un?`<span class="cunr">${un}</span>`:''}</button>`;}).join('')
     :`<div class="deckempty" style="padding:34px 20px"><div class="big">�static</div></div>`;
-  if(!chats.length)$('chatList').innerHTML=`<div class="deckempty" style="padding:34px 20px"><div class="big">💘</div><div class="mut small" style="max-width:260px">When you match, your chats live here.<br>Tip: the first ${C.freeChatMsgs} messages are always free 💌</div></div>`;
+  if(!chats.length)$('chatList').innerHTML=`<div class="deckempty" style="padding:34px 20px"><div class="big">${MIMG('chat','💘',72)}</div><div class="mut small" style="max-width:260px">When you match, your chats live here.<br>Tip: the first ${C.freeChatMsgs} messages are always free 💌</div></div>`;
   renderTabbar();
 }
 
@@ -958,7 +1128,7 @@ function openChat(mid){
   L.unread[mid]=0; save();
   $('chAv').style.background=grad(m.gi); $('chAv').textContent=m.em;
   ensurePhoto(p,url=>{ if(url&&R.chatWith===mid){ $('chAv').style.background='none'; putImg($('chAv'),url); } });
-  $('chName').innerHTML=`${m.name}${L.exclusive[mid]?'<span class="excl">✨ EXCLUSIVE</span>':''}`;
+  $('chName').innerHTML=`${m.name} ${VB(VD[m.peer])}${L.exclusive[mid]?'<span class="excl">✨ EXCLUSIVE</span>':''}`;
   $('chatHead').classList.toggle('excl',!!L.exclusive[mid]);
   $('chState').textContent=p?`${p.city||''} · matched ${new Date(m.ts).toLocaleDateString()}`:'';
   $('chatScr').classList.add('on');
@@ -970,7 +1140,7 @@ function paintFreeBar(){
   const mid=R.chatWith; const left=L.freeLeft[mid]||0;
   const pct=left*100/C.freeChatMsgs;
   $('freeBar').innerHTML= left>0
-    ? `<span>💌 Free messages left</span><div class="bar"><i style="width:${pct}%"></i></div><b>${left}</b>`
+    ? `<span>${T('💌 Free messages left')}</span><div class="bar"><i style="width:${pct}%"></i></div><b>${left}</b>`
     : `<span>🪙 ${C.msgCost}/message · balance</span><div class="bar"><i style="width:100%;background:var(--gold)"></i></div><b>${L.coins}</b>`;
 }
 function paintIce(){
@@ -1009,9 +1179,7 @@ async function sendMsg(){
   const msg={who:'msg',text:v,me:true,ts:Date.now()}; (L.chats[mid]=L.chats[mid]||[]).push(msg);
   save(); pushBubble(msg); paintFreeBar(); paintIce();
   if(!DEMO&&!p.sim){
-    ref('chats/'+mid).push({from:uid,fromName:L.me.name,text:v,ts:Date.now()});
-    const left=await ref('chatMeta/'+mid+'/freeLeft').transaction(n=>Math.max(0,(n===null?C.freeChatMsgs:n)-1));
-    ref('chatMeta/'+mid+'/unread_b').transaction(n=>(n||0)+1);
+    ref('chats/'+mid).push({from:uid,fromName:L.me.name,text:v,ts:Date.now()}); // referee counts frees + debits vault
   }
   if(p&&p.sim)botReply(mid,p);
 }
@@ -1056,19 +1224,79 @@ let lastType=0;
 function typingNow(){ if(DEMO)return; const now=Date.now(); if(now-lastType>2000){ lastType=now;
   ref('typing/'+R.chatWith+'/'+uid).set(now); ref('typing/'+R.chatWith+'/'+uid).onDisconnect().remove(); } }
 function chatMenu(){
-  $('genBody').innerHTML=`<div class="h2" style="margin-bottom:10px">Options</div>
+  const m=L.matches.find(m=>m.mid===R.chatWith);
+  $('genBody').innerHTML=`<div class="h2" style="margin-bottom:10px">${m?m.name:'Options'}</div>
+    <button class="btn btn-line" onclick="viewPeerProfile()">👀 View profile</button>
+    <div style="height:8px"></div>
     <button class="btn btn-line" onclick="openGift();hide('genSheet')">🪙 Gift coins — turn this chat gold</button>
     <div style="height:8px"></div>
-    <button class="btn btn-line" onclick="toast('Profile viewed 👀');hide('genSheet')">👀 View profile</button>
+    <button class="btn btn-line" onclick="unmatchAsk()">💔 Unmatch</button>
     <div style="height:8px"></div>
-    <button class="btn btn-line" style="color:#c0392b" onclick="unmatch()">🚫 Unmatch & report</button>`;
+    <button class="btn btn-line" style="color:#c0392b" onclick="reportAsk()">🚩 Report & block</button>`;
   show('genSheet');
 }
-function unmatch(){ const mid=R.chatWith; hide('genSheet');
-  if(confirm('Unmatch? This can’t be undone.')){
-    if(!DEMO){ const p=peerOf(mid); ref('reports').push({from:uid,against:p?p.id:'?',ts:Date.now()}); }
-    L.matches=L.matches.filter(m=>m.mid!==mid); delete L.chats[mid];
-    save(); closeChat(); toast('Unmatched. Onwards to better 💛'); } }
+/* 👀 Tinder-style profile card (with Unmatch at the bottom, just like Tinder) */
+function viewPeerProfile(){
+  const p=peerOf(R.chatWith); if(!p)return toast('Profile still loading…');
+  hide('genSheet');
+  $('genBody').innerHTML=`
+    <div style="border-radius:20px;overflow:hidden;margin-bottom:12px;position:relative">
+      <div style="height:230px;background:${grad(p.gi)};display:flex;align-items:center;justify-content:center;font-size:84px" id="vpPh">${p.em||'💛'}</div>
+      <div style="position:absolute;inset-inline:0;bottom:0;padding:12px;background:linear-gradient(transparent,rgba(30,10,25,.78));color:#fff">
+        <b style="font-size:20px">${p.name}${p.age?', '+p.age:''}</b>
+        <div class="tiny" style="opacity:.9;font-weight:700">📍 ${p.city||'Morocco'}</div>
+      </div>
+    </div>
+    <div class="small" style="line-height:1.55">${p.bio||'No bio yet'}</div>
+    <div class="row" style="flex-wrap:wrap;gap:6px;margin:10px 0 14px">${(p.tags||[]).map(t=>`<span class="chip" style="font-size:11px">${t}</span>`).join('')}</div>
+    <button class="btn btn-line" onclick="hide('genSheet');openGift()">🪙 Gift coins</button>
+    <div style="height:8px"></div>
+    <button class="btn btn-line" onclick="unmatchAsk()">💔 Unmatch</button>`;
+  ensurePhoto(p,url=>{ if(url)putImg($('vpPh'),url); });
+  show('genSheet');
+}
+/* 💔 UNMATCH — silent, both sides, chat erased (Tinder behavior) */
+function unmatchAsk(){
+  const m=L.matches.find(m=>m.mid===R.chatWith); if(!m)return;
+  $('genBody').innerHTML=`<div style="text-align:center;padding:6px 0 12px">
+    <div style="font-size:46px">💔</div>
+    <div class="h2">Unmatch with ${m.name}?</div>
+    <div class="mut small" style="margin-top:6px;line-height:1.6">The match and the whole conversation<br>disappear for <b>both</b> of you.<br>They are never notified.</div></div>
+    <button class="btn btn-grad" onclick="doUnmatch(false)">💔 Yes, unmatch</button>
+    <div style="height:8px"></div>
+    <button class="btn btn-line" onclick="hide('genSheet')">Keep the match 💛</button>`;
+  show('genSheet');
+}
+/* 🚩 REPORT — Tinder-style reasons, also unmatches + flags admin */
+function reportAsk(){
+  const m=L.matches.find(m=>m.mid===R.chatWith); if(!m)return;
+  const reasons=['💰 Asked for money / scam','🤬 Harassment or hate','🔞 Inappropriate content','🎭 Fake profile / catfish','📵 Something else'];
+  $('genBody').innerHTML=`<div class="h2" style="margin-bottom:4px">Report ${m.name} 🚩</div>
+    <div class="mut small" style="margin-bottom:12px">Our team reviews every report within 24h.<br>They will be unmatched & blocked instantly.</div>
+    ${reasons.map(r=>`<button class="btn btn-line" style="margin-bottom:8px;text-align:start" onclick="doUnmatch(true,'${r}')">${r}</button>`).join('')}
+    <button class="btn btn-line" onclick="hide('genSheet')">Cancel</button>`;
+  show('genSheet');
+}
+async function doUnmatch(reported,reason){
+  hide('genSheet');
+  const mid=R.chatWith; const m=L.matches.find(m=>m.mid===mid); if(!m)return;
+  const peerId=m.peer;
+  if(!DEMO){
+    try{
+      if(reported)ref('reports').push({from:uid,against:peerId,reason:reason||'report',mid,ts:Date.now()});
+      // tombstone: THEIR app deletes the match too on next sync (locks safe — only members can write the match)
+      await ref('matches/'+mid).set({dead:1,a:uid,b:peerId,by:uid,ts:Date.now()}).catch(()=>{});
+      await ref('userMatches/'+uid+'/'+mid).remove().catch(()=>{});
+      await ref('chats/'+mid).remove().catch(()=>{});
+      await ref('chatMeta/'+mid).remove().catch(()=>{});
+      await ref('typing/'+mid).remove().catch(()=>{});
+    }catch(e){}
+  }
+  L.matches=L.matches.filter(x=>x.mid!==mid);
+  delete L.chats[mid]; delete L.freeLeft[mid]; delete L.unread[mid]; delete L.exclusive[mid];
+  save(); closeChat();
+  toast(reported?'🚩 Reported & unmatched — you are safe here 💛':'💔 Unmatched. Onwards to better 💛');
+}
 
 /* ============ GIFT COINS ============ */
 function openGiftFromCard(pid){ R.giftTarget={type:'card',pid};
@@ -1086,7 +1314,7 @@ function giftHtml(p,where){
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
       ${[10,25,50,100].map(n=>`<button class="pack ${n>=C.giftExclusive?'best':''}" style="margin:0" onclick="doGift(${n})">
         ${n>=C.giftExclusive?'<div class="ptag">EXCLUSIVE ✨</div>':''}
-        <div class="pem">${n>=C.giftExclusive?'👑':'🌹'}</div>
+        <div class="pem">${MIMG('gift',n>=C.giftExclusive?'👑':'🌹',27)}</div>
         <div><b>${n} 🪙</b><div class="mut tiny">${n>=C.giftExclusive?'Chat goes gold + note':'Sweet gesture'}</div></div></button>`).join('')}
     </div>
     <div class="mut tiny" style="text-align:center;margin-top:8px">Your balance: <b>${L.coins} 🪙</b> · Gifts never expire, her coins are 100% hers</div>`;
@@ -1127,34 +1355,35 @@ function renderWallet(){
   const pend=L.pendingOrders||[];
   $('walletWrap').innerHTML=`
     <div class="streakfire">
-      <div style="font-size:44px">🪙</div>
+      <div style="font-size:44px;line-height:1">${MIMG('coin','🪙',44)}</div>
       <div style="flex:1"><b class="h1" style="font-size:30px">${L.coins}</b>
-        <div class="mut small">coins · claim free daily below</div></div>
+        <div class="mut small">${T('coins · claim free daily below')}</div></div>
     </div>
     <div class="card" style="margin-bottom:12px">
-      <div class="spread"><b>Daily free coins 🔥</b><span class="pill">Streak: ${streak} day${streak===1?'':'s'}</span></div>
-      <div class="mut small" style="margin:6px 0 10px">Come back daily — your streak grows the gift (+${C.streakBonusPct}%/day, up to 2×)</div>
+      <div class="spread"><b>${T('Daily free coins 🔥')}</b><span class="pill">${T('Streak: ')}${streak}</span></div>
+      <div class="mut small" style="margin:6px 0 10px">${T('Come back daily — your streak grows the gift (+10%/day, up to 2×)')}</div>
       <button class="btn ${canClaim?'btn-grad':'btn-line'}" ${canClaim?'':'disabled'} onclick="claimDaily()">
-        ${canClaim?`Claim +${bonus} 🪙 now`:'✅ Claimed today — see you tomorrow!'}</button>
+        ${canClaim?T('Claim +N coins now').replace('N','+'+bonus+' 🪙'):T('✅ Claimed today — see you tomorrow!')}</button>
     </div>
-    <div class="sec mut tiny" style="font-weight:900;letter-spacing:1px;padding:6px 2px">EARN FREE COINS</div>
+    <div class="sec mut tiny" style="font-weight:900;letter-spacing:1px;padding:6px 2px">${T('EARN FREE COINS')}</div>
     <div class="card">
-      <button class="earnrow" onclick="toast('📹 Ad breaks come when coins are 0 — claimed +10 for now (demo)'); L.coins+=10; save(); renderWallet()">
+      <button class="earnrow" onclick="earnTap('video')">
         <div class="ee">📹</div><div style="flex:1"><b class="small">Watch a video</b><div class="mut tiny">+10 🪙</div></div><span class="pill">Watch</span></button>
       <button class="earnrow" onclick="toast('💌 Invite link copied — +50 🪙 when they join!')">
         <div class="ee">💌</div><div style="flex:1"><b class="small">Invite a friend</b><div class="mut tiny">+50 🪙 when they join</div></div><span class="pill">Invite</span></button>
-      <button class="earnrow" onclick="toast('💛 Complete your bio & interests — people love details!'); L.coins+=15; save(); renderWallet()">
+      <button class="earnrow" onclick="earnTap('profile')">
         <div class="ee">✨</div><div style="flex:1"><b class="small">Complete profile 100%</b><div class="mut tiny">+15 🪙 one time</div></div><span class="pill">Do it</span></button>
       ${photoQuestRow()}
     </div>
-    <div class="sec mut tiny" style="font-weight:900;letter-spacing:1px;padding:16px 2px 8px">BUY COINS</div>
+    <div class="sec mut tiny" style="font-weight:900;letter-spacing:1px;padding:16px 2px 8px">${T('BUY COINS')}</div>
     ${ZWIN_CONFIG.packs.map(p=>`<button class="pack ${p.tag?'best':''}" onclick="buyPack('${p.id}')">
       ${p.tag?`<div class="ptag">${p.tag}</div>`:''}<div class="pem">${p.em}</div>
       <div style="flex:1"><b>${p.coins} 🪙</b><div class="mut tiny">${p.label} pack</div></div><b class="grad-txt" style="font-size:18px">${p.priceDH} DH</b></button>`).join('')}
     ${pend.length?`<div class="card small" style="margin-top:6px;color:#8a6d00;background:#fffdf7;border-color:#eee0b8">⏳ ${pend.map(o=>o.coins+' 🪙 ('+o.ref+')').join(', ')} — waiting for bank validation</div>`:''}
-    <div class="mut tiny" style="text-align:center;padding:14px">Secure Al Barid/CMI checkout coming soon — now via bank transfer 🏦</div>`;
+    <div class="mut tiny" style="text-align:center;padding:14px">${T('Secure Al Barid/CMI checkout coming soon — now via bank transfer 🏦')}</div>`;
 }
 function claimDaily(){
+  if(!DEMO){ ref('coinReq/'+uid).push({type:'daily',ts:Date.now()}); return toast('⏳ The vault is checking your streak…'); }
   const d=L.daily; const yest=new Date(Date.now()-86400000).toDateString();
   d.streak=(d.lastClaim&&new Date(d.lastClaim).toDateString()===yest)?(d.streak||0)+1:1;
   d.lastClaim=Date.now();
@@ -1210,7 +1439,7 @@ function renderProfile(){
     <div class="pcard">
       <div class="ph" style="background:${grad(L.me.gi)}">${mp?`<img src="${mp}" alt="my photo">`:`<span>${L.me.em}</span>`}</div>
       <div class="pbody">
-        <div class="nm h2">${L.me.name}, ${L.me.age} <span style="background:var(--soft);color:var(--pk);font-size:10px;font-weight:900;padding:4px 8px;border-radius:8px">${mp?'📸 PHOTO PROFILE':'✓ PHONE VERIFIED'}</span></div>
+        <div class="nm h2">${L.me.name}, ${L.me.age} ${VB(L.verified)} <span style="background:var(--soft);color:var(--pk);font-size:10px;font-weight:900;padding:4px 8px;border-radius:8px">${L.verified?'✅ VERIFIED':(mp?'📸 PHOTO PROFILE':'✓ GOOGLE VERIFIED')}</span></div>
         <div class="mut small" style="margin:4px 0">📍 ${L.me.city}</div>
         <div class="small">${L.me.bio}</div>
         <div class="row" style="flex-wrap:wrap;gap:6px;margin-top:8px">${L.me.tags.map(t=>`<span class="chip" style="font-size:11px">${t}</span>`).join('')}</div>
@@ -1218,29 +1447,32 @@ function renderProfile(){
     </div>
     <div style="padding:4px 18px">
       <div class="card" style="margin-bottom:10px">
-        <div class="spread"><b class="small">My photos 📸</b><span class="mut tiny">${photos.length}/${maxPh} · first = main</span></div>
-        <div class="mut tiny" style="margin:4px 0 10px">Real photos get ~3× more matches 💛 Auto-compressed & synced — free.</div>
+        <div class="spread"><b class="small">${T('My photos 📸')}</b><span class="mut tiny">${photos.length}/${maxPh} · first = main</span></div>
+        <div class="mut tiny" style="margin:4px 0 10px">${T('Real photos get ~3× more matches 💛 Auto-compressed & synced — free.')}</div>
         <div class="photogrid">
           ${photos.map((u,i)=>`<div class="phslot full"><button class="del" onclick="delPhoto(${i})">✕</button>${i===0?'<span class="main">MAIN</span>':''}<img src="${u}" alt=""></div>`).join('')}
           ${photos.length<maxPh?`<button class="phslot" onclick="pickPhoto()">＋</button>`:''}
         </div>
       </div>
       <div class="card">
-        <div class="spread"><b class="small">My stats this week</b>💛</div>
+        <div class="spread"><b class="small">${T('My stats this week')}</b>💛</div>
         <div class="divider" style="margin:10px 0"></div>
         <div class="row" style="justify-content:space-around;text-align:center">
-          <div><b style="font-size:20px">${L.matches.length}</b><div class="mut tiny">Matches</div></div>
-          <div><b style="font-size:20px">${Object.keys(L.likesYou).length||L.likesYou.length}</b><div class="mut tiny">Admirers</div></div>
-          <div><b style="font-size:20px">${Object.values(L.gifts).reduce((a,b)=>a+b,0)}</b><div class="mut tiny">🪙 gifted</div></div>
-          <div><b style="font-size:20px">${L.daily.streak||0}</b><div class="mut tiny">Streak 🔥</div></div>
+          <div><b style="font-size:20px">${L.matches.length}</b><div class="mut tiny">${T('Matches')}</div></div>
+          <div><b style="font-size:20px">${Object.keys(L.likesYou).length||L.likesYou.length}</b><div class="mut tiny">${T('Admirers')}</div></div>
+          <div><b style="font-size:20px">${Object.values(L.gifts).reduce((a,b)=>a+b,0)}</b><div class="mut tiny">${T('🪙 gifted')}</div></div>
+          <div><b style="font-size:20px">${L.daily.streak||0}</b><div class="mut tiny">${T('Streak 🔥')}</div></div>
         </div>
       </div>
       <div style="height:10px"></div>
       <div class="card">
-        <button class="earnrow" onclick="enablePush()"><div class="ee">📲</div><div style="flex:1"><b class="small">Lock-screen alerts</b><div class="mut tiny">Get pinged the second someone likes or texts you</div></div><span class="pill">${pushOn?'ON 🔔':'Turn on'}</span></button>
-        <button class="earnrow" onclick="toggleNotif()"><div class="ee">🔔</div><div style="flex:1"><b class="small">In-app notifications</b><div class="mut tiny">Toasts while the app is open</div></div><div class="toggle ${L.notif===false?'':'on'}" id="notifT"></div></button>
-        <button class="earnrow" onclick="toast('🛡️ Blocked list is private & permanent. You are safe here.')"><div class="ee">🛡️</div><div style="flex:1"><b class="small">Safety center</b><div class="mut tiny">Block, report, dating-tips</div></div></button>
-        <button class="earnrow" onclick="toast('💌 Contact: ${ZWIN_CONFIG.company.supportEmail}')"><div class="ee">💬</div><div style="flex:1"><b class="small">Help & support</b></div></button>
+        <button class="earnrow" onclick="setLang(L.lang==='en'?'fr':L.lang==='fr'?'ar':'en')"><div class="ee">🌍</div><div style="flex:1"><b class="small">${T('Language')}</b><div class="mut tiny">English · Français · العربية</div></div><span class="pill">${L.lang==='ar'?'عربي':L.lang==='fr'?'FR':'EN'}</span></button>
+        <button class="earnrow" onclick="startVerify()"><div class="ee">✅</div><div style="flex:1"><b class="small">${T('VERIFIED badge')}</b><div class="mut tiny">${L.verified?'You are verified — blue check everywhere 💙':L.verifyPending?'⏳ Selfie under review (usually under 24h)':'Selfie + ✌️ = blue check · +30 🪙 reward · real humans match more'}</div></div><span class="pill" style="${L.verified?'background:#e3f1ff;color:#2f8fe0':''}">${L.verified?'✓ VERIFIED':L.verifyPending?'Reviewing':'Get it'}</span></button>
+        <button class="earnrow" onclick="askGeo()"><div class="ee">📍</div><div style="flex:1"><b class="small">${T('Real distance (GPS)')}</b><div class="mut tiny">${L.geo?'ON — rounded ~2 km, your exact spot is never stored':'Real km like Tinder Gold — free on Zwin'}</div></div><span class="pill">${L.geo?'ON 📍':'Turn on'}</span></button>
+        <button class="earnrow" onclick="enablePush()"><div class="ee">📲</div><div style="flex:1"><b class="small">${T('Lock-screen alerts')}</b><div class="mut tiny">Get pinged the second someone likes or texts you</div></div><span class="pill">${pushOn?'ON 🔔':'Turn on'}</span></button>
+        <button class="earnrow" onclick="toggleNotif()"><div class="ee">🔔</div><div style="flex:1"><b class="small">${T('In-app notifications')}</b><div class="mut tiny">Toasts while the app is open</div></div><div class="toggle ${L.notif===false?'':'on'}" id="notifT"></div></button>
+        <button class="earnrow" onclick="toast('🛡️ Blocked list is private & permanent. You are safe here.')"><div class="ee">🛡️</div><div style="flex:1"><b class="small">${T('Safety center')}</b><div class="mut tiny">Block, report, dating-tips</div></div></button>
+        <button class="earnrow" onclick="toast('💌 Contact: ${ZWIN_CONFIG.company.supportEmail}')"><div class="ee">💬</div><div style="flex:1"><b class="small">${T('Help & support')}</b></div></button>
       </div>
     </div>`;
 }
@@ -1251,6 +1483,11 @@ function paintCoins(){ const el=$('coinTop'); if(el)el.textContent=L.coins; }
 /* ============ INIT ============ */
 fbInit();
 paintCoins();
+paintAuthBg();
+skinMedia();
+if(!L.lang)L.lang='en';
+document.documentElement.dir=(L.lang==='ar')?'rtl':'ltr'; document.documentElement.lang=L.lang;
+skinLang();
 if(DEMO){ if(L.me){ showTab('discover'); loadDeck(); } else { startOnboard(); } }
 /* live mode: AUTH.onAuthStateChanged drives the boot — phone verify first, 🔐 locks on */
 async function syncBadges(){
@@ -1259,7 +1496,14 @@ async function syncBadges(){
   const snap=await ref('userMatches/'+uid).once('value'); const map=snap.val()||{};
   for(const mid of Object.keys(map)){
     if(L.matches.find(m=>m.mid===mid))continue;
-    const m=(await ref('matches/'+mid).once('value')).val(); if(!m)continue;
+    const m=(await ref('matches/'+mid).once('value')).val();
+    if(!m||m.dead){ // the other person unmatched — clean MY side too
+      await ref('userMatches/'+uid+'/'+mid).remove().catch(()=>{});
+      if(L.matches.find(x=>x.mid===mid)){ L.matches=L.matches.filter(x=>x.mid!==mid);
+        delete L.chats[mid]; delete L.freeLeft[mid]; delete L.unread[mid]; delete L.exclusive[mid]; save();
+        if(R.chatWith===mid)closeChat();
+        setTimeout(()=>toast('💔 One of your matches ended'),900); }
+      continue; }
     const peer=m.a===uid?m.b:m.a;
     const p=(await ref('users/'+peer).once('value')).val()||{name:'Match',em:'💛',gi:1};
     L.matches.unshift({mid,peer,name:p.name,em:p.em,gi:p.gi,ts:m.ts});

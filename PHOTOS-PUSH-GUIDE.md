@@ -63,3 +63,39 @@ iPhones deliver web push **only when the app is on the Home Screen**: Safari →
 | In-app + lock-screen push (Spark) | **0 DH** — FCM has no quota |
 | Console promo broadcasts | **0 DH** |
 | Auto push (Blaze, optional) | **0 DH** inside free allowance, realistic first year |
+
+---
+
+## 🪙 LOCK COINS — the server referee (kills the LAST possible hack)
+
+**The vault principle:** coins live in `wallets/{uid}` — a node users can READ
+but can NEVER WRITE. Cloud Functions are the only banker: every daily claim,
+gift, message, boost, super-like, reveal and welcome bonus is validated
+server-side. A cheater editing app files now only repaints their own wallpaper. 💪
+
+| Attack | After the referee |
+|---|---|
+| Edit local coins / DevTools inflate | ❌ Screen reverts to vault value; spends fail server-side |
+| Fake a 100🪙 gift while broke | ❌ Gift + chat bubble deleted, zero coins move |
+| Free messages beyond the 10 free | ❌ Message deleted + kind "get coins" note |
+| Super-like / Boost / Reveal at 0 🪙 | ❌ Downgraded · cancelled · card re-blurs |
+| Daily-claim farming | ❌ Server tracks days + one-time quest flags |
+| Claim a quest twice | ❌ Server flag says "already collected" |
+
+### Activate (15 min — needs the Blaze plan from Level 3)
+**ORDER MATTERS — functions first, rules second:**
+1. ✅ Deploy functions (Level 3 steps above) — the referee is already inside
+   `functions/index.js` (`welcomeCoins`, `coinRequests`, `msgReferee`,
+   `giftReferee`, `superReferee`, `boostReferee`, `revealReferee`)
+2. THEN → Realtime Database → Rules → paste the NEW `firebase-rules.json` → **Publish**
+3. Re-upload the new `index.html` + `admin.html` to GitHub
+4. Test: claim daily coins → "⏳ The vault is checking…" → vault receipt toast →
+   balance rises. Try editing localStorage → the vault slaps it back. 😌
+
+> 💰 Your revenue never depended on client honesty anyway: only YOU credit pack
+> orders (admin dashboard → now writes into the vault). The referee simply makes
+> the free side farm-proof too.
+>
+> 🔁 Beta balances: old `users/{uid}/coins` values become display history —
+> everyone gets a fresh 50🪙 welcome in the vault; you can top anyone up manually
+> from the admin dashboard anytime.
