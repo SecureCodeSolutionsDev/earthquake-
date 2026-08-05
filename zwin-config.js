@@ -8,11 +8,11 @@ const ZWIN_CONFIG = {
      console.firebase.google.com → project → Realtime Database (europe-west1,
      test mode) → Project settings → Web app </> → paste the 5 keys below.   */
   firebase: {
-    apiKey:      "PASTE_API_KEY_HERE",
-    authDomain:  "PASTE_PROJECT.firebaseapp.com",
-    databaseURL: "https://PASTE_PROJECT-default-rtdb.europe-west1.firebasedatabase.app",
-    projectId:   "PASTE_PROJECT",
-    appId:       "1:PASTE:web:PASTE"
+    apiKey:      "AIzaSyCefjPeoakEOUg9mjI_lLwU80dka0lNkEc",
+    authDomain:  "zwin-270c4.firebaseapp.com",
+    databaseURL: "https://zwin-270c4-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId:   "zwin-270c4",
+    appId:       "1:231744808339:web:a6be044023f256f9c93466"
   },
 
   /* ---------- 🔐 LOCK 3 (optional but recommended): App Check against bots.
