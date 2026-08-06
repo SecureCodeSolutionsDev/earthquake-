@@ -402,6 +402,11 @@ body.preauth #scr-auth{display:block!important}
 .boostbtn{display:none!important}
 .xbtn.liveboost{background:var(--grad);color:#fff;border-color:transparent;animation:pulseL 1.6s infinite;box-shadow:0 8px 24px rgba(226,67,107,.45)}
 
+/* ---------- v8 — floating-proof empty states + onboarding photo box ---------- */
+.emptybox{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:10px;padding:30px 22px}
+.obphoto{width:132px;height:132px;border-radius:28px;margin:8px auto 4px;border:2px dashed var(--pk);background:#fff;display:flex;flex-direction:column;gap:6px;align-items:center;justify-content:center;overflow:hidden;position:relative;color:var(--pk)}
+.obphoto img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+
 </style>
 </head>
 <body class="preauth">
@@ -452,11 +457,11 @@ body.preauth #scr-auth{display:block!important}
   <div id="quotaSlot" class="quota"></div>
   <div class="deck" id="deck"></div>
   <div class="dactions">
-    <button class="xbtn" onclick="rewind()" title="Rewind"><span class="mslot" data-m="rewind" data-em="↩️" data-px="24">↩️</span></button>
-    <button class="xbtn big" style="color:var(--pk)" onclick="swipeBtn('pass')"><span class="mslot" data-m="nope" data-em="✕" data-px="30">✕</span></button>
-    <button class="xbtn" style="color:var(--blue)" onclick="swipeBtn('super')"><span class="mslot" data-m="super" data-em="✨" data-px="26">✨</span></button>
-    <button class="xbtn big" style="color:var(--green)" onclick="swipeBtn('like')"><span class="mslot" data-m="like" data-em="♥" data-px="32">♥</span></button>
-    <button class="xbtn" id="boostAct" onclick="boost()" title="Boost"><span class="mslot" data-m="boost" data-em="🚀" data-px="24">🚀</span></button>
+    <button class="xbtn" style="color:#f0b52e" onclick="rewind()" title="Rewind"><svg class="icnsvg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z"/></svg></button>
+    <button class="xbtn big" style="color:var(--pk)" onclick="swipeBtn('pass')"><svg class="icnsvg" width="30" height="30" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.4 17.6 5 12 10.6 6.4 5 5 6.4 10.6 12 5 17.6 6.4 19 12 13.4 17.6 19 19 17.6 13.4 12z"/></svg></button>
+    <button class="xbtn" style="color:var(--blue)" onclick="swipeBtn('super')"><svg class="icnsvg" width="26" height="26" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.6l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5L12 17.4l-5.8 3.1 1.1-6.5L2.6 9.4l6.5-.9z"/></svg></button>
+    <button class="xbtn big" style="color:var(--green)" onclick="swipeBtn('like')"><svg class="icnsvg" width="30" height="30" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21S3.6 15.5 3.6 9.8C3.6 6.7 5.9 4.5 8.6 4.5c1.5 0 2.8.75 3.4 1.9.6-1.15 1.9-1.9 3.4-1.9 2.7 0 5 2.2 5 5.3C20.4 15.5 12 21 12 21z"/></svg></button>
+    <button class="xbtn" id="boostAct" style="color:#8a5cf6" onclick="boost()" title="Boost"><svg class="icnsvg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c3 2.2 4.6 5.8 4.6 9.4 0 1.6-.3 3.1-.9 4.5l1.9 1.9c.6.6.1 1.7-.8 1.8l-3.1.4c-.5.7-1.1 1.4-1.7 2-.6-.6-1.2-1.3-1.7-2l-3.1-.4c-.9-.1-1.4-1.2-.8-1.8l1.9-1.9c-.6-1.4-.9-2.9-.9-4.5C7.4 7.8 9 4.2 12 2zm0 7a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/></svg></button>
   </div>
 </section>
 
@@ -573,7 +578,9 @@ function IC(n,px){ const P={
   rew:'M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z',
   check:'M9.55 16.7 4.85 12l-1.41 1.41 6.11 6.11L20.6 8.47l-1.41-1.41z',
   globe:'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 2c1.62 2.05 2.55 4.9 2.55 8s-.93 5.95-2.55 8c-1.62-2.05-2.55-4.9-2.55-8S10.38 6.05 12 4zM4.3 11h15.4M4.3 15h15.4',
-  sliders:'M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2H11v2h10zm-6-4h2V7h4V5h-4V3h-2v6z'
+  sliders:'M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2H11v2h10zm-6-4h2V7h4V5h-4V3h-2v6z',
+  flame:'M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67zM11.71 19c-1.78 0-3.22-1.4-3.22-3.14 0-1.63 1.05-2.76 2.81-3.12 1.77-.36 3.6-1.21 4.62-2.58.39 1.29.59 2.65.59 4.04 0 2.65-2.15 4.8-4.8 4.8z',
+  person:'M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'
 }[n]||''; return '<svg class="icnsvg" width="'+(px||20)+'" height="'+(px||20)+'" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="'+P+'"/></svg>'; }
 function shop(){ openGold(); } // legacy shim
 
@@ -716,7 +723,6 @@ function onAuthed(u){
   // Different uid = wipe local memory, then the cloud rebuilds it (profile, photos, matches, likes).
   if(L.accountUid!==uid){ const keepLang=L.lang; Object.keys(L).forEach(k=>delete L[k]); Object.assign(L,fresh()); L.lang=keepLang||'en'; L.accountUid=uid; save(); }
   document.querySelectorAll('.scr').forEach(x=>{ x.classList.remove('on'); x.style.display='none'; }); $('tabbar').style.display='flex';
-  toast('Welcome in — real people only');
   initPush();
   DB.ref('.info/connected').on('value',s=>{ if(s.val()&&L.me){heartbeat(); syncMe(); syncBadges();} });
   if(L.me){ showTab('discover'); loadDeck().catch(e=>{ console.warn('deck',e); paintDeck(); }); }
@@ -725,7 +731,6 @@ function onAuthed(u){
 /* ☁️ welcome back — the cloud remembers you. Profile lives under users/{uid}, photos under photos/{uid}.
    Logging out only wipes THIS device; Google sign-in brings everything back (the big apps behave the same). */
 function restoreMe(){
-  toast('One moment — restoring your profile…');
   ref('users/'+uid).once('value').then(s2=>{
     const p=s2.val();
     if(p&&p.name){
@@ -743,7 +748,7 @@ function restoreMe(){
 }
 /* ---- phone sign-in screen ---- */
 function hardScreen(id){ document.querySelectorAll('.scr').forEach(s=>{ s.classList.remove('on'); s.style.display='none'; });
-  const e=$(id); e.classList.add('on'); e.style.display='block'; e.scrollTop=0; }
+  const e=$(id); e.classList.add('on'); e.style.display=(id==='scr-discover'?'flex':'block'); e.scrollTop=0; }
 function showAuth(){
   hardScreen('scr-auth'); $('tabbar').style.display='none';
   paintAuthBg();
@@ -769,7 +774,7 @@ function googleIn(){
 function ref(p){return DB.ref('wasla_dating/'+p)} // root kept as chosen — rules must match this word
 function txAdd(path,d){return ref(path).transaction(v=>+(((+v||0)+d).toFixed(2)))}
 function heartbeat(){
-  if(!window._phb){ window._phb=1; window.addEventListener('pagehide',()=>{ try{ if(window.uid&&L.me)ref('presence/'+uid).update({online:false,lastSeen:Date.now()}); }catch(e){} }); }
+  if(!window._phb){ window._phb=1; window.addEventListener('pagehide',()=>{ try{ if(uid&&L.me)ref('presence/'+uid).update({online:false,lastSeen:Date.now()}); }catch(e){} }); }
   ref('presence/'+uid).update({online:true,lastSeen:Date.now(),name:L.me.name});
   ref('presence/'+uid).onDisconnect().update({online:false,lastSeen:Date.now()});
   setInterval(()=>ref('presence/'+uid).update({lastSeen:Date.now()}),25000);
@@ -1008,7 +1013,10 @@ fr:{
 'Country':'Pays','All countries':'Tous les pays','Apply — refresh my deck':'Appliquer — rafraîchir mon deck',
 'Reset to everyone, everywhere':'Réinitialiser : tout le monde, partout','Tune discovery filters':'Régler les filtres',
 'Filters on — deck refreshed':'Filtres actifs — deck rafraîchi','Showing everyone, everywhere':'Tout le monde, partout',
-'Melt Rules':'Règles Melt','By continuing, you agree to the':'En continuant, tu acceptes les'
+'Melt Rules':'Règles Melt','By continuing, you agree to the':'En continuant, tu acceptes les',
+'Add your photo':'Ajoute ta photo','A real photo matches about 3× more. An avatar works too — your call.':'Une vraie photo = ~3× plus de matchs. Un avatar marche aussi — à toi de choisir.',
+'Tap to add a photo':'Touche pour ajouter une photo','Change photo':'Changer la photo','Continue':'Continuer',
+'Continue with an avatar instead':'Continuer avec un avatar','Adding your photo…':'Ajout de ta photo…'
 },
 ar:{
 'Discover':'اكتشف','Liked you':'عجبتهم','Matches':'توافقات','Coins':'كوينز','Me':'أنا',
@@ -1139,9 +1147,9 @@ function paintFiltChip(){ const b=$('filtChip'); if(!b)return;
   else { b.style.background=''; b.style.color=''; b.style.borderColor=''; } }
 
 /* ============ ONBOARDING ============ */
-const OB={step:0,data:{name:'',age:22,g:'',into:[],city:'Casablanca',bio:'',tags:[],em:'😊',gi:0}};
+const OB={step:0,photo:'',data:{name:'',age:22,g:'',into:[],city:'Casablanca',bio:'',tags:[],em:'😊',gi:0}};
 function startOnboard(){ if(!AUTHED){ showAuth(); return; }
-  OB.step=0; paintOb();
+  OB.step=0; OB.photo=''; OB.data={name:'',age:22,g:'',into:[],city:'Casablanca',bio:'',tags:[],em:'😊',gi:0}; paintOb();
   showTab('onboard');
 }
 const WORLD_CITIES=['Casablanca', 'Rabat', 'Marrakech', 'Tangier', 'Agadir', 'Fès', 'Meknès', 'Oujda', 'Laâyoune', 'Al Hoceima', 'Essaouira', 'Chefchaouen', 'Algiers', 'Oran', 'Tunis', 'Paris', 'Marseille', 'Lyon', 'Toulouse', 'Brussels', 'Geneva', 'Madrid', 'Barcelona', 'Valencia', 'London', 'Amsterdam', 'Berlin', 'Munich', 'Rome', 'Milan', 'Lisbon', 'Cairo', 'Istanbul', 'Dubai', 'Abu Dhabi', 'Doha', 'Riyadh', 'Jeddah', 'Dakar', 'Abidjan', 'Lagos', 'Nairobi', 'New York', 'Los Angeles', 'Miami', 'Toronto', 'Montreal', 'Mexico City', 'São Paulo', 'Buenos Aires', 'Tokyo', 'Singapore', 'Bangkok', 'Seoul', 'Sydney', 'Mumbai', 'Jakarta'];
@@ -1184,6 +1192,12 @@ function paintOb(){
      <datalist id="obCities">${WORLD_CITIES.map(c=>`<option value="${c}">`).join('')}</datalist>
      <button class="btn btn-grad" onclick="obCityGo()">Continue →</button></div>`,
    ()=>`<div class="obstep">
+     <div class="h2">${T('Add your photo')}</div>
+     <div class="mut small">${T('A real photo matches about 3× more. An avatar works too — your call.')}</div>
+     <button class="obphoto" onclick="obPickPhoto()">${OB.photo?`<img src="${OB.photo}" alt="my photo">`:`${IC('camera',32)}<span class="small" style="font-weight:900;text-align:center">${T('Tap to add a photo')}</span>`}</button>
+     ${OB.photo?`<button class="chip" onclick="obPickPhoto()">${T('Change photo')}</button>`:''}
+     <button class="btn btn-grad" onclick="obNext(3)">${OB.photo?T('Continue'):T('Continue with an avatar instead')}</button></div>`,
+   ()=>`<div class="obstep">
      <div class="h2">Your vibe</div>
      <textarea class="inp" id="obBio" maxlength="140" placeholder="A line that sounds like you… (funny > perfect)">${d.bio}</textarea>
      <div class="mut small">Pick 3–4 interests (better matches):</div>
@@ -1197,6 +1211,13 @@ function paintOb(){
   W.innerHTML=steps[OB.step]();
   skinMedia();
 }
+function obPickPhoto(){
+  const inp=document.createElement('input'); inp.type='file'; inp.accept='image/*';
+  inp.onchange=async()=>{ const f=inp.files&&inp.files[0]; if(!f)return;
+    try{ toast('📸 '+T('Adding your photo…')); OB.photo=await compressImage(f); paintOb(); }
+    catch(e){ toast('That photo didn’t work — try another one'); } };
+  inp.click();
+}
 function obNext(s){OB.step=s;paintOb()}
 function obTag(t){const d=OB.data; if(d.tags.includes(t))d.tags=d.tags.filter(x=>x!==t); else if(d.tags.length<4)d.tags.push(t); paintOb()}
 function obStep2(){
@@ -1209,7 +1230,9 @@ function obStep2(){
 async function obFinish(){
   OB.data.bio=$('obBio').value.trim()||'New here — say hi and surprise me 💛';
   if(OB.data.tags.length<2)return toast('Pick at least 2 interests ✨');
-  L.me={...OB.data,uid}; L.createdAt=Date.now(); save();
+  L.me={...OB.data,uid}; L.createdAt=Date.now();
+  if(OB.photo){ L.me.photos=[OB.photo]; OB.photo=''; delete photoCache[uid]; save(); syncPhotos(); }
+  else save();
   toast(`Welcome, ${L.me.name} — may you find the one that melts you.`);
   if(!DEMO)syncMe();
   showTab('discover'); loadDeck().catch(e=>{ console.warn('deck',e); paintDeck(); });
@@ -1223,8 +1246,8 @@ function renderTabbar(){
   const unChats=unreadTotal();
   $('tabbar').innerHTML=TABS.map(([id,em,nm])=>{
     const b=id==='likes'&&unLikes?`<span class="tbadge">${unLikes}</span>`:id==='matches'&&unChats?`<span class="tbadge">${unChats}</span>`:'';
-    const mic={discover:'flame',likes:'loveface',matches:'chat',wallet:'coin',profile:'super'}[id];
-    return `<button class="tab ${R.tab===id?'on':''}" onclick="showTab('${id}')">${b}<span class="ic">${MIMG(mic,em,19)}</span>${T(nm)}</button>`;
+    const mic={discover:'flame',likes:'heart',matches:'chat',wallet:'crown',profile:'person'}[id];
+    return `<button class="tab ${R.tab===id?'on':''}" onclick="showTab('${id}')">${b}<span class="ic">${IC(mic,19)}</span>${T(nm)}</button>`;
   }).join('');
 }
 function showTab(t){
@@ -1410,7 +1433,7 @@ function personOf(pid){ return SAMPLES.find(s=>s.id===pid)||(R.usersCache.find(u
 function renderLikes(){
   const list=L.likesYou;
   $('likeCnt').textContent=list.filter(x=>!x.seen).length+' new';
-  if(!list.length){ $('lkGrid').innerHTML=`<div class="deckempty" style="grid-column:1/-1"><div class="big">${MIMG('loveface','💌',72)}</div>
+  if(!list.length){ $('lkGrid').innerHTML=`<div class="emptybox" style="grid-column:1/-1"><div class="big">${MIMG('loveface','💌',72)}</div>
     <div class="h2">Your admirers will gather here</div>
     <div class="mut small" style="max-width:260px">Keep swiping — the like notifications start rolling fast. GOLD Boost speeds it up 10×</div></div>`; return; }
   $('lkGrid').innerHTML=list.map((lk,i)=>{
@@ -1458,8 +1481,8 @@ function renderMatches(){
       <div class="cav" style="background:${grad(m.gi)}">${m.em}<span class="onl"></span></div>
       <div class="prv"><b>${m.name} ${excl?'<span class="excl">✨ EXCLUSIVE</span>':''}</b><div class="lm">${txt}</div></div>
       ${un?`<span class="cunr">${un}</span>`:''}</button>`;}).join('')
-    :`<div class="deckempty" style="padding:34px 20px"><div class="big">${MIMG('chat','💘',72)}</div></div>`;
-  if(!chats.length)$('chatList').innerHTML=`<div class="deckempty" style="padding:34px 20px"><div class="big">${MIMG('chat','💘',72)}</div><div class="mut small" style="max-width:260px">When you match, your chats live here.<br>Tip: the first ${C.freeChatMsgs} messages are always free 💌</div></div>`;
+    :`<div class="emptybox"><div class="big">${MIMG('chat','💘',72)}</div></div>`;
+  if(!chats.length)$('chatList').innerHTML=`<div class="emptybox"><div class="big">${MIMG('chat','💘',72)}</div><div class="mut small" style="max-width:260px">When you match, your chats live here.<br>Tip: the first ${C.freeChatMsgs} messages are always free</div></div>`;
   renderTabbar();
 }
 
@@ -1799,7 +1822,7 @@ function paintGold(){ const el=$('goldTop'); if(el)el.textContent=L.gold?T('GOLD
 
 /* ============ INIT ============ */
 setTimeout(()=>{ const dk=$('deck'); if(AUTHED&&R.tab==='discover'&&dk&&!dk.children.length){ try{paintDeck();}catch(e){} } }, 5200);
-const MELT_BUILD='v6'; /* bump this number on every release — every phone self-updates once, no cache games */
+const MELT_BUILD='v7'; /* bump this number on every release — every phone self-updates once, no cache games */
 try{ if(location.search.indexOf(MELT_BUILD)<0){ localStorage.setItem('melt_boot_'+MELT_BUILD,'1'); location.replace(location.pathname+'?'+MELT_BUILD); } }catch(e){}
 fbInit();
 paintGold();
