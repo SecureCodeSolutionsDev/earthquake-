@@ -343,6 +343,33 @@ body{background:#efe4e2}
 .gbtn{max-width:320px}
 .authseg{max-width:220px}
 
+/* ---------- MELT COMPACT FLOW (v4) — no dead air, thumb-sized buttons below ---------- */
+.topbar{padding-bottom:4px}
+.card{padding:13px 14px;border-radius:18px}
+.pcard{margin:2px 16px}
+.earnrow{padding:11px 0;gap:10px}
+.ob{padding:14px 18px calc(16px + env(safe-area-inset-bottom));gap:10px}
+.ob-logo .flame{width:64px;height:64px;border-radius:22px;font-size:34px;box-shadow:0 10px 30px rgba(255,78,126,.35)}
+.inp{padding:13px 14px}
+textarea.inp{min-height:64px}
+.seg button{padding:12px;font-size:13.5px}
+.tchip{padding:8px 12px}
+.emojipick{width:46px;height:46px;font-size:23px}
+.gradpick{width:38px;height:38px}
+.quota{padding-bottom:2px}
+.deckempty{padding:16px;gap:8px}
+.deckempty .big{font-size:54px}
+.h2{margin:4px 0}
+/* discover: the five action buttons, Tinder-sized so thumbs never miss */
+.dactions{gap:14px;padding:12px 0 6px}
+.xbtn{width:58px;height:58px;font-size:26px;box-shadow:0 8px 22px rgba(43,34,48,.16)}
+.xbtn.big{width:74px;height:74px;font-size:33px}
+/* bottom navigation: bigger tap targets */
+.tab{padding:8px 0;font-size:11px;gap:4px}
+.tab .ic{height:31px;width:48px}
+/* every primary button: thumb-friendly height */
+.btn{min-height:52px}
+
 </style>
 </head>
 <body>
@@ -383,6 +410,7 @@ body{background:#efe4e2}
     <div class="logo"><div class="flame"><span class="mslot" data-m="flame" data-em="🔥" data-px="19">🔥</span></div><span class="grad-txt">Melt</span></div>
     <div style="display:flex;gap:8px">
       <button class="chip" id="nearChip" style="font-size:11px;padding:9px 11px" onclick="toggleNear()" title="People near you"><svg class="icnsvg" width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.6a2.6 2.6 0 1 1 0-5.2 2.6 2.6 0 0 1 0 5.2z"/></svg></button>
+      <button class="chip" id="filtChip" style="font-size:11px;padding:9px 11px" onclick="openFilters()" title="Discovery filters"><svg class="icnsvg" width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2H11v2h10zm-6-4h2V7h4V5h-4V3h-2v6z"/></svg> <span data-t="Filters">Filters</span></button>
       <button class="coinpill goldpill" onclick="showTab('wallet')"><svg class="icnsvg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M2.7 6.8 7.6 10.4 12 4.6l4.4 5.8 4.9-3.6-1.6 10.2H4.3L2.7 6.8z"/></svg> <span id="goldTop">GOLD</span></button>
     </div>
   </div>
@@ -511,7 +539,8 @@ function IC(n,px){ const P={
   spark:'M12 2l2.1 6.7L21 11l-6.9 2.3L12 20l-2.1-6.7L3 11l6.9-2.3L12 2z',
   rew:'M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z',
   check:'M9.55 16.7 4.85 12l-1.41 1.41 6.11 6.11L20.6 8.47l-1.41-1.41z',
-  globe:'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 2c1.62 2.05 2.55 4.9 2.55 8s-.93 5.95-2.55 8c-1.62-2.05-2.55-4.9-2.55-8S10.38 6.05 12 4zM4.3 11h15.4M4.3 15h15.4'
+  globe:'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 2c1.62 2.05 2.55 4.9 2.55 8s-.93 5.95-2.55 8c-1.62-2.05-2.55-4.9-2.55-8S10.38 6.05 12 4zM4.3 11h15.4M4.3 15h15.4',
+  sliders:'M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2H11v2h10zm-6-4h2V7h4V5h-4V3h-2v6z'
 }[n]||''; return '<svg class="icnsvg" width="'+(px||20)+'" height="'+(px||20)+'" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="'+P+'"/></svg>'; }
 function shop(){ openGold(); } // legacy shim
 
@@ -634,7 +663,27 @@ function onAuthed(u){
   initPush();
   DB.ref('.info/connected').on('value',s=>{ if(s.val()&&L.me){heartbeat(); syncMe(); syncBadges();} });
   if(L.me){ showTab('discover'); loadDeck().catch(e=>{ console.warn('deck',e); paintDeck(); }); }
-  else { startOnboard(); }
+  else { restoreMe(); }
+}
+/* ☁️ welcome back — the cloud remembers you. Profile lives under users/{uid}, photos under photos/{uid}.
+   Logging out only wipes THIS device; Google sign-in brings everything back (Tinder behaves the same). */
+function restoreMe(){
+  toast('One moment — restoring your profile…');
+  ref('users/'+uid).once('value').then(s2=>{
+    const p=s2.val();
+    if(p&&p.name){
+      L.me={ name:p.name, age:p.age||22, g:p.g||'', into:(Array.isArray(p.into)&&p.into.length?p.into.slice(0,2):['w','m']),
+        city:p.city||'Casablanca', bio:p.bio||'', tags:(Array.isArray(p.tags)?p.tags.slice(0,4):[]),
+        em:p.em||'😊', gi:(p.gi!=null?p.gi:0), uid:uid, photos:[] };
+      save();
+      ref('photos/'+uid).once('value').then(ps=>{ const m=ps.val()||{};
+        const arr=['p0','p1','p2','p3','p4','p5'].map(k=>m[k]).filter(Boolean);
+        if(arr.length){ L.me.photos=arr; delete photoCache[uid]; save(); if(R.tab==='profile')renderProfile(); }
+      }).catch(()=>{});
+      toast('Welcome back, '+L.me.name+' — profile restored, nothing was lost 💛');
+      showTab('discover'); loadDeck().catch(e=>{ console.warn('deck',e); paintDeck(); });
+    } else startOnboard();
+  }).catch(e=>{ console.warn('restore',e); startOnboard(); });
 }
 /* ---- phone sign-in screen ---- */
 function hardScreen(id){ document.querySelectorAll('.scr').forEach(s=>{ s.classList.remove('on'); s.style.display='none'; });
@@ -724,13 +773,16 @@ async function cloudDiscover(){
   let vfd={}; try{ vfd=(await ref('verified').once('value')).val()||{}; }catch(e){}
   Object.entries(vfd).forEach(([k,v])=>{VD[k]=!!v});
   const me=L.me;
-  const wantW=me.into.includes('w'), wantM=me.into.includes('m');
+  const flt=L.filters||{show:'auto',country:'all'};
+  const wantW=flt.show==='auto'?me.into.includes('w'):(flt.show==='e'||flt.show==='w');
+  const wantM=flt.show==='auto'?me.into.includes('m'):(flt.show==='e'||flt.show==='m');
   let pool=Object.entries(all)
     .filter(([k,p])=>k!==uid&&p.name&&!banned[k]&&((p.g==='w'&&wantW)||(p.g==='m'&&wantM)))
     .map(([k,p])=>{ const g=((p.geo&&p.geo.la!=null)?p.geo:null);
       return {...p,id:k,sim:false,
         km:(g&&L.geo)?distKm(L.geo.la,L.geo.lo,g.la,g.lo):null,
         fresh:(p.lastSeen||0)>now-3*86400000, verified:!!vfd[k]}; });
+  if(flt.country&&flt.country!=='all')pool=pool.filter(p=>countryOf(p.city)===flt.country);
   if(L.nearOnly)pool=pool.filter(p=>p.city===me.city||(p.km!=null&&p.km<=80));
   // boosted first, then REAL nearest first; random when no geo context (keeps discovery fun)
   pool=pool.sort((a,b)=>((b.boostUntil>now?1:0)-(a.boostUntil>now?1:0)));
@@ -887,7 +939,13 @@ fr:{
 'Safety center':'Centre de sécurité','Help & support':'Aide & support','Language':'Langue',
 'That’s everyone nearby!':'C\'est tout pour le moment !',
 'Secure Al Barid/CMI checkout coming soon — now via bank transfer 🏦':'Paiement CMI/Al Barid bientôt — virement bancaire pour le moment 🏦',
-'💌 Free messages left':'💌 Messages gratuits restants'
+'💌 Free messages left':'💌 Messages gratuits restants',
+'Close':'Fermer','Filters':'Filtres','Discovery settings':'Réglages de découverte',
+'Like Tinder: browse everyone, or tune who appears in your deck. Matching still unlocks the chat.':'Comme Tinder : vois tout le monde, ou règle qui apparaît. Le match débloque le chat.',
+'Show me':'Me montrer','My preference':'Ma préférence','Everyone':'Tout le monde','Women':'Femmes','Men':'Hommes',
+'Country':'Pays','All countries':'Tous les pays','Apply — refresh my deck':'Appliquer — rafraîchir mon deck',
+'Reset to everyone, everywhere':'Réinitialiser : tout le monde, partout','Tune discovery filters':'Régler les filtres',
+'Filters on — deck refreshed':'Filtres actifs — deck rafraîchi','Showing everyone, everywhere':'Tout le monde, partout'
 },
 ar:{
 'Discover':'اكتشف','Liked you':'عجبتهم','Matches':'توافقات','Coins':'كوينز','Me':'أنا',
@@ -984,6 +1042,38 @@ function toggleNear(){ L.nearOnly=!L.nearOnly; save(); paintNearChip();
 function paintNearChip(){ const b=$('nearChip'); if(!b)return;
   if(L.nearOnly){ b.style.background='var(--grad)'; b.style.color='#fff'; b.innerHTML=IC('pin',13)+' Near'; }
   else { b.style.background=''; b.style.color=''; b.innerHTML=IC('pin',15); } }
+/* ============ 🌍 DISCOVERY FILTERS — the Tinder method: everyone public, you tune who appears ============ */
+const CITY_COUNTRY={Casablanca:'Morocco',Rabat:'Morocco',Marrakech:'Morocco',Tangier:'Morocco',Agadir:'Morocco','Fès':'Morocco','Meknès':'Morocco',Oujda:'Morocco','Laâyoune':'Morocco','Al Hoceima':'Morocco',Essaouira:'Morocco',Chefchaouen:'Morocco',Algiers:'Algeria',Oran:'Algeria',Tunis:'Tunisia',Paris:'France',Marseille:'France',Lyon:'France',Toulouse:'France',Brussels:'Belgium',Geneva:'Switzerland',Madrid:'Spain',Barcelona:'Spain',Valencia:'Spain',London:'United Kingdom',Amsterdam:'Netherlands',Berlin:'Germany',Munich:'Germany',Rome:'Italy',Milan:'Italy',Lisbon:'Portugal',Cairo:'Egypt',Istanbul:'Turkey',Dubai:'UAE','Abu Dhabi':'UAE',Doha:'Qatar',Riyadh:'Saudi Arabia',Jeddah:'Saudi Arabia',Dakar:'Senegal',Abidjan:"Côte d'Ivoire",Lagos:'Nigeria',Nairobi:'Kenya','New York':'USA','Los Angeles':'USA',Miami:'USA',Toronto:'Canada',Montreal:'Canada','Mexico City':'Mexico','São Paulo':'Brazil','Buenos Aires':'Argentina',Tokyo:'Japan',Singapore:'Singapore',Bangkok:'Thailand',Seoul:'South Korea',Sydney:'Australia',Mumbai:'India',Jakarta:'Indonesia'};
+function countryOf(city){ return CITY_COUNTRY[city]||'Other'; }
+function F(){ if(!L.filters)L.filters={show:'auto',country:'all'}; return L.filters; }
+function filtersActive(){ const f=F(); return f.country!=='all'||f.show!=='auto'; }
+function openFilters(){
+  const f=F();
+  const seen={}; const countries=[];
+  R.usersCache.forEach(p=>{ const c=countryOf(p.city); if(!seen[c]){seen[c]=1;countries.push(c);} });
+  ['Morocco','France','Spain','UAE','Turkey','United Kingdom','USA','Other'].forEach(c=>{ if(!seen[c]){seen[c]=1;countries.push(c);} });
+  const segB=(val,label)=>`<button class="${f.show===val?'on':''}" onclick="F().show='${val}';openFilters()">${label}</button>`;
+  $('genBody').innerHTML=`<div class="h2" style="display:flex;align-items:center;gap:8px">${IC('sliders',21)} ${T('Discovery settings')}</div>
+    <div class="mut small" style="margin:6px 0 12px;line-height:1.6">${T('Like Tinder: browse everyone, or tune who appears in your deck. Matching still unlocks the chat.')}</div>
+    <div class="mut small" style="font-weight:900">${T('Show me')}</div>
+    <div class="seg" style="margin:6px 0 8px">${segB('auto',T('My preference'))}${segB('e',T('Everyone'))}</div>
+    <div class="seg" style="margin:0 0 14px">${segB('w',T('Women'))}${segB('m',T('Men'))}</div>
+    <div class="mut small" style="font-weight:900">${T('Country')}</div>
+    <div class="tagwrap" style="margin:6px 0 16px;max-height:180px;overflow-y:auto">
+      <button class="tchip ${f.country==='all'?'on':''}" onclick="F().country='all';openFilters()">🌍 ${T('All countries')}</button>
+      ${countries.map(c=>`<button class="tchip ${f.country===c?'on':''}" onclick="F().country='${c}';openFilters()">${c}</button>`).join('')}
+    </div>
+    <button class="btn btn-grad" onclick="applyFilters()">${T('Apply — refresh my deck')}</button>
+    <div style="height:8px"></div>
+    <button class="btn btn-line" onclick="L.filters={show:'auto',country:'all'};save();applyFilters()">${T('Reset to everyone, everywhere')}</button>`;
+  show('genSheet');
+}
+function applyFilters(){ save(); hide('genSheet'); R.cacheTs=0; paintFiltChip();
+  loadDeck().catch(e=>{ console.warn('deck',e); paintDeck(); });
+  toast(filtersActive()?'✨ '+T('Filters on — deck refreshed'):'🌍 '+T('Showing everyone, everywhere')); }
+function paintFiltChip(){ const b=$('filtChip'); if(!b)return;
+  if(filtersActive()){ b.style.background='var(--grad)'; b.style.color='#fff'; b.style.borderColor='transparent'; }
+  else { b.style.background=''; b.style.color=''; b.style.borderColor=''; } }
 
 /* ============ ONBOARDING ============ */
 const OB={step:0,data:{name:'',age:22,g:'',into:[],city:'Casablanca',bio:'',tags:[],em:'😊',gi:0}};
@@ -1079,15 +1169,16 @@ function showTab(t){
   if(t==='wallet')renderWallet();
   if(t==='profile')renderProfile();
   if(t==='discover'){ $('demoSlot').innerHTML=DEMO?`<div class="demobanner">⚡ DEMO MODE — Firebase not set up yet (see README.md). Everyone here is a starter profile; connect the free cloud to meet real people.</div>`:'';
-    paintGeoSlot(); paintNearChip(); paintLikesPill(); }
+    paintGeoSlot(); paintNearChip(); paintFiltChip(); paintLikesPill(); }
 }
 function paintBadges(){renderTabbar(); if(R.tab==='matches')renderMatches();}
 
 /* ============ DISCOVERY DECK ============ */
 async function loadDeck(){
   if(!L.me){return}
-  const demoPool=SAMPLES.filter(p=>
-    (p.g==='w'&&L.me.into.includes('w'))||(p.g==='m'&&L.me.into.includes('m'))).map(p=>({...p,sim:true}));
+  /* 🚪 live mode = real people only — no starter profiles, no fake auto-matches (the Tinder rule) */
+  const demoPool=DEMO?SAMPLES.filter(p=>
+    (p.g==='w'&&L.me.into.includes('w'))||(p.g==='m'&&L.me.into.includes('m'))).map(p=>({...p,sim:true})):[];
   let cloudPool=[];
   if(!DEMO){ try{ cloudPool=await cloudDiscover(); }catch(e){} }
   const all=[...cloudPool,...demoPool.filter(p=>!cloudPool.find(c=>c.name===p.name))];
@@ -1104,6 +1195,7 @@ function paintDeck(){
       <div class="h2">${T('No more hearts here — for now')}</div>
       <div class="mut small" style="max-width:280px;line-height:1.6">${T('Melt shows only real Google-verified people. New hearts join every day, and your free likes refresh after midnight.')}</div>
       <button class="btn btn-grad" style="max-width:240px;margin-top:10px" onclick="R.cacheTs=0;loadDeck().catch(()=>paintDeck())">${T('Refresh deck')}</button>
+      ${filtersActive()?`<button class="btn btn-line" style="max-width:240px;margin-top:6px" onclick="openFilters()">${IC('sliders',16)} ${T('Tune discovery filters')}</button>`:''}
       <button class="btn btn-line" style="max-width:240px;margin-top:6px" onclick="openGold('likes')">${IC('crown',16)} ${T('GO GOLD')}</button>
     </div>`;
     const da=document.querySelector('.dactions'); if(da)da.classList.add('dim');
@@ -1134,7 +1226,7 @@ function cardHtml(p,i){
     <div class="stamp like">LIKE</div><div class="stamp no">NOPE</div><div class="stamp wow">WOW ✨</div>
     <div class="info">
       <div class="nm">${p.name} <span class="age">${p.age}</span> ${VB(p.verified)}</div>
-      <div class="ds">${IC('pin',12)} ${p.km!=null?`${p.km} km · `:''}${p.city||'Morocco'}</div>
+      <div class="ds">${IC('pin',12)} ${p.km!=null?`${p.km} km · `:''}${p.city||'Earth'}${countryOf(p.city)!=='Other'?' · '+countryOf(p.city):''}</div>
       <div class="bio">${p.bio||''}</div>
       <div class="tags">${(p.tags||[]).slice(0,3).map(t=>`<span>${t}</span>`).join('')}</div>
     </div></div>`;
@@ -1600,7 +1692,7 @@ function renderProfile(){
     </div>`;
 }
 function toggleNotif(){ L.notif=L.notif===false?true:false; $('notifT').classList.toggle('on',L.notif!==false); save(); }
-function resetAll(){ if(confirm('Log out and wipe this device profile?')){ localStorage.removeItem('zwin_local'); try{firebase.auth().signOut()}catch(e){} location.reload(); } }
+function resetAll(){ if(confirm('Log out of Melt on this device?\n\nYour profile, photos, matches and chats stay safe in the cloud. Sign in with the same Google account and everything comes back.')){ localStorage.removeItem('zwin_local'); try{firebase.auth().signOut()}catch(e){} location.reload(); } }
 function paintGold(){ const el=$('goldTop'); if(el)el.textContent=L.gold?T('GOLD'):T('GO GOLD'); }
 
 /* ============ INIT ============ */
