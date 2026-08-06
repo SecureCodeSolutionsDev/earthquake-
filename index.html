@@ -299,6 +299,24 @@ html{background:#08030a}
 .quota svg{color:var(--pk)}
 .streakfire .h1{color:var(--gold)}
 
+
+/* ---------- MELT AUTH — Tinder full-bleed photograph ---------- */
+#scr-auth{padding-bottom:0}
+.authwrap{position:absolute;inset:0}
+.authbg{position:absolute;inset:0;background-position:center 28%;background-size:cover;background-repeat:no-repeat;animation:kenb 26s ease-in-out infinite alternate}
+@keyframes kenb{from{transform:scale(1)}to{transform:scale(1.08)}}
+.authgrad{position:absolute;inset:0;background:linear-gradient(180deg,rgba(16,6,16,.02) 0%,rgba(16,6,16,.22) 42%,rgba(16,6,16,.88) 74%,#100610 97%)}
+.authbody{position:absolute;inset-inline:0;bottom:0;padding:0 24px calc(26px + env(safe-area-inset-bottom));text-align:center}
+.authlogo{width:74px;height:74px;border-radius:26px;background:rgba(16,6,16,.45);backdrop-filter:blur(8px);margin:0 auto;border:1px solid rgba(255,255,255,.14);display:flex;align-items:center;justify-content:center;box-shadow:0 18px 44px rgba(0,0,0,.5)}
+.authname{font-size:46px;font-weight:900;letter-spacing:-1.2px;margin-top:10px;color:#fff}
+.authh{color:#fff;font-size:19px;font-weight:900;margin-top:4px}
+.authsub{color:#eed6e0;margin:8px auto 18px;max-width:310px;font-size:13.5px;line-height:1.55}
+.gbtn{background:#fff!important;color:#1b0d18!important;border-radius:999px;box-shadow:0 14px 34px rgba(0,0,0,.5)}
+.authtiny{color:#c79cb1;font-size:10.5px;margin-top:10px}
+.authseg{max-width:250px;margin:14px auto 0}
+.authseg button{background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.18);color:#fff;backdrop-filter:blur(6px)}
+.deckempty{color:var(--txt)}
+
 </style>
 </head>
 <body>
@@ -307,20 +325,22 @@ html{background:#08030a}
 
 <!-- ==================== AUTH (google sign-in) ==================== -->
 <section class="scr" id="scr-auth">
-  <div class="ob">
-    <div class="obstep">
-      <div class="ob-logo"><div class="flame"><span class="mslot" data-m="flame" data-em="🔥" data-px="42">🔥</span></div></div>
-      <h1 class="h1" style="text-align:center" data-t="Real people only">Real people only</h1>
-      <div class="mut" style="text-align:center" data-t="One tap with your Google account to enter Melt —<br>no bots, no fakes, no catfish farms.<br><b>We never see your emails or post anything.</b>">One tap with your Google account to enter Melt —<br>no bots, no fakes, no catfish farms.<br><b>We never see your emails or post anything.</b></div>
-      <button class="btn btn-line" id="btnGoogle" onclick="googleIn()" style="background:#fff;font-size:15.5px">
+  <div class="authwrap">
+    <div class="authbg" id="authBgLayer"></div>
+    <div class="authgrad"></div>
+    <div class="authbody">
+      <div class="authlogo"><span class="mslot" data-m="flame" data-em="🔥" data-px="46">🔥</span></div>
+      <div class="authname grad-txt">Melt</div>
+      <div class="authh" data-t="Real people only">Real people only</div>
+      <div class="authsub" data-t="One tap with your Google account — no bots, no fakes, no catfish farms. We never see your emails or post anything.">One tap with your Google account — no bots, no fakes, no catfish farms. We never see your emails or post anything.</div>
+      <button class="btn gbtn" id="btnGoogle" onclick="googleIn()" style="font-size:15.5px">
         <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.1H42V20H24v8h11.3c-1.6 4.7-6.1 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3l5.7-5.7C34 6.1 29.3 4 24 4 13 4 4 13 4 24s9 20 20 20 20-9 20-20c0-1.3-.1-2.7-.4-3.9z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.9 1.2 8 3l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.1H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C41 35.4 44 30.2 44 24c0-1.3-.1-2.7-.4-3.9z"/></svg>
         <span data-t="Continue with Google">Continue with Google</span>
       </button>
-      <div class="mut tiny" style="text-align:center" data-t="Sign-in secured by Google · your identity stays private · 18+">Sign-in secured by Google · your identity stays private · 18+</div>
-      <div class="seg" style="max-width:280px;margin:6px auto 0">
+      <div class="authtiny" data-t="Sign-in secured by Google · your identity stays private · 18+">Sign-in secured by Google · your identity stays private · 18+</div>
+      <div class="seg authseg">
         <button onclick="setLang('en')">EN</button>
         <button onclick="setLang('fr')">FR</button>
-        <button onclick="setLang('ar')">عربي</button>
       </div>
     </div>
   </div>
@@ -384,7 +404,7 @@ html{background:#08030a}
   <div style="padding:12px 18px">
     <button class="btn btn-line" onclick="editProfile()" data-t="Edit profile">Edit profile</button>
     <div style="height:10px"></div>
-    <button class="btn btn-line" onclick="toast('Preview shared')" data-t="Preview my card">Preview my card</button>
+    <button class="btn btn-line" onclick="previewMe()" data-t="Preview my card">Preview my card</button>
     <div class="mut tiny" style="text-align:center;margin-top:16px" data-t="Melt v1.0 · love that melts doubts away">Melt v1.0 · love that melts doubts away</div>
   </div>
 </section>
@@ -569,7 +589,7 @@ let COMMISSION/*unused*/=0;
 /* 🔐 LOCK 3 — App Check: activates only if you put a real site key in zwin-config.js */
 /* 🔐 LOCK 1 — Google sign-in: every user is a verified auth.uid before touching the DB */
 function fbInit(){
-  if(!zwinCloudReady()){DEMO=true;return}
+  if(!zwinCloudReady()){ showAuth(); return }
   try{
     firebase.initializeApp(ZWIN_CONFIG.firebase);
     try{ const k=(ZWIN_CONFIG.appCheck&&ZWIN_CONFIG.appCheck.recaptchaSiteKey)||'';
@@ -577,23 +597,24 @@ function fbInit(){
     }catch(e){ console.warn('App Check skipped:',e); }
     DB=firebase.database(); AUTH=firebase.auth();
     AUTH.onAuthStateChanged(u=>{ if(u){ onAuthed(u); } else if(!DEMO){ showAuth(); } });
-  }catch(e){DEMO=true}
+  }catch(e){ showAuth(); }
 }
 let AUTHED=false;
 function onAuthed(u){
   if(AUTHED)return; AUTHED=true;
   uid=u.uid; // identity IS the verified phone user from now on
-  $('scr-auth').classList.remove('on'); $('tabbar').style.display='flex';
+  document.querySelectorAll('.scr').forEach(x=>{ x.classList.remove('on'); x.style.display='none'; }); $('tabbar').style.display='flex';
   toast('Welcome in — real people only');
   initPush();
   DB.ref('.info/connected').on('value',s=>{ if(s.val()&&L.me){heartbeat(); syncMe(); syncBadges();} });
-  if(L.me){ showTab('discover'); loadDeck(); }
+  if(L.me){ showTab('discover'); loadDeck().catch(e=>{ console.warn('deck',e); paintDeck(); }); }
   else { startOnboard(); }
 }
 /* ---- phone sign-in screen ---- */
+function hardScreen(id){ document.querySelectorAll('.scr').forEach(s=>{ s.classList.remove('on'); s.style.display='none'; });
+  const e=$(id); e.classList.add('on'); e.style.display='block'; e.scrollTop=0; }
 function showAuth(){
-  document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));
-  $('scr-auth').classList.add('on'); $('tabbar').style.display='none';
+  hardScreen('scr-auth'); $('tabbar').style.display='none';
   paintAuthBg();
 }
 /* 🔐 LOCK 1 — Google sign-in: one tap, verified auth.uid, zero SMS cost, no limits */
@@ -705,8 +726,8 @@ function skinMedia(){ document.querySelectorAll('.mslot[data-m]').forEach(el=>{ 
   const u=MURL(el.dataset.m); if(!u)return; const px=el.dataset.px||20;
   el.innerHTML=`<img class="mimg" src="${u}" style="height:${px}px;width:${px}px" onerror="this.parentNode.textContent=this.parentNode.dataset.em" alt="">`; }); }
 /* 👰🤵 sign-in background — the promise (love that ends in marriage) */
-function paintAuthBg(){ const u=MURL('authBg'); if(!u)return; const s=$('scr-auth'); if(!s||s.dataset.bgdone)return; s.dataset.bgdone='1';
-  s.style.background=`linear-gradient(180deg,rgba(255,247,249,.04) 0%,rgba(255,247,249,.28) 40%,rgba(255,247,249,.84) 66%,#fff7f9 88%),url('${u}') center 30%/cover no-repeat`; }
+function paintAuthBg(){ const u=MURL('authBg'); if(!u)return; const s=$('authBgLayer'); if(!s||s.dataset.bgdone)return; s.dataset.bgdone='1';
+  s.style.backgroundImage=`url('${u}')`; }
 
 /* ============ 📸 REAL PHOTOS ============ */
 /* Photos live in their OWN table (photos/{uid}/p0..p3) so user profiles stay light:
@@ -928,22 +949,24 @@ function askGeo(){
     L.geoDenied=0; save(); paintGeoSlot();
     if(!DEMO)syncMe();
     toast('📍 Distance ON — real km, privacy-safe 💛');
-    R.cacheTs=0; loadDeck();
+    R.cacheTs=0; loadDeck().catch(e=>{ console.warn('deck',e); paintDeck(); });
   },err=>{ L.geoDenied=1; save(); paintGeoSlot(); toast('Location off — city names still show 💛'); },
   {timeout:9000,maximumAge:600000}); }
 function toggleNear(){ L.nearOnly=!L.nearOnly; save(); paintNearChip();
   if(L.nearOnly&&!L.geo){ askGeo(); }
-  else { toast(L.nearOnly?'📍 Near-you mode: your city + under 80 km first':'🌍 Showing everyone again'); R.cacheTs=0; loadDeck(); } }
+  else { toast(L.nearOnly?'📍 Near-you mode: your city + under 80 km first':'🌍 Showing everyone again'); R.cacheTs=0; loadDeck().catch(e=>{ console.warn('deck',e); paintDeck(); }); } }
 function paintNearChip(){ const b=$('nearChip'); if(!b)return;
   if(L.nearOnly){ b.style.background='var(--grad)'; b.style.color='#fff'; b.innerHTML=IC('pin',13)+' Near'; }
   else { b.style.background=''; b.style.color=''; b.innerHTML=IC('pin',15); } }
 
 /* ============ ONBOARDING ============ */
 const OB={step:0,data:{name:'',age:22,g:'',into:[],city:'Casablanca',bio:'',tags:[],em:'😊',gi:0}};
-function startOnboard(){
+function startOnboard(){ if(!AUTHED){ showAuth(); return; }
   OB.step=0; paintOb();
   showTab('onboard');
 }
+const WORLD_CITIES=['Casablanca', 'Rabat', 'Marrakech', 'Tangier', 'Agadir', 'Fès', 'Meknès', 'Oujda', 'Laâyoune', 'Al Hoceima', 'Essaouira', 'Chefchaouen', 'Algiers', 'Oran', 'Tunis', 'Paris', 'Marseille', 'Lyon', 'Toulouse', 'Brussels', 'Geneva', 'Madrid', 'Barcelona', 'Valencia', 'London', 'Amsterdam', 'Berlin', 'Munich', 'Rome', 'Milan', 'Lisbon', 'Cairo', 'Istanbul', 'Dubai', 'Abu Dhabi', 'Doha', 'Riyadh', 'Jeddah', 'Dakar', 'Abidjan', 'Lagos', 'Nairobi', 'New York', 'Los Angeles', 'Miami', 'Toronto', 'Montreal', 'Mexico City', 'São Paulo', 'Buenos Aires', 'Tokyo', 'Singapore', 'Bangkok', 'Seoul', 'Sydney', 'Mumbai', 'Jakarta'];
+function obCityGo(){ const i=$('obCityIn'); if(i){ OB.data.city=(i.value||'').trim().slice(0,30)||OB.data.city||'Casablanca'; } obStep2(); }
 function paintOb(){
   const d=OB.data; const W=$('obWrap');
   const steps=[
@@ -973,9 +996,10 @@ function paintOb(){
        <button class="${d.into.length===1&&d.into[0]==='w'?'on':''}" onclick="OB.data.into=['w'];paintOb()">👩 Women</button>
        <button class="${d.into.length===1&&d.into[0]==='m'?'on':''}" onclick="OB.data.into=['m'];paintOb()">👨 Men</button>
      </div>
-     <div class="mut small">City</div>
-     <div class="seg" style="flex-wrap:wrap">${['Casablanca','Rabat','Marrakech','Tangier'].map(c=>`<button class="${d.city===c?'on':''}" onclick="OB.data.city='${c}';paintOb()">${c}</button>`).join('')}</div>
-     <button class="btn btn-grad" onclick="obStep2()">Continue →</button></div>`,
+     <div class="mut small">City — type yours, anywhere on Earth 🌍</div>
+     <input class="inp" id="obCityIn" list="obCities" value="${d.city}" maxlength="30" placeholder="e.g. Casablanca, Paris, Dubai…">
+     <datalist id="obCities">${WORLD_CITIES.map(c=>`<option value="${c}">`).join('')}</datalist>
+     <button class="btn btn-grad" onclick="obCityGo()">Continue →</button></div>`,
    ()=>`<div class="obstep">
      <div class="h2">Your vibe ✨</div>
      <textarea class="inp" id="obBio" maxlength="140" placeholder="A line that sounds like you… (funny > perfect)">${d.bio}</textarea>
@@ -1005,7 +1029,7 @@ async function obFinish(){
   L.me={...OB.data,uid}; L.createdAt=Date.now(); save();
   toast(`Welcome, ${L.me.name} — may you find the one that melts you.`);
   if(!DEMO)syncMe();
-  showTab('discover'); loadDeck();
+  showTab('discover'); loadDeck().catch(e=>{ console.warn('deck',e); paintDeck(); });
 }
 function editProfile(){ OB.data={...L.me}; OB.step=1; paintOb(); showTab('onboard'); }
 
@@ -1021,8 +1045,8 @@ function renderTabbar(){
   }).join('');
 }
 function showTab(t){
-  document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));
-  $('scr-'+t).classList.add('on'); R.tab=t; renderTabbar();
+  if(!AUTHED){ showAuth(); return; }
+  hardScreen('scr-'+t); R.tab=t; renderTabbar();
   if(t==='discover'&&!L.me)startOnboard();
   if(t==='likes')renderLikes();
   if(t==='matches')renderMatches();
@@ -1448,6 +1472,21 @@ function renderWallet(){
 }
 
 /* ============ PROFILE ============ */
+function previewMe(){
+  if(!L.me)return toast('Create your profile first');
+  const mp=(L.me.photos||[]).filter(Boolean)[0]||null; const tags=(L.me.tags||[]).slice(0,4);
+  $('genBody').innerHTML=`<div style="border-radius:22px;overflow:hidden;position:relative;box-shadow:0 16px 40px rgba(0,0,0,.55)">
+    <div style="height:330px;background:${grad(L.me.gi)};display:flex;align-items:center;justify-content:center;font-size:110px">${mp?`<img src="${mp}" style="width:100%;height:100%;object-fit:cover" alt="my photo">`:L.me.em}</div>
+    <div style="position:absolute;inset-inline:0;bottom:58px;padding:14px;background:linear-gradient(transparent,rgba(8,3,10,.9) 82%);color:#fff">
+      <div style="font-size:24px;font-weight:900;display:flex;align-items:center;gap:8px">${L.me.name}, ${L.me.age} ${VB(L.verified)}</div>
+      <div style="font-size:12px;opacity:.92;font-weight:700;margin-top:4px">${IC('pin',12)} ${L.me.city}</div>
+      <div style="font-size:13.5px;margin-top:8px;line-height:1.5">${L.me.bio||''}</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:9px">${tags.map(t=>`<span style="background:rgba(255,255,255,.18);padding:5px 10px;border-radius:999px;font-size:11.5px;font-weight:700">${t}</span>`).join('')}</div>
+    </div>
+    <div style="height:58px;background:#0b050c;display:flex;align-items:center;justify-content:center;color:var(--mut);font-size:10.5px;font-weight:900;letter-spacing:1px">THIS IS WHAT OTHERS SEE</div>
+  </div>`;
+  show('genSheet');
+}
 function renderProfile(){
   if(!L.me){ $('profileWrap').innerHTML=''; return; }
   const maxPh=(ZWIN_CONFIG.photos&&ZWIN_CONFIG.photos.maxPhotos)||4;
@@ -1485,7 +1524,7 @@ function renderProfile(){
       </div>
       <div style="height:10px"></div>
       <div class="card">
-        <button class="earnrow" onclick="setLang(L.lang==='en'?'fr':L.lang==='fr'?'ar':'en')"><div class="ee">${IC('globe',22)}</div><div style="flex:1"><b class="small">${T('Language')}</b><div class="mut tiny">English · Français · العربية</div></div><span class="pill">${L.lang==='ar'?'عربي':L.lang==='fr'?'FR':'EN'}</span></button>
+        <button class="earnrow" onclick="setLang(L.lang==='en'?'fr':'en')"><div class="ee">${IC('globe',22)}</div><div style="flex:1"><b class="small">${T('Language')}</b><div class="mut tiny">English · Français</div></div><span class="pill">${L.lang==='fr'?'FR':'EN'}</span></button>
         <button class="earnrow" onclick="startVerify()"><div class="ee">${IC('check',22)}</div><div style="flex:1"><b class="small">${T('VERIFIED badge')}</b><div class="mut tiny">${L.verified?'You are verified — blue check everywhere':L.verifyPending?'Selfie under review (usually under 24h)':'Selfie + peace sign = blue check · real humans match more'}</div></div><span class="pill" style="${L.verified?'background:#e3f1ff;color:#2f8fe0':''}">${L.verified?'✓ VERIFIED':L.verifyPending?'Reviewing':'Get it'}</span></button>
         <button class="earnrow" onclick="askGeo()"><div class="ee">${IC('pin',22)}</div><div style="flex:1"><b class="small">${T('Real distance (GPS)')}</b><div class="mut tiny">${L.geo?'ON — rounded ~2 km, your exact spot is never stored':'Real km like Tinder Gold — free on Melt'}</div></div><span class="pill">${L.geo?'ON':'Turn on'}</span></button>
         <button class="earnrow" onclick="enablePush()"><div class="ee">${IC('bell',22)}</div><div style="flex:1"><b class="small">${T('Lock-screen alerts')}</b><div class="mut tiny">Get pinged the second someone likes or texts you</div></div><span class="pill">${pushOn?'ON':'Turn on'}</span></button>
@@ -1500,14 +1539,16 @@ function resetAll(){ if(confirm('Log out and wipe this device profile?')){ local
 function paintGold(){ const el=$('goldTop'); if(el)el.textContent=L.gold?T('GOLD'):T('GO GOLD'); }
 
 /* ============ INIT ============ */
+setTimeout(()=>{ const dk=$('deck'); if(R.tab==='discover'&&dk&&!dk.children.length){ try{paintDeck();}catch(e){} } }, 5200);
+if(!localStorage.getItem('melt_boot_v2')){ localStorage.setItem('melt_boot_v3','1'); setTimeout(()=>{ location.replace(location.pathname+'?v=3'); }, 60); }
 fbInit();
 paintGold();
 paintAuthBg();
 skinMedia();
-if(!L.lang)L.lang='en';
+if(!L.lang||L.lang==='ar')L.lang='en';
 document.documentElement.dir=(L.lang==='ar')?'rtl':'ltr'; document.documentElement.lang=L.lang;
 skinLang();
-if(DEMO){ if(L.me){ showTab('discover'); loadDeck(); } else { startOnboard(); } }
+/* demo door removed — AUTH.onAuthStateChanged alone decides who enters (Google or nobody) */
 /* live mode: AUTH.onAuthStateChanged drives the boot — phone verify first, 🔐 locks on */
 async function syncBadges(){
   if(DEMO||!L.me)return;
