@@ -300,7 +300,7 @@ html{background:#08030a}
 .streakfire .h1{color:var(--gold)}
 
 
-/* ---------- MELT AUTH — Tinder full-bleed photograph ---------- */
+/* ---------- MELT AUTH — cinematic full-bleed photograph ---------- */
 #scr-auth{padding-bottom:0}
 .authwrap{position:absolute;inset:0}
 .authbg{position:absolute;inset:0;background-position:center 28%;background-size:cover;background-repeat:no-repeat}
@@ -338,7 +338,7 @@ body{background:#efe4e2}
 .ice .chip{border-color:#ffd3de}
 .dactions.dim{opacity:.32;pointer-events:none;filter:saturate(.4)}
 .toast{background:#2b2230;border:1px solid rgba(255,255,255,.08)}
-/* auth: content centered, login button in the middle — true Tinder hero */
+/* auth: content centered, login button in the middle — true dating-app hero */
 .authbody{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 26px calc(30px + env(safe-area-inset-bottom));text-align:center;padding-top:8vh}
 .gbtn{max-width:320px}
 .authseg{max-width:220px}
@@ -360,7 +360,7 @@ textarea.inp{min-height:64px}
 .deckempty{padding:16px;gap:8px}
 .deckempty .big{font-size:54px}
 .h2{margin:4px 0}
-/* discover: the five action buttons, Tinder-sized so thumbs never miss */
+/* discover: the five action buttons, generous so thumbs never miss */
 .dactions{gap:14px;padding:12px 0 6px}
 .xbtn{width:58px;height:58px;font-size:26px;box-shadow:0 8px 22px rgba(43,34,48,.16)}
 .xbtn.big{width:74px;height:74px;font-size:33px}
@@ -370,9 +370,29 @@ textarea.inp{min-height:64px}
 /* every primary button: thumb-friendly height */
 .btn{min-height:52px}
 
+/* ---------- v5 — logged-out wall, pro tag icons, rules link ---------- */
+body.preauth #tabbar{display:none!important}
+body.preauth .scr{display:none!important}
+body.preauth #scr-auth{display:block!important}
+.tchip{display:inline-flex;align-items:center;gap:6px}
+.dcard .tags span{display:inline-flex;align-items:center;gap:5px}
+.linklike{color:#ffd9e4;text-decoration:underline;font-weight:800;font-size:inherit}
+.ruleli{display:flex;gap:8px;line-height:1.55;margin:8px 0;font-size:13px;align-items:flex-start}
+.ruleli svg{flex:none;margin-top:2px;color:var(--green)}
+
+/* ---------- v6 — empty-deck containment: copy never spills onto the action buttons ---------- */
+.deckempty{inset:10px;overflow-y:auto;scrollbar-width:none;gap:8px;align-items:center}
+.deckempty::-webkit-scrollbar{display:none}
+.deckempty .h2{font-size:20px}
+.deckempty .btn{min-height:48px;padding:13px}
+@media (max-height:660px){
+  .deckempty{justify-content:flex-start;padding-top:22px}
+  .deckempty .big{font-size:40px}
+}
+
 </style>
 </head>
-<body>
+<body class="preauth">
 <div class="app">
 <div id="toasts"></div>
 
@@ -391,6 +411,7 @@ textarea.inp{min-height:64px}
         <span data-t="Continue with Google">Continue with Google</span>
       </button>
       <div class="authtiny" data-t="Sign-in secured by Google · your identity stays private · 18+">Sign-in secured by Google · your identity stays private · 18+</div>
+      <div class="authtiny" style="margin-top:12px"><span data-t="By continuing, you agree to the">By continuing, you agree to the</span> <button class="linklike" onclick="openRules()"><span data-t="Melt Rules">Melt Rules</span></button></div>
       <div class="seg authseg">
         <button onclick="setLang('en')">EN</button>
         <button onclick="setLang('fr')">FR</button>
@@ -610,7 +631,28 @@ function show(id){$(id).classList.add('on')} function hide(id){$(id).classList.r
 function grad(i){const G=[['#ffd1e3','#ffb3c7'],['#ffe3c2','#ffc09e'],['#d7f0ff','#b3dcff'],['#e7ffd9','#c3f5b0'],['#f5e0ff','#e6c2ff'],['#fff3c9','#ffe48a'],['#d9fff4','#a9f2df'],['#ffe0e0','#ffb0b0']];const g=G[i%G.length];return `linear-gradient(160deg,${g[0]},${g[1]})`}
 
 /* ---------- sample people (demo + when cloud is empty) ---------- */
-const TAGS=['🌍 Travel','🍜 Foodie','🎧 Music','📚 Books','🌊 Sea','🥾 Hiking','🎨 Art','🐱 Cats','☕ Coffee','🎬 Cinema','⚽ Football','👨‍🍳 Cooking','🎮 Gaming','📷 Photo','💪 Fitness','🧘 Zen'];
+const TAGS=['Travel','Foodie','Music','Books','Sea','Hiking','Art','Cats','Coffee','Cinema','Football','Cooking','Gaming','Photo','Fitness','Zen'];
+/* 🏷️ pro line-icons for interests — strips old emoji prefixes from saved tags too */
+function tagTxt(t){ return (t||'').replace(/^[^A-Za-zÀ-ÿ]+/,'').trim(); }
+const TICP={
+ Travel:"M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z",
+ Foodie:"M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2M7 2v20M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zm0 0v7",
+ Music:"M9 18V5l12-2v13M9 21a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM21 19a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z",
+ Books:"M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z",
+ Sea:"M2 7c1.7 0 1.7-1.6 3.3-1.6S7 7 8.7 7s1.6-1.6 3.3-1.6S13.6 7 15.3 7s1.6-1.6 3.4-1.6S20.3 7 22 7M2 12c1.7 0 1.7-1.6 3.3-1.6S7 12 8.7 12s1.6-1.6 3.3-1.6S13.6 12 15.3 12s1.6-1.6 3.4-1.6S20.3 12 22 12M2 17c1.7 0 1.7-1.6 3.3-1.6S7 17 8.7 17s1.6-1.6 3.3-1.6S13.6 17 15.3 17s1.6-1.6 3.4-1.6S20.3 17 22 17",
+ Hiking:"m8 3 4 8 5-5 5 15H2L8 3z",
+ Art:"m9.06 11.9 8.07-8.06a2.85 2.85 0 1 1 4.03 4.03l-8.06 8.08M7.07 14.94c-1.66 0-3 1.35-3 3.02 0 1.33-2.5 1.52-2 2.02 1.08 1.1 2.49 2.02 4 2.02 2.2 0 4-1.8 4-4.04a3.01 3.01 0 0 0-3-3.02z",
+ Cats:"M12 5c.67 0 1.35.09 2 .26 1.78-2 5.03-2.84 6.42-2.26 1.4.58-.42 7-.42 7 .57 1.07 1 2.24 1 3.44C21 17.9 16.97 21 12 21s-9-3.1-9-7.56c0-1.2.43-2.37 1-3.44 0 0-1.82-6.42-.42-7 1.39-.58 4.64.26 6.42 2.26.65-.17 1.33-.26 2-.26ZM8 14h.01M16 14h.01",
+ Coffee:"M17 8h1a4 4 0 1 1 0 8h-1M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z",
+ Cinema:"M20.2 6 3 11l-.9-2.4c-.3-1.1.3-2.2 1.3-2.5l13.5-4c1.1-.3 2.2.3 2.5 1.3ZM6.2 5.3l3.1 3.9M12.4 3.4l3.1 4M3 11h18v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2Z",
+ Football:"M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20ZM12 7l3.5 3-1.3 4h-4.4l-1.3-4L12 7",
+ Cooking:"M2 12h20M20 12v6a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3v-6M5 12a7 7 0 0 1 14 0M10 6.5c0-1 .8-1.2.8-2.2M14 6.5c0-1 .8-1.2.8-2.2",
+ Gaming:"M6 11h4M8 9v4M15 12h.01M18 10h.01M17.32 5H6.68a4 4 0 0 0-3.98 3.59C2.61 9.42 2 14.46 2 16a3 3 0 0 0 3 3c1 0 1.5-.5 2-1l1.41-1.41A2 2 0 0 1 9.83 16h4.34a2 2 0 0 1 1.41.59L17 18c.5.5 1 1 2 1a3 3 0 0 0 3-3c0-1.54-.61-6.58-.68-7.26A4 4 0 0 0 17.32 5z",
+ Photo:"M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3zM12 17a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z",
+ Fitness:"m6.5 6.5 11 11M21 21l-1-1M3 3l1 1M18 22l4-4M2 6l4-4M3 10l7-7M14 21l7-7",
+ Zen:"M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"};
+function TIC(t,px){ const d=TICP[tagTxt(t)]; if(!d)return IC('spark',px||13);
+  return `<svg class="icnsvg" width="${px||13}" height="${px||13}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="${d}"/></svg>`; }
 const SAMPLES=[
  {id:'b1',name:'Salma',age:24,g:'w',city:'Casablanca',bio:'Sunset chaser 🌅 I cook tajine that could end wars. Swipe right if you laugh easily.',tags:['🌊 Sea','👨‍🍳 Cooking','🎬 Cinema'],em:'👩🏽',gi:0,km:2},
  {id:'b2',name:'Omar',age:27,g:'m',city:'Rabat',bio:'Architect by day, oud player by night 🎶 I plan dates like I plan buildings: with care.',tags:['🎧 Music','🎨 Art','📚 Books'],em:'🧔🏽',gi:2,km:5},
@@ -656,8 +698,11 @@ function fbInit(){
 }
 let AUTHED=false;
 function onAuthed(u){
-  if(AUTHED)return; AUTHED=true;
-  uid=u.uid; // identity IS the verified phone user from now on
+  if(AUTHED)return; AUTHED=true; document.body.classList.remove('preauth');
+  uid=u.uid; // identity IS the verified Google user from now on
+  // 👥 several accounts on one phone: memory belongs to an account, not to the device.
+  // Different uid = wipe local memory, then the cloud rebuilds it (profile, photos, matches, likes).
+  if(L.accountUid!==uid){ const keepLang=L.lang; Object.keys(L).forEach(k=>delete L[k]); Object.assign(L,fresh()); L.lang=keepLang||'en'; L.accountUid=uid; save(); }
   document.querySelectorAll('.scr').forEach(x=>{ x.classList.remove('on'); x.style.display='none'; }); $('tabbar').style.display='flex';
   toast('Welcome in — real people only');
   initPush();
@@ -666,7 +711,7 @@ function onAuthed(u){
   else { restoreMe(); }
 }
 /* ☁️ welcome back — the cloud remembers you. Profile lives under users/{uid}, photos under photos/{uid}.
-   Logging out only wipes THIS device; Google sign-in brings everything back (Tinder behaves the same). */
+   Logging out only wipes THIS device; Google sign-in brings everything back (the big apps behave the same). */
 function restoreMe(){
   toast('One moment — restoring your profile…');
   ref('users/'+uid).once('value').then(s2=>{
@@ -725,6 +770,11 @@ async function syncMe(){
     hasPhoto:(L.me.photos&&L.me.photos.length)?Date.now():0,
     geo:(L.geo&&L.geo.la!=null)?{la:L.geo.la,lo:L.geo.lo}:null
   });
+  // bring back MY swipes first — a fresh device never re-shows people I already judged
+  ref('swipes/'+uid).once('value').then(s2=>{ const m=s2.val()||{}; let ch=0;
+    Object.keys(m).forEach(pid=>{ if(!L.swiped[pid]){ L.swiped[pid]={d:m[pid].d,ts:m[pid].ts||Date.now()}; ch=1; } });
+    if(ch){ save(); if(R.tab==='discover'){ R.cacheTs=0; loadDeck().catch(()=>paintDeck()); } }
+  }).catch(()=>{});
   // restore my photos if I log in from a new device (they live in their own table)
   ref('photos/'+uid).once('value').then(s=>{ const m=s.val()||{};
     const arr=['p0','p1','p2','p3','p4','p5'].map(k=>m[k]).filter(Boolean);
@@ -941,11 +991,12 @@ fr:{
 'Secure Al Barid/CMI checkout coming soon — now via bank transfer 🏦':'Paiement CMI/Al Barid bientôt — virement bancaire pour le moment 🏦',
 '💌 Free messages left':'💌 Messages gratuits restants',
 'Close':'Fermer','Filters':'Filtres','Discovery settings':'Réglages de découverte',
-'Like Tinder: browse everyone, or tune who appears in your deck. Matching still unlocks the chat.':'Comme Tinder : vois tout le monde, ou règle qui apparaît. Le match débloque le chat.',
+'Browse everyone, or tune who appears in your deck. Matching unlocks the chat.':'Vois tout le monde, ou règle qui apparaît. Le match débloque le chat.',
 'Show me':'Me montrer','My preference':'Ma préférence','Everyone':'Tout le monde','Women':'Femmes','Men':'Hommes',
 'Country':'Pays','All countries':'Tous les pays','Apply — refresh my deck':'Appliquer — rafraîchir mon deck',
 'Reset to everyone, everywhere':'Réinitialiser : tout le monde, partout','Tune discovery filters':'Régler les filtres',
-'Filters on — deck refreshed':'Filtres actifs — deck rafraîchi','Showing everyone, everywhere':'Tout le monde, partout'
+'Filters on — deck refreshed':'Filtres actifs — deck rafraîchi','Showing everyone, everywhere':'Tout le monde, partout',
+'Melt Rules':'Règles Melt','By continuing, you agree to the':'En continuant, tu acceptes les'
 },
 ar:{
 'Discover':'اكتشف','Liked you':'عجبتهم','Matches':'توافقات','Coins':'كوينز','Me':'أنا',
@@ -1017,7 +1068,7 @@ function pickVerifySelfie(){
   inp.click();
 }
 
-/* ============ 📍 REAL DISTANCE (GPS opt-in — Tinder Gold feature, FREE here) */
+/* ============ 📍 REAL DISTANCE (GPS opt-in — a paid feature elsewhere, FREE here) */
 /* Privacy by design: coordinates are rounded to ~2 km before saving. Exact spots never stored. */
 function distKm(la1,lo1,la2,lo2){ const R=6371,dLa=(la2-la1)*Math.PI/180,dLo=(lo2-lo1)*Math.PI/180,
   a=Math.sin(dLa/2)*Math.sin(dLa/2)+Math.cos(la1*Math.PI/180)*Math.cos(la2*Math.PI/180)*Math.sin(dLo/2)*Math.sin(dLo/2);
@@ -1042,7 +1093,7 @@ function toggleNear(){ L.nearOnly=!L.nearOnly; save(); paintNearChip();
 function paintNearChip(){ const b=$('nearChip'); if(!b)return;
   if(L.nearOnly){ b.style.background='var(--grad)'; b.style.color='#fff'; b.innerHTML=IC('pin',13)+' Near'; }
   else { b.style.background=''; b.style.color=''; b.innerHTML=IC('pin',15); } }
-/* ============ 🌍 DISCOVERY FILTERS — the Tinder method: everyone public, you tune who appears ============ */
+/* ============ 🌍 DISCOVERY FILTERS — everyone browsable, you tune who appears ============ */
 const CITY_COUNTRY={Casablanca:'Morocco',Rabat:'Morocco',Marrakech:'Morocco',Tangier:'Morocco',Agadir:'Morocco','Fès':'Morocco','Meknès':'Morocco',Oujda:'Morocco','Laâyoune':'Morocco','Al Hoceima':'Morocco',Essaouira:'Morocco',Chefchaouen:'Morocco',Algiers:'Algeria',Oran:'Algeria',Tunis:'Tunisia',Paris:'France',Marseille:'France',Lyon:'France',Toulouse:'France',Brussels:'Belgium',Geneva:'Switzerland',Madrid:'Spain',Barcelona:'Spain',Valencia:'Spain',London:'United Kingdom',Amsterdam:'Netherlands',Berlin:'Germany',Munich:'Germany',Rome:'Italy',Milan:'Italy',Lisbon:'Portugal',Cairo:'Egypt',Istanbul:'Turkey',Dubai:'UAE','Abu Dhabi':'UAE',Doha:'Qatar',Riyadh:'Saudi Arabia',Jeddah:'Saudi Arabia',Dakar:'Senegal',Abidjan:"Côte d'Ivoire",Lagos:'Nigeria',Nairobi:'Kenya','New York':'USA','Los Angeles':'USA',Miami:'USA',Toronto:'Canada',Montreal:'Canada','Mexico City':'Mexico','São Paulo':'Brazil','Buenos Aires':'Argentina',Tokyo:'Japan',Singapore:'Singapore',Bangkok:'Thailand',Seoul:'South Korea',Sydney:'Australia',Mumbai:'India',Jakarta:'Indonesia'};
 function countryOf(city){ return CITY_COUNTRY[city]||'Other'; }
 function F(){ if(!L.filters)L.filters={show:'auto',country:'all'}; return L.filters; }
@@ -1054,13 +1105,13 @@ function openFilters(){
   ['Morocco','France','Spain','UAE','Turkey','United Kingdom','USA','Other'].forEach(c=>{ if(!seen[c]){seen[c]=1;countries.push(c);} });
   const segB=(val,label)=>`<button class="${f.show===val?'on':''}" onclick="F().show='${val}';openFilters()">${label}</button>`;
   $('genBody').innerHTML=`<div class="h2" style="display:flex;align-items:center;gap:8px">${IC('sliders',21)} ${T('Discovery settings')}</div>
-    <div class="mut small" style="margin:6px 0 12px;line-height:1.6">${T('Like Tinder: browse everyone, or tune who appears in your deck. Matching still unlocks the chat.')}</div>
+    <div class="mut small" style="margin:6px 0 12px;line-height:1.6">${T('Browse everyone, or tune who appears in your deck. Matching unlocks the chat.')}</div>
     <div class="mut small" style="font-weight:900">${T('Show me')}</div>
     <div class="seg" style="margin:6px 0 8px">${segB('auto',T('My preference'))}${segB('e',T('Everyone'))}</div>
     <div class="seg" style="margin:0 0 14px">${segB('w',T('Women'))}${segB('m',T('Men'))}</div>
     <div class="mut small" style="font-weight:900">${T('Country')}</div>
     <div class="tagwrap" style="margin:6px 0 16px;max-height:180px;overflow-y:auto">
-      <button class="tchip ${f.country==='all'?'on':''}" onclick="F().country='all';openFilters()">🌍 ${T('All countries')}</button>
+      <button class="tchip ${f.country==='all'?'on':''}" onclick="F().country='all';openFilters()">${T('All countries')}</button>
       ${countries.map(c=>`<button class="tchip ${f.country===c?'on':''}" onclick="F().country='${c}';openFilters()">${c}</button>`).join('')}
     </div>
     <button class="btn btn-grad" onclick="applyFilters()">${T('Apply — refresh my deck')}</button>
@@ -1097,35 +1148,35 @@ function paintOb(){
      <button class="btn btn-line">I’m 18 or older — tap Next confirms</button>
      <button class="btn btn-grad" onclick="obNext(1)">Create my profile</button></div>`,
    ()=>`<div class="obstep">
-     <div class="h2">First, the basics 💁</div>
+     <div class="h2">First, the basics</div>
      <input class="inp" id="obName" placeholder="Your first name" value="${d.name}" maxlength="16">
      <div class="row"><span class="mut small">Age</span>
        <div class="numstep"><button onclick="OB.data.age=Math.max(18,OB.data.age-1);paintOb()">−</button><b>${d.age}</b><button onclick="OB.data.age=Math.min(99,OB.data.age+1);paintOb()">+</button></div></div>
      <div class="mut small" style="margin-top:6px">I am…</div>
      <div class="seg">
-       <button class="${d.g==='w'?'on':''}" onclick="OB.data.g='w';paintOb()">👩 Woman</button>
-       <button class="${d.g==='m'?'on':''}" onclick="OB.data.g='m';paintOb()">👨 Man</button>
+       <button class="${d.g==='w'?'on':''}" onclick="OB.data.g='w';paintOb()">Woman</button>
+       <button class="${d.g==='m'?'on':''}" onclick="OB.data.g='m';paintOb()">Man</button>
      </div>
      <div class="mut small">Show me…</div>
      <div class="seg">
-       <button class="${d.into.length===2?'on':''}" onclick="OB.data.into=['w','m'];paintOb()">💞 Everyone</button>
-       <button class="${d.into.length===1&&d.into[0]==='w'?'on':''}" onclick="OB.data.into=['w'];paintOb()">👩 Women</button>
-       <button class="${d.into.length===1&&d.into[0]==='m'?'on':''}" onclick="OB.data.into=['m'];paintOb()">👨 Men</button>
+       <button class="${d.into.length===2?'on':''}" onclick="OB.data.into=['w','m'];paintOb()">Everyone</button>
+       <button class="${d.into.length===1&&d.into[0]==='w'?'on':''}" onclick="OB.data.into=['w'];paintOb()">Women</button>
+       <button class="${d.into.length===1&&d.into[0]==='m'?'on':''}" onclick="OB.data.into=['m'];paintOb()">Men</button>
      </div>
-     <div class="mut small">City — type yours, anywhere on Earth 🌍</div>
+     <div class="mut small">City — type yours, anywhere on Earth</div>
      <input class="inp" id="obCityIn" list="obCities" value="${d.city}" maxlength="30" placeholder="e.g. Casablanca, Paris, Dubai…">
      <datalist id="obCities">${WORLD_CITIES.map(c=>`<option value="${c}">`).join('')}</datalist>
      <button class="btn btn-grad" onclick="obCityGo()">Continue →</button></div>`,
    ()=>`<div class="obstep">
-     <div class="h2">Your vibe ✨</div>
+     <div class="h2">Your vibe</div>
      <textarea class="inp" id="obBio" maxlength="140" placeholder="A line that sounds like you… (funny > perfect)">${d.bio}</textarea>
      <div class="mut small">Pick 3–4 interests (better matches):</div>
-     <div class="tagwrap">${TAGS.map(t=>`<button class="tchip ${d.tags.includes(t)?'on':''}" onclick="obTag('${t}')">${t}</button>`).join('')}</div>
+     <div class="tagwrap">${TAGS.map(t=>`<button class="tchip ${d.tags.includes(t)?'on':''}" onclick="obTag('${t}')">${TIC(t)}${t}</button>`).join('')}</div>
      <div class="mut small">Your avatar</div>
      <div class="emojirow">${['😊','😎','🥰','😌','🤗','😇','🦁','🌸','🦊','🐼','😽','🌟'].map(e=>`<button class="emojipick ${d.em===e?'on':''}" onclick="OB.data.em='${e}';paintOb()">${e}</button>`).join('')}</div>
      <div class="mut small">Card color</div>
      <div class="gradrow">${[0,1,2,3,4,5,6,7].map(i=>`<button class="gradpick ${d.gi===i?'on':''}" style="background:${grad(i)}" onclick="OB.data.gi=${i};paintOb()"></button>`).join('')}</div>
-     <button class="btn btn-grad" onclick="obFinish()">Start swiping 🔥</button></div>`
+     <button class="btn btn-grad" onclick="obFinish()">Start swiping</button></div>`
   ];
   W.innerHTML=steps[OB.step]();
   skinMedia();
@@ -1176,7 +1227,7 @@ function paintBadges(){renderTabbar(); if(R.tab==='matches')renderMatches();}
 /* ============ DISCOVERY DECK ============ */
 async function loadDeck(){
   if(!L.me){return}
-  /* 🚪 live mode = real people only — no starter profiles, no fake auto-matches (the Tinder rule) */
+  /* 🚪 live mode = real people only — no starter profiles, no fake auto-matches, ever */
   const demoPool=DEMO?SAMPLES.filter(p=>
     (p.g==='w'&&L.me.into.includes('w'))||(p.g==='m'&&L.me.into.includes('m'))).map(p=>({...p,sim:true})):[];
   let cloudPool=[];
@@ -1228,7 +1279,7 @@ function cardHtml(p,i){
       <div class="nm">${p.name} <span class="age">${p.age}</span> ${VB(p.verified)}</div>
       <div class="ds">${IC('pin',12)} ${p.km!=null?`${p.km} km · `:''}${p.city||'Earth'}${countryOf(p.city)!=='Other'?' · '+countryOf(p.city):''}</div>
       <div class="bio">${p.bio||''}</div>
-      <div class="tags">${(p.tags||[]).slice(0,3).map(t=>`<span>${t}</span>`).join('')}</div>
+      <div class="tags">${(p.tags||[]).slice(0,3).map(t=>`<span>${TIC(t,11)}${tagTxt(t)}</span>`).join('')}</div>
     </div></div>`;
 }
 function bindTopCard(){
@@ -1506,7 +1557,7 @@ function chatMenu(){
     <button class="btn btn-line" style="color:#ff7a7a" onclick="reportAsk()">Report & block</button>`;
   show('genSheet');
 }
-/* 👀 Tinder-style profile card (with Unmatch at the bottom, just like Tinder) */
+/* 👀 your public card — Unmatch sits at the bottom */
 function viewPeerProfile(){
   const p=peerOf(R.chatWith); if(!p)return toast('Profile still loading…');
   hide('genSheet');
@@ -1524,7 +1575,7 @@ function viewPeerProfile(){
   ensurePhoto(p,url=>{ if(url)putImg($('vpPh'),url); });
   show('genSheet');
 }
-/* 💔 UNMATCH — silent, both sides, chat erased (Tinder behavior) */
+/* 💔 UNMATCH — silent, both sides, chat erased (silent, both sides) */
 function unmatchAsk(){
   const m=L.matches.find(m=>m.mid===R.chatWith); if(!m)return;
   $('genBody').innerHTML=`<div style="text-align:center;padding:6px 0 12px">
@@ -1536,7 +1587,7 @@ function unmatchAsk(){
     <button class="btn btn-line" onclick="hide('genSheet')">Keep the match</button>`;
   show('genSheet');
 }
-/* 🚩 REPORT — Tinder-style reasons, also unmatches + flags admin */
+/* 🚩 REPORT — clear reasons, also unmatches + flags admin */
 function reportAsk(){
   const m=L.matches.find(m=>m.mid===R.chatWith); if(!m)return;
   const reasons=['💰 Asked for money / scam','🤬 Harassment or hate','🔞 Inappropriate content','🎭 Fake profile / catfish','📵 Something else'];
@@ -1597,6 +1648,34 @@ function renderWallet(){
 /* ============ PROFILE ============ */
 
 /* ============ 🛡️ SHEETS THAT ANSWER — safety, help, close by tap-outside ============ */
+function ruleLine(t){ return `<div class="ruleli">${IC('check',14)}<span>${t}</span></div>`; }
+function openRules(){
+  const fr=(L.lang==='fr');
+  const lst= fr ? [
+   'Une seule règle compte vraiment : sois poli(e) et respectueux(se) — tu parles à un humain réel.',
+   '18 ans et plus uniquement. Un seul vrai toi : tes vraies photos, ta vraie identité. Pas de faux profils.',
+   'Interdit : harcèlement ou haine, arnaques ou demandes d\u2019argent, vente de services, contenu nu ou violent, spam publicitaire.',
+   'L\u2019admin peut avertir, bloquer ou bannir définitivement tout compte qui enfreint ces règles. Un bannissement te retire de Melt pour tout le monde, et la décision de l\u2019admin est finale.',
+   'Paiement : Melt GOLD est une activation numérique unique (99 DH). Une fois GOLD activé sur ton compte, c\u2019est définitif : aucun remboursement, aucun transfert vers un autre compte — même si le compte est ensuite banni pour infraction. Une capture du virement peut être demandée comme preuve.',
+   'Sécurité : Melt ne demande jamais ton mot de passe ni de codes. N\u2019envoie jamais d\u2019argent à quelqu\u2019un rencontré ici. Premier rendez-vous : lieu public, et préviens un(e) ami(e).',
+   'Confidentialité : Google prouve seulement que tu es réel(le) — on ne lit jamais tes e-mails, on ne publie rien pour toi. Ton profil est visible par les autres membres ; tu peux demander sa suppression au support.'
+  ] : [
+   'One rule above all: be polite and respectful — you are talking to a real human.',
+   '18+ only. One real you: your own photos, your real identity. No fakes, no impersonation.',
+   'Not allowed: harassment or hate, scams or asking for money, selling services, nude or violent content, advertising spam.',
+   'The admin may warn, block, or permanently ban any account that breaks these rules. A ban removes you from Melt for everyone, and admin decisions are final.',
+   'Payment: Melt GOLD is a one-time digital activation (99 DH). Once GOLD is activated on your account, it is final: no refunds, no transfers to another account — even if the account is later banned for breaking these rules. A transfer screenshot may be requested as proof.',
+   'Safety: Melt never asks for your password or codes. Never send money to someone you met here. First date: a public place, and tell a friend.',
+   'Privacy: Google sign-in only proves you are real — we never read your emails, we never post for you. Your profile is visible to other members; you can ask support to delete it.'
+  ];
+  const sup=(typeof ZWIN_CONFIG!=='undefined'&&ZWIN_CONFIG.company&&ZWIN_CONFIG.company.supportEmail)||'';
+  $('genBody').innerHTML=`<div class="h2" style="display:flex;align-items:center;gap:8px">${IC('shield',21)} ${fr?'Règles Melt':'Melt Rules'}</div>
+   <div style="margin-top:8px">${lst.map(ruleLine).join('')}</div>
+   ${sup?`<div class="mut small" style="margin:12px 0 4px">${fr?'Question ou problème':'Questions or a problem'}: <b>${sup}</b></div>`:''}
+   <div style="height:10px"></div>
+   <button class="btn btn-line" onclick="hide('genSheet')">${T('Close')}</button>`;
+  show('genSheet');
+}
 function openSafety(){
   $('genBody').innerHTML=`<div class="h2" style="display:flex;align-items:center;gap:8px">${IC('shield',22)} ${T('Safety center')}</div>
   <div class="small" style="line-height:1.9;margin-top:10px">
@@ -1658,7 +1737,7 @@ function renderProfile(){
         <div class="nm h2">${L.me.name}, ${L.me.age} ${VB(L.verified)} <span style="background:var(--soft);color:var(--pk);font-size:10px;font-weight:900;padding:4px 8px;border-radius:8px">${L.verified?'✅ VERIFIED':(mp?'📸 PHOTO PROFILE':'✓ GOOGLE VERIFIED')}</span></div>
         <div class="mut small" style="margin:4px 0">${IC('pin',13)} ${L.me.city}</div>
         <div class="small">${L.me.bio}</div>
-        <div class="row" style="flex-wrap:wrap;gap:6px;margin-top:8px">${L.me.tags.map(t=>`<span class="chip" style="font-size:11px">${t}</span>`).join('')}</div>
+        <div class="row" style="flex-wrap:wrap;gap:6px;margin-top:8px">${L.me.tags.map(t=>`<span class="chip" style="font-size:11px;display:inline-flex;align-items:center;gap:5px">${TIC(t,12)}${tagTxt(t)}</span>`).join('')}</div>
       </div>
     </div>
     <div style="padding:4px 18px">
@@ -1684,7 +1763,7 @@ function renderProfile(){
       <div class="card">
         <button class="earnrow" onclick="setLang(L.lang==='en'?'fr':'en')"><div class="ee">${IC('globe',22)}</div><div style="flex:1"><b class="small">${T('Language')}</b><div class="mut tiny">English · Français</div></div><span class="pill">${L.lang==='fr'?'FR':'EN'}</span></button>
         <button class="earnrow" onclick="startVerify()"><div class="ee">${IC('check',22)}</div><div style="flex:1"><b class="small">${T('VERIFIED badge')}</b><div class="mut tiny">${L.verified?'You are verified — blue check everywhere':L.verifyPending?'Selfie under review (usually under 24h)':'Selfie + peace sign = blue check · real humans match more'}</div></div><span class="pill" style="${L.verified?'background:#e3f1ff;color:#2f8fe0':''}">${L.verified?'✓ VERIFIED':L.verifyPending?'Reviewing':'Get it'}</span></button>
-        <button class="earnrow" onclick="askGeo()"><div class="ee">${IC('pin',22)}</div><div style="flex:1"><b class="small">${T('Real distance (GPS)')}</b><div class="mut tiny">${L.geo?'ON — rounded ~2 km, your exact spot is never stored':'Real km like Tinder Gold — free on Melt'}</div></div><span class="pill">${L.geo?'ON':'Turn on'}</span></button>
+        <button class="earnrow" onclick="askGeo()"><div class="ee">${IC('pin',22)}</div><div style="flex:1"><b class="small">${T('Real distance (GPS)')}</b><div class="mut tiny">${L.geo?'ON — rounded ~2 km, your exact spot is never stored':'Real kilometres — always free on Melt'}</div></div><span class="pill">${L.geo?'ON':'Turn on'}</span></button>
         <button class="earnrow" onclick="toggleNotif()"><div class="ee">${IC('bell',22)}</div><div style="flex:1"><b class="small">${T('In-app notifications')}</b><div class="mut tiny">Toasts while the app is open</div></div><div class="toggle ${L.notif===false?'':'on'}" id="notifT"></div></button>
         <button class="earnrow" onclick="openSafety()"><div class="ee">${IC('shield',22)}</div><div style="flex:1"><b class="small">${T('Safety center')}</b><div class="mut tiny">Block, report, dating tips</div></div></button>
         <button class="earnrow" onclick="openHelp()"><div class="ee">${IC('chat',22)}</div><div style="flex:1"><b class="small">${T('Help & support')}</b><div class="mut tiny">Answers, payments, contact</div></div></button>
@@ -1692,12 +1771,16 @@ function renderProfile(){
     </div>`;
 }
 function toggleNotif(){ L.notif=L.notif===false?true:false; $('notifT').classList.toggle('on',L.notif!==false); save(); }
-function resetAll(){ if(confirm('Log out of Melt on this device?\n\nYour profile, photos, matches and chats stay safe in the cloud. Sign in with the same Google account and everything comes back.')){ localStorage.removeItem('zwin_local'); try{firebase.auth().signOut()}catch(e){} location.reload(); } }
+async function resetAll(){ if(!confirm('Log out of Melt on this device?\n\nYour profile, photos, matches and chats stay safe in the cloud. Sign in with the same Google account and everything comes back.'))return;
+  localStorage.removeItem('zwin_local');
+  try{ await Promise.race([firebase.auth().signOut(),new Promise(r=>setTimeout(r,1500))]); }catch(e){}
+  location.reload(); }
 function paintGold(){ const el=$('goldTop'); if(el)el.textContent=L.gold?T('GOLD'):T('GO GOLD'); }
 
 /* ============ INIT ============ */
-setTimeout(()=>{ const dk=$('deck'); if(R.tab==='discover'&&dk&&!dk.children.length){ try{paintDeck();}catch(e){} } }, 5200);
-try{ if(location.search.indexOf('v=')<0){ localStorage.setItem('melt_boot_v4','1'); location.replace(location.pathname+'?v=4'); } }catch(e){}
+setTimeout(()=>{ const dk=$('deck'); if(AUTHED&&R.tab==='discover'&&dk&&!dk.children.length){ try{paintDeck();}catch(e){} } }, 5200);
+const MELT_BUILD='v5'; /* bump this number on every release — every phone self-updates once, no cache games */
+try{ if(location.search.indexOf(MELT_BUILD)<0){ localStorage.setItem('melt_boot_'+MELT_BUILD,'1'); location.replace(location.pathname+'?'+MELT_BUILD); } }catch(e){}
 fbInit();
 paintGold();
 paintAuthBg();
