@@ -390,6 +390,18 @@ body.preauth #scr-auth{display:block!important}
   .deckempty .big{font-size:40px}
 }
 
+/* ---------- v7 — every photo container sealed: no image can ever escape over text ---------- */
+#vpPh{position:relative!important;overflow:hidden}
+#vpPh img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.mnew .av div{position:relative;overflow:hidden}
+.mnew .av div img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:50%}
+.cav{overflow:hidden}
+.cav img,#chAv img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:50%}
+.cav .onl{z-index:2}
+/* boost lives on the action bar now — no floating pulsing pill over the deck */
+.boostbtn{display:none!important}
+.xbtn.liveboost{background:var(--grad);color:#fff;border-color:transparent;animation:pulseL 1.6s infinite;box-shadow:0 8px 24px rgba(226,67,107,.45)}
+
 </style>
 </head>
 <body class="preauth">
@@ -444,7 +456,7 @@ body.preauth #scr-auth{display:block!important}
     <button class="xbtn big" style="color:var(--pk)" onclick="swipeBtn('pass')"><span class="mslot" data-m="nope" data-em="✕" data-px="30">✕</span></button>
     <button class="xbtn" style="color:var(--blue)" onclick="swipeBtn('super')"><span class="mslot" data-m="super" data-em="✨" data-px="26">✨</span></button>
     <button class="xbtn big" style="color:var(--green)" onclick="swipeBtn('like')"><span class="mslot" data-m="like" data-em="♥" data-px="32">♥</span></button>
-    <button class="xbtn" onclick="boost()" title="Boost"><span class="mslot" data-m="boost" data-em="🚀" data-px="24">🚀</span></button>
+    <button class="xbtn" id="boostAct" onclick="boost()" title="Boost"><span class="mslot" data-m="boost" data-em="🚀" data-px="24">🚀</span></button>
   </div>
 </section>
 
@@ -592,7 +604,7 @@ function openGold(why){
     +'<div class="card" style="margin:12px 0">'
     +goldPerks().map(p=>'<div class="perkrow">'+IC(p[1],18)+'<span>'+p[0]+'</span><span class="vchk" style="background:linear-gradient(45deg,#f2c14e,#c98a12)">'+IC('check',11)+'</span></div>').join('')
     +'</div>'
-    +'<button class="btn btn-grad goldcta" onclick="buyGold()">'+IC('crown',18)+' '+T('Unlock GOLD')+' · '+G.priceDH+' DH — '+T('once, forever')+'</button>'
+    +'<button class="btn btn-grad goldcta" onclick="buyGold()">'+IC('crown',18)+' '+T('Unlock GOLD')+' · '+G.priceDH+' DH (≈ $'+(G.usd||9)+') — '+T('once, forever')+'</button>'
     +'<div style="height:8px"></div>'
     +'<button class="btn btn-line" onclick="hide(\'shopSheet\')">'+T('Maybe tomorrow')+'</button>';
   show('shopSheet');
@@ -601,7 +613,7 @@ function buyGold(){
   hide('shopSheet');
   const c=ZWIN_CONFIG.company; const refid='MLT-'+uid.slice(-4).toUpperCase()+'-'+Date.now().toString(36).toUpperCase();
   $('bankBody').innerHTML='<div style="text-align:center;padding:4px 0 8px"><div class="gcr">'+IC('crown',40)+'</div>'
-    +'<div class="h2" style="margin-top:8px">Melt GOLD — '+G.priceDH+' DH</div>'
+    +'<div class="h2" style="margin-top:8px">Melt GOLD — '+G.priceDH+' DH <span style="font-size:14px;opacity:.75">(≈ $'+(G.usd||9)+')</span></div>'
     +'<div class="mut small">'+T('One-time bank transfer — unlimited forever')+'</div></div>'
     +'<div class="bankblock">'+T('Transfer details')+'<br>'
     +T('Bank')+': <b>'+c.bank+'</b><br>'
@@ -725,7 +737,6 @@ function restoreMe(){
         const arr=['p0','p1','p2','p3','p4','p5'].map(k=>m[k]).filter(Boolean);
         if(arr.length){ L.me.photos=arr; delete photoCache[uid]; save(); if(R.tab==='profile')renderProfile(); }
       }).catch(()=>{});
-      toast('Welcome back, '+L.me.name+' — profile restored, nothing was lost 💛');
       showTab('discover'); loadDeck().catch(e=>{ console.warn('deck',e); paintDeck(); });
     } else startOnboard();
   }).catch(e=>{ console.warn('restore',e); startOnboard(); });
@@ -758,6 +769,7 @@ function googleIn(){
 function ref(p){return DB.ref('wasla_dating/'+p)} // root kept as chosen — rules must match this word
 function txAdd(path,d){return ref(path).transaction(v=>+(((+v||0)+d).toFixed(2)))}
 function heartbeat(){
+  if(!window._phb){ window._phb=1; window.addEventListener('pagehide',()=>{ try{ if(window.uid&&L.me)ref('presence/'+uid).update({online:false,lastSeen:Date.now()}); }catch(e){} }); }
   ref('presence/'+uid).update({online:true,lastSeen:Date.now(),name:L.me.name});
   ref('presence/'+uid).onDisconnect().update({online:false,lastSeen:Date.now()});
   setInterval(()=>ref('presence/'+uid).update({lastSeen:Date.now()}),25000);
@@ -881,7 +893,7 @@ function compressImage(file){
     img.onload=()=>{ let w=img.naturalWidth,h=img.naturalHeight; const sc=Math.min(1,maxSide/Math.max(w,h));
       w=Math.max(1,Math.round(w*sc)); h=Math.max(1,Math.round(h*sc));
       const cv=document.createElement('canvas'); cv.width=w; cv.height=h;
-      cv.getContext('2d').drawImage(img,0,0,w,h); URL.revokeObjectURL(img.src);
+      const cx=cv.getContext('2d'); cx.fillStyle='#ffffff'; cx.fillRect(0,0,w,h); cx.drawImage(img,0,0,w,h); URL.revokeObjectURL(img.src);
       res(cv.toDataURL('image/jpeg',q)); };
     img.onerror=()=>rej(new Error('bad image'));
     img.src=URL.createObjectURL(file); });
@@ -1135,6 +1147,10 @@ function startOnboard(){ if(!AUTHED){ showAuth(); return; }
 const WORLD_CITIES=['Casablanca', 'Rabat', 'Marrakech', 'Tangier', 'Agadir', 'Fès', 'Meknès', 'Oujda', 'Laâyoune', 'Al Hoceima', 'Essaouira', 'Chefchaouen', 'Algiers', 'Oran', 'Tunis', 'Paris', 'Marseille', 'Lyon', 'Toulouse', 'Brussels', 'Geneva', 'Madrid', 'Barcelona', 'Valencia', 'London', 'Amsterdam', 'Berlin', 'Munich', 'Rome', 'Milan', 'Lisbon', 'Cairo', 'Istanbul', 'Dubai', 'Abu Dhabi', 'Doha', 'Riyadh', 'Jeddah', 'Dakar', 'Abidjan', 'Lagos', 'Nairobi', 'New York', 'Los Angeles', 'Miami', 'Toronto', 'Montreal', 'Mexico City', 'São Paulo', 'Buenos Aires', 'Tokyo', 'Singapore', 'Bangkok', 'Seoul', 'Sydney', 'Mumbai', 'Jakarta'];
 function obCityGo(){ const i=$('obCityIn'); if(i){ OB.data.city=(i.value||'').trim().slice(0,30)||OB.data.city||'Casablanca'; } obStep2(); }
 function paintOb(){
+  // grab what the human already typed BEFORE repainting — repaint must never eat keystrokes
+  const _n=$('obName'); if(_n)OB.data.name=_n.value;
+  const _b=$('obBio'); if(_b)OB.data.bio=_b.value;
+  const _c=$('obCityIn'); if(_c)OB.data.city=_c.value;
   const d=OB.data; const W=$('obWrap');
   const steps=[
    ()=>`<div class="obstep">
@@ -1260,12 +1276,9 @@ function paintDeck(){
   hydrateDeckPhotos();
 }
 function boostChip(){
-  const live=L.boostUntil>Date.now();
-  const old=$('boostChip'); if(old)old.remove();
-  const b=document.createElement('button');
-  b.id='boostChip'; b.className='boostbtn'+(live?' live':'');
-  b.innerHTML=(live?MIMG('boost','🚀',14)+' Boosted!':MIMG('boost','🚀',14)+' Boost');
-  b.onclick=boost; $('deck').appendChild(b);
+  const old=$('boostChip'); if(old)old.remove(); // retire the floating pill for good
+  const b=$('boostAct'); if(!b)return;
+  b.classList.toggle('liveboost',L.boostUntil>Date.now());
 }
 function cardHtml(p,i){
   const isSuper=(L.likesYou.find(x=>x.uid===p.id&&x.d==='super'));
@@ -1426,19 +1439,26 @@ function revealLike(i){
 function unreadTotal(){ return Object.values(L.unread||{}).reduce((a,b)=>a+b,0); }
 function renderMatches(){
   const freshMs=L.matches.slice(0,8);
-  $('mRow').innerHTML=freshMs.length? freshMs.map((m,i)=>`<button class="mnew" onclick="openChat('${m.mid}')">
+  $('mRow').innerHTML=freshMs.length? freshMs.map((m,i)=>`<button class="mnew" data-mc="${m.mid}" onclick="openChat('${m.mid}')">
     <div class="av"><div style="background:${grad(m.gi)}">${m.em}</div></div><span>${m.name}</span></button>`).join('')
-    :`<div class="mut small" style="padding:4px 0 10px">Your next match is one swipe away 🔥</div>`;
+    :`<div class="mut small" style="padding:4px 0 10px">Your next match is one swipe away</div>`;
+  // real faces in the circles (photo cache keeps bandwidth tiny)
+  L.matches.forEach(m=>{ const pr=R.usersCache.find(u=>u.id===m.peer);
+    ensurePhoto(pr||{id:m.peer,hasPhoto:1,sim:false},url=>{ if(!url)return;
+      const a=document.querySelector('.mnew[data-mc="'+m.mid+'"] .av div'); if(a)putImg(a,url);
+      const c=document.querySelector('.citem[data-mc="'+m.mid+'"] .cav');
+      if(c){ putImg(c,url); const dd=document.createElement('span'); dd.className='onl'; c.appendChild(dd); }
+    }); });
   const chats=L.matches;
   $('chatList').innerHTML=chats.length?chats.map(m=>{
     const last=(L.chats[m.mid]||[]).slice(-1)[0];
     const un=L.unread[m.mid]||0; const excl=L.exclusive[m.mid];
     const txt=last? (last.who==='sys'?'💕 You matched!':last.who==='gift'?'🌹 A rose for you':(last.me?'You: ':'')+last.text) :'Say hi 👋';
-    return `<button class="citem ${excl?'exclwrap':''}" onclick="openChat('${m.mid}')">
+    return `<button class="citem ${excl?'exclwrap':''}" data-mc="${m.mid}" onclick="openChat('${m.mid}')">
       <div class="cav" style="background:${grad(m.gi)}">${m.em}<span class="onl"></span></div>
       <div class="prv"><b>${m.name} ${excl?'<span class="excl">✨ EXCLUSIVE</span>':''}</b><div class="lm">${txt}</div></div>
       ${un?`<span class="cunr">${un}</span>`:''}</button>`;}).join('')
-    :`<div class="deckempty" style="padding:34px 20px"><div class="big">�static</div></div>`;
+    :`<div class="deckempty" style="padding:34px 20px"><div class="big">${MIMG('chat','💘',72)}</div></div>`;
   if(!chats.length)$('chatList').innerHTML=`<div class="deckempty" style="padding:34px 20px"><div class="big">${MIMG('chat','💘',72)}</div><div class="mut small" style="max-width:260px">When you match, your chats live here.<br>Tip: the first ${C.freeChatMsgs} messages are always free 💌</div></div>`;
   renderTabbar();
 }
@@ -1570,7 +1590,7 @@ function viewPeerProfile(){
       </div>
     </div>
     <div class="small" style="line-height:1.55">${p.bio||'No bio yet'}</div>
-    <div class="row" style="flex-wrap:wrap;gap:6px;margin:10px 0 14px">${(p.tags||[]).map(t=>`<span class="chip" style="font-size:11px">${t}</span>`).join('')}</div>
+    <div class="row" style="flex-wrap:wrap;gap:6px;margin:10px 0 14px">${(p.tags||[]).map(t=>`<span class="chip" style="font-size:11px;display:inline-flex;align-items:center;gap:5px">${TIC(t,12)}${tagTxt(t)}</span>`).join('')}</div>
     <button class="btn btn-line" onclick="unmatchAsk()">💔 Unmatch</button>`;
   ensurePhoto(p,url=>{ if(url)putImg($('vpPh'),url); });
   show('genSheet');
@@ -1630,7 +1650,7 @@ function renderWallet(){
     <div class="card"><b class="small">${T('Your superpowers')}</b><div class="divider" style="margin:10px 0"></div>
       ${goldPerks().map(p=>`<div class="perkrow">${IC(p[1],18)}<span>${p[0]}</span><b class="gldtxt">${T('ON')}</b></div>`).join('')}
     </div>
-    <div class="mut tiny" style="text-align:center;padding:14px">${G.priceDH} DH ${T('one-time')} · ${T('Support:')} ${ZWIN_CONFIG.company.supportEmail}</div>`
+    <div class="mut tiny" style="text-align:center;padding:14px">${G.priceDH} DH (≈ $${G.usd||9}) ${T('one-time')} · ${T('Support:')} ${ZWIN_CONFIG.company.supportEmail}</div>`
   : `<div class="streakfire goldhero">
       <div class="gcr">${IC('crown',42)}</div>
       <div style="flex:1"><b class="h1" style="font-size:26px">Melt GOLD</b>
@@ -1641,7 +1661,7 @@ function renderWallet(){
     </div>
     ${pend.length?`<div class="card small" style="margin-top:10px;background:#241a08;border-color:#7a5514;color:#e8c96e">${T('Payment under validation — GOLD activates by itself when approved. Ref:')} <b>${pend.map(o=>o.ref).join(', ')}</b></div>`:''}
     <div style="height:12px"></div>
-    <button class="btn btn-grad goldcta" onclick="buyGold()">${IC('crown',18)} ${T('Get GOLD')} · ${G.priceDH} DH — ${T('once, forever')}</button>
+    <button class="btn btn-grad goldcta" onclick="buyGold()">${IC('crown',18)} ${T('Get GOLD')} · ${G.priceDH} DH (≈ $${G.usd||9}) — ${T('once, forever')}</button>
     <div class="mut tiny" style="text-align:center;padding:14px">${T('Bank transfer today · Al Barid & CMI cards soon')}</div>`;
 }
 
@@ -1656,7 +1676,7 @@ function openRules(){
    '18 ans et plus uniquement. Un seul vrai toi : tes vraies photos, ta vraie identité. Pas de faux profils.',
    'Interdit : harcèlement ou haine, arnaques ou demandes d\u2019argent, vente de services, contenu nu ou violent, spam publicitaire.',
    'L\u2019admin peut avertir, bloquer ou bannir définitivement tout compte qui enfreint ces règles. Un bannissement te retire de Melt pour tout le monde, et la décision de l\u2019admin est finale.',
-   'Paiement : Melt GOLD est une activation numérique unique (99 DH). Une fois GOLD activé sur ton compte, c\u2019est définitif : aucun remboursement, aucun transfert vers un autre compte — même si le compte est ensuite banni pour infraction. Une capture du virement peut être demandée comme preuve.',
+   'Paiement : Melt GOLD est une activation numérique unique (99 DH, soit environ 9 USD). Une fois GOLD activé sur ton compte, c\u2019est définitif : aucun remboursement, aucun transfert vers un autre compte — même si le compte est ensuite banni pour infraction. Une capture du virement peut être demandée comme preuve.',
    'Sécurité : Melt ne demande jamais ton mot de passe ni de codes. N\u2019envoie jamais d\u2019argent à quelqu\u2019un rencontré ici. Premier rendez-vous : lieu public, et préviens un(e) ami(e).',
    'Confidentialité : Google prouve seulement que tu es réel(le) — on ne lit jamais tes e-mails, on ne publie rien pour toi. Ton profil est visible par les autres membres ; tu peux demander sa suppression au support.'
   ] : [
@@ -1664,7 +1684,7 @@ function openRules(){
    '18+ only. One real you: your own photos, your real identity. No fakes, no impersonation.',
    'Not allowed: harassment or hate, scams or asking for money, selling services, nude or violent content, advertising spam.',
    'The admin may warn, block, or permanently ban any account that breaks these rules. A ban removes you from Melt for everyone, and admin decisions are final.',
-   'Payment: Melt GOLD is a one-time digital activation (99 DH). Once GOLD is activated on your account, it is final: no refunds, no transfers to another account — even if the account is later banned for breaking these rules. A transfer screenshot may be requested as proof.',
+   'Payment: Melt GOLD is a one-time digital activation (99 DH ≈ $9). Once GOLD is activated on your account, it is final: no refunds, no transfers to another account — even if the account is later banned for breaking these rules. A transfer screenshot may be requested as proof.',
    'Safety: Melt never asks for your password or codes. Never send money to someone you met here. First date: a public place, and tell a friend.',
    'Privacy: Google sign-in only proves you are real — we never read your emails, we never post for you. Your profile is visible to other members; you can ask support to delete it.'
   ];
@@ -1771,7 +1791,7 @@ function renderProfile(){
     </div>`;
 }
 function toggleNotif(){ L.notif=L.notif===false?true:false; $('notifT').classList.toggle('on',L.notif!==false); save(); }
-async function resetAll(){ if(!confirm('Log out of Melt on this device?\n\nYour profile, photos, matches and chats stay safe in the cloud. Sign in with the same Google account and everything comes back.'))return;
+async function resetAll(){ if(!confirm('Log out of Melt on this device?'))return;
   localStorage.removeItem('zwin_local');
   try{ await Promise.race([firebase.auth().signOut(),new Promise(r=>setTimeout(r,1500))]); }catch(e){}
   location.reload(); }
@@ -1779,7 +1799,7 @@ function paintGold(){ const el=$('goldTop'); if(el)el.textContent=L.gold?T('GOLD
 
 /* ============ INIT ============ */
 setTimeout(()=>{ const dk=$('deck'); if(AUTHED&&R.tab==='discover'&&dk&&!dk.children.length){ try{paintDeck();}catch(e){} } }, 5200);
-const MELT_BUILD='v5'; /* bump this number on every release — every phone self-updates once, no cache games */
+const MELT_BUILD='v6'; /* bump this number on every release — every phone self-updates once, no cache games */
 try{ if(location.search.indexOf(MELT_BUILD)<0){ localStorage.setItem('melt_boot_'+MELT_BUILD,'1'); location.replace(location.pathname+'?'+MELT_BUILD); } }catch(e){}
 fbInit();
 paintGold();

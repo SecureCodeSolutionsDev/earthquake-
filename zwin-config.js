@@ -59,6 +59,7 @@ const ZWIN_CONFIG = {
      bank transfer lands. Tune freely — admin Settings shows these live.    */
   gold: {
     priceDH:      99,   // one-time. Never a subscription.
+    usd:           9,   // shown next to the DH price (≈ rate hint for the diaspora)
     likesPerDay:  20,   // free likes every day, reset after midnight
     msgsPerMatch: 10,   // free messages per new match (the spark stays free)
     superPerDay:   1,   // free Super Likes per day

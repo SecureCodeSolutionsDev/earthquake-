@@ -175,7 +175,7 @@ function boot(){
 }
 function paintAll(){
   const users=Object.entries(D.users||{});
-  const pres=Object.values(D.presence||{}).filter(p=>p.online).length;
+  const pres=Object.values(D.presence||{}).filter(p=>p.online&&(Date.now()-(p.lastSeen||0))<180000).length; // online = flag + heartbeat < 3 min ago
   const matches=Object.keys(D.matches||{}).length;
   const msgs=Object.values(D.chats||{}).reduce((a,c)=>a+Object.keys(c||{}).length,0);
   // orders are nested: orders/{uid}/{oid} — flatten for display
@@ -254,7 +254,7 @@ function verifyUser(id){
 }
 function paintUs(rows){
   $('tblUs').innerHTML='<tbody>'+(rows.length?`<tr><th>User</th><th>City</th><th>Plan</th><th>Last seen</th></tr>`+
-   rows.sort((a,b)=>(b[1].lastSeen||0)-(a[1].lastSeen||0)).slice(0,50).map(([id,u])=>`<tr>
+   rows.sort((a,b)=>(b[1].lastSeen||0)-(a[1].lastSeen||0)).slice(0,200).map(([id,u])=>`<tr>
     <td class="small"><b>${u.em||'💛'} ${u.name||'?'}</b> <span class="mut tiny">${u.age||''} · ${u.g==='w'?'♀':'♂'}</span></td>
     <td class="small">${u.city||'—'}</td><td><b>${(D.gold||{})[id]?'👑 GOLD':'free'}</b></td>
     <td class="mut tiny">${ts(u.lastSeen)}</td></tr>`).join('')
