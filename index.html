@@ -303,8 +303,7 @@ html{background:#08030a}
 /* ---------- MELT AUTH — Tinder full-bleed photograph ---------- */
 #scr-auth{padding-bottom:0}
 .authwrap{position:absolute;inset:0}
-.authbg{position:absolute;inset:0;background-position:center 28%;background-size:cover;background-repeat:no-repeat;animation:kenb 26s ease-in-out infinite alternate}
-@keyframes kenb{from{transform:scale(1)}to{transform:scale(1.08)}}
+.authbg{position:absolute;inset:0;background-position:center 28%;background-size:cover;background-repeat:no-repeat}
 .authgrad{position:absolute;inset:0;background:linear-gradient(180deg,rgba(16,6,16,.02) 0%,rgba(16,6,16,.22) 42%,rgba(16,6,16,.88) 74%,#100610 97%)}
 .authbody{position:absolute;inset-inline:0;bottom:0;padding:0 24px calc(26px + env(safe-area-inset-bottom));text-align:center}
 .authlogo{width:74px;height:74px;border-radius:26px;background:rgba(16,6,16,.45);backdrop-filter:blur(8px);margin:0 auto;border:1px solid rgba(255,255,255,.14);display:flex;align-items:center;justify-content:center;box-shadow:0 18px 44px rgba(0,0,0,.5)}
@@ -1540,7 +1539,7 @@ function paintGold(){ const el=$('goldTop'); if(el)el.textContent=L.gold?T('GOLD
 
 /* ============ INIT ============ */
 setTimeout(()=>{ const dk=$('deck'); if(R.tab==='discover'&&dk&&!dk.children.length){ try{paintDeck();}catch(e){} } }, 5200);
-if(!localStorage.getItem('melt_boot_v2')){ localStorage.setItem('melt_boot_v3','1'); setTimeout(()=>{ location.replace(location.pathname+'?v=3'); }, 60); }
+try{ if(location.search.indexOf('v=')<0){ localStorage.setItem('melt_boot_v4','1'); location.replace(location.pathname+'?v=4'); } }catch(e){}
 fbInit();
 paintGold();
 paintAuthBg();
