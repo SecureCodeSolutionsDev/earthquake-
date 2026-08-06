@@ -316,6 +316,33 @@ html{background:#08030a}
 .authseg button{background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.18);color:#fff;backdrop-filter:blur(6px)}
 .deckempty{color:var(--txt)}
 
+
+/* ---------- MELT WARM-LIGHT INTERIOR — safe by day, premium always (v3) ---------- */
+:root{ --bg:#faf4ef; --card:#ffffff; --soft:#fdf0f4; --line:#f2dde3; --txt:#2b2230; --mut:#9c8a99; --gold:#c9871a; }
+body{background:#efe4e2}
+.app{box-shadow:0 0 70px rgba(226,67,107,.16)}
+.tabbar{background:rgba(255,255,255,.93);border-top-color:var(--line)}
+.card{box-shadow:0 6px 20px rgba(226,67,107,.07)}
+.chip{box-shadow:0 2px 8px rgba(43,34,48,.05)}
+.streakfire{background:linear-gradient(45deg,#fff4dd,#ffe9f0);border-color:#f0d9a8}
+.bankblock{background:#fffaf0;border-color:#ecd9a8}.bankblock b{color:#9c6f0b}
+.copybtn{background:#fff}
+.demobanner{background:#fff8e6;border-color:#eedc9e;color:#8a6d00}
+.chathead.excl{background:linear-gradient(90deg,#fff2cd,#fff)}
+.exclwrap{background:linear-gradient(90deg,#fff6dd,#fff);border-bottom-color:#f0e2b0}
+.gift{background:linear-gradient(45deg,#fff2cd,#ffe7ee);border-color:#ffd08a;color:#6b4a00}
+.boostbtn{background:rgba(255,255,255,.88);color:var(--txt);border:1px solid var(--line)}
+.mnew .av div{background:#fff}
+.bub.them{background:#fff;border-color:var(--line);box-shadow:0 2px 8px rgba(43,34,48,.05)}
+.phslot{background:var(--soft);border-color:#f3b7c6}
+.ice .chip{border-color:#ffd3de}
+.dactions.dim{opacity:.32;pointer-events:none;filter:saturate(.4)}
+.toast{background:#2b2230;border:1px solid rgba(255,255,255,.08)}
+/* auth: content centered, login button in the middle — true Tinder hero */
+.authbody{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 26px calc(30px + env(safe-area-inset-bottom));text-align:center;padding-top:8vh}
+.gbtn{max-width:320px}
+.authseg{max-width:220px}
+
 </style>
 </head>
 <body>
@@ -1072,12 +1099,17 @@ async function loadDeck(){
 function paintDeck(){
   const dk=$('deck');
   if(!R.deck.length){
-    dk.innerHTML=`<div class="deckempty"><div class="big">${MIMG('flame','🌅',72)}</div>
-      <div class="h2">${T('That’s everyone nearby!')}</div>
-      <div class="mut small" style="max-width:270px">New hearts join Melt every day. Fresh free likes arrive after midnight — or go GOLD and never wait.</div>
-      <button class="btn btn-grad" style="max-width:240px;margin-top:8px" onclick="openGold('likes')">${IC('crown',16)} ${T('GO GOLD')}</button></div>`;
+    dk.innerHTML=`<div class="deckempty">
+      <div class="big">${MIMG('flame','🌅',72)}</div>
+      <div class="h2">${T('No more hearts here — for now')}</div>
+      <div class="mut small" style="max-width:280px;line-height:1.6">${T('Melt shows only real Google-verified people. New hearts join every day, and your free likes refresh after midnight.')}</div>
+      <button class="btn btn-grad" style="max-width:240px;margin-top:10px" onclick="R.cacheTs=0;loadDeck().catch(()=>paintDeck())">${T('Refresh deck')}</button>
+      <button class="btn btn-line" style="max-width:240px;margin-top:6px" onclick="openGold('likes')">${IC('crown',16)} ${T('GO GOLD')}</button>
+    </div>`;
+    const da=document.querySelector('.dactions'); if(da)da.classList.add('dim');
     return;
   }
+  { const da=document.querySelector('.dactions'); if(da)da.classList.remove('dim'); }
   boostChip();
   const show=R.deck.slice(0,3);
   dk.innerHTML=show.map((p,i)=>cardHtml(p,i)).join('');
@@ -1130,7 +1162,7 @@ function bindTopCard(){
   }
   R.flyTop=fly;
 }
-function swipeBtn(dir){ if(R.flyTop)R.flyTop(dir); }
+function swipeBtn(dir){ if(!R.deck.length)return toast('No cards right now — refresh the deck'); if(R.flyTop)R.flyTop(dir); }
 async function doSwipe(pid,dir){
   const p=R.deck.shift(); L.swiped[pid]={d:dir,ts:Date.now()};
   if(!R.deck.length||R.deck.length<3)paintDeck(); else paintDeck();
@@ -1471,6 +1503,39 @@ function renderWallet(){
 }
 
 /* ============ PROFILE ============ */
+
+/* ============ 🛡️ SHEETS THAT ANSWER — safety, help, close by tap-outside ============ */
+function openSafety(){
+  $('genBody').innerHTML=`<div class="h2" style="display:flex;align-items:center;gap:8px">${IC('shield',22)} ${T('Safety center')}</div>
+  <div class="small" style="line-height:1.9;margin-top:10px">
+    <b>${T('Blocked & reported, instantly.')}</b><br>• ${T('Inside any chat, tap the ⋯ menu: unmatch or report — the match and chat vanish for both, quietly.')}<br>
+    • ${T('A human reviews every report within 24 hours. Scams and harassment = permanent ban.')}<br>
+    • ${T('The blue VERIFIED badge is a real person we checked with a selfie.')}<br>
+    • ${T('Never send money or codes to anyone you met online — sweet words cost nothing.')}<br>
+    • ${T('First meeting: a public place, and tell a friend where you are.')}
+  </div>
+  <div style="height:12px"></div>
+  <button class="btn btn-line" onclick="hide('genSheet')">${T('Close')}</button>`;
+  show('genSheet');
+}
+function openHelp(){
+  const c=ZWIN_CONFIG.company;
+  $('genBody').innerHTML=`<div class="h2" style="display:flex;align-items:center;gap:8px">${IC('chat',22)} ${T('Help & support')}</div>
+  <div class="small" style="line-height:1.9;margin-top:10px">
+    • <b>GOLD ${T('activation')}</b>: ${T('usually under 1 hour after your transfer — it turns on by itself, you can close the app.')}<br>
+    • ${T('Paid but not activated? Send your reference and your name — we fix it fast.')}<br>
+    • ${T('Photos too heavy? They auto-compress; if upload fails, try a smaller one.')}<br>
+    • ${T('Anything else, a human answers:')}
+  </div>
+  <div class="bankblock" style="margin-top:10px">${IC('chat',15)} <b>${c.supportEmail}</b><br>${IC('bell',15)} ${c.supportPhone}</div>
+  <button class="btn btn-grad" onclick="navigator.clipboard&&navigator.clipboard.writeText('${c.supportEmail}');toast('${T('Email copied')}')">${T('Copy support email')}</button>
+  <div style="height:8px"></div>
+  <button class="btn btn-line" onclick="hide('genSheet')">${T('Close')}</button>`;
+  show('genSheet');
+}
+/* tap the dark dim behind any sheet = it closes */
+document.querySelectorAll('.mback').forEach(b=>b.addEventListener('click',e=>{ if(e.target===b)b.classList.remove('on'); }));
+
 function previewMe(){
   if(!L.me)return toast('Create your profile first');
   const mp=(L.me.photos||[]).filter(Boolean)[0]||null; const tags=(L.me.tags||[]).slice(0,4);
@@ -1483,7 +1548,9 @@ function previewMe(){
       <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:9px">${tags.map(t=>`<span style="background:rgba(255,255,255,.18);padding:5px 10px;border-radius:999px;font-size:11.5px;font-weight:700">${t}</span>`).join('')}</div>
     </div>
     <div style="height:58px;background:#0b050c;display:flex;align-items:center;justify-content:center;color:var(--mut);font-size:10.5px;font-weight:900;letter-spacing:1px">THIS IS WHAT OTHERS SEE</div>
-  </div>`;
+  </div>
+  <div style="height:10px"></div>
+  <button class="btn btn-line" onclick="hide('genSheet')">${T('Close')}</button>`;
   show('genSheet');
 }
 function renderProfile(){
@@ -1526,10 +1593,9 @@ function renderProfile(){
         <button class="earnrow" onclick="setLang(L.lang==='en'?'fr':'en')"><div class="ee">${IC('globe',22)}</div><div style="flex:1"><b class="small">${T('Language')}</b><div class="mut tiny">English · Français</div></div><span class="pill">${L.lang==='fr'?'FR':'EN'}</span></button>
         <button class="earnrow" onclick="startVerify()"><div class="ee">${IC('check',22)}</div><div style="flex:1"><b class="small">${T('VERIFIED badge')}</b><div class="mut tiny">${L.verified?'You are verified — blue check everywhere':L.verifyPending?'Selfie under review (usually under 24h)':'Selfie + peace sign = blue check · real humans match more'}</div></div><span class="pill" style="${L.verified?'background:#e3f1ff;color:#2f8fe0':''}">${L.verified?'✓ VERIFIED':L.verifyPending?'Reviewing':'Get it'}</span></button>
         <button class="earnrow" onclick="askGeo()"><div class="ee">${IC('pin',22)}</div><div style="flex:1"><b class="small">${T('Real distance (GPS)')}</b><div class="mut tiny">${L.geo?'ON — rounded ~2 km, your exact spot is never stored':'Real km like Tinder Gold — free on Melt'}</div></div><span class="pill">${L.geo?'ON':'Turn on'}</span></button>
-        <button class="earnrow" onclick="enablePush()"><div class="ee">${IC('bell',22)}</div><div style="flex:1"><b class="small">${T('Lock-screen alerts')}</b><div class="mut tiny">Get pinged the second someone likes or texts you</div></div><span class="pill">${pushOn?'ON':'Turn on'}</span></button>
         <button class="earnrow" onclick="toggleNotif()"><div class="ee">${IC('bell',22)}</div><div style="flex:1"><b class="small">${T('In-app notifications')}</b><div class="mut tiny">Toasts while the app is open</div></div><div class="toggle ${L.notif===false?'':'on'}" id="notifT"></div></button>
-        <button class="earnrow" onclick="toast('🛡️ Blocked list is private & permanent. You are safe here.')"><div class="ee">${IC('shield',22)}</div><div style="flex:1"><b class="small">${T('Safety center')}</b><div class="mut tiny">Block, report, dating-tips</div></div></button>
-        <button class="earnrow" onclick="toast('💌 Contact: ${ZWIN_CONFIG.company.supportEmail}')"><div class="ee">${IC('chat',22)}</div><div style="flex:1"><b class="small">${T('Help & support')}</b></div></button>
+        <button class="earnrow" onclick="openSafety()"><div class="ee">${IC('shield',22)}</div><div style="flex:1"><b class="small">${T('Safety center')}</b><div class="mut tiny">Block, report, dating tips</div></div></button>
+        <button class="earnrow" onclick="openHelp()"><div class="ee">${IC('chat',22)}</div><div style="flex:1"><b class="small">${T('Help & support')}</b><div class="mut tiny">Answers, payments, contact</div></div></button>
       </div>
     </div>`;
 }
