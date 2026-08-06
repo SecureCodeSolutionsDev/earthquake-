@@ -5,6 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#fff7f9">
 <title>Melt — Love that melts doubts away</title>
+<meta name="description" content="Melt — love that melts doubts away. Real Google-verified people only: 20 free likes a day, first messages free, GOLD once and forever.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Melt">
+<meta property="og:title" content="Melt — love that melts doubts away">
+<meta property="og:description" content="Real Google-verified people only. 20 free likes a day, first messages free, GOLD once and forever.">
+<meta property="og:image" content="https://securecodesolutionsdev.github.io/earthquake-/auth-bg.jpg">
+<meta property="og:url" content="https://securecodesolutionsdev.github.io/earthquake-/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Melt — love that melts doubts away">
+<meta name="twitter:description" content="Real Google-verified people only. Free to start.">
+<meta name="twitter:image" content="https://securecodesolutionsdev.github.io/earthquake-/auth-bg.jpg">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" type="image/png" href="icon.png">
 <link rel="apple-touch-icon" href="icon.png">
@@ -1814,15 +1825,15 @@ function renderProfile(){
     </div>`;
 }
 function toggleNotif(){ L.notif=L.notif===false?true:false; $('notifT').classList.toggle('on',L.notif!==false); save(); }
-async function resetAll(){ if(!confirm('Log out of Melt on this device?'))return;
+async function resetAll(){ /* one tap = logged out. No popup, no drama — the cloud keeps everything anyway */
   localStorage.removeItem('zwin_local');
-  try{ await Promise.race([firebase.auth().signOut(),new Promise(r=>setTimeout(r,1500))]); }catch(e){}
+  try{ await Promise.race([firebase.auth().signOut(),new Promise(r=>setTimeout(r,1200))]); }catch(e){}
   location.reload(); }
 function paintGold(){ const el=$('goldTop'); if(el)el.textContent=L.gold?T('GOLD'):T('GO GOLD'); }
 
 /* ============ INIT ============ */
 setTimeout(()=>{ const dk=$('deck'); if(AUTHED&&R.tab==='discover'&&dk&&!dk.children.length){ try{paintDeck();}catch(e){} } }, 5200);
-const MELT_BUILD='v7'; /* bump this number on every release — every phone self-updates once, no cache games */
+const MELT_BUILD='v8'; /* bump this number on every release — every phone self-updates once, no cache games */
 try{ if(location.search.indexOf(MELT_BUILD)<0){ localStorage.setItem('melt_boot_'+MELT_BUILD,'1'); location.replace(location.pathname+'?'+MELT_BUILD); } }catch(e){}
 fbInit();
 paintGold();
