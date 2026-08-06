@@ -11,6 +11,10 @@
 <meta property="og:title" content="Melt — love that melts doubts away">
 <meta property="og:description" content="Real Google-verified people only. 20 free likes a day, first messages free, GOLD once and forever.">
 <meta property="og:image" content="https://securecodesolutionsdev.github.io/earthquake-/auth-bg.jpg">
+<meta property="og:image:secure_url" content="https://securecodesolutionsdev.github.io/earthquake-/auth-bg.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="896">
+<meta property="og:image:height" content="1200">
 <meta property="og:url" content="https://securecodesolutionsdev.github.io/earthquake-/">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Melt — love that melts doubts away">
@@ -1833,7 +1837,7 @@ function paintGold(){ const el=$('goldTop'); if(el)el.textContent=L.gold?T('GOLD
 
 /* ============ INIT ============ */
 setTimeout(()=>{ const dk=$('deck'); if(AUTHED&&R.tab==='discover'&&dk&&!dk.children.length){ try{paintDeck();}catch(e){} } }, 5200);
-const MELT_BUILD='v8'; /* bump this number on every release — every phone self-updates once, no cache games */
+const MELT_BUILD='v9'; /* bump this number on every release — every phone self-updates once, no cache games */
 try{ if(location.search.indexOf(MELT_BUILD)<0){ localStorage.setItem('melt_boot_'+MELT_BUILD,'1'); location.replace(location.pathname+'?'+MELT_BUILD); } }catch(e){}
 fbInit();
 paintGold();
