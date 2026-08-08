@@ -1,23 +1,23 @@
 /* =====================================================================
-   MELT — PUSH SERVICE WORKER (lock-screen alerts)
+   TAYRIPAGES — PUSH SERVICE WORKER (lock-screen alerts)
    Lives next to index.html on GitHub Pages. 100% free with Firebase Spark.
-   Nothing to edit here — it reads your keys from zwin-config.js.
+   Nothing to edit here — it reads your keys from tayri-config.js.
    ===================================================================== */
 importScripts('https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js');
 importScripts('https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js');
-importScripts('zwin-config.js');
+importScripts('tayri-config.js');
 
 try {
-  if (typeof ZWIN_CONFIG !== 'undefined' && ZWIN_CONFIG.firebase
-      && !String(ZWIN_CONFIG.firebase.apiKey).startsWith('PASTE')) {
-    firebase.initializeApp(ZWIN_CONFIG.firebase);
+  if (typeof TAYRI_CONFIG !== 'undefined' && TAYRI_CONFIG.firebase
+      && !String(TAYRI_CONFIG.firebase.apiKey).startsWith('PASTE')) {
+    firebase.initializeApp(TAYRI_CONFIG.firebase);
     const messaging = firebase.messaging();
     messaging.onBackgroundMessage((payload) => {
       const n = (payload && payload.notification) || {};
       const d = (payload && payload.data) || {};
-      const title = n.title || d.title || 'Melt';
+      const title = n.title || d.title || 'Tayripages';
       const options = {
-        body: n.body || d.body || 'Someone likes you — open Melt 💛',
+        body: n.body || d.body || 'Someone likes you — open Tayripages 💛',
         icon: 'icon.png',
         badge: 'icon.png',
         vibrate: [80, 40, 80],

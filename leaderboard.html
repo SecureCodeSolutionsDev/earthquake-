@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#fff7f9">
+<title>Tayripages Leaderboard — Tayri, the Tamazight word for love</title>
+<meta name="description" content="Weekly Tayripages social presence, charm, and supporter standings.">
+<link rel="icon" type="image/png" href="icon.png">
+<script src="tayri-config.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-check-compat.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}body{min-height:100vh;background:radial-gradient(circle at 20% 0,#ffe8ef 0,transparent 35%),#fff7f9;color:#281923;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans Arabic",Arial,sans-serif}.top{max-width:900px;margin:0 auto;padding:18px;display:flex;align-items:center;justify-content:space-between;gap:14px}.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:inherit}.mark{width:42px;height:42px;border-radius:14px;background:linear-gradient(45deg,#ff4e7e,#ffb15c);display:grid;place-items:center;color:#fff;font-size:21px;box-shadow:0 10px 24px rgba(255,78,126,.28)}.brand-copy{display:flex;flex-direction:column;line-height:1.05}.brand-name{font-size:21px;font-weight:950;background:linear-gradient(45deg,#ff4e7e,#ffb15c);background-clip:text;-webkit-background-clip:text;color:transparent}.brand-note{color:#876c7b;font-size:10px;font-weight:700;margin-top:4px}.back{color:#ff4e7e;font-size:13px;font-weight:900;padding:10px 13px;border:1px solid #eadce3;border-radius:999px;background:#fff}.wrap{max-width:900px;margin:0 auto;padding:12px 18px 50px}.hero{text-align:center;margin:15px auto 24px}.eyebrow{color:#ff4e7e;font-size:11px;font-weight:950;letter-spacing:1.2px;text-transform:uppercase}.hero h1{font-size:clamp(30px,6vw,48px);letter-spacing:-1.2px;margin:8px 0}.hero p{color:#876c7b;font-size:14px;line-height:1.6}.status{text-align:center;color:#876c7b;font-weight:800;font-size:13px;min-height:22px;margin:10px}.status.bad{color:#bd345a}.status.good{color:#19985d}.card{background:rgba(255,255,255,.92);border:1px solid #eadce3;border-radius:25px;padding:17px;box-shadow:0 18px 50px rgba(150,70,105,.14);margin-bottom:14px}.identity{text-align:center;color:#876c7b;font-size:12px;margin-bottom:8px}.tabs{display:flex;gap:8px;margin-bottom:13px}.tab{flex:1;border:1px solid #eadce3;border-radius:13px;background:#fff;color:#876c7b;padding:11px 8px;font-size:12px;font-weight:900}.tab.active{background:#ffe5ec;border-color:#ffb5c5;color:#c3345a}.section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}.section-head h2{font-size:17px}.week{color:#876c7b;font-size:11px;font-weight:800}.row{display:grid;grid-template-columns:34px 1fr auto;align-items:center;gap:10px;padding:11px 4px;border-bottom:1px solid #f0e4e9}.row:last-child{border-bottom:0}.rank{font-size:17px;font-weight:950;color:#bd8a9b;text-align:center}.avatar{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(45deg,#ff4e7e,#ffb15c);color:#fff;font-size:15px;font-weight:950}.person{display:flex;align-items:center;gap:8px;min-width:0}.person-name{font-weight:900;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.tier{color:#876c7b;font-size:10px;font-weight:800;margin-top:3px}.score{text-align:end;font-size:14px;font-weight:950;color:#c3345a}.score small{display:block;color:#876c7b;font-size:9px;font-weight:800}.private{padding:15px;text-align:center;border:1px dashed #ffb5c5;background:#fff8fb;border-radius:16px;color:#876c7b;font-size:12px;line-height:1.55}.private strong{display:block;color:#c3345a;font-size:16px;margin-bottom:5px}.crown{font-size:26px;margin-bottom:4px}.note{padding:13px 15px;background:#fff8df;border:1px solid #f1dda3;border-radius:15px;color:#786022;font-size:11px;line-height:1.6}.empty{text-align:center;color:#876c7b;font-size:12px;padding:20px}.btn{display:block;width:100%;border:0;border-radius:14px;padding:14px;background:linear-gradient(45deg,#ff4e7e,#ffb15c);color:#fff;font-weight:950;cursor:pointer}.hidden{display:none!important}@media(max-width:560px){.top{padding-top:calc(12px + env(safe-area-inset-top))}.tabs{flex-direction:column}.wrap{padding-top:4px}}
+</style>
+</head>
+<body>
+<header class="top"><a class="brand" href="./index.html"><span class="mark">🔥</span><span class="brand-copy"><span class="brand-name">Tayripages</span><span class="brand-note">Tayri — the Tamazight word for love.</span></span></a><a class="back" href="./index.html">Back to app</a></header>
+<main class="wrap">
+  <section class="hero"><div class="eyebrow">Weekly standings · positive competition</div><h1>Find your place.</h1><p>Build social presence through real conversations, respectful calls, and meaningful connections. Raw votes stay private.</p></section>
+  <section class="card" id="gate"><div class="status" id="status">Checking your secure connection…</div><div id="identity" class="identity"></div><button class="btn" id="signBtn">Continue with Google</button></section>
+  <section class="card hidden" id="board">
+    <div class="tabs"><button class="tab active" id="socialTab">Social presence</button><button class="tab" id="charmTab">Tayri Charm</button><button class="tab" id="supporterTab">Supporters</button></div>
+    <div id="socialView"><div class="section-head"><h2>Social presence</h2><span class="week" id="weekLabel"></span></div><div id="myRank"></div><div id="socialRows"></div></div>
+    <div id="charmView" class="hidden"><div class="section-head"><h2>Tayri Charm Crown</h2><span class="week" id="weekLabel2"></span></div><div id="charmBox"></div></div>
+    <div id="supporterView" class="hidden"><div class="section-head"><h2>Supporter circle</h2><span class="week">approved Gold</span></div><div id="supporterRows"></div></div>
+  </section>
+  <div class="note"><b>How it works:</b> after a real video conversation, each member may leave one private weekly review for the other person. Scores use a minimum-vote smoothing rule to reduce one-vote surprises. Harassment, manipulation, and repeated abuse can remove leaderboard eligibility.</div>
+</main>
+<script>
+(function(){
+'use strict';
+const ROOT='wasla_dating', $=id=>document.getElementById(id), TTL=3;
+let db=null,user=null,uid='',scores={},rows=[],week='';
+function root(path){return db.ref(ROOT+'/'+path)}
+function weekKey(){const d=new Date(),day=(d.getUTCDay()+6)%7;d.setUTCDate(d.getUTCDate()-day);return d.toISOString().slice(0,10)}
+function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function setStatus(t,bad){$('status').textContent=t;$('status').className='status'+(bad?' bad':' good')}
+function show(id,on){$(id).classList.toggle('hidden',!on)}
+function tier(score){return score>=4.65?'Tayri Legend':score>=4.25?'Diamond':score>=3.9?'Platinum':score>=3.55?'Gold':score>=3.1?'Silver':'Bronze'}
+function smoothed(a){const prior=3.5,weight=3;return (a.reduce((x,y)=>x+y,0)+prior*weight)/(a.length+weight)}
+function render(){
+  const users=scores.users||{};
+  rows=Object.entries(scores.byTarget||{}).map(([id,v])=>({id,...v,name:(users[id]&&users[id].name)||'Tayripages member',em:(users[id]&&users[id].em)||'💛',social:(smoothed(v.s)+smoothed(v.r))/2,charm:smoothed(v.c),count:v.s.length})).filter(x=>x.count>=1).sort((a,b)=>b.social-a.social);
+  const mine=rows.findIndex(x=>x.id===uid);
+  $('weekLabel').textContent=week;$('weekLabel2').textContent=week;
+  $('myRank').innerHTML=mine>=0?'<div class="private" style="margin-bottom:8px"><strong>Your social rank: #'+(mine+1)+'</strong>'+tier(rows[mine].social)+' · '+rows[mine].count+' private review'+(rows[mine].count===1?'':'s')+'</div>':'';
+  $('socialRows').innerHTML=rows.length?rows.slice(0,20).map((x,i)=>'<div class="row"><div class="rank">'+(i<3?['🥇','🥈','🥉'][i]:(i+1))+'</div><div class="person"><div class="avatar">'+esc(x.em)+'</div><div><div class="person-name">'+esc(x.name)+'</div><div class="tier">'+tier(x.social)+' · '+x.count+' review'+(x.count===1?'':'s')+'</div></div></div><div class="score">'+x.social.toFixed(2)+'<small>presence</small></div></div>').join(''):'<div class="empty">Complete a video conversation to begin this week’s standings.</div>';
+  const charm=rows.slice().sort((a,b)=>b.charm-a.charm), cr=charm.findIndex(x=>x.id===uid);
+  if(!charm.length){$('charmBox').innerHTML='<div class="private">Tayri Charm becomes available after members leave private reviews.</div>';}
+  else if(cr===0){$('charmBox').innerHTML='<div class="private"><div class="crown">👑</div><strong>You are this week’s Tayri Charm Crown</strong>Your crown is visible to you first. Choose later whether to display it publicly.</div>';}
+  else {$('charmBox').innerHTML='<div class="private"><div class="crown">✨</div><strong>Your Charm position stays private</strong>Only the weekly #1 unlocks the Tayri Charm Crown. Keep having real conversations to climb.</div>';}
+}
+function renderSupporters(gold,users){
+  const ar=Object.entries(gold||{}).map(([id,v])=>({id,name:(users[id]&&users[id].name)||'Tayripages member',em:(users[id]&&users[id].em)||'👑',price:+(v&&v.price||0),at:+(v&&v.at||0)})).filter(x=>x.price>0).sort((a,b)=>b.price-a.price||b.at-a.at);
+  $('supporterRows').innerHTML=ar.length?ar.slice(0,20).map((x,i)=>'<div class="row"><div class="rank">'+(i+1)+'</div><div class="person"><div class="avatar">'+esc(x.em)+'</div><div><div class="person-name">'+esc(x.name)+'</div><div class="tier">Tayri Patron · verified manually</div></div></div><div class="score">'+x.price+' DH<small>approved Gold</small></div></div>').join(''):'<div class="empty">Supporter standings appear after an admin manually approves a Gold transfer.</div>';
+}
+async function load(){
+  try{
+    week=weekKey();
+    const [us,vs,gs]=await Promise.all([root('users').once('value'),root('socialVotes/'+week).once('value'),root('gold').once('value')]);
+    const users=us.val()||{}, byTarget={};
+    Object.entries(vs.val()||{}).forEach(([from,targets])=>Object.entries(targets||{}).forEach(([to,v])=>{if(!v||to===from)return;(byTarget[to]||(byTarget[to]={s:[],r:[],c:[]})).s.push(+v.sociability||3);byTarget[to].r.push(+v.respect||3);byTarget[to].c.push(+v.charm||3);}));
+    scores={users,byTarget};render();renderSupporters(gs.val()||{},users);show('gate',false);show('board',true);setStatus('Loaded','');
+  }catch(e){console.warn(e);setStatus('Could not load the leaderboard. Check your Firebase rules.',true)}
+}
+async function signIn(){try{await firebase.auth().signInWithPopup(new firebase.auth.GoogleAuthProvider())}catch(e){if(['auth/popup-blocked','auth/operation-not-supported-in-this-environment','auth/web-storage-unsupported'].includes(e.code))return firebase.auth().signInWithRedirect(new firebase.auth.GoogleAuthProvider());setStatus('Google sign-in failed: '+(e.code||'try again'),true)}}
+function tab(which){['social','charm','supporter'].forEach(x=>{show(x+'View',x===which);$(x+'Tab').classList.toggle('active',x===which)})}
+$('socialTab').onclick=()=>tab('social');$('charmTab').onclick=()=>tab('charm');$('supporterTab').onclick=()=>tab('supporter');$('signBtn').onclick=signIn;
+try{if(!firebase.apps.length)firebase.initializeApp(TAYRI_CONFIG.firebase);if(TAYRI_CONFIG.appCheck&&TAYRI_CONFIG.appCheck.recaptchaSiteKey&&firebase.appCheck){try{firebase.appCheck().activate(TAYRI_CONFIG.appCheck.recaptchaSiteKey,true)}catch(e){}}db=firebase.database();firebase.auth().onAuthStateChanged(u=>{user=u;uid=u&&u.uid||'';if(!u){setStatus('Sign in with Google to view the weekly standings.',true);return} $('identity').textContent=(u.displayName||u.email||'Signed in')+' · signed in';load()})}catch(e){setStatus('Firebase could not start.',true)}
+})();
+</script>
+</body>
+</html>

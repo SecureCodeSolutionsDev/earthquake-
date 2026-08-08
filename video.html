@@ -1,0 +1,409 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#fff7f9">
+<title>Tayripages Instant Video — Tayri, the Tamazight word for love</title>
+<meta name="description" content="A free, peer-to-peer instant video room for Tayripages members.">
+<link rel="icon" type="image/png" href="icon.png">
+<script src="tayri-config.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-check-compat.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#fff7f9;--card:#fff;--ink:#281923;--mut:#876c7b;--line:#eadce3;--pink:#ff4e7e;--orange:#ff9a5c;--grad:linear-gradient(45deg,#ff4e7e,#ffb15c);--shadow:0 18px 50px rgba(150,70,105,.14)}
+body{min-height:100vh;background:radial-gradient(circle at 20% 0,#ffe8ef 0,transparent 35%),var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans Arabic",Arial,sans-serif}
+button,a{font:inherit}button{border:0;cursor:pointer}a{text-decoration:none;color:inherit}
+.top{max-width:900px;margin:0 auto;padding:18px 18px 8px;display:flex;align-items:center;justify-content:space-between;gap:14px}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}.mark{width:42px;height:42px;border-radius:14px;background:var(--grad);display:grid;place-items:center;color:#fff;font-size:21px;box-shadow:0 10px 24px rgba(255,78,126,.28);flex:0 0 auto}.brand-copy{display:flex;flex-direction:column;line-height:1.05}.brand-name{font-size:21px;font-weight:950;background:var(--grad);background-clip:text;-webkit-background-clip:text;color:transparent}.brand-note{color:var(--mut);font-size:10px;font-weight:700;margin-top:4px;white-space:nowrap}.back{color:var(--pink);font-size:13px;font-weight:900;padding:10px 13px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.75)}
+.wrap{max-width:900px;margin:0 auto;padding:22px 18px 50px}.hero{text-align:center;max-width:680px;margin:18px auto 22px}.eyebrow{color:var(--pink);font-size:11px;letter-spacing:1.3px;font-weight:950;text-transform:uppercase}.hero h1{font-size:clamp(28px,6vw,48px);letter-spacing:-1.3px;margin:8px 0 10px}.hero p{color:var(--mut);font-size:14px;line-height:1.65}.card{background:rgba(255,255,255,.9);border:1px solid var(--line);border-radius:26px;padding:18px;box-shadow:var(--shadow);max-width:800px;margin:0 auto}.status{text-align:center;color:var(--mut);font-size:14px;font-weight:750;min-height:24px;margin:4px 0 14px}.status.good{color:#19985d}.status.warn{color:#b56a00}.status.bad{color:#bd345a}
+.mode-tabs{display:flex;gap:8px;max-width:520px;margin:0 auto 14px}.mode{flex:1;padding:11px 12px;border:1px solid var(--line);border-radius:14px;background:#fff;color:var(--mut);font-size:12px;font-weight:900}.mode.active{background:#ffe5ec;border-color:#ffb5c5;color:#c3345a}.mode:disabled{opacity:.45;cursor:not-allowed}.match-panel{max-width:620px;margin:0 auto 14px;padding:13px;border:1px solid var(--line);border-radius:18px;background:#fff8fb}.match-title{text-align:center;color:var(--mut);font-size:12px;font-weight:850;margin-bottom:9px}.match-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px}.match-choice{display:flex;align-items:center;gap:8px;text-align:start;padding:10px;border:1px solid var(--line);border-radius:13px;background:#fff;color:var(--ink);font-size:12px;font-weight:850}.match-choice.selected{border-color:var(--pink);background:#ffe5ec;box-shadow:0 4px 12px rgba(255,78,126,.12)}.match-avatar{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--grad);color:#fff;font-size:14px;flex:0 0 auto}.match-empty{color:var(--mut);font-size:12px;text-align:center;padding:8px}.feedback{margin-top:14px;padding:15px;border:1px solid #f2d4de;border-radius:18px;background:#fff8fb}.feedback-title{text-align:center;font-size:14px;font-weight:950;margin-bottom:10px}.feedback-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.feedback-grid label{display:flex;flex-direction:column;gap:5px;color:var(--mut);font-size:10px;font-weight:850}.feedback-grid select{width:100%;padding:10px 8px;border:1px solid var(--line);border-radius:11px;background:#fff;color:var(--ink);font-size:11px;font-weight:800}.feedback-actions{display:flex;gap:8px;margin-top:12px}.feedback-actions .btn{min-width:0;padding:11px;font-size:12px}.feedback-note{text-align:center;color:var(--mut);font-size:10px;margin-top:8px}
+.videos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.panel{position:relative;aspect-ratio:4/3;border-radius:20px;overflow:hidden;background:linear-gradient(145deg,#2a1322,#100610);border:1px solid #4a273a;display:grid;place-items:center}.panel video{width:100%;height:100%;object-fit:cover;display:block}.panel.remote video:not([src]){opacity:0}.panel-label{position:absolute;z-index:2;left:10px;bottom:10px;color:#fff;background:rgba(20,5,15,.66);backdrop-filter:blur(8px);border-radius:999px;padding:6px 9px;font-size:10px;font-weight:950;letter-spacing:.5px}.panel-empty{position:absolute;color:rgba(255,255,255,.7);font-size:12px;font-weight:800;text-align:center;padding:20px}.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}.btn{flex:1;min-width:130px;border-radius:15px;padding:13px 15px;font-weight:900;font-size:14px;background:#fff;border:1px solid var(--line);color:var(--ink)}.btn.primary{background:var(--grad);color:#fff;border:0;box-shadow:0 10px 24px rgba(255,78,126,.24)}.btn.danger{background:#fff0f3;border-color:#ffc7d4;color:#c3345a}.btn:disabled{opacity:.45;cursor:not-allowed}.mini-actions{display:flex;justify-content:center;gap:9px;margin-top:10px}.round{width:46px;height:40px;border-radius:14px;background:#fff;border:1px solid var(--line);font-size:18px}.round.on{background:#ffe5ec;border-color:#ffb5c5}.hidden{display:none!important}.notice{max-width:800px;margin:14px auto 0;padding:13px 16px;border-radius:16px;background:#fff8df;border:1px solid #f1dda3;color:#786022;font-size:12px;line-height:1.6}.rules{max-width:800px;margin:16px auto 0;display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.rule{padding:13px;background:rgba(255,255,255,.7);border:1px solid var(--line);border-radius:16px;text-align:center;color:var(--mut);font-size:11px;font-weight:750;line-height:1.45}.rule b{display:block;color:var(--ink);font-size:12px;margin-bottom:3px}.identity{display:flex;align-items:center;justify-content:center;gap:8px;color:var(--mut);font-size:12px;margin-bottom:10px}.avatar{width:28px;height:28px;border-radius:50%;background:var(--grad);display:grid;place-items:center;color:#fff;font-size:13px;font-weight:900}
+@media(max-width:560px){.top{padding-top:calc(12px + env(safe-area-inset-top))}.brand-note{font-size:9px}.videos{grid-template-columns:1fr}.panel{aspect-ratio:16/11}.rules{grid-template-columns:1fr}.feedback-grid{grid-template-columns:1fr}.wrap{padding-top:10px}.hero h1{font-size:32px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="./index.html" aria-label="Back to Tayripages">
+    <span class="mark">🔥</span>
+    <span class="brand-copy"><span class="brand-name">Tayripages</span><span class="brand-note">Tayri — the Tamazight word for love.</span></span>
+  </a>
+  <a class="back" href="./index.html">Back to app</a>
+</header>
+<main class="wrap">
+  <section class="hero">
+    <div class="eyebrow">Instant video · peer to peer</div>
+    <h1>Meet someone live.</h1>
+    <p>Choose a spontaneous random connection or call someone you already matched with. Your camera connects directly to another Tayripages member—Firebase only coordinates the handshake; it never carries your video.</p>
+  </section>
+
+  <section class="card" id="card">
+    <div class="identity" id="identity"></div>
+    <div class="status" id="status">Checking your secure connection…</div>
+    <div class="mode-tabs" id="modeTabs">
+      <button class="mode active" id="randomMode">Random instant video</button>
+      <button class="mode" id="matchMode">Video with a match</button>
+    </div>
+    <div class="match-panel hidden" id="matchPanel">
+      <div class="match-title">Choose one of your mutual matches</div>
+      <div class="match-list" id="matchList">Loading matches…</div>
+    </div>
+    <div class="videos hidden" id="videos">
+      <div class="panel">
+        <video id="localVideo" autoplay muted playsinline></video>
+        <div class="panel-empty" id="localEmpty">Your camera preview</div>
+        <div class="panel-label">YOU</div>
+      </div>
+      <div class="panel remote">
+        <video id="remoteVideo" autoplay playsinline></video>
+        <div class="panel-empty" id="remoteEmpty">Waiting for your match…</div>
+        <div class="panel-label">TAYRIPAGES MEMBER</div>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="btn primary" id="startBtn" disabled>Start instant video</button>
+      <button class="btn danger hidden" id="skipBtn">Skip &amp; find another</button>
+      <button class="btn danger hidden" id="endBtn">End call</button>
+    </div>
+    <div class="mini-actions hidden" id="mediaActions">
+      <button class="round on" id="micBtn" title="Mute microphone">🎙️</button>
+      <button class="round on" id="camBtn" title="Turn camera off">📷</button>
+    </div>
+    <div class="feedback hidden" id="feedback">
+      <div class="feedback-title">How did the conversation feel?</div>
+      <div class="feedback-grid">
+        <label>Social energy<select id="voteSocial"><option value="5">Excellent</option><option value="4">Good</option><option value="3" selected>Okay</option><option value="2">Needs work</option><option value="1">Poor</option></select></label>
+        <label>Respect<select id="voteRespect"><option value="5">Excellent</option><option value="4">Good</option><option value="3" selected>Okay</option><option value="2">Needs work</option><option value="1">Poor</option></select></label>
+        <label>Charm &amp; style<select id="voteCharm"><option value="5">Excellent</option><option value="4">Good</option><option value="3" selected>Okay</option><option value="2">Needs work</option><option value="1">Poor</option></select></label>
+      </div>
+      <div class="feedback-actions"><button class="btn primary" id="sendFeedback">Submit private feedback</button><button class="btn" id="skipFeedback">Skip</button></div>
+      <div class="feedback-note">Your individual vote is private. It helps build weekly Tayripages scores.</div>
+    </div>
+  </section>
+
+  <div class="notice"><b>Free MVP note:</b> direct WebRTC works without a video provider in many networks. A small number of restrictive networks may need a TURN relay later; those users will receive a connection message instead of creating a paid video bill.</div>
+  <div class="rules">
+    <div class="rule"><b>Private by design</b>No recording or media upload.</div>
+    <div class="rule"><b>One-to-one</b>Only two signed-in members per room.</div>
+    <div class="rule"><b>Stay respectful</b>End, skip, block, or report from the app.</div>
+  </div>
+</main>
+<script>
+(function(){
+  'use strict';
+  const ROOT='wasla_dating';
+  const TTL=120000;
+  const $=id=>document.getElementById(id);
+  const statusEl=$('status'), startBtn=$('startBtn'), skipBtn=$('skipBtn'), endBtn=$('endBtn');
+  const videos=$('videos'), mediaActions=$('mediaActions'), localVideo=$('localVideo'), remoteVideo=$('remoteVideo');
+  const localEmpty=$('localEmpty'), remoteEmpty=$('remoteEmpty'), identity=$('identity');
+  const modeTabs=$('modeTabs'), randomMode=$('randomMode'), matchMode=$('matchMode'), matchPanel=$('matchPanel'), matchList=$('matchList');
+  const feedback=$('feedback'), sendFeedback=$('sendFeedback'), skipFeedback=$('skipFeedback');
+  let authUser=null, db=null, uid='';
+  let localStream=null, remoteStream=null, pc=null;
+  let queueRef=null, queueRootRef=null, pairRootRef=null, roomRef=null, pairRef=null, candidateRef=null;
+  let queueCb=null, pairCb=null, roomCb=null, candidateCb=null;
+  let queueSnapshot={}, pairSnapshot={};
+  let currentRoomId=null, currentPeer=null, currentPair=null, role=null;
+  let videoMode='random', selectedPeer=null, selectedPeerName='', matchData=[];
+  let feedbackPeer=null, callConnected=false;
+  let searching=false, closing=false, offerBusy=false, answerBusy=false, remoteSet=false, pendingCandidates=[];
+  const RTC_CONFIG=(TAYRI_CONFIG.video&&TAYRI_CONFIG.video.rtc)||{
+    iceServers:[
+      {urls:'stun:stun.l.google.com:19302'},
+      {urls:'stun:stun1.l.google.com:19302'}
+    ]
+  };
+
+  function setStatus(text,kind){ statusEl.textContent=text; statusEl.className='status'+(kind?' '+kind:''); }
+  function show(el,on){ el.classList.toggle('hidden',!on); }
+  function safeName(u){ return (u&&((u.displayName||'').split(' ')[0]||u.email||'Member'))||'Member'; }
+  function root(path){ return db.ref(ROOT+'/'+path); }
+  function now(){ return Date.now(); }
+  function fresh(t){ return t && (now()-(+t.createdAt||0)<TTL); }
+  function roomIdFor(a,b){
+    const s=[a,b].sort().join('|');
+    let h=2166136261;
+    for(let i=0;i<s.length;i++){ h^=s.charCodeAt(i); h=Math.imul(h,16777619); }
+    return 'r_'+(h>>>0).toString(36);
+  }
+  function memberOf(p){ return p && (p.a===uid||p.b===uid); }
+  function peerOf(p){ return p && (p.a===uid?p.b:p.a); }
+  function stopListener(ref,evt,cb){ try{ if(ref&&cb)ref.off(evt,cb); }catch(e){} }
+  function renderStartButton(){
+    if(!authUser){ startBtn.disabled=false; startBtn.textContent='Continue with Google'; startBtn.onclick=signIn; return; }
+    if(videoMode==='match'){
+      startBtn.disabled=!selectedPeer;
+      startBtn.textContent=selectedPeer?('Call '+selectedPeerName):'Choose a match first';
+      startBtn.onclick=startDirectMatch;
+    }else{
+      startBtn.disabled=false; startBtn.textContent='Start instant video'; startBtn.onclick=startMatch;
+    }
+  }
+  function setMode(mode){
+    if(searching) return;
+    videoMode=mode==='match'?'match':'random';
+    randomMode.classList.toggle('active',videoMode==='random');
+    matchMode.classList.toggle('active',videoMode==='match');
+    show(matchPanel,videoMode==='match');
+    if(videoMode==='match') loadMatches();
+    renderStartButton();
+    setStatus(videoMode==='match'?'Choose a mutual match to call live.':'Ready when you are. Camera access is requested only when you start.','good');
+  }
+  async function loadMatches(){
+    if(!authUser||!db) return;
+    matchList.innerHTML='<div class="match-empty">Loading mutual matches…</div>';
+    try{
+      const snap=await root('userMatches/'+uid).once('value');
+      const mids=Object.keys(snap.val()||{}).slice(0,30);
+      const rows=await Promise.all(mids.map(async mid=>{
+        const ms=(await root('matches/'+mid).once('value')).val()||{};
+        const peer=ms.a===uid?ms.b:ms.a;
+        if(!peer) return null;
+        const profile=(await root('users/'+peer).once('value')).val()||{};
+        return {mid,peer,name:profile.name||'Tayripages member',em:profile.em||'💛'};
+      }));
+      matchData=rows.filter(Boolean);
+      renderMatches();
+    }catch(e){ console.warn('match list',e); matchData=[]; matchList.innerHTML='<div class="match-empty">Your mutual matches could not be loaded yet.</div>'; }
+  }
+  function renderMatches(){
+    if(!matchData.length){ matchList.innerHTML='<div class="match-empty">No mutual matches yet. Use Random instant video or match with someone first.</div>'; return; }
+    matchList.innerHTML=matchData.map(m=>'<button class="match-choice '+(selectedPeer===m.peer?'selected':'')+'" data-peer="'+escapeHtml(m.peer)+'"><span class="match-avatar">'+escapeHtml(m.em)+'</span><span>'+escapeHtml(m.name)+'</span></button>').join('');
+    matchList.querySelectorAll('.match-choice').forEach(btn=>btn.addEventListener('click',()=>selectMatch(btn.dataset.peer)));
+  }
+  function selectMatch(peer){
+    const m=matchData.find(x=>x.peer===peer); if(!m)return;
+    selectedPeer=m.peer; selectedPeerName=m.name; renderMatches(); renderStartButton(); setStatus('Ready to call '+m.name+'.','good');
+  }
+  function wirePairs(){
+    pairRootRef=root('videoPairIndex');
+    pairCb=s=>{ pairSnapshot=s.val()||{}; findExistingPair(); };
+    pairRootRef.on('value',pairCb);
+  }
+
+  async function init(){
+    try{
+      if(!firebase.apps.length){ firebase.initializeApp(TAYRI_CONFIG.firebase); }
+      if(TAYRI_CONFIG.appCheck&&TAYRI_CONFIG.appCheck.recaptchaSiteKey&&firebase.appCheck){
+        try{ firebase.appCheck().activate(TAYRI_CONFIG.appCheck.recaptchaSiteKey,true); }catch(e){}
+      }
+      db=firebase.database();
+      randomMode.onclick=()=>setMode('random');
+      matchMode.onclick=()=>setMode('match');
+      firebase.auth().onAuthStateChanged(async u=>{
+        authUser=u; uid=u&&u.uid||'';
+        if(!u){
+          identity.innerHTML=''; matchData=[]; matchList.innerHTML='<div class="match-empty">Sign in to see mutual matches.</div>';
+          renderStartButton(); setStatus('Sign in with Google to enter instant video.','warn');
+          return;
+        }
+        identity.innerHTML='<span class="avatar">'+(safeName(u)[0]||'T')+'</span><b>'+escapeHtml(safeName(u))+'</b><span>signed in</span>';
+        await loadMatches(); renderStartButton();
+        setStatus(videoMode==='match'?'Choose a mutual match to call live.':'Ready when you are. Camera access is requested only when you start.','good');
+      });
+    }catch(e){ console.error(e); setStatus('Firebase could not start. Check the Tayripages configuration.','bad'); }
+  }
+  function escapeHtml(s){ return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+  function weekKey(){
+    const d=new Date(); const day=(d.getUTCDay()+6)%7; d.setUTCDate(d.getUTCDate()-day);
+    return d.toISOString().slice(0,10);
+  }
+  function showFeedback(peer){
+    feedbackPeer=peer||null;
+    if(feedbackPeer){ show(feedback,true); setStatus('Call ended. Leave private feedback if you like.','good'); }
+  }
+  async function submitFeedback(){
+    if(!feedbackPeer||!authUser)return hideFeedback();
+    sendFeedback.disabled=true;
+    try{
+      await root('socialVotes/'+weekKey()+'/'+uid+'/'+feedbackPeer).set({
+        to:feedbackPeer,
+        sociability:Number($('voteSocial').value),
+        respect:Number($('voteRespect').value),
+        charm:Number($('voteCharm').value),
+        ts:firebase.database.ServerValue.TIMESTAMP
+      });
+      hideFeedback(); setStatus('Private feedback saved. Thank you.','good');
+    }catch(e){ console.warn(e); setStatus('Feedback could not be saved. Try again later.','bad'); sendFeedback.disabled=false; }
+  }
+  function hideFeedback(){ show(feedback,false); feedbackPeer=null; sendFeedback.disabled=false; }
+  async function signIn(){
+    const provider=new firebase.auth.GoogleAuthProvider();
+    try{ await firebase.auth().signInWithPopup(provider); }
+    catch(e){
+      if(e&&['auth/popup-blocked','auth/operation-not-supported-in-this-environment','auth/web-storage-unsupported'].includes(e.code)) return firebase.auth().signInWithRedirect(provider);
+      setStatus('Google sign-in failed: '+(e.code||'try again'),'bad');
+    }
+  }
+  async function ensureMedia(){
+    if(localStream) return localStream;
+    if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia) throw new Error('Camera and microphone are not available in this browser.');
+    localStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'},audio:true});
+    localVideo.srcObject=localStream; localEmpty.classList.add('hidden');
+    return localStream;
+  }
+  function wireQueue(){
+    queueRootRef=root('videoQueue');
+    pairRootRef=root('videoPairIndex');
+    queueCb=s=>{ queueSnapshot=s.val()||{}; tryMatch(); };
+    pairCb=s=>{ pairSnapshot=s.val()||{}; findExistingPair(); };
+    queueRootRef.on('value',queueCb); pairRootRef.on('value',pairCb);
+  }
+  async function startMatch(){
+    if(!authUser) return signIn();
+    if(searching) return;
+    try{
+      await ensureMedia();
+      searching=true; closing=false; show(videos,true); show(startBtn,false); show(skipBtn,true); show(endBtn,false); show(mediaActions,true); show(modeTabs,false); remoteEmpty.classList.remove('hidden');
+      setStatus('Looking for another member…','good');
+      queueRef=root('videoQueue/'+uid);
+      await queueRef.onDisconnect().remove();
+      await queueRef.set({uid:uid,state:'waiting',createdAt:now()});
+      wireQueue();
+      setTimeout(()=>{ if(searching&&!currentRoomId) setStatus('Still searching. Keep this page open for a live match.','good'); },8000);
+    }catch(e){ console.error(e); setStatus(e.message||'Camera permission is required to start.','bad'); cleanupMedia(); searching=false; show(startBtn,true); show(skipBtn,false); show(mediaActions,false); show(modeTabs,true); renderStartButton(); }
+  }
+  async function startDirectMatch(){
+    if(!authUser) return signIn();
+    if(!selectedPeer) return setStatus('Choose a mutual match first.','warn');
+    if(searching) return;
+    try{
+      await ensureMedia();
+      searching=true; closing=false; show(videos,true); show(startBtn,false); show(skipBtn,false); show(endBtn,false); show(mediaActions,true); show(modeTabs,false); remoteEmpty.classList.remove('hidden');
+      setStatus('Opening a private room for '+selectedPeerName+'…','good');
+      wirePairs();
+      const sorted=[uid,selectedPeer].sort();
+      const pair={a:sorted[0],b:sorted[1],status:'ringing',createdAt:now(),mode:'match'};
+      const id=roomIdFor(uid,selectedPeer);
+      const tx=await root('videoPairIndex/'+id).transaction(v=>{
+        if(!v||v.status==='ended'||!fresh(v)) return pair;
+        return v;
+      });
+      const chosen=tx.snapshot&&tx.snapshot.val();
+      if(chosen&&chosen.a===sorted[0]&&chosen.b===sorted[1]){
+        await root('videoRooms/'+id).transaction(v=>v||pair);
+        await joinRoom(id,chosen);
+        setStatus('Waiting for '+selectedPeerName+' to open the video room…','good');
+      }else throw new Error('The private video room could not be created. Please try again.');
+    }catch(e){ console.error(e); setStatus(e.message||'Could not open the private video room.','bad'); cleanupMedia(); searching=false; show(startBtn,true); show(skipBtn,false); show(mediaActions,false); show(modeTabs,true); renderStartButton(); }
+  }
+  async function tryMatch(){
+    if(!searching||currentRoomId||closing) return;
+    const own=queueSnapshot[uid];
+    if(!own||own.state!=='waiting') return;
+    const candidates=Object.entries(queueSnapshot).map(([id,v])=>({...v,id})).filter(v=>v.id!==uid&&v.state==='waiting'&&fresh(v)).sort((a,b)=>(+a.createdAt)-(+b.createdAt));
+    if(!candidates.length) return;
+    const peer=candidates[0];
+    // Only the lexicographically first UID creates the deterministic pair.
+    if(uid>peer.id) return;
+    await createPair(peer.id);
+  }
+  async function createPair(peer){
+    if(currentRoomId||closing) return;
+    const id=roomIdFor(uid,peer);
+    const sorted=[uid,peer].sort();
+    const pair={a:sorted[0],b:sorted[1],status:'ringing',createdAt:now()};
+    try{
+      const tx=await root('videoPairIndex/'+id).transaction(v=>{
+        if(!v||v.status==='ended'||!fresh(v)) return pair;
+        return v;
+      });
+      const chosen=tx.snapshot&&tx.snapshot.val();
+      if(chosen&&chosen.a===sorted[0]&&chosen.b===sorted[1]){
+        await root('videoRooms/'+id).transaction(v=>v||pair);
+        await joinRoom(id,chosen);
+      }
+    }catch(e){ console.warn('pair create failed',e); }
+  }
+  function findExistingPair(){
+    if(!searching||currentRoomId||closing) return;
+    const found=Object.entries(pairSnapshot).map(([id,v])=>({id,...v})).find(v=>v.status==='ringing'&&fresh(v)&&memberOf(v));
+    if(found) joinRoom(found.id,found);
+    else tryMatch();
+  }
+  async function joinRoom(id,pair){
+    if(currentRoomId||closing||!pair||!memberOf(pair)) return;
+    currentRoomId=id; currentPair=pair; currentPeer=peerOf(pair); role=uid===pair.a?'caller':'callee';
+    setStatus('Match found. Connecting securely…','good'); show(skipBtn,false); show(endBtn,true); remoteEmpty.classList.remove('hidden');
+    try{ if(queueRef) await queueRef.remove(); }catch(e){}
+    roomRef=root('videoRooms/'+id); pairRef=root('videoPairIndex/'+id);
+    try{ await roomRef.onDisconnect().update({status:'ended'}); await pairRef.onDisconnect().update({status:'ended'}); }catch(e){}
+    await setupPeer();
+    roomCb=async snap=>{ const data=snap.val(); if(!data||data.status==='ended') return endCall('The other member left.',false); await processRoom(data); };
+    roomRef.on('value',roomCb);
+    candidateRef=roomRef.child('candidates/'+currentPeer);
+    candidateCb=snap=>addCandidate(snap.val()); candidateRef.on('child_added',candidateCb);
+  }
+  async function setupPeer(){
+    callConnected=false;
+    remoteStream=new MediaStream(); remoteVideo.srcObject=remoteStream;
+    pc=new RTCPeerConnection(RTC_CONFIG);
+    localStream.getTracks().forEach(t=>pc.addTrack(t,localStream));
+    pc.ontrack=e=>{ (e.streams[0]?e.streams[0].getTracks():[e.track]).forEach(t=>{ if(!remoteStream.getTracks().some(x=>x.id===t.id))remoteStream.addTrack(t); }); remoteEmpty.classList.add('hidden'); };
+    pc.onicecandidate=e=>{ if(e.candidate&&roomRef) roomRef.child('candidates/'+uid).push(e.candidate.toJSON()).catch(()=>{}); };
+    pc.onconnectionstatechange=()=>{
+      const s=pc.connectionState;
+      if(s==='connected'){ callConnected=true; setStatus('Connected. Enjoy the conversation.','good'); remoteEmpty.classList.add('hidden'); }
+      else if(s==='connecting') setStatus('Connecting camera to your match…','good');
+      else if(s==='failed') endCall('This network could not connect directly. Try again or use text chat.',false);
+      else if(s==='disconnected') setStatus('Connection interrupted…','warn');
+    };
+  }
+  async function processRoom(data){
+    if(!pc) return;
+    if(role==='caller'&&!data.offer&&!offerBusy){
+      offerBusy=true;
+      try{ const offer=await pc.createOffer(); await pc.setLocalDescription(offer); await roomRef.child('offer').set({type:offer.type,sdp:offer.sdp}); }
+      catch(e){ console.warn(e); } finally{ offerBusy=false; }
+    }
+    if(role==='callee'&&data.offer&&!remoteSet&&!answerBusy){
+      answerBusy=true;
+      try{ await pc.setRemoteDescription(new RTCSessionDescription(data.offer)); remoteSet=true; await flushCandidates(); const answer=await pc.createAnswer(); await pc.setLocalDescription(answer); await roomRef.child('answer').set({type:answer.type,sdp:answer.sdp}); }
+      catch(e){ console.warn(e); } finally{ answerBusy=false; }
+    }
+    if(role==='caller'&&data.answer&&!remoteSet){
+      try{ await pc.setRemoteDescription(new RTCSessionDescription(data.answer)); remoteSet=true; await flushCandidates(); }catch(e){ console.warn(e); }
+    }
+  }
+  async function addCandidate(data){
+    if(!data||!pc) return;
+    if(!remoteSet){ pendingCandidates.push(data); return; }
+    try{ await pc.addIceCandidate(new RTCIceCandidate(data)); }catch(e){ console.warn('candidate',e); }
+  }
+  async function flushCandidates(){ const list=pendingCandidates.splice(0); for(const c of list){ try{ await pc.addIceCandidate(new RTCIceCandidate(c)); }catch(e){} } }
+  async function skipMatch(){ await endCall('You skipped the match.',true); }
+  async function endCall(message,restart){
+    if(closing) return; closing=true; searching=false;
+    const endedPeer=currentPeer, shouldRate=callConnected&&!!currentPeer&&!restart;
+    setStatus(message||'Call ended.','warn');
+    try{ if(pairRef) await pairRef.update({status:'ended'}); }catch(e){}
+    try{ if(roomRef) await roomRef.update({status:'ended'}); }catch(e){}
+    try{ if(queueRef) await queueRef.remove(); }catch(e){}
+    detach(); cleanupMedia();
+    currentRoomId=null; currentPeer=null; currentPair=null; role=null; pc=null; roomRef=null; pairRef=null; candidateRef=null; remoteSet=false; pendingCandidates=[]; offerBusy=false; answerBusy=false; callConnected=false;
+    show(endBtn,false); show(skipBtn,false); show(mediaActions,false); show(videos,false); show(modeTabs,true); show(startBtn,true); renderStartButton();
+    if(restart){ closing=false; setTimeout(()=>{ if(authUser)startMatch(); },700); }
+    else if(shouldRate){ showFeedback(endedPeer); closing=false; }
+    else { setTimeout(()=>{ if(!searching) setStatus('Ready when you are. Camera access is requested only when you start.','good'); },1200); closing=false; }
+  }
+  function detach(){
+    stopListener(queueRootRef,'value',queueCb); stopListener(pairRootRef,'value',pairCb); stopListener(roomRef,'value',roomCb); stopListener(candidateRef,'child_added',candidateCb);
+    queueRootRef=pairRootRef=roomRef=pairRef=candidateRef=null; queueCb=pairCb=roomCb=candidateCb=null;
+  }
+  function cleanupMedia(){ if(pc){try{pc.close();}catch(e){}} if(localStream){localStream.getTracks().forEach(t=>t.stop());localStream=null;} if(localVideo)localVideo.srcObject=null; if(remoteVideo)remoteVideo.srcObject=null; }
+  $('endBtn').onclick=()=>endCall('Call ended.',false);
+  $('skipBtn').onclick=skipMatch;
+  $('micBtn').onclick=()=>{ if(!localStream)return; const t=localStream.getAudioTracks()[0]; if(!t)return; t.enabled=!t.enabled; $('micBtn').classList.toggle('on',t.enabled); $('micBtn').textContent=t.enabled?'🎙️':'🔇'; };
+  $('camBtn').onclick=()=>{ if(!localStream)return; const t=localStream.getVideoTracks()[0]; if(!t)return; t.enabled=!t.enabled; $('camBtn').classList.toggle('on',t.enabled); $('camBtn').textContent=t.enabled?'📷':'🚫'; };
+  sendFeedback.onclick=submitFeedback;
+  skipFeedback.onclick=hideFeedback;
+  window.addEventListener('beforeunload',()=>{ try{ if(queueRef)queueRef.remove(); if(roomRef)roomRef.child('status').set('ended'); if(pairRef)pairRef.child('status').set('ended'); }catch(e){} });
+  init();
+})();
+</script>
+</body>
+</html>

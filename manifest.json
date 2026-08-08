@@ -1,7 +1,7 @@
 {
-  "name": "Melt — Love that melts doubts away",
-  "short_name": "Melt",
-  "description": "Melt — the warmer way to date. 20 free likes a day, 10 free messages per match, GOLD once and forever.",
+  "name": "Tayripages — Where real connections begin",
+  "short_name": "Tayripages",
+  "description": "Tayripages — where real connections begin. Tayri is the Tamazight word for love. 20 free likes a day, 10 free messages per match, GOLD once and forever.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",

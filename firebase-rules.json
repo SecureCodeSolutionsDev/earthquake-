@@ -123,6 +123,66 @@
       "gold": {
         ".read": "auth != null",
         ".write": "root.child('wasla_dating/admins/'+auth.uid).exists()"
+      },
+      "videoQueue": {
+        ".read": "auth != null",
+        "$uid": {
+          ".write": "auth != null && auth.uid === $uid",
+          ".validate": "newData.hasChildren(['uid','state','createdAt']) && newData.child('uid').isString() && newData.child('uid').val() === $uid && newData.child('state').val() === 'waiting' && newData.child('createdAt').isNumber()"
+        },
+        ".indexOn": [
+          "state",
+          "createdAt"
+        ]
+      },
+      "videoPairIndex": {
+        ".read": "auth != null",
+        "$roomId": {
+          ".write": "auth != null && ((data.exists() && (data.child('a').val() === auth.uid || data.child('b').val() === auth.uid)) || (!data.exists() && (newData.child('a').val() === auth.uid || newData.child('b').val() === auth.uid)))",
+          ".validate": "newData.hasChildren(['a','b','status','createdAt']) && newData.child('a').isString() && newData.child('b').isString() && newData.child('a').val() !== newData.child('b').val() && newData.child('status').isString() && (newData.child('status').val() === 'ringing' || newData.child('status').val() === 'ended') && newData.child('createdAt').isNumber()"
+        },
+        ".indexOn": [
+          "a",
+          "b",
+          "status",
+          "createdAt"
+        ]
+      },
+      "videoRooms": {
+        "$roomId": {
+          ".read": "auth != null && data.exists() && (data.child('a').val() === auth.uid || data.child('b').val() === auth.uid)",
+          ".write": "auth != null && ((data.exists() && (data.child('a').val() === auth.uid || data.child('b').val() === auth.uid)) || (!data.exists() && (newData.child('a').val() === auth.uid || newData.child('b').val() === auth.uid)))",
+          ".validate": "newData.hasChildren(['a','b','status','createdAt']) && newData.child('a').isString() && newData.child('b').isString() && newData.child('a').val() !== newData.child('b').val() && newData.child('status').isString() && (newData.child('status').val() === 'ringing' || newData.child('status').val() === 'ended') && newData.child('createdAt').isNumber()",
+          "offer": {
+            ".validate": "newData.hasChildren(['type','sdp']) && newData.child('type').isString() && newData.child('sdp').isString() && newData.child('sdp').val().length < 30000"
+          },
+          "answer": {
+            ".validate": "newData.hasChildren(['type','sdp']) && newData.child('type').isString() && newData.child('sdp').isString() && newData.child('sdp').val().length < 30000"
+          },
+          "candidates": {
+            "$uid": {
+              "$candidateId": {
+                ".validate": "newData.hasChildren(['candidate']) && newData.child('candidate').isString() && newData.child('candidate').val().length < 5000"
+              }
+            }
+          }
+        }
+      },
+      "socialVotes": {
+        ".read": "auth != null",
+        "$week": {
+          "$from": {
+            ".read": "auth != null && auth.uid === $from",
+            "$to": {
+              ".write": "auth != null && auth.uid === $from && $from !== $to",
+              ".validate": "newData.hasChildren(['to','sociability','respect','charm','ts']) && newData.child('to').isString() && newData.child('to').val() === $to && newData.child('sociability').isNumber() && newData.child('sociability').val() >= 1 && newData.child('sociability').val() <= 5 && newData.child('respect').isNumber() && newData.child('respect').val() >= 1 && newData.child('respect').val() <= 5 && newData.child('charm').isNumber() && newData.child('charm').val() >= 1 && newData.child('charm').val() <= 5 && newData.child('ts').isNumber()"
+            }
+          }
+        },
+        ".indexOn": [
+          "to",
+          "ts"
+        ]
       }
     }
   }
