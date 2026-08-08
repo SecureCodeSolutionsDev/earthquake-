@@ -164,7 +164,7 @@ textarea.inp{min-height:80px;resize:none}
 .chathead.excl{background:linear-gradient(90deg,#fff2cd,#fff)}
 .chatbody{flex:1;overflow-y:auto;padding:14px 14px 6px;display:flex;flex-direction:column;gap:8px;scrollbar-width:none}
 .chatbody::-webkit-scrollbar{display:none}
-.bub{max-width:76%;padding:11px 15px;border-radius:20px;font-size:14.5px;line-height:1.4;animation:bi .2s ease;position:relative}
+.bub{max-width:76%;padding:11px 15px;border-radius:20px;font-size:14.5px;line-height:1.4;animation:bi .2s ease;position:relative;cursor:pointer}
 @keyframes bi{from{opacity:0;transform:scale(.92) translateY(6px)}to{opacity:1;transform:none}}
 .bub.me{align-self:flex-end;background:var(--grad);color:#fff;border-end-end-radius:6px}
 .bub.them{align-self:flex-start;background:#fff;border:1px solid var(--line);border-end-start-radius:6px;box-shadow:0 2px 8px rgba(43,34,48,.05)}
@@ -316,6 +316,7 @@ html{background:#08030a}
 .quota{padding:0 18px 6px;font-size:11.5px;font-weight:800;color:var(--mut);display:flex;justify-content:flex-end;gap:6px;align-items:center}
 .quota svg{color:var(--pk)}
 .streakfire .h1{color:var(--gold)}
+.referral-card{border:1px solid #f0d394;background:linear-gradient(145deg,#fffdf3,#fff8df);color:#5f4a1c}.referral-head{display:flex;align-items:center;gap:9px;font-weight:950;color:#8d6100}.referral-icon{width:34px;height:34px;border-radius:12px;background:linear-gradient(45deg,#f2c14e,#ff9d5c);display:grid;place-items:center;color:#fff;font-size:18px}.referral-progress{height:8px;border-radius:99px;background:#f2e4bb;overflow:hidden;margin:10px 0 5px}.referral-progress i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#f2c14e,#ff8a5c)}.referral-actions{display:flex;gap:8px;margin-top:10px}.referral-actions .btn{flex:1;padding:11px;font-size:12px}
 
 
 /* ---------- TAYRIPAGES AUTH — cinematic full-bleed photograph ---------- */
@@ -579,7 +580,12 @@ let uid=myUid();
 const L=load();
 function myUid(){let u=localStorage.getItem('zwin_uid');if(!u){u='u_'+Math.random().toString(36).slice(2,9)+Date.now().toString(36);localStorage.setItem('zwin_uid',u)}return u}
 function load(){try{return JSON.parse(localStorage.getItem('zwin_local'))||fresh()}catch(e){return fresh()}}
-function fresh(){return {me:null,gold:0,swiped:{},matches:[],chats:{},freeLeft:{},exclusive:{},likesYou:[],likesDay:{d:'',n:0},superDay:{d:'',n:0},boostDay:'',boostUntil:0,unread:{},pendingOrders:[],seen:{},gifts:{} } }
+function fresh(){return {me:null,gold:0,referralCount:0,referralGoldUntil:0,referralJoined:false,deletedForMe:{},swiped:{},matches:[],chats:{},freeLeft:{},exclusive:{},likesYou:[],likesDay:{d:'',n:0},superDay:{d:'',n:0},boostDay:'',boostUntil:0,unread:{},pendingOrders:[],seen:{},gifts:{} } }
+function goldActive(){ return !!L.gold || (+L.referralGoldUntil||0)>Date.now(); }
+function captureReferral(){
+  try{ const r=new URLSearchParams(location.search).get('ref'); if(r&&r.length>5&&r.length<160&&r!==uid)localStorage.setItem('tayri_referrer',r); }catch(e){}
+}
+captureReferral();
 function save(){localStorage.setItem('zwin_local',JSON.stringify(L));
   paintGold();paintBadges()}
 
@@ -604,7 +610,7 @@ function IC(n,px){ const P={
 function shop(){ openGold(); } // legacy shim
 
 /* ============ 👑 TAYRIPAGES GOLD — one-time pass, unlimited forever (no coins) */
-function paintGold(){ const el=$('goldTop'); if(el)el.textContent=L.gold?T('GOLD'):T('GO GOLD'); }
+function paintGold(){ const el=$('goldTop'); if(el)el.textContent=goldActive()?T('GOLD'):T('GO GOLD'); }
 function goldPerks(){ return [
   [T('Unlimited likes — swipe all day'),'heart'],
   [T('Unlimited chat with every match'),'chat'],
@@ -614,7 +620,7 @@ function goldPerks(){ return [
   [T('1 free Boost every day'),'spark']]; }
 function paintLikesPill(){ const el=$('quotaSlot'); if(!el)return;
   if(!L.me||!L.me.name){ el.innerHTML=''; return; }
-  if(L.gold){ el.innerHTML='<span class="gldtxt">'+IC('crown',13)+' GOLD · '+T('unlimited')+'</span>'; return; }
+  if(goldActive()){ el.innerHTML='<span class="gldtxt">'+IC('crown',13)+' GOLD · '+T('unlimited')+'</span>'; return; }
   const today=new Date().toDateString(); const n=L.likesDay.d===today?(L.likesDay.n||0):0;
   const left=Math.max(0,G.likesPerDay-n);
   el.innerHTML=IC('heart',13)+' <b>'+left+'</b> '+T('likes left today')+' · <span class="goldlink" onclick="openGold(\'likes\')">'+T('GO GOLD')+'</span>'; }
@@ -738,6 +744,7 @@ let AUTHED=false;
 function onAuthed(u){
   if(AUTHED)return; AUTHED=true; document.body.classList.remove('preauth');
   uid=u.uid; // identity IS the verified Google user from now on
+  loadReferralStatus().catch(()=>{});
   // 👥 several accounts on one phone: memory belongs to an account, not to the device.
   // Different uid = wipe local memory, then the cloud rebuilds it (profile, photos, matches, likes).
   if(L.accountUid!==uid){ const keepLang=L.lang; Object.keys(L).forEach(k=>delete L[k]); Object.assign(L,fresh()); L.lang=keepLang||'en'; L.accountUid=uid; save(); }
@@ -756,6 +763,7 @@ function restoreMe(){
       L.me={ name:p.name, age:p.age||22, g:p.g||'', into:(Array.isArray(p.into)&&p.into.length?p.into.slice(0,2):['w','m']),
         city:p.city||'Casablanca', bio:p.bio||'', tags:(Array.isArray(p.tags)?p.tags.slice(0,4):[]),
         em:p.em||'😊', gi:(p.gi!=null?p.gi:0), uid:uid, photos:[] };
+      L.createdAt=p.createdAt||Date.now();
       save();
       ref('photos/'+uid).once('value').then(ps=>{ const m=ps.val()||{};
         const arr=['p0','p1','p2','p3','p4','p5'].map(k=>m[k]).filter(Boolean);
@@ -792,6 +800,54 @@ function googleIn(){
 
 function ref(p){return DB.ref('wasla_dating/'+p)} // root kept as chosen — rules must match this word
 function txAdd(path,d){return ref(path).transaction(v=>+(((+v||0)+d).toFixed(2)))}
+function referralBase(){
+  const p=location.pathname.replace(/index\.html$/,'');
+  return location.origin+(p.endsWith('/')?p:p+'/');
+}
+function referralLink(){ return referralBase()+'?ref='+encodeURIComponent(uid); }
+async function copyReferral(){
+  const link=referralLink();
+  try{ await navigator.clipboard.writeText(link); toast('🔗 Referral link copied — invite 10 friends for 1 hour of GOLD'); }
+  catch(e){ window.prompt('Copy your Tayripages referral link',link); }
+}
+async function shareReferral(){
+  const link=referralLink();
+  if(navigator.share){ try{ await navigator.share({title:'Join Tayripages',text:'Join me on Tayripages — Tayri means love in Tamazight.',url:link}); return; }catch(e){} }
+  copyReferral();
+}
+async function processReferral(){
+  const referrer=localStorage.getItem('tayri_referrer');
+  if(!referrer||!uid||referrer===uid||L.referralJoined)return;
+  try{
+    await ref('referrals/'+referrer+'/'+uid).set({referrer,referred:uid,status:'qualified',createdAt:firebase.database.ServerValue.TIMESTAMP});
+    L.referralJoined=true; localStorage.removeItem('tayri_referrer'); save();
+  }catch(e){ console.warn('referral record failed',e); }
+}
+async function loadReferralStatus(){
+  if(!uid||!DB)return;
+  try{
+    const [rs,rew]=await Promise.all([ref('referrals/'+uid).once('value'),ref('referralRewards/'+uid).once('value')]);
+    const qualified=Object.values(rs.val()||{}).filter(v=>v&&v.status==='qualified').length;
+    const old=rew.val()||{}; const grants=Math.floor(qualified/10); const previous=+old.grantedCount||0;
+    let until=+old.until||0;
+    if(grants>previous){ until=Math.max(Date.now(),until)+(grants-previous)*3600000; await ref('referralRewards/'+uid).set({until,grantedCount:grants,updatedAt:firebase.database.ServerValue.TIMESTAMP}); toast('🎁 Referral GOLD unlocked for '+((grants-previous))+' hour'+(grants-previous===1?'':'s')+' — chat and swipes only'); }
+    L.referralCount=qualified; L.referralGoldUntil=until; save(); if(R.tab==='wallet')renderWallet();
+  }catch(e){ console.warn('referral status failed',e); }
+}
+function referralGoldCard(){
+  const count=+L.referralCount||0, progress=count%10, active=(+L.referralGoldUntil||0)>Date.now();
+  const remaining=10-progress;
+  const time=active?Math.max(1,Math.ceil((+L.referralGoldUntil-Date.now())/60000)):0;
+  return `<div class="card referral-card" style="margin-top:12px">
+    <div class="referral-head"><span class="referral-icon">🎁</span><span>Invite 10 friends</span></div>
+    <div class="small" style="margin-top:9px">When 10 new friends create a Tayripages profile through your referral link, you receive <b>1 hour of free GOLD</b> for swipes, likes, and chat.</div>
+    <div class="mut tiny" style="margin-top:7px">Video chat and Pro video filters are not included in this reward.</div>
+    <div class="referral-progress"><i style="width:${progress*10}%"></i></div>
+    <div class="mut tiny"><b>${progress}/10</b> qualified friend${progress===1?'':'s'} · ${remaining===10?'10 more to unlock':remaining+' more to the next hour'}</div>
+    ${active?`<div class="gldtxt small" style="margin-top:8px">⏱ Referral GOLD active · ${time} minute${time===1?'':'s'} remaining</div>`:''}
+    <div class="referral-actions"><button class="btn btn-line" onclick="copyReferral()">Copy invite link</button><button class="btn btn-grad goldcta" onclick="shareReferral()">Share</button></div>
+  </div>`;
+}
 function heartbeat(){
   if(!window._phb){ window._phb=1; window.addEventListener('pagehide',()=>{ try{ if(uid&&L.me)ref('presence/'+uid).update({online:false,lastSeen:Date.now()}); }catch(e){} }); }
   ref('presence/'+uid).update({online:true,lastSeen:Date.now(),name:L.me.name});
@@ -802,10 +858,12 @@ async function syncMe(){
   // publish my profile & coins, listen for events (likes, gifts, orders)
   await ref('users/'+uid).update({
     name:L.me.name,age:L.me.age,g:L.me.g,into:L.me.into,city:L.me.city,bio:L.me.bio,
-    tags:L.me.tags.slice(0,4),em:L.me.em,gi:L.me.gi,lastSeen:Date.now(),
+    tags:L.me.tags.slice(0,4),em:L.me.em,gi:L.me.gi,lastSeen:Date.now(),createdAt:L.createdAt||Date.now(),
     hasPhoto:(L.me.photos&&L.me.photos.length)?Date.now():0,
     geo:(L.geo&&L.geo.la!=null)?{la:L.geo.la,lo:L.geo.lo}:null
   });
+  loadReferralStatus().catch(()=>{});
+  if(!window._referralListener){ window._referralListener=1; ref('referrals/'+uid).on('value',()=>loadReferralStatus()); }
   // bring back MY swipes first — a fresh device never re-shows people I already judged
   ref('swipes/'+uid).once('value').then(s2=>{ const m=s2.val()||{}; let ch=0;
     Object.keys(m).forEach(pid=>{ if(!L.swiped[pid]){ L.swiped[pid]={d:m[pid].d,ts:m[pid].ts||Date.now()}; ch=1; } });
@@ -1250,11 +1308,12 @@ function obStep2(){
 async function obFinish(){
   OB.data.bio=$('obBio').value.trim()||'New here — say hi and surprise me 💛';
   if(OB.data.tags.length<2)return toast('Pick at least 2 interests ✨');
+  const firstProfile=!L.createdAt;
   L.me={...OB.data,uid}; L.createdAt=Date.now();
   if(OB.photo){ L.me.photos=[OB.photo]; OB.photo=''; delete photoCache[uid]; save(); syncPhotos(); }
   else save();
   toast(`Welcome, ${L.me.name} — may you find the one that brings you closer.`);
-  if(!DEMO)syncMe();
+  if(!DEMO){ syncMe(); if(firstProfile)processReferral().then(loadReferralStatus).catch(()=>{}); }
   showTab('discover'); loadDeck().catch(e=>{ console.warn('deck',e); paintDeck(); });
 }
 function editProfile(){ OB.data={...L.me}; OB.step=1; paintOb(); showTab('onboard'); }
@@ -1369,8 +1428,8 @@ async function doSwipe(pid,dir){
   const _today=new Date().toDateString();
   if(L.likesDay.d!==_today)L.likesDay={d:_today,n:0};
   if(L.superDay.d!==_today)L.superDay={d:_today,n:0};
-  if(dir==='like'&&!L.gold){ if(L.likesDay.n>=G.likesPerDay){ undoSwipe(); return openGold('likes'); } L.likesDay.n++; }
-  if(dir==='super'){ const _cap=L.gold?G.superGold:G.superPerDay; if((L.superDay.n||0)>=_cap){ undoSwipe(); return openGold('super'); } L.superDay.n++; }
+  if(dir==='like'&&!goldActive()){ if(L.likesDay.n>=G.likesPerDay){ undoSwipe(); return openGold('likes'); } L.likesDay.n++; }
+  if(dir==='super'){ const _cap=goldActive()?G.superGold:G.superPerDay; if((L.superDay.n||0)>=_cap){ undoSwipe(); return openGold('super'); } L.superDay.n++; }
   paintLikesPill(); save();
   if(!DEMO&&!p.sim){
     ref('swipes/'+uid+'/'+pid).set({d:dir,ts:Date.now()});
@@ -1391,12 +1450,12 @@ async function doSwipe(pid,dir){
 function undoSwipe(){ R.deck.unshift(R.lastSwipe.p); delete L.swiped[R.lastSwipe.p.id]; paintDeck(); }
 function rewind(){
   if(!R.lastSwipe)return toast('Nothing to rewind');
-  if(!L.gold)return openGold('rewind');
+  if(!goldActive())return openGold('rewind');
   undoSwipe(); save(); paintLikesPill(); toast(''+T('No judgment — take another look'));
 }
 async function boost(){
   const live=L.boostUntil>Date.now(); if(live)return toast('Already boosted — enjoy the views');
-  if(!L.gold)return openGold('boost');
+  if(!goldActive())return openGold('boost');
   const _tb=new Date().toDateString(); if(L.boostDay===_tb)return toast('GOLD boost: 1 per day — come back tomorrow');
   L.boostDay=_tb; L.boostUntil=Date.now()+30*60000;
   if(!DEMO)ref('users/'+uid).update({boostUntil:L.boostUntil});
@@ -1471,7 +1530,7 @@ function renderLikes(){
 }
 function revealLike(i){
   const lk=L.likesYou[i]; if(!lk)return;
-  if(lk.d!=='super'&&!lk.seen&&!L.gold)return openGold('likesYou');
+  if(lk.d!=='super'&&!lk.seen&&!goldActive())return openGold('likesYou');
   lk.seen=1; save(); renderLikes();
   const p=personOf(lk.uid);
   if(DEMO&&Math.random()<0.75){ makeMatch(p); }
@@ -1527,7 +1586,7 @@ function paintFreeBar(){
   const pct=Math.max(0,left*100/C.freeChatMsgs);
   $('freeBar').innerHTML= left>0
     ? `<span>${T('💌 Free messages left')}</span><div class="bar"><i style="width:${pct}%"></i></div><b>${left}</b>`
-    : (L.gold
+    : (goldActive()
       ? `<span class="gldtxt">${IC('crown',13)} GOLD · ${T('unlimited messages')}</span>`
       : `<span>${T('Free messages used')}</span><div class="bar"><i style="width:100%;background:var(--gold)"></i></div><b class="goldlink" onclick="openGold('chat')">${T('GO GOLD')}</b>`);
 }
@@ -1538,22 +1597,50 @@ function paintIce(){
   $('iceRow').innerHTML=(L.chats[R.chatWith]||[]).length<2?uniq.map(s=>`<button class="chip" onclick="useIce('${s.replace(/'/g,"\\'")}')">${s}</button>`).join(''):'';
 }
 function useIce(s){ $('chatIn').value=s; $('chatIn').focus(); }
+function isDeletedForMe(mid,key){ return !!(L.deletedForMe&&L.deletedForMe[mid]&&L.deletedForMe[mid][key]); }
 function paintMsgs(){
-  const chat=L.chats[R.chatWith]||[];
-  $('chatBody').innerHTML=`<div class="sys">💕 You matched — first ${C.freeChatMsgs} messages are free. Be kind ✨</div>`+chat.map(m=>bubbleHtml(m)).join('');
+  const mid=R.chatWith; const chat=(L.chats[mid]||[]).filter((m,i)=>{ if(!m.key)m.key='local_'+(m.ts||Date.now())+'_'+i; return !isDeletedForMe(mid,m.key); });
+  $('chatBody').innerHTML=`<div class="sys">💕 You matched — first ${C.freeChatMsgs} messages are free. Be kind ✨</div>`+chat.map((m,i)=>bubbleHtml(m,i)).join('');
   scrollChat();
 }
-function bubbleHtml(m){
+function bubbleHtml(m,index){
   if(m.who==='sys')return `<div class="sys">${m.text}</div>`;
   if(m.who==='gift')return `<div class="gift">🌹 ${m.fromName} ${T('sent you a rose')}<div class="tiny mut" style="margin-top:3px">${T('Sweet gesture')}</div></div>`;
+  if(!m.key)m.key='local_'+(m.ts||Date.now())+'_'+(index||0);
   const tm=new Date(m.ts).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
-  return `<div class="bub ${m.me?'me':'them'}">${m.text}<span class="tm">${m.me&&m.read?'✓✓ read · ':''}${tm}</span></div>`;
+  const key=encodeURIComponent(m.key);
+  return `<div class="bub ${m.me?'me':'them'}" data-msg-key="${key}" onclick="messageMenu('${key}')">${m.text}<span class="tm">${m.me&&m.read?'✓✓ read · ':''}${tm} · tap for options</span></div>`;
 }
-function pushBubble(m){ $('chatBody').insertAdjacentHTML('beforeend',bubbleHtml(m)); scrollChat(); }
+function pushBubble(m){ $('chatBody').insertAdjacentHTML('beforeend',bubbleHtml(m,(L.chats[R.chatWith]||[]).length-1)); scrollChat(); }
 function scrollChat(){ $('chatBody').scrollTop=1e7; }
 function addMsg(mid,who,obj,meFlag){
-  const m= who==='gift'? {who,coins:obj.coins,fromName:obj.fromName,ts:Date.now()} : {who,text:obj,me:!!meFlag,ts:Date.now()};
+  const m= who==='gift'? {who,coins:obj.coins,fromName:obj.fromName,ts:Date.now(),key:'local_gift_'+Date.now()} : {who,text:obj,me:!!meFlag,ts:Date.now(),key:'local_'+Date.now()};
   L.chats[mid]=L.chats[mid]||[]; L.chats[mid].push(m); save(); return m;
+}
+function messageMenu(encodedKey){
+  const key=decodeURIComponent(encodedKey||''); const mid=R.chatWith; const m=(L.chats[mid]||[]).find(x=>x.key===key); if(!m||m.who!=='msg')return;
+  const own=!!m.me||m.from===uid; const canEveryone=own&&!String(key).startsWith('local_')&&!String(key).startsWith('sim_');
+  $('genBody').innerHTML=`<div class="h2" style="margin-bottom:8px">Message options</div>
+    <div class="card small" style="line-height:1.45;margin-bottom:10px">${proofEsc(m.text)}</div>
+    <div class="mut tiny" style="margin-bottom:10px">Choose carefully. Deletions cannot be undone.</div>
+    <button class="btn btn-line" onclick="confirmDeleteMessage('me','${encodeURIComponent(key)}')">Delete for me</button>
+    ${canEveryone?`<div style="height:8px"></div><button class="btn btn-line" style="color:#c3345a" onclick="confirmDeleteMessage('everyone','${encodeURIComponent(key)}')">Unsend for everyone</button>`:''}
+    <div style="height:8px"></div><button class="btn btn-line" onclick="hide('genSheet')">Cancel</button>`;
+  show('genSheet');
+}
+async function confirmDeleteMessage(scope,encodedKey){
+  const key=decodeURIComponent(encodedKey||''), mid=R.chatWith; const m=(L.chats[mid]||[]).find(x=>x.key===key); if(!m)return;
+  const text=scope==='everyone'?'Unsend this message for everyone? It will be removed from the conversation permanently.':'Delete this message only from your view? The other person will still see it.';
+  if(!window.confirm(text))return;
+  if(scope==='everyone'){
+    if(!m.me&&m.from!==uid)return toast('You can only unsend your own message.');
+    if(String(key).startsWith('local_'))return toast('This older local message cannot be unsent for everyone.');
+    try{ await ref('chats/'+mid+'/'+key).remove(); L.chats[mid]=(L.chats[mid]||[]).filter(x=>x.key!==key); save(); paintMsgs(); hide('genSheet'); toast('Message unsent for everyone'); }
+    catch(e){ toast('Message could not be unsent. Try again.','err'); }
+  }else{
+    L.deletedForMe=L.deletedForMe||{}; L.deletedForMe[mid]=L.deletedForMe[mid]||{}; L.deletedForMe[mid][key]=1;
+    L.chats[mid]=(L.chats[mid]||[]).filter(x=>x.key!==key); save(); paintMsgs(); hide('genSheet'); toast('Message deleted for you');
+  }
 }
 async function sendMsg(){
   const v=$('chatIn').value.trim(); if(!v)return;
@@ -1561,13 +1648,12 @@ async function sendMsg(){
   const p=personOf(m.peer);
   // first messages free, then GOLD wall (immediate) — no coins anywhere
   if((L.freeLeft[mid]||0)>0){ L.freeLeft[mid]--; if(L.freeLeft[mid]===0)setTimeout(()=>toast('Free messages used — GOLD = unlimited chat with '+m.name),400); }
-  else if(!L.gold){ return openGold('chat'); }
+  else if(!goldActive()){ return openGold('chat'); }
   $('chatIn').value='';
-  const msg={who:'msg',text:v,me:true,ts:Date.now()}; (L.chats[mid]=L.chats[mid]||[]).push(msg);
+  const serverRef=(!DEMO&&!p.sim)?ref('chats/'+mid).push():null;
+  const msg={who:'msg',text:v,me:true,from:uid,key:serverRef?serverRef.key:'local_'+Date.now(),ts:Date.now()}; (L.chats[mid]=L.chats[mid]||[]).push(msg);
   save(); pushBubble(msg); paintFreeBar(); paintIce();
-  if(!DEMO&&!p.sim){
-    ref('chats/'+mid).push({from:uid,fromName:L.me.name,text:v,ts:Date.now()}); // chat sync only
-  }
+  if(serverRef){ try{ await serverRef.set({from:uid,fromName:L.me.name,text:v,ts:msg.ts}); }catch(e){ toast('Message could not be sent.','err'); } }
   if(p&&p.sim)botReply(mid,p);
 }
 function botReply(mid,p){
@@ -1586,21 +1672,25 @@ function botReply(mid,p){
   },600+Math.random()*1200);
 }
 /* live chat for real users */
-let chatListener=null;
+let chatQuery=null;
 function listenChat(mid){
-  if(chatListener){chatListener.off();chatListener=null}
+  if(chatQuery){try{chatQuery.off();}catch(e){} chatQuery=null;}
   if(DEMO)return;
   const p=peerOf(mid);
-  chatListener=ref('chats/'+mid).limitToLast(30).on('child_added',s=>{
+  chatQuery=ref('chats/'+mid).limitToLast(30);
+  chatQuery.on('child_added',s=>{
     const m=s.val(); if(!m)return;
     if(m.from&&m.from!==uid){
-      const key=s.key; if(L.seen['cm'+key])return; L.seen['cm'+key]=1;
-      const msg={who:'msg',text:m.text,me:false,ts:m.ts||Date.now()};
+      const key=s.key; if(L.seen['cm'+key]||isDeletedForMe(mid,key))return; L.seen['cm'+key]=1;
+      const msg={who:'msg',text:m.text,me:false,from:m.from,key:key,ts:m.ts||Date.now()};
       (L.chats[mid]=L.chats[mid]||[]).push(msg); save();
       if(R.chatWith===mid)pushBubble(msg);
       else { L.unread[mid]=(L.unread[mid]||0)+1; toast(`💬 ${peerOf(mid)?peerOf(mid).name:'Match'}: ${m.text.slice(0,40)}…`); paintBadges(); }
     }
     if(m.fromName&&!m.from){ /* system */ }
+  });
+  chatQuery.on('child_removed',s=>{
+    const key=s.key; L.chats[mid]=(L.chats[mid]||[]).filter(x=>x.key!==key); save(); if(R.chatWith===mid)paintMsgs();
   });
   // freeLeft sync
   ref('chatMeta/'+mid+'/freeLeft').on('value',s=>{ if(s.val()!==null&&s.val()!==L.freeLeft[mid]){L.freeLeft[mid]=s.val();save();if(R.chatWith===mid)paintFreeBar();} });
@@ -1650,30 +1740,45 @@ function unmatchAsk(){
     <button class="btn btn-line" onclick="hide('genSheet')">Keep the match</button>`;
   show('genSheet');
 }
-/* 🚩 REPORT — clear reasons, also unmatches + flags admin */
+/* 🚩 REPORT — reason first, then optionally attach one text message as evidence */
+function proofEsc(s){ return String(s||'').slice(0,1200).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function reportAsk(){
   const m=L.matches.find(m=>m.mid===R.chatWith); if(!m)return;
   const reasons=['💰 Asked for money / scam','🤬 Harassment or hate','🔞 Inappropriate content','🎭 Fake profile / catfish','📵 Something else'];
-  $('genBody').innerHTML=`<div class="h2" style="margin-bottom:4px">Report ${m.name}</div>
-    <div class="mut small" style="margin-bottom:12px">Our team reviews every report within 24h.<br>They will be unmatched & blocked instantly.</div>
-    ${reasons.map(r=>`<button class="btn btn-line" style="margin-bottom:8px;text-align:start" onclick="doUnmatch(true,'${r}')">${r}</button>`).join('')}
+  $('genBody').innerHTML=`<div class="h2" style="margin-bottom:4px">Report ${proofEsc(m.name)}</div>
+    <div class="mut small" style="margin-bottom:12px">Our team reviews every report within 24h.<br>They will be unmatched and blocked instantly.</div>
+    ${reasons.map(r=>`<button class="btn btn-line" style="margin-bottom:8px;text-align:start" onclick="reportProofAsk('${r}')">${r}</button>`).join('')}
     <button class="btn btn-line" onclick="hide('genSheet')">Cancel</button>`;
   show('genSheet');
 }
-async function doUnmatch(reported,reason){
+function reportProofAsk(reason){
+  const mid=R.chatWith, m=L.matches.find(x=>x.mid===mid); if(!m)return;
+  const messages=(L.chats[mid]||[]).map((x,i)=>({x,i})).filter(o=>o.x&&o.x.who==='msg'&&o.x.text).slice(-30);
+  $('genBody').innerHTML=`<div class="h2" style="margin-bottom:4px">Send one proof message?</div>
+    <div class="mut small" style="margin-bottom:12px">Choose at most one text message for the admin team. You can also report without attaching proof.</div>
+    <div style="max-height:280px;overflow:auto">${messages.length?messages.map(o=>`<button class="btn btn-line" style="margin-bottom:8px;text-align:start;line-height:1.45" onclick="doUnmatch(true,'${reason}',${o.i})"><b>${o.x.me?'You':proofEsc(m.name)}</b><br>${proofEsc(o.x.text)}</button>`).join(''):'<div class="mut small" style="padding:10px 0">No text messages are available in this conversation.</div>'}</div>
+    <button class="btn btn-grad" onclick="doUnmatch(true,'${reason}',null)">Report without proof</button>
+    <div style="height:8px"></div><button class="btn btn-line" onclick="hide('genSheet')">Cancel</button>`;
+  show('genSheet');
+}
+async function doUnmatch(reported,reason,proofIndex){
   hide('genSheet');
   const mid=R.chatWith; const m=L.matches.find(m=>m.mid===mid); if(!m)return;
   const peerId=m.peer;
   if(!DEMO){
     try{
-      if(reported)ref('reports').push({from:uid,against:peerId,reason:reason||'report',mid,ts:Date.now()});
+      if(reported){
+        const source=(L.chats[mid]||[])[Number.isInteger(proofIndex)?proofIndex:-1];
+        const proof=source&&source.text?{text:String(source.text).slice(0,1200),from:source.me?uid:peerId,fromName:source.me?(L.me&&L.me.name):m.name,ts:source.ts||Date.now()}:null;
+        await ref('reports').push({from:uid,against:peerId,reason:reason||'report',mid,ts:Date.now(),status:'open',proof:proof||null});
+      }
       // tombstone: THEIR app deletes the match too on next sync (locks safe — only members can write the match)
       await ref('matches/'+mid).set({dead:1,a:uid,b:peerId,by:uid,ts:Date.now()}).catch(()=>{});
       await ref('userMatches/'+uid+'/'+mid).remove().catch(()=>{});
       await ref('chats/'+mid).remove().catch(()=>{});
       await ref('chatMeta/'+mid).remove().catch(()=>{});
       await ref('typing/'+mid).remove().catch(()=>{});
-    }catch(e){}
+    }catch(e){ toast('The report could not be sent. Please try again.','err'); }
   }
   L.matches=L.matches.filter(x=>x.mid!==mid);
   delete L.chats[mid]; delete L.freeLeft[mid]; delete L.unread[mid]; delete L.exclusive[mid];
@@ -1694,6 +1799,7 @@ function renderWallet(){
       ${goldPerks().map(p=>`<div class="perkrow">${IC(p[1],18)}<span>${p[0]}</span><b class="gldtxt">${T('ON')}</b></div>`).join('')}
     </div>
     <div class="mut tiny" style="text-align:center;padding:14px">${G.priceDH} DH (≈ $${G.usd||9}) ${T('one-time')} · ${T('Support:')} ${TAYRI_CONFIG.company.supportEmail}</div>`
+    + referralGoldCard()
   : `<div class="streakfire goldhero">
       <div class="gcr">${IC('crown',42)}</div>
       <div style="flex:1"><b class="h1" style="font-size:26px">Tayripages GOLD</b>
@@ -1705,7 +1811,8 @@ function renderWallet(){
     ${pend.length?`<div class="card small" style="margin-top:10px;background:#241a08;border-color:#7a5514;color:#e8c96e">${T('Payment under validation — GOLD activates by itself when approved. Ref:')} <b>${pend.map(o=>o.ref).join(', ')}</b></div>`:''}
     <div style="height:12px"></div>
     <button class="btn btn-grad goldcta" onclick="buyGold()">${IC('crown',18)} ${T('Get GOLD')} · ${G.priceDH} DH (≈ $${G.usd||9}) — ${T('once, forever')}</button>
-    <div class="mut tiny" style="text-align:center;padding:14px">${T('Bank transfer today · Al Barid & CMI cards soon')}</div>`;
+    <div class="mut tiny" style="text-align:center;padding:14px">${T('Bank transfer today · Al Barid & CMI cards soon')}</div>`
+    + referralGoldCard();
 }
 
 /* ============ PROFILE ============ */
@@ -1819,7 +1926,7 @@ function renderProfile(){
           <div><b style="font-size:20px">${L.matches.length}</b><div class="mut tiny">${T('Matches')}</div></div>
           <div><b style="font-size:20px">${Object.keys(L.likesYou).length||L.likesYou.length}</b><div class="mut tiny">${T('Admirers')}</div></div>
           <div><b style="font-size:20px">${L.likesDay.n||0}</b><div class="mut tiny">${T('Likes today')}</div></div>
-          <div><b style="font-size:20px">${L.gold?'∞':Math.max(0,G.likesPerDay-(L.likesDay.d===new Date().toDateString()?(L.likesDay.n||0):0))}</b><div class="mut tiny">${T('Free likes')}</div></div>
+          <div><b style="font-size:20px">${goldActive()?'∞':Math.max(0,G.likesPerDay-(L.likesDay.d===new Date().toDateString()?(L.likesDay.n||0):0))}</b><div class="mut tiny">${T('Free likes')}</div></div>
         </div>
       </div>
       <div style="height:10px"></div>
@@ -1840,12 +1947,12 @@ async function resetAll(){ /* one tap = logged out. No popup, no drama — the c
   localStorage.removeItem('zwin_local');
   try{ await Promise.race([firebase.auth().signOut(),new Promise(r=>setTimeout(r,1200))]); }catch(e){}
   location.reload(); }
-function paintGold(){ const el=$('goldTop'); if(el)el.textContent=L.gold?T('GOLD'):T('GO GOLD'); }
+function paintGold(){ const el=$('goldTop'); if(el)el.textContent=goldActive()?T('GOLD'):T('GO GOLD'); }
 
 /* ============ INIT ============ */
 setTimeout(()=>{ const dk=$('deck'); if(AUTHED&&R.tab==='discover'&&dk&&!dk.children.length){ try{paintDeck();}catch(e){} } }, 5200);
 const TAYRI_BUILD='v9'; /* bump this number on every release — every phone self-updates once, no cache games */
-try{ if(location.search.indexOf(TAYRI_BUILD)<0){ localStorage.setItem('tayri_boot_'+TAYRI_BUILD,'1'); location.replace(location.pathname+'?'+TAYRI_BUILD); } }catch(e){}
+try{ if(location.search.indexOf(TAYRI_BUILD)<0){ localStorage.setItem('tayri_boot_'+TAYRI_BUILD,'1'); const q=location.search; location.replace(location.pathname+(q?(q+'&'):'?')+TAYRI_BUILD); } }catch(e){}
 fbInit();
 paintGold();
 paintAuthBg();

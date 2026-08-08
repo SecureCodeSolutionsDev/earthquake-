@@ -104,7 +104,13 @@ tr:last-child td{border-bottom:none}
   </div>
 
   <div id="pg-or" style="display:none"><div class="card"><table id="tblOr"><tbody></tbody></table></div></div>
-  <div id="pg-rp" style="display:none"><div class="card"><table id="tblRp"><tbody></tbody></table></div></div>
+  <div id="pg-rp" style="display:none">
+    <div class="card" style="margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
+      <div><b>Report audit queue</b><div class="mut tiny">Review proof messages, then mark open reports as audited.</div></div>
+      <button class="btn btn-g" onclick="auditAllReports()">✅ Audit all open reports</button>
+    </div>
+    <div class="card"><table id="tblRp"><tbody></tbody></table></div>
+  </div>
   <div id="pg-vf" style="display:none"><div id="vfList"></div></div>
   <div id="pg-us" style="display:none"><div class="card"><table id="tblUs"><tbody></tbody></table></div></div>
 
@@ -128,6 +134,7 @@ let DB=null, DEMO=false, D={};
 const G=TAYRI_CONFIG.gold;
 function toast(m,k){const d=document.createElement('div');d.className='toast';d.textContent=m;$('toasts').appendChild(d);setTimeout(()=>d.remove(),2600)}
 function fmt(n){return `${(+n).toFixed(0)} DH`}
+function eh(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function ref(p){return DB.ref('wasla_dating/'+p)} // matches firebase-rules.json root
 function ts(t){return t?new Date(t).toLocaleString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}):''}
 let PIN_OK=false;
@@ -170,7 +177,10 @@ function boot(){
   DB.ref('.info/connected').on('value',s=>{$('connState').textContent=s.val()?'🟢 live':'🔴 offline'});
   // 🔐 read pieces separately — locked rules don't allow root reads
   ['users','presence','matches','chats','orders','reports','gold','verifyReq','photos','verified'].forEach(k=>{
-    ref(k).on('value',s=>{ D[k]=s.val()||{}; paintAll(); });
+    ref(k).on('value',s=>{ D[k]=s.val()||{}; paintAll(); },e=>{
+      console.error('Firebase read failed for '+k,e);
+      if(['orders','gold'].includes(k)) toast('Admin access denied for '+k+' — confirm this Google UID is in wasla_dating/admins','err');
+    });
   });
 }
 function paintAll(){
@@ -211,20 +221,45 @@ function paintOr(pend,all){
     <td style="text-align:end">${o.status==='pending'?`<button class="btn btn-g" onclick="approve('${id}','${o.uid}')">✓ Activate GOLD</button> <button class="btn btn-r" onclick="reject('${id}','${o.uid}')">✗</button>`:''}</td></tr>`).join('')
    :'<tr><td class="mut">No GOLD orders yet.</td></tr>')+'</tbody>';
 }
-function approve(id,ouid){
+async function approve(id,ouid){
   const o=(D.orders||{})[ouid]?.[id]; if(!o||o.status!=='pending')return;
-  ref('orders/'+ouid+'/'+id).update({status:'approved',handledAt:Date.now()});
-  ref('gold/'+ouid).set({at:Date.now(),by:'admin',price:o.price||0,ref:o.ref||''});
-  toast(`👑 GOLD activated for ${o.name} — their app unlocks instantly`);
+  const updates={
+    ['orders/'+ouid+'/'+id+'/status']:'approved',
+    ['orders/'+ouid+'/'+id+'/handledAt']:Date.now(),
+    ['gold/'+ouid]:{at:Date.now(),by:'admin',price:o.price||0,ref:o.ref||''}
+  };
+  try{
+    await DB.ref('wasla_dating').update(updates);
+    toast(`👑 GOLD activated for ${o.name} — their app unlocks instantly`);
+  }catch(e){
+    console.error('GOLD approval failed',e);
+    toast('Approval failed: '+(e.code||'permission denied')+' — confirm your Google UID is in wasla_dating/admins','err');
+  }
 }
-function reject(id,ouid){ ref('orders/'+ouid+'/'+id).update({status:'rejected'}); toast('Rejected'); }
+async function reject(id,ouid){
+  try{ await ref('orders/'+ouid+'/'+id).update({status:'rejected'}); toast('Order rejected'); }
+  catch(e){ console.error(e); toast('Reject failed: '+(e.code||'permission denied'),'err'); }
+}
 function paintRp(rows){
-  $('tblRp').innerHTML='<tbody>'+(rows.length?`<tr><th>Report</th><th>When</th><th></th></tr>`+
-   rows.sort((a,b)=>b[1].ts-a[1].ts).slice(0,30).map(([id,r])=>`<tr>
-    <td class="small">${r.from?.slice(0,12)||'?'} → ${r.against?.slice(0,12)||'?'}</td>
-    <td class="mut tiny">${ts(r.ts)}</td>
-    <td style="text-align:end"><button class="btn btn-r" onclick="banUser('${r.against}')">🚫 Ban user</button> <button class="btn btn-g" onclick="dismissRp('${id}')">Dismiss</button></td></tr>`).join('')
-   :'<tr><td class="mut">No reports 💛 healthy community!</td></tr>')+'</tbody>';
+  const sorted=rows.sort((a,b)=>(b[1].ts||0)-(a[1].ts||0)).slice(0,60);
+  const html=sorted.map(([id,r])=>{
+    const p=r.proof&&r.proof.text?`<div style="margin-top:6px;padding:8px;border-radius:9px;background:#160d12;color:#ffd8e5;font-size:12px;line-height:1.45"><b>PROOF · ${eh(r.proof.fromName||'Message')}</b><br>${eh(r.proof.text)}<div style="color:#b193a3;font-size:10px;margin-top:4px">${ts(r.proof.ts)}</div></div>`:'<span class="mut tiny">No message attached</span>';
+    const reviewed=r.status==='reviewed';
+    return `<tr><td class="small"><b>${eh(r.reason||'Report')}</b><div class="mut tiny">${eh(r.from||'?')} → ${eh(r.against||'?')}</div>${p}</td><td class="mut tiny">${ts(r.ts)}<div class="badge ${reviewed?'b-done':'b-live'}" style="margin-top:5px">${reviewed?'reviewed':'open'}</div></td><td style="text-align:end"><button class="btn btn-r" onclick="banUser('${eh(r.against)}')">🚫 Ban user</button> ${reviewed?'':`<button class="btn btn-g" onclick="reviewReport('${id}')">Mark reviewed</button>`} <button class="btn btn-line" onclick="dismissRp('${id}')">Dismiss</button></td></tr>`;
+  }).join('');
+  $('tblRp').innerHTML='<tbody>'+(sorted.length?'<tr><th>Report and evidence</th><th>When/status</th><th></th></tr>'+html:'<tr><td class="mut">No reports 💛 healthy community!</td></tr>')+'</tbody>';
+}
+async function reviewReport(id){
+  try{ await ref('reports/'+id).update({status:'reviewed',reviewedAt:Date.now(),reviewedBy:firebase.auth().currentUser.uid}); toast('Report marked reviewed'); }
+  catch(e){ toast('Could not mark report reviewed: '+(e.code||'permission denied'),'err'); }
+}
+async function auditAllReports(){
+  const updates={}, me=firebase.auth().currentUser;
+  if(!me)return toast('Sign in as admin first','err');
+  Object.entries(D.reports||{}).forEach(([id,r])=>{ if(!r||r.status==='reviewed')return; updates['reports/'+id+'/status']='reviewed'; updates['reports/'+id+'/reviewedAt']=Date.now(); updates['reports/'+id+'/reviewedBy']=me.uid; });
+  if(!Object.keys(updates).length)return toast('No open reports to audit');
+  try{ await DB.ref('wasla_dating').update(updates); toast('All open reports marked reviewed'); }
+  catch(e){ toast('Bulk audit failed: '+(e.code||'permission denied'),'err'); }
 }
 function banUser(u){ if(!u||!confirm('Ban this user? Their profile will be removed.'))return;
   ref('users/'+u).remove(); toast('User banned'); }

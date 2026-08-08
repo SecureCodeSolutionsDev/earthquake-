@@ -183,6 +183,22 @@
           "to",
           "ts"
         ]
+      },
+      "referrals": {
+        "$referrer": {
+          ".read": "auth != null && auth.uid === $referrer",
+          "$referred": {
+            ".write": "auth != null && auth.uid === $referred && $referred !== $referrer",
+            ".validate": "newData.hasChildren(['referrer','referred','status','createdAt']) && newData.child('referrer').val() === $referrer && newData.child('referred').val() === $referred && newData.child('status').val() === 'qualified' && newData.child('createdAt').isNumber()"
+          }
+        }
+      },
+      "referralRewards": {
+        "$uid": {
+          ".read": "auth != null && auth.uid === $uid",
+          ".write": "auth != null && auth.uid === $uid",
+          ".validate": "newData.hasChildren(['until','grantedCount','updatedAt']) && newData.child('until').isNumber() && newData.child('grantedCount').isNumber() && newData.child('grantedCount').val() >= 0 && newData.child('updatedAt').isNumber()"
+        }
       }
     }
   }

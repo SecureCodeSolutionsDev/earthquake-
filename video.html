@@ -125,7 +125,7 @@ button,a{font:inherit}button{border:0;cursor:pointer}a{text-decoration:none;colo
   let currentRoomId=null, currentPeer=null, currentPair=null, role=null;
   let videoMode='random', selectedPeer=null, selectedPeerName='', matchData=[];
   let isPro=false, myProfile={}, discoveryUsers={}, discoveryScores={}, discoveryGold={};
-  let feedbackPeer=null, callConnected=false;
+  let feedbackPeer=null, callConnected=false, scanTimer=null, searchStartedAt=0;
   let searching=false, closing=false, offerBusy=false, answerBusy=false, remoteSet=false, pendingCandidates=[];
   const RTC_CONFIG=(TAYRI_CONFIG.video&&TAYRI_CONFIG.video.rtc)||{
     iceServers:[
@@ -246,7 +246,7 @@ button,a{font:inherit}button{border:0;cursor:pointer}a{text-decoration:none;colo
   function wirePairs(){
     pairRootRef=root('videoPairIndex');
     pairCb=s=>{ pairSnapshot=s.val()||{}; findExistingPair(); };
-    pairRootRef.on('value',pairCb);
+    pairRootRef.on('value',pairCb,e=>{ if(e)setStatus('Video room access was denied. Publish the updated Firebase Rules.','bad'); });
   }
 
   async function init(){
@@ -317,21 +317,29 @@ button,a{font:inherit}button{border:0;cursor:pointer}a{text-decoration:none;colo
     pairRootRef=root('videoPairIndex');
     queueCb=s=>{ queueSnapshot=s.val()||{}; tryMatch(); };
     pairCb=s=>{ pairSnapshot=s.val()||{}; findExistingPair(); };
-    queueRootRef.on('value',queueCb); pairRootRef.on('value',pairCb);
+    queueRootRef.on('value',queueCb,e=>{ if(e)setStatus('Video matching could not read the queue. Publish the updated Firebase Rules.','bad'); });
+    pairRootRef.on('value',pairCb,e=>{ if(e)setStatus('Video room access was denied. Publish the updated Firebase Rules.','bad'); });
+  }
+  function searchStatus(){
+    if(!searching||currentRoomId)return;
+    const waiting=Object.values(queueSnapshot||{}).filter(v=>v&&v.state==='waiting'&&fresh(v)).length-1;
+    if(waiting>0) setStatus(waiting+' member'+(waiting===1?' is':'s are')+' currently scanning, but no compatible match is available. We will keep checking.','warn');
+    else if(now()-searchStartedAt>5000) setStatus('No compatible member is available at the moment. Everyone eligible may be in another conversation. Please try again shortly.','warn');
   }
   async function startMatch(){
     if(!authUser) return signIn();
     if(searching) return;
     try{
       await ensureMedia();
-      searching=true; closing=false; show(videos,true); show(startBtn,false); show(skipBtn,true); show(endBtn,false); show(mediaActions,true); show(modeTabs,false); show(proFilterPanel,false); remoteEmpty.classList.remove('hidden');
+      searching=true; searchStartedAt=now(); closing=false; show(videos,true); show(startBtn,false); show(skipBtn,true); show(endBtn,false); show(mediaActions,true); show(modeTabs,false); show(proFilterPanel,false); remoteEmpty.classList.remove('hidden');
       const f=activeFilters(); setStatus(isPro&&((f.gender!=='any')||f.minSocial||f.maxCharmRank||f.supporterOnly)?'Looking for someone who matches your Pro filters…':'Looking for another member…','good');
       queueRef=root('videoQueue/'+uid);
       await queueRef.onDisconnect().remove();
       const ownScore=discoveryScores[uid]||{};
       await queueRef.set({uid:uid,state:'waiting',createdAt:now(),gender:genderOf(myProfile),social:+(ownScore.social||0),charm:+(ownScore.charm||0),charmRank:+(ownScore.charmRank||999999),supporter:!!discoveryGold[uid],filters:f});
       wireQueue();
-      setTimeout(()=>{ if(searching&&!currentRoomId) setStatus('Still searching. Keep this page open for a live match.','good'); },8000);
+      clearInterval(scanTimer); scanTimer=setInterval(()=>tryMatch(),1500);
+      setTimeout(()=>{ if(searching&&!currentRoomId) searchStatus(); },5000);
     }catch(e){ console.error(e); setStatus(e.message||'Camera permission is required to start.','bad'); cleanupMedia(); searching=false; show(startBtn,true); show(skipBtn,false); show(mediaActions,false); show(modeTabs,true); renderStartButton(); }
   }
   async function startDirectMatch(){
@@ -364,7 +372,7 @@ button,a{font:inherit}button{border:0;cursor:pointer}a{text-decoration:none;colo
     if(!own||own.state!=='waiting') return;
     const ownProfile=candidateData(uid,own);
     const candidates=Object.entries(queueSnapshot).map(([id,v])=>({...v,id,profile:candidateData(id,v)})).filter(v=>v.id!==uid&&v.state==='waiting'&&fresh(v)&&compatible(ownProfile,v.profile)).sort((a,b)=>(+a.createdAt)-(+b.createdAt));
-    if(!candidates.length) return;
+    if(!candidates.length){ searchStatus(); return; }
     const peer=candidates[0];
     // Only the lexicographically first UID creates the deterministic pair.
     if(uid>peer.id) return;
@@ -396,6 +404,7 @@ button,a{font:inherit}button{border:0;cursor:pointer}a{text-decoration:none;colo
   async function joinRoom(id,pair){
     if(currentRoomId||closing||!pair||!memberOf(pair)) return;
     currentRoomId=id; currentPair=pair; currentPeer=peerOf(pair); role=uid===pair.a?'caller':'callee';
+    clearInterval(scanTimer); scanTimer=null;
     setStatus('Match found. Connecting securely…','good'); show(skipBtn,false); show(endBtn,true); remoteEmpty.classList.remove('hidden');
     try{ if(queueRef) await queueRef.remove(); }catch(e){}
     roomRef=root('videoRooms/'+id); pairRef=root('videoPairIndex/'+id);
@@ -445,7 +454,7 @@ button,a{font:inherit}button{border:0;cursor:pointer}a{text-decoration:none;colo
   async function flushCandidates(){ const list=pendingCandidates.splice(0); for(const c of list){ try{ await pc.addIceCandidate(new RTCIceCandidate(c)); }catch(e){} } }
   async function skipMatch(){ await endCall('You skipped the match.',true); }
   async function endCall(message,restart){
-    if(closing) return; closing=true; searching=false;
+    if(closing) return; closing=true; searching=false; clearInterval(scanTimer); scanTimer=null;
     const endedPeer=currentPeer, shouldRate=callConnected&&!!currentPeer&&!restart;
     setStatus(message||'Call ended.','warn');
     try{ if(pairRef) await pairRef.update({status:'ended'}); }catch(e){}
