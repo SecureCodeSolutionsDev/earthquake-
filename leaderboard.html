@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#fff7f9">
-<title>Tayripages Leaderboard — Tayri, the Tamazight word for love</title>
+<meta name="theme-color" content="#0b0812">
+<title>Tayripages Leaderboard</title>
 <meta name="description" content="Weekly Tayripages social presence, charm, and supporter standings.">
 <link rel="icon" type="image/png" href="icon.png">
 <script src="tayri-config.js"></script>
@@ -13,11 +13,53 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-check-compat.js"></script>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}body{min-height:100vh;background:radial-gradient(circle at 20% 0,#ffe8ef 0,transparent 35%),#fff7f9;color:#281923;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans Arabic",Arial,sans-serif}.top{max-width:900px;margin:0 auto;padding:18px;display:flex;align-items:center;justify-content:space-between;gap:14px}.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:inherit}.mark{width:42px;height:42px;border-radius:14px;background:linear-gradient(45deg,#ff4e7e,#ffb15c);display:grid;place-items:center;color:#fff;font-size:21px;box-shadow:0 10px 24px rgba(255,78,126,.28)}.brand-copy{display:flex;flex-direction:column;line-height:1.05}.brand-name{font-size:21px;font-weight:950;background:linear-gradient(45deg,#ff4e7e,#ffb15c);background-clip:text;-webkit-background-clip:text;color:transparent}.brand-note{color:#876c7b;font-size:10px;font-weight:700;margin-top:4px}.back{color:#ff4e7e;font-size:13px;font-weight:900;padding:10px 13px;border:1px solid #eadce3;border-radius:999px;background:#fff}.wrap{max-width:900px;margin:0 auto;padding:12px 18px 50px}.hero{text-align:center;margin:15px auto 24px}.eyebrow{color:#ff4e7e;font-size:11px;font-weight:950;letter-spacing:1.2px;text-transform:uppercase}.hero h1{font-size:clamp(30px,6vw,48px);letter-spacing:-1.2px;margin:8px 0}.hero p{color:#876c7b;font-size:14px;line-height:1.6}.status{text-align:center;color:#876c7b;font-weight:800;font-size:13px;min-height:22px;margin:10px}.status.bad{color:#bd345a}.status.good{color:#19985d}.card{background:rgba(255,255,255,.92);border:1px solid #eadce3;border-radius:25px;padding:17px;box-shadow:0 18px 50px rgba(150,70,105,.14);margin-bottom:14px}.identity{text-align:center;color:#876c7b;font-size:12px;margin-bottom:8px}.tabs{display:flex;gap:8px;margin-bottom:13px}.tab{flex:1;border:1px solid #eadce3;border-radius:13px;background:#fff;color:#876c7b;padding:11px 8px;font-size:12px;font-weight:900}.tab.active{background:#ffe5ec;border-color:#ffb5c5;color:#c3345a}.section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}.section-head h2{font-size:17px}.week{color:#876c7b;font-size:11px;font-weight:800}.row{display:grid;grid-template-columns:34px 1fr auto;align-items:center;gap:10px;padding:11px 4px;border-bottom:1px solid #f0e4e9}.row:last-child{border-bottom:0}.rank{font-size:17px;font-weight:950;color:#bd8a9b;text-align:center}.avatar{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(45deg,#ff4e7e,#ffb15c);color:#fff;font-size:15px;font-weight:950}.person{display:flex;align-items:center;gap:8px;min-width:0}.person-name{font-weight:900;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.tier{color:#876c7b;font-size:10px;font-weight:800;margin-top:3px}.score{text-align:end;font-size:14px;font-weight:950;color:#c3345a}.score small{display:block;color:#876c7b;font-size:9px;font-weight:800}.private{padding:15px;text-align:center;border:1px dashed #ffb5c5;background:#fff8fb;border-radius:16px;color:#876c7b;font-size:12px;line-height:1.55}.private strong{display:block;color:#c3345a;font-size:16px;margin-bottom:5px}.crown{font-size:26px;margin-bottom:4px}.note{padding:13px 15px;background:#fff8df;border:1px solid #f1dda3;border-radius:15px;color:#786022;font-size:11px;line-height:1.6}.empty{text-align:center;color:#876c7b;font-size:12px;padding:20px}.btn{display:block;width:100%;border:0;border-radius:14px;padding:14px;background:linear-gradient(45deg,#ff4e7e,#ffb15c);color:#fff;font-weight:950;cursor:pointer}.hidden{display:none!important}@media(max-width:560px){.top{padding-top:calc(12px + env(safe-area-inset-top))}.tabs{flex-direction:column}.wrap{padding-top:4px}}
+*{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;color:#f6eef4;background:radial-gradient(900px 520px at 12% -8%,rgba(255,78,126,.22),transparent 60%),radial-gradient(820px 500px at 92% 4%,rgba(138,92,246,.18),transparent 62%),radial-gradient(700px 460px at 50% 112%,rgba(255,138,92,.10),transparent 60%),#0b0812;background-attachment:fixed;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans Arabic",Arial,sans-serif}
+.top{max-width:940px;margin:0 auto;padding:20px 18px 10px;display:flex;align-items:center;justify-content:space-between;gap:14px}
+.brand{display:flex;align-items:center;gap:11px;text-decoration:none;color:inherit}
+.mark{width:44px;height:44px;border-radius:15px;background:linear-gradient(135deg,#ff4e7e,#ff8a5c);display:grid;place-items:center;color:#fff;box-shadow:0 10px 28px rgba(255,78,126,.42),0 0 0 1px rgba(255,255,255,.08) inset}
+.brand-copy{display:flex;flex-direction:column;line-height:1.05}
+.brand-name{font-size:21px;font-weight:950;letter-spacing:-.4px;background:linear-gradient(135deg,#fff,#ffc9d9);background-clip:text;-webkit-background-clip:text;color:transparent}
+.brand-note{color:#a794b0;font-size:10px;font-weight:700;margin-top:4px}
+.back{color:#ffd4e0;font-size:12.5px;font-weight:900;padding:10px 15px;border:1px solid rgba(255,255,255,.09);border-radius:999px;background:rgba(255,255,255,.045);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);text-decoration:none;transition:border-color .2s,background .2s}
+.back:hover{border-color:rgba(255,78,126,.5);background:rgba(255,78,126,.1)}
+.wrap{max-width:940px;margin:0 auto;padding:12px 18px 60px}
+.hero{text-align:center;margin:12px auto 24px}
+.eyebrow{display:inline-flex;align-items:center;color:#ff9ab5;font-size:11px;font-weight:950;letter-spacing:1.5px;text-transform:uppercase;padding:7px 14px;border:1px solid rgba(255,78,126,.28);border-radius:999px;background:rgba(255,78,126,.08)}
+.hero h1{font-size:clamp(32px,6.4vw,52px);letter-spacing:-1.8px;font-weight:950;margin:14px 0 10px;background:linear-gradient(120deg,#fff 30%,#ffb6cc 70%,#ff8a5c);background-clip:text;-webkit-background-clip:text;color:transparent}
+.hero p{color:#a794b0;font-size:14px;line-height:1.7;max-width:580px;margin:0 auto}
+.status{text-align:center;color:#a794b0;font-weight:800;font-size:13px;min-height:22px;margin:10px}
+.status.bad{color:#ff6b8a}.status.good{color:#3fdc85}
+.card{background:rgba(24,15,29,.78);border:1px solid rgba(255,255,255,.09);border-radius:26px;padding:18px;box-shadow:0 30px 80px rgba(0,0,0,.52);margin-bottom:14px;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+.identity{text-align:center;color:#a794b0;font-size:12px;margin-bottom:8px}
+.tabs{display:flex;gap:8px;margin-bottom:13px;padding:5px;border-radius:17px;background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.09)}
+.tab{flex:1;border:0;border-radius:13px;background:transparent;color:#a794b0;padding:11px 8px;font-size:12px;font-weight:900;cursor:pointer;transition:all .2s}
+.tab.active{background:linear-gradient(135deg,#ff4e7e,#ff8a5c);color:#fff;box-shadow:0 8px 20px rgba(255,78,126,.35)}
+.section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
+.section-head h2{font-size:17px;letter-spacing:-.2px}
+.week{color:#a794b0;font-size:11px;font-weight:800}
+.row{display:grid;grid-template-columns:34px 1fr auto;align-items:center;gap:10px;padding:11px 6px;border-bottom:1px solid rgba(255,255,255,.06)}
+.row:last-child{border-bottom:0}
+.rank{font-size:16px;font-weight:950;color:#8d7488;text-align:center}
+.avatar{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#ff4e7e,#ff8a5c);color:#fff;font-size:15px;font-weight:950;box-shadow:0 6px 14px rgba(255,78,126,.3)}
+.person{display:flex;align-items:center;gap:9px;min-width:0}
+.person-name{font-weight:900;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#f6eef4}
+.tier{color:#a794b0;font-size:10px;font-weight:800;margin-top:3px}
+.score{text-align:end;font-size:14px;font-weight:950;color:#ff9ab5}
+.score small{display:block;color:#a794b0;font-size:9px;font-weight:800}
+.private{padding:16px;text-align:center;border:1px dashed rgba(255,78,126,.45);background:rgba(255,78,126,.06);border-radius:18px;color:#a794b0;font-size:12px;line-height:1.6}
+.private strong{display:block;color:#ff9ab5;font-size:16px;margin-bottom:5px}
+.crown{margin-bottom:6px;display:flex;justify-content:center}
+.note{padding:14px 16px;background:rgba(242,193,78,.07);border:1px solid rgba(242,193,78,.2);border-radius:18px;color:#c9ad72;font-size:11px;line-height:1.65}
+.note b{color:#eccb7d}
+.empty{text-align:center;color:#a794b0;font-size:12px;padding:20px}
+.btn{display:block;width:100%;border:0;border-radius:16px;padding:14px;background:linear-gradient(135deg,#ff4e7e,#ff8a5c);color:#fff;font-weight:950;cursor:pointer;box-shadow:0 14px 32px rgba(255,78,126,.38)}
+.hidden{display:none!important}
+@media(max-width:560px){.top{padding-top:calc(12px + env(safe-area-inset-top))}.tabs{flex-direction:column}.wrap{padding-top:4px}}
 </style>
 </head>
 <body>
-<header class="top"><a class="brand" href="./index.html"><span class="mark">🔥</span><span class="brand-copy"><span class="brand-name">Tayripages</span><span class="brand-note">Tayri — the Tamazight word for love.</span></span></a><a class="back" href="./index.html">Back to app</a></header>
+<header class="top"><a class="brand" href="./index.html"><span class="mark"><svg width="20" height="20" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67zM11.71 19c-1.78 0-3.22-1.4-3.22-3.14 0-1.63 1.05-2.76 2.81-3.12 1.77-.36 3.6-1.21 4.62-2.58.39 1.29.59 2.65.59 4.04 0 2.65-2.15 4.8-4.8 4.8z"/></svg></span><span class="brand-copy"><span class="brand-name">Tayripages</span></span></a><a class="back" href="./index.html">Back to app</a></header>
 <main class="wrap">
   <section class="hero"><div class="eyebrow">Weekly standings · positive competition</div><h1>Find your place.</h1><p>Build social presence through real conversations, respectful calls, and meaningful connections. Raw votes stay private.</p></section>
   <section class="card" id="gate"><div class="status" id="status">Checking your secure connection…</div><div id="identity" class="identity"></div><button class="btn" id="signBtn">Continue with Google</button></section>
@@ -39,23 +81,28 @@ function weekKey(){const d=new Date(),day=(d.getUTCDay()+6)%7;d.setUTCDate(d.get
 function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function setStatus(t,bad){$('status').textContent=t;$('status').className='status'+(bad?' bad':' good')}
 function show(id,on){$(id).classList.toggle('hidden',!on)}
+/* pro rank icons — gold/silver/bronze medals + crown, no emoji chrome */
+function medal(i){const C=['#e8b400','#9aa3ad','#cd7f32'];const ribbon=['#c3345a','#4aa8ff','#7a5610'];
+return i<3?'<svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path fill="'+ribbon[i]+'" d="M7 2h4.5v8.2L9 8.6l-2.5 1.6V2zM12.5 2H17v8.2L14.5 8.6l-2 1.6V2z"/><circle cx="12" cy="15.5" r="6.2" fill="'+C[i]+'"/><circle cx="12" cy="15.5" r="3.4" fill="#fff" opacity=".85"/><circle cx="12" cy="15.5" r="3.4" fill="none"/><text x="12" y="18.6" font-size="7" font-weight="900" text-anchor="middle" fill="'+C[i]+'">'+(i+1)+'</text></svg>':'';}
+function crownI(px){return '<svg width="'+px+'" height="'+px+'" viewBox="0 0 24 24" fill="#e8b400" aria-hidden="true"><path d="M2.7 6.8 7.6 10.4 12 4.6l4.4 5.8 4.9-3.6-1.6 10.2H4.3L2.7 6.8z"/></svg>';}
+function sparkI(px){return '<svg width="'+px+'" height="'+px+'" viewBox="0 0 24 24" fill="#ff5e8a" aria-hidden="true"><path d="M12 2l2.1 6.7L21 11l-6.9 2.3L12 20l-2.1-6.7L3 11l6.9-2.3L12 2z"/></svg>';}
 function tier(score){return score>=4.65?'Tayri Legend':score>=4.25?'Diamond':score>=3.9?'Platinum':score>=3.55?'Gold':score>=3.1?'Silver':'Bronze'}
 function smoothed(a){const prior=3.5,weight=3;return (a.reduce((x,y)=>x+y,0)+prior*weight)/(a.length+weight)}
 function render(){
   const users=scores.users||{};
-  rows=Object.entries(scores.byTarget||{}).map(([id,v])=>({id,...v,name:(users[id]&&users[id].name)||'Tayripages member',em:(users[id]&&users[id].em)||'💛',social:(smoothed(v.s)+smoothed(v.r))/2,charm:smoothed(v.c),count:v.s.length})).filter(x=>x.count>=1).sort((a,b)=>b.social-a.social);
+  rows=Object.entries(scores.byTarget||{}).map(([id,v])=>({id,...v,name:(users[id]&&users[id].name)||'Tayripages member',social:(smoothed(v.s)+smoothed(v.r))/2,charm:smoothed(v.c),count:v.s.length})).filter(x=>x.count>=1).sort((a,b)=>b.social-a.social);
   const mine=rows.findIndex(x=>x.id===uid);
   $('weekLabel').textContent=week;$('weekLabel2').textContent=week;
   $('myRank').innerHTML=mine>=0?'<div class="private" style="margin-bottom:8px"><strong>Your social rank: #'+(mine+1)+'</strong>'+tier(rows[mine].social)+' · '+rows[mine].count+' private review'+(rows[mine].count===1?'':'s')+'</div>':'';
-  $('socialRows').innerHTML=rows.length?rows.slice(0,20).map((x,i)=>'<div class="row"><div class="rank">'+(i<3?['🥇','🥈','🥉'][i]:(i+1))+'</div><div class="person"><div class="avatar">'+esc(x.em)+'</div><div><div class="person-name">'+esc(x.name)+'</div><div class="tier">'+tier(x.social)+' · '+x.count+' review'+(x.count===1?'':'s')+'</div></div></div><div class="score">'+x.social.toFixed(2)+'<small>presence</small></div></div>').join(''):'<div class="empty">Complete a video conversation to begin this week’s standings.</div>';
+  $('socialRows').innerHTML=rows.length?rows.slice(0,20).map((x,i)=>'<div class="row"><div class="rank">'+(i<3?medal(i):(i+1))+'</div><div class="person"><div class="avatar">'+esc((x.name||'T')[0].toUpperCase())+'</div><div><div class="person-name">'+esc(x.name)+'</div><div class="tier">'+tier(x.social)+' · '+x.count+' review'+(x.count===1?'':'s')+'</div></div></div><div class="score">'+x.social.toFixed(2)+'<small>presence</small></div></div>').join(''):'<div class="empty">Complete a video conversation to begin this week’s standings.</div>';
   const charm=rows.slice().sort((a,b)=>b.charm-a.charm), cr=charm.findIndex(x=>x.id===uid);
   if(!charm.length){$('charmBox').innerHTML='<div class="private">Tayri Charm becomes available after members leave private reviews.</div>';}
-  else if(cr===0){$('charmBox').innerHTML='<div class="private"><div class="crown">👑</div><strong>You are this week’s Tayri Charm Crown</strong>Your crown is visible to you first. Choose later whether to display it publicly.</div>';}
-  else {$('charmBox').innerHTML='<div class="private"><div class="crown">✨</div><strong>Your Charm position stays private</strong>Only the weekly #1 unlocks the Tayri Charm Crown. Keep having real conversations to climb.</div>';}
+  else if(cr===0){$('charmBox').innerHTML='<div class="private"><div class="crown">'+crownI(26)+'</div><strong>You are this week’s Tayri Charm Crown</strong>Your crown is visible to you first. Choose later whether to display it publicly.</div>';}
+  else {$('charmBox').innerHTML='<div class="private"><div class="crown">'+sparkI(26)+'</div><strong>Your Charm position stays private</strong>Only the weekly #1 unlocks the Tayri Charm Crown. Keep having real conversations to climb.</div>';}
 }
 function renderSupporters(gold,users){
-  const ar=Object.entries(gold||{}).map(([id,v])=>({id,name:(users[id]&&users[id].name)||'Tayripages member',em:(users[id]&&users[id].em)||'👑',price:+(v&&v.price||0),at:+(v&&v.at||0)})).filter(x=>x.price>0).sort((a,b)=>b.price-a.price||b.at-a.at);
-  $('supporterRows').innerHTML=ar.length?ar.slice(0,20).map((x,i)=>'<div class="row"><div class="rank">'+(i+1)+'</div><div class="person"><div class="avatar">'+esc(x.em)+'</div><div><div class="person-name">'+esc(x.name)+'</div><div class="tier">Tayri Patron · verified manually</div></div></div><div class="score">'+x.price+' DH<small>approved Gold</small></div></div>').join(''):'<div class="empty">Supporter standings appear after an admin manually approves a Gold transfer.</div>';
+  const ar=Object.entries(gold||{}).map(([id,v])=>({id,name:(users[id]&&users[id].name)||'Tayripages member',price:+(v&&v.price||0),at:+(v&&v.at||0)})).filter(x=>x.price>0).sort((a,b)=>b.price-a.price||b.at-a.at);
+  $('supporterRows').innerHTML=ar.length?ar.slice(0,20).map((x,i)=>'<div class="row"><div class="rank">'+(i+1)+'</div><div class="person"><div class="avatar">'+esc((x.name||'T')[0].toUpperCase())+'</div><div><div class="person-name">'+esc(x.name)+'</div><div class="tier">Tayri Patron · verified manually</div></div></div><div class="score">'+x.price+' DH<small>approved Gold</small></div></div>').join(''):'<div class="empty">Supporter standings appear after an admin manually approves a Gold transfer.</div>';
 }
 async function load(){
   try{

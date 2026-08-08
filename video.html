@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#fff7f9">
-<title>Tayripages Instant Video — Tayri, the Tamazight word for love</title>
+<meta name="theme-color" content="#0b0812">
+<title>Tayripages Instant Video</title>
 <meta name="description" content="A free, peer-to-peer instant video room for Tayripages members.">
 <link rel="icon" type="image/png" href="icon.png">
 <script src="tayri-config.js"></script>
@@ -14,24 +14,136 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-check-compat.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--bg:#fff7f9;--card:#fff;--ink:#281923;--mut:#876c7b;--line:#eadce3;--pink:#ff4e7e;--orange:#ff9a5c;--grad:linear-gradient(45deg,#ff4e7e,#ffb15c);--shadow:0 18px 50px rgba(150,70,105,.14)}
-body{min-height:100vh;background:radial-gradient(circle at 20% 0,#ffe8ef 0,transparent 35%),var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans Arabic",Arial,sans-serif}
+:root{--bg:#0b0812;--card:rgba(24,15,29,.78);--card2:rgba(255,255,255,.045);--ink:#f6eef4;--mut:#a794b0;--line:rgba(255,255,255,.09);--pink:#ff4e7e;--orange:#ff9a5c;--grad:linear-gradient(135deg,#ff4e7e,#ff8a5c);--gold:linear-gradient(135deg,#f2c14e,#c98a12);--shadow:0 30px 80px rgba(0,0,0,.52);--green:#3fdc85;--warn:#ffb020;--bad:#ff6b8a}
+html{background:#0b0812}
+body{min-height:100vh;color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans Arabic",Arial,sans-serif;background:radial-gradient(900px 520px at 12% -8%,rgba(255,78,126,.22),transparent 60%),radial-gradient(820px 500px at 92% 4%,rgba(138,92,246,.18),transparent 62%),radial-gradient(700px 460px at 50% 112%,rgba(255,138,92,.10),transparent 60%),#0b0812;background-attachment:fixed}
 button,a{font:inherit}button{border:0;cursor:pointer}a{text-decoration:none;color:inherit}
-.top{max-width:900px;margin:0 auto;padding:18px 18px 8px;display:flex;align-items:center;justify-content:space-between;gap:14px}
-.brand{display:flex;align-items:center;gap:10px;min-width:0}.mark{width:42px;height:42px;border-radius:14px;background:var(--grad);display:grid;place-items:center;color:#fff;font-size:21px;box-shadow:0 10px 24px rgba(255,78,126,.28);flex:0 0 auto}.brand-copy{display:flex;flex-direction:column;line-height:1.05}.brand-name{font-size:21px;font-weight:950;background:var(--grad);background-clip:text;-webkit-background-clip:text;color:transparent}.brand-note{color:var(--mut);font-size:10px;font-weight:700;margin-top:4px;white-space:nowrap}.back{color:var(--pink);font-size:13px;font-weight:900;padding:10px 13px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.75)}
-.wrap{max-width:900px;margin:0 auto;padding:22px 18px 50px}.hero{text-align:center;max-width:680px;margin:18px auto 22px}.eyebrow{color:var(--pink);font-size:11px;letter-spacing:1.3px;font-weight:950;text-transform:uppercase}.hero h1{font-size:clamp(28px,6vw,48px);letter-spacing:-1.3px;margin:8px 0 10px}.hero p{color:var(--mut);font-size:14px;line-height:1.65}.card{background:rgba(255,255,255,.9);border:1px solid var(--line);border-radius:26px;padding:18px;box-shadow:var(--shadow);max-width:800px;margin:0 auto}.status{text-align:center;color:var(--mut);font-size:14px;font-weight:750;min-height:24px;margin:4px 0 14px}.status.good{color:#19985d}.status.warn{color:#b56a00}.status.bad{color:#bd345a}
-.mode-tabs{display:flex;gap:8px;max-width:520px;margin:0 auto 14px}.mode{flex:1;padding:11px 12px;border:1px solid var(--line);border-radius:14px;background:#fff;color:var(--mut);font-size:12px;font-weight:900}.mode.active{background:#ffe5ec;border-color:#ffb5c5;color:#c3345a}.mode:disabled{opacity:.45;cursor:not-allowed}.pro-filter-bar{display:flex;align-items:center;justify-content:center;gap:8px;margin:-3px auto 10px}.filter-toggle{padding:8px 12px;border:1px solid #e9c16b;border-radius:999px;background:#fff9e5;color:#9b6a00;font-size:11px;font-weight:950}.filter-toggle.locked{opacity:.65}.pro-badge{padding:4px 8px;border-radius:999px;background:linear-gradient(45deg,#f2c14e,#c98a12);color:#fff;font-size:9px;font-weight:950;letter-spacing:.5px}.pro-filter-panel{max-width:700px;margin:0 auto 14px;padding:14px;border:1px solid #f1dda3;border-radius:18px;background:#fffdf3}.filter-title{text-align:center;font-size:13px;font-weight:950;color:#786022;margin-bottom:10px}.filter-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.filter-grid label{display:flex;flex-direction:column;gap:5px;color:#876c7b;font-size:10px;font-weight:850}.filter-grid select{width:100%;padding:9px 7px;border:1px solid #ead7a5;border-radius:10px;background:#fff;color:#281923;font-size:10px;font-weight:800}.filter-note{text-align:center;color:#927946;font-size:10px;margin-top:9px}.match-panel{max-width:620px;margin:0 auto 14px;padding:13px;border:1px solid var(--line);border-radius:18px;background:#fff8fb}.match-title{text-align:center;color:var(--mut);font-size:12px;font-weight:850;margin-bottom:9px}.match-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px}.match-choice{display:flex;align-items:center;gap:8px;text-align:start;padding:10px;border:1px solid var(--line);border-radius:13px;background:#fff;color:var(--ink);font-size:12px;font-weight:850}.match-choice.selected{border-color:var(--pink);background:#ffe5ec;box-shadow:0 4px 12px rgba(255,78,126,.12)}.match-avatar{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--grad);color:#fff;font-size:14px;flex:0 0 auto}.match-empty{color:var(--mut);font-size:12px;text-align:center;padding:8px}.feedback{margin-top:14px;padding:15px;border:1px solid #f2d4de;border-radius:18px;background:#fff8fb}.feedback-title{text-align:center;font-size:14px;font-weight:950;margin-bottom:10px}.feedback-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.feedback-grid label{display:flex;flex-direction:column;gap:5px;color:var(--mut);font-size:10px;font-weight:850}.feedback-grid select{width:100%;padding:10px 8px;border:1px solid var(--line);border-radius:11px;background:#fff;color:var(--ink);font-size:11px;font-weight:800}.feedback-actions{display:flex;gap:8px;margin-top:12px}.feedback-actions .btn{min-width:0;padding:11px;font-size:12px}.feedback-note{text-align:center;color:var(--mut);font-size:10px;margin-top:8px}
-.videos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.panel{position:relative;aspect-ratio:4/3;border-radius:20px;overflow:hidden;background:linear-gradient(145deg,#2a1322,#100610);border:1px solid #4a273a;display:grid;place-items:center}.panel video{width:100%;height:100%;object-fit:cover;display:block}.panel.remote video:not([src]){opacity:0}.panel-label{position:absolute;z-index:2;left:10px;bottom:10px;color:#fff;background:rgba(20,5,15,.66);backdrop-filter:blur(8px);border-radius:999px;padding:6px 9px;font-size:10px;font-weight:950;letter-spacing:.5px}.panel-empty{position:absolute;color:rgba(255,255,255,.7);font-size:12px;font-weight:800;text-align:center;padding:20px}.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}.btn{flex:1;min-width:130px;border-radius:15px;padding:13px 15px;font-weight:900;font-size:14px;background:#fff;border:1px solid var(--line);color:var(--ink)}.btn.primary{background:var(--grad);color:#fff;border:0;box-shadow:0 10px 24px rgba(255,78,126,.24)}.btn.danger{background:#fff0f3;border-color:#ffc7d4;color:#c3345a}.btn:disabled{opacity:.45;cursor:not-allowed}.mini-actions{display:flex;justify-content:center;gap:9px;margin-top:10px}.round{width:46px;height:40px;border-radius:14px;background:#fff;border:1px solid var(--line);font-size:18px}.round.on{background:#ffe5ec;border-color:#ffb5c5}.hidden{display:none!important}.notice{max-width:800px;margin:14px auto 0;padding:13px 16px;border-radius:16px;background:#fff8df;border:1px solid #f1dda3;color:#786022;font-size:12px;line-height:1.6}.rules{max-width:800px;margin:16px auto 0;display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.rule{padding:13px;background:rgba(255,255,255,.7);border:1px solid var(--line);border-radius:16px;text-align:center;color:var(--mut);font-size:11px;font-weight:750;line-height:1.45}.rule b{display:block;color:var(--ink);font-size:12px;margin-bottom:3px}.identity{display:flex;align-items:center;justify-content:center;gap:8px;color:var(--mut);font-size:12px;margin-bottom:10px}.avatar{width:28px;height:28px;border-radius:50%;background:var(--grad);display:grid;place-items:center;color:#fff;font-size:13px;font-weight:900}
-@media(max-width:560px){.top{padding-top:calc(12px + env(safe-area-inset-top))}.brand-note{font-size:9px}.videos{grid-template-columns:1fr}.panel{aspect-ratio:16/11}.rules{grid-template-columns:1fr}.feedback-grid,.filter-grid{grid-template-columns:1fr 1fr}.wrap{padding-top:10px}.hero h1{font-size:32px}}
+svg{display:inline-block}
+.top{max-width:940px;margin:0 auto;padding:20px 18px 10px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{display:flex;align-items:center;gap:11px;min-width:0}
+.mark{width:44px;height:44px;border-radius:15px;background:var(--grad);display:grid;place-items:center;flex:0 0 auto;box-shadow:0 10px 28px rgba(255,78,126,.42),0 0 0 1px rgba(255,255,255,.08) inset}
+.brand-copy{display:flex;flex-direction:column;line-height:1.05}
+.brand-name{font-size:21px;font-weight:950;letter-spacing:-.4px;background:linear-gradient(135deg,#fff,#ffc9d9);background-clip:text;-webkit-background-clip:text;color:transparent}
+.brand-note{color:var(--mut);font-size:10px;font-weight:700;margin-top:4px;white-space:nowrap}
+.back{color:#ffd4e0;font-size:12.5px;font-weight:900;padding:10px 15px;border:1px solid var(--line);border-radius:999px;background:var(--card2);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);transition:border-color .2s,background .2s}
+.back:hover{border-color:rgba(255,78,126,.5);background:rgba(255,78,126,.1)}
+.top-r{display:flex;align-items:center;gap:9px}
+.onlinepill{display:inline-flex;align-items:center;gap:7px;padding:10px 13px;border:1px solid var(--line);border-radius:999px;background:var(--card2);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);color:#d9f7e6;font-size:11.5px;font-weight:900;white-space:nowrap}
+.opdot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green);animation:opPulse 2.2s infinite}
+@keyframes opPulse{50%{opacity:.5}}
+.wrap{max-width:940px;margin:0 auto;padding:22px 18px 60px}
+.hero{text-align:center;max-width:700px;margin:12px auto 24px}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;color:#ff9ab5;font-size:11px;letter-spacing:1.5px;font-weight:950;text-transform:uppercase;padding:7px 14px;border:1px solid rgba(255,78,126,.28);border-radius:999px;background:rgba(255,78,126,.08)}
+.hero h1{font-size:clamp(30px,6.4vw,52px);letter-spacing:-1.8px;font-weight:950;margin:14px 0 10px;background:linear-gradient(120deg,#fff 30%,#ffb6cc 70%,#ff8a5c);background-clip:text;-webkit-background-clip:text;color:transparent}
+.hero p{color:var(--mut);font-size:14px;line-height:1.7;max-width:600px;margin:0 auto}
+.card{background:var(--card);border:1px solid var(--line);border-radius:28px;padding:20px;box-shadow:var(--shadow);max-width:820px;margin:0 auto;position:relative;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+.status{text-align:center;color:var(--mut);font-size:13.5px;font-weight:750;min-height:24px;margin:4px 0 14px}
+.status.good{color:var(--green)}.status.warn{color:var(--warn)}.status.bad{color:var(--bad)}
+.mode-tabs{display:flex;gap:8px;max-width:560px;margin:0 auto 14px;padding:5px;border-radius:17px;background:rgba(0,0,0,.28);border:1px solid var(--line)}
+.mode{flex:1;padding:11px 12px;border-radius:13px;background:transparent;color:var(--mut);font-size:12px;font-weight:900;transition:all .2s}
+.mode.active{background:var(--grad);color:#fff;box-shadow:0 8px 20px rgba(255,78,126,.35)}
+.mode:disabled{opacity:.45;cursor:not-allowed}
+.pro-filter-bar{display:flex;align-items:center;justify-content:center;gap:8px;margin:-3px auto 10px}
+.filter-toggle{display:inline-flex;align-items:center;gap:7px;padding:9px 13px;border:1px solid rgba(242,193,78,.4);border-radius:999px;background:rgba(242,193,78,.09);color:#eccb7d;font-size:11px;font-weight:950}
+.filter-toggle.locked{opacity:.65}
+.pro-badge{padding:4px 8px;border-radius:999px;background:var(--gold);color:#1d150c;font-size:9px;font-weight:950;letter-spacing:.6px}
+.pro-badge.free{background:linear-gradient(45deg,#9fb3c8,#6d8296);color:#0a0f14;letter-spacing:.5px}
+.pro-filter-panel{max-width:700px;margin:0 auto 14px;padding:15px;border:1px solid rgba(242,193,78,.26);border-radius:20px;background:rgba(31,22,10,.55)}
+.filter-title{text-align:center;font-size:13px;font-weight:950;color:#eccb7d;margin-bottom:10px}
+.filter-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.filter-grid label{display:flex;flex-direction:column;gap:5px;color:#c4a770;font-size:10px;font-weight:850}
+.filter-grid select{width:100%;padding:10px 8px;border:1px solid rgba(242,193,78,.25);border-radius:11px;background:#170f0a;color:#f2e6cd;font-size:10.5px;font-weight:800;outline:none;appearance:none;-webkit-appearance:none}
+.filter-grid select:disabled{opacity:.45}
+.filter-note{text-align:center;color:#a68a54;font-size:10px;margin-top:9px;line-height:1.5}
+.free-tag{align-self:flex-start;background:rgba(255,78,126,.16);border:1px solid rgba(255,78,126,.4);color:#ff9ab5;font-size:8px;font-weight:950;padding:2px 6px;border-radius:6px;letter-spacing:.5px;margin-top:-9px}
+.match-panel{max-width:640px;margin:0 auto 14px;padding:13px;border:1px solid var(--line);border-radius:20px;background:var(--card2)}
+.match-title{text-align:center;color:var(--mut);font-size:12px;font-weight:850;margin-bottom:9px}
+.match-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px}
+.match-choice{display:flex;align-items:center;gap:9px;text-align:start;padding:11px;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.03);color:var(--ink);font-size:12px;font-weight:850;transition:all .15s}
+.match-choice:hover{border-color:rgba(255,78,126,.45)}
+.match-choice.selected{border-color:var(--pink);background:rgba(255,78,126,.13);box-shadow:0 4px 14px rgba(255,78,126,.2)}
+.match-avatar{width:29px;height:29px;border-radius:50%;display:grid;place-items:center;background:var(--grad);color:#fff;font-size:13.5px;font-weight:950;flex:0 0 auto}
+.match-empty{color:var(--mut);font-size:12px;text-align:center;padding:10px;line-height:1.6}
+.videos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.panel{position:relative;aspect-ratio:4/3;border-radius:22px;overflow:hidden;background:radial-gradient(120% 120% at 50% 0%,#241426,#0e0710);border:1px solid rgba(255,255,255,.1);display:grid;place-items:center;transition:box-shadow .3s}
+.panel.live{box-shadow:0 0 0 1.5px rgba(255,78,126,.55),0 0 44px rgba(255,78,126,.16)}
+.panel video{width:100%;height:100%;object-fit:cover;display:block}
+.panel.remote video:not([src]){opacity:0}
+.panel-label{position:absolute;z-index:2;left:10px;bottom:10px;color:#fff;background:rgba(8,4,10,.62);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:6px 11px;font-size:9.5px;font-weight:950;letter-spacing:.8px}
+.panel-empty{position:absolute;color:rgba(255,255,255,.55);font-size:12px;font-weight:800;text-align:center;padding:20px;line-height:1.5}
+.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}
+.btn{flex:1;min-width:130px;border-radius:16px;padding:14px 16px;font-weight:900;font-size:14px;color:var(--ink);background:var(--card2);border:1px solid var(--line);transition:transform .12s,box-shadow .2s,opacity .2s}
+.btn:active{transform:scale(.985)}
+.btn.primary{background:var(--grad);color:#fff;border:0;box-shadow:0 14px 32px rgba(255,78,126,.38)}
+.btn.primary:hover{box-shadow:0 18px 40px rgba(255,78,126,.5)}
+.btn.danger{background:rgba(255,80,110,.1);border:1px solid rgba(255,107,138,.4);color:#ff9ab5}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.mini-actions{display:flex;justify-content:center;gap:10px;margin-top:12px}
+.round{width:48px;height:42px;border-radius:15px;background:var(--card2);border:1px solid var(--line);color:var(--ink);font-size:18px;position:relative;display:inline-flex;align-items:center;justify-content:center}
+.round.on{background:rgba(255,78,126,.16);border-color:rgba(255,78,126,.5);color:#ffb6cc}
+.ccdot{position:absolute;top:-4px;right:-4px;min-width:16px;height:16px;border-radius:99px;background:var(--pink);color:#fff;font-size:9px;font-weight:950;display:grid;place-items:center;padding:0 4px;box-shadow:0 0 12px rgba(255,78,126,.7)}
+.ringtimer{position:absolute;top:10px;right:10px;z-index:3;background:rgba(8,4,10,.66);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(242,193,78,.4);color:#ffd97e;border-radius:999px;padding:7px 12px;font-size:11px;font-weight:950;display:flex;align-items:center;gap:6px}
+.ringtimer b{font-variant-numeric:tabular-nums}
+.ringtimer.hot{color:var(--green);border-color:rgba(63,220,133,.5);animation:pulseR 1.2s infinite}
+#extBtn{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;line-height:1;background:var(--gold);color:#241a05;border:0;box-shadow:0 8px 20px rgba(242,193,78,.35)}
+@keyframes pulseR{50%{transform:scale(1.07)}}
+.callchat{position:absolute;z-index:4;left:8px;right:8px;bottom:8px;top:auto;max-height:72%;display:flex;flex-direction:column;background:rgba(16,9,18,.92);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid var(--line);border-radius:20px;overflow:hidden;box-shadow:0 22px 50px rgba(0,0,0,.55)}
+.callchat-h{display:flex;align-items:center;justify-content:space-between;padding:10px 13px;background:rgba(255,255,255,.04);border-bottom:1px solid var(--line);font-size:12px;font-weight:950}
+.callchat-h button{color:#ff9ab5;display:inline-flex;align-items:center;padding:3px 8px}
+.callchat-b{flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:6px;scrollbar-width:none;min-height:90px}
+.callchat-b::-webkit-scrollbar{display:none}
+.ccmsg{max-width:82%;padding:8px 12px;border-radius:16px;font-size:13px;line-height:1.35}
+.ccmsg.me{align-self:flex-end;background:var(--grad);color:#fff;border-end-end-radius:5px}
+.ccmsg.them{align-self:flex-start;background:rgba(255,255,255,.06);border:1px solid var(--line);color:var(--ink);border-end-start-radius:5px}
+.ccnote{align-self:center;color:var(--mut);font-size:10px;font-weight:800;text-align:center}
+.callchat-f{display:flex;gap:7px;padding:8px 10px;background:rgba(255,255,255,.03);border-top:1px solid var(--line)}
+.callchat-f input{flex:1;border:1.5px solid var(--line);background:rgba(255,255,255,.05);border-radius:999px;padding:10px 14px;font-size:13px;outline:none;min-width:0;color:var(--ink)}
+.callchat-f input::placeholder{color:var(--mut)}
+.callchat-f input:focus{border-color:var(--pink)}
+.callchat-f button{width:42px;height:42px;flex:none;border-radius:50%;background:var(--grad);color:#fff;display:grid;place-items:center;box-shadow:0 8px 18px rgba(255,78,126,.35)}
+.feedback{margin-top:14px;padding:16px;border:1px solid var(--line);border-radius:20px;background:var(--card2)}
+.feedback-title{text-align:center;font-size:14px;font-weight:950;margin-bottom:10px}
+.feedback-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.feedback-grid label{display:flex;flex-direction:column;gap:5px;color:var(--mut);font-size:10px;font-weight:850}
+.feedback-grid select{width:100%;padding:11px 9px;border:1px solid var(--line);border-radius:12px;background:rgba(255,255,255,.05);color:var(--ink);font-size:11px;font-weight:800;outline:none;appearance:none;-webkit-appearance:none}
+.feedback-grid select option{color:#1b1218}
+.filter-grid select option{color:#1b1218}
+.feedback-actions{display:flex;gap:8px;margin-top:12px}
+.feedback-actions .btn{min-width:0;padding:12px;font-size:12.5px}
+.feedback-note{text-align:center;color:var(--mut);font-size:10px;margin-top:9px}
+.solocard{margin-top:16px;padding:22px 18px;border:1px solid rgba(255,78,126,.3);border-radius:22px;background:linear-gradient(180deg,rgba(255,78,126,.09),rgba(255,138,92,.05));text-align:center;animation:soloIn .35s ease}
+@keyframes soloIn{from{opacity:0;transform:translateY(8px)}}
+.solo-ic{width:66px;height:66px;margin:0 auto 13px;border-radius:24px;background:var(--grad);display:grid;place-items:center;color:#fff;box-shadow:0 14px 34px rgba(255,78,126,.4)}
+.solocard h3{font-size:19px;font-weight:950;letter-spacing:-.3px;margin-bottom:8px}
+.solocard p{color:var(--mut);font-size:13px;line-height:1.7;max-width:460px;margin:0 auto 15px}
+.solocard p b{color:#ff9ab5}
+.solo-actions{display:flex;gap:9px;max-width:380px;margin:0 auto}
+.solo-actions .btn{padding:12px 10px;font-size:12.5px;min-width:0}
+.solo-note{text-align:center;color:var(--mut);font-size:10px;margin-top:11px;font-weight:800}
+.hidden{display:none!important}
+.notice{max-width:820px;margin:16px auto 0;padding:14px 17px;border-radius:18px;background:rgba(242,193,78,.07);border:1px solid rgba(242,193,78,.2);color:#c9ad72;font-size:12px;line-height:1.65}
+.notice b{color:#eccb7d}
+.rules{max-width:820px;margin:18px auto 0;display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
+.rule{padding:16px 13px;background:var(--card);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid var(--line);border-radius:20px;text-align:center;color:var(--mut);font-size:11px;font-weight:750;line-height:1.5}
+.rule .r-ic{width:38px;height:38px;margin:0 auto 9px;border-radius:13px;display:grid;place-items:center;color:#fff;background:var(--grad);box-shadow:0 8px 18px rgba(255,78,126,.3)}
+.rule.gold .r-ic{background:var(--gold);box-shadow:0 8px 18px rgba(242,193,78,.28)}
+.rule.violet .r-ic{background:linear-gradient(135deg,#8a5cf6,#6d3ee6);box-shadow:0 8px 18px rgba(138,92,246,.3)}
+.rule b{display:block;color:var(--ink);font-size:12.5px;font-weight:950;margin-bottom:3px}
+.identity{display:flex;align-items:center;justify-content:center;gap:8px;color:var(--mut);font-size:12px;margin-bottom:10px}
+.avatar{width:28px;height:28px;border-radius:50%;background:var(--grad);display:grid;place-items:center;color:#fff;font-size:13px;font-weight:900;flex:0 0 auto}
+@media(max-width:560px){.top{padding-top:calc(12px + env(safe-area-inset-top))}.brand-note{font-size:9px}.videos{grid-template-columns:1fr}.panel{aspect-ratio:16/11}.rules{grid-template-columns:1fr}.feedback-grid,.filter-grid{grid-template-columns:1fr 1fr}.wrap{padding-top:10px}.hero h1{font-size:32px}.onlinepill{padding:9px 10px;font-size:10.5px}}
 </style>
 </head>
 <body>
 <header class="top">
   <a class="brand" href="./index.html" aria-label="Back to Tayripages">
-    <span class="mark">🔥</span>
-    <span class="brand-copy"><span class="brand-name">Tayripages</span><span class="brand-note">Tayri — the Tamazight word for love.</span></span>
+    <span class="mark"><svg width="20" height="20" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67zM11.71 19c-1.78 0-3.22-1.4-3.22-3.14 0-1.63 1.05-2.76 2.81-3.12 1.77-.36 3.6-1.21 4.62-2.58.39 1.29.59 2.65.59 4.04 0 2.65-2.15 4.8-4.8 4.8z"/></svg></span>
+    <span class="brand-copy"><span class="brand-name">Tayripages Video</span></span>
   </a>
-  <a class="back" href="./index.html">Back to app</a>
+  <div class="top-r">
+    <span class="onlinepill hidden" id="onlinePill"><span class="opdot"></span><span id="onlineNum">0</span>&nbsp;online now</span>
+    <a class="back" href="./index.html">Back to app</a>
+  </div>
 </header>
 <main class="wrap">
   <section class="hero">
@@ -48,11 +160,13 @@ button,a{font:inherit}button{border:0;cursor:pointer}a{text-decoration:none;colo
       <button class="mode" id="matchMode">Video with a match</button>
     </div>
     <div class="pro-filter-bar" id="proFilterBar">
-      <button class="filter-toggle" id="filterToggle">⚙ Pro filters</button><span class="pro-badge" id="proBadge">GOLD</span>
+      <button class="filter-toggle" id="filterToggle"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:-2px" aria-hidden="true"><path d="M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2H11v2h10zm-6-4h2V7h4V5h-4V3h-2v6z"/></svg> Pro filters</button><span class="pro-badge" id="proBadge">GOLD</span>
     </div>
     <div class="pro-filter-panel hidden" id="proFilterPanel">
       <div class="filter-title">Choose who you meet</div>
       <div class="filter-grid">
+        <label>Country<span class="free-tag">FREE</span><select id="filterCountry"><option value="all">Everywhere</option></select></label>
+        <label>Shared interest<span class="free-tag">FREE</span><select id="filterInterest"><option value="any">Any interest</option></select></label>
         <label>Gender<select id="filterGender"><option value="any">Everyone</option><option value="w">Women</option><option value="m">Men</option></select></label>
         <label>Minimum social score<select id="filterSocial"><option value="0">Any level</option><option value="3.1">Silver or higher</option><option value="3.55">Gold or higher</option><option value="3.9">Platinum or higher</option><option value="4.25">Diamond or higher</option></select></label>
         <label>Tayri Charm rank<select id="filterCharm"><option value="0">Any rank</option><option value="100">Top 100</option><option value="50">Top 50</option><option value="10">Top 10</option><option value="3">Top 3</option></select></label>
@@ -73,6 +187,7 @@ button,a{font:inherit}button{border:0;cursor:pointer}a{text-decoration:none;colo
       <div class="panel remote">
         <video id="remoteVideo" autoplay playsinline></video>
         <div class="panel-empty" id="remoteEmpty">Waiting for your match…</div>
+        <div class="ringtimer hidden" id="ringTimer"><b>0:30</b><span id="ringHint">left to extend</span></div>
         <div class="panel-label">TAYRIPAGES MEMBER</div>
       </div>
     </div>
@@ -81,9 +196,26 @@ button,a{font:inherit}button{border:0;cursor:pointer}a{text-decoration:none;colo
       <button class="btn danger hidden" id="skipBtn">Skip &amp; find another</button>
       <button class="btn danger hidden" id="endBtn">End call</button>
     </div>
+    <div class="solocard hidden" id="soloCard">
+      <div class="solo-ic"><svg width="30" height="30" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg></div>
+      <h3>Nobody is live right now — and that's real</h3>
+      <p>We show you the truth: at this moment no other member is searching for a video chat. <b>We never fake online counters or invent profiles</b> — every Tayripages account is a real, organic signup. Share Tayripages with a friend and let's grow together.</p>
+      <div class="solo-actions">
+        <button class="btn primary" id="soloInvite">Copy invite link</button>
+        <button class="btn" id="soloKeep">Keep waiting</button>
+      </div>
+      <div class="solo-note">This page keeps listening — you'll connect the second someone arrives.</div>
+    </div>
     <div class="mini-actions hidden" id="mediaActions">
-      <button class="round on" id="micBtn" title="Mute microphone">🎙️</button>
-      <button class="round on" id="camBtn" title="Turn camera off">📷</button>
+      <button class="round on" id="micBtn" title="Mute microphone"></button>
+      <button class="round on" id="camBtn" title="Turn camera off"></button>
+      <button class="round" id="chatBtn" title="Chat during the call"><span id="ccDot" class="ccdot hidden">0</span></button>
+      <button class="round hidden" id="extBtn" title="Ask for 30 more seconds"></button>
+    </div>
+    <div class="callchat hidden" id="callChat">
+      <div class="callchat-h"><span>Chat during the call</span><button id="ccClose" title="Close chat"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+      <div class="callchat-b" id="ccBody"><div class="ccnote">Say hello — a kind word goes a long way 💛</div></div>
+      <div class="callchat-f"><input id="ccInput" maxlength="280" placeholder="Message…" onkeydown="if(event.key==='Enter')window.__ccSend()"><button id="ccSend" title="Send"></button></div>
     </div>
     <div class="feedback hidden" id="feedback">
       <div class="feedback-title">How did the conversation feel?</div>
@@ -97,11 +229,11 @@ button,a{font:inherit}button{border:0;cursor:pointer}a{text-decoration:none;colo
     </div>
   </section>
 
-  <div class="notice"><b>Free MVP note:</b> direct WebRTC works without a video provider in many networks. A small number of restrictive networks may need a TURN relay later; those users will receive a connection message instead of creating a paid video bill.</div>
+  <div class="notice"><b>Connection tips:</b> direct peer-to-peer video works on most networks. If a call says the network could not connect, ask both members to try Wi-Fi or mobile data (some restrictive routers block direct video). Calling a match works best when both of you have this page open and press Start.</div>
   <div class="rules">
-    <div class="rule"><b>Private by design</b>No recording or media upload.</div>
-    <div class="rule"><b>One-to-one</b>Only two signed-in members per room.</div>
-    <div class="rule"><b>Stay respectful</b>End, skip, block, or report from the app.</div>
+    <div class="rule"><span class="r-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2h-1V8a5 5 0 0 0-5-5zm-3 8V8a3 3 0 1 1 6 0v3H9z"/></svg></span><b>Private by design</b>No recording or media upload.</div>
+    <div class="rule violet"><span class="r-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/></svg></span><b>One-to-one</b>Only two signed-in members per room.</div>
+    <div class="rule gold"><span class="r-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2 4.5 4.8v6.1c0 4.9 3.2 9.5 7.5 11.1 4.3-1.6 7.5-6.2 7.5-11.1V4.8L12 2z"/></svg></span><b>Stay respectful</b>End, skip, block, or report from the app.</div>
   </div>
 </main>
 <script>
@@ -116,6 +248,7 @@ button,a{font:inherit}button{border:0;cursor:pointer}a{text-decoration:none;colo
   const modeTabs=$('modeTabs'), randomMode=$('randomMode'), matchMode=$('matchMode'), matchPanel=$('matchPanel'), matchList=$('matchList');
   const proFilterBar=$('proFilterBar'), filterToggle=$('filterToggle'), proBadge=$('proBadge'), proFilterPanel=$('proFilterPanel');
   const filterGender=$('filterGender'), filterSocial=$('filterSocial'), filterCharm=$('filterCharm'), filterSupporter=$('filterSupporter'), filterNote=$('filterNote');
+  const filterCountry=$('filterCountry'), filterInterest=$('filterInterest');
   const feedback=$('feedback'), sendFeedback=$('sendFeedback'), skipFeedback=$('skipFeedback');
   let authUser=null, db=null, uid='';
   let localStream=null, remoteStream=null, pc=null;
@@ -126,13 +259,38 @@ button,a{font:inherit}button{border:0;cursor:pointer}a{text-decoration:none;colo
   let videoMode='random', selectedPeer=null, selectedPeerName='', matchData=[];
   let isPro=false, myProfile={}, discoveryUsers={}, discoveryScores={}, discoveryGold={};
   let feedbackPeer=null, callConnected=false, scanTimer=null, searchStartedAt=0;
+  let msgsRef=null, msgsCb=null, ccOpen=false, ccUnread=0, rtTimer=null, callStartTs=0, lastRoomData=null, timerMode='random';
+  let onlineNow=null, soloShown=false, presenceRef=null;
   let searching=false, closing=false, offerBusy=false, answerBusy=false, remoteSet=false, pendingCandidates=[];
-  const RTC_CONFIG=(TAYRI_CONFIG.video&&TAYRI_CONFIG.video.rtc)||{
-    iceServers:[
-      {urls:'stun:stun.l.google.com:19302'},
-      {urls:'stun:stun1.l.google.com:19302'}
-    ]
-  };
+
+  /* 🖤 pro icon engine — inline SVG, no emoji chrome */
+  function IC(n,px,off){
+    const P={
+      sliders:'M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2H11v2h10zm-6-4h2V7h4V5h-4V3h-2v6z',
+      lock:'M12 3a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2h-1V8a5 5 0 0 0-5-5zm-3 8V8a3 3 0 1 1 6 0v3H9z',
+      mic:'M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5.5-3c0 3-2.54 5.1-5.5 5.1S6.5 14 6.5 11H4.5a7.5 7.5 0 0 0 7 7.48V21h1v-2.52A7.5 7.5 0 0 0 19.5 11h-2z',
+      cam:'M9.2 4 8 6H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-4l-1.2-2H9.2zM12 9a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9z',
+      chat:'M4 3h16a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H8.4L4.4 21a.9.9 0 0 1-1.4-.74V5a2 2 0 0 1 2-2z',
+      send:'M2.1 21.6 23 12 2.1 2.4 2.07 9.56 15.36 12 2.07 14.44z',
+      plus:'M11 5h2v6h6v2h-6v6h-2v-6H5v-2h6V5z'
+    };
+    return '<svg width="'+(px||18)+'" height="'+(px||18)+'" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:-4px" aria-hidden="true"><path d="'+P[n]+'"/>'+(off?'<line x1="4.4" y1="4.4" x2="20" y2="20" stroke="#fff" stroke-width="3.4" stroke-linecap="round" fill="none"/><line x1="4.4" y1="4.4" x2="20" y2="20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/>':'')+'</svg>';
+  }
+  const RTC_CONFIG=(function(){
+    const base={iceServers:[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:stun1.l.google.com:19302'}]};
+    try{
+      const v=(TAYRI_CONFIG&&TAYRI_CONFIG.video)||{};
+      if(v.rtc&&Array.isArray(v.rtc.iceServers)&&v.rtc.iceServers.length) base.iceServers=v.rtc.iceServers.slice();
+      const t=v.turn||{};
+      if(t.urls&&t.username&&!/PASTE/i.test(String(t.username))) base.iceServers.push({urls:t.urls,username:t.username,credential:t.credential});
+    }catch(e){}
+    return base;
+  })();
+  /* 🌍 countries + interests for the free filters (same maps as the main app) */
+  const CITY_COUNTRY={Casablanca:'Morocco',Rabat:'Morocco',Marrakech:'Morocco',Tangier:'Morocco',Agadir:'Morocco','Fès':'Morocco','Meknès':'Morocco',Oujda:'Morocco','Laâyoune':'Morocco','Al Hoceima':'Morocco',Essaouira:'Morocco',Chefchaouen:'Morocco',Algiers:'Algeria',Oran:'Algeria',Tunis:'Tunisia',Paris:'France',Marseille:'France',Lyon:'France',Toulouse:'France',Brussels:'Belgium',Geneva:'Switzerland',Madrid:'Spain',Barcelona:'Spain',Valencia:'Spain',London:'United Kingdom',Amsterdam:'Netherlands',Berlin:'Germany',Munich:'Germany',Rome:'Italy',Milan:'Italy',Lisbon:'Portugal',Cairo:'Egypt',Istanbul:'Turkey',Dubai:'UAE','Abu Dhabi':'UAE',Doha:'Qatar',Riyadh:'Saudi Arabia',Jeddah:'Saudi Arabia',Dakar:'Senegal',Abidjan:"Côte d'Ivoire",Lagos:'Nigeria',Nairobi:'Kenya','New York':'USA','Los Angeles':'USA',Miami:'USA',Toronto:'Canada',Montreal:'Canada','Mexico City':'Mexico','São Paulo':'Brazil','Buenos Aires':'Argentina',Tokyo:'Japan',Singapore:'Singapore',Bangkok:'Thailand',Seoul:'South Korea',Sydney:'Australia',Mumbai:'India',Jakarta:'Indonesia'};
+  const TAGS=['Travel','Foodie','Music','Books','Sea','Hiking','Art','Cats','Coffee','Cinema','Football','Cooking','Gaming','Photo','Fitness','Zen'];
+  function countryOf(city){ return CITY_COUNTRY[city]||'Other'; }
+  function tagTxt(t){ return (t||'').replace(/^[^A-Za-zÀ-ÿ]+/,'').trim(); }
 
   function setStatus(text,kind){ statusEl.textContent=text; statusEl.className='status'+(kind?' '+kind:''); }
   function show(el,on){ el.classList.toggle('hidden',!on); }
@@ -163,28 +321,48 @@ button,a{font:inherit}button{border:0;cursor:pointer}a{text-decoration:none;colo
     return out;
   }
   function genderOf(profile){ return profile&&((profile.g==='w'||profile.g==='m')?profile.g:(profile.gender||'u')); }
-  function defaultFilters(){ return {gender:'any',minSocial:0,maxCharmRank:0,supporterOnly:false}; }
+  function defaultFilters(){ return {gender:'any',minSocial:0,maxCharmRank:0,supporterOnly:false,country:'all',interest:'any'}; }
   function activeFilters(){
-    if(!isPro)return defaultFilters();
-    return {gender:filterGender.value,minSocial:+filterSocial.value||0,maxCharmRank:+filterCharm.value||0,supporterOnly:filterSupporter.value==='1'};
+    // Country + Shared interest are FREE for everyone; the rest are GOLD perks
+    const f=defaultFilters();
+    f.country=filterCountry.value||'all'; f.interest=filterInterest.value||'any';
+    if(isPro){ f.gender=filterGender.value; f.minSocial=+filterSocial.value||0; f.maxCharmRank=+filterCharm.value||0; f.supporterOnly=filterSupporter.value==='1'; }
+    return f;
   }
   function renderProFilters(){
     show(proFilterBar,videoMode==='random');
-    proBadge.textContent=isPro?'GOLD':'LOCKED';
-    filterToggle.classList.toggle('locked',!isPro);
-    filterToggle.textContent=isPro?'⚙ Pro filters':'🔒 Pro filters · GOLD';
+    proBadge.textContent=isPro?'GOLD':'FREE';
+    proBadge.classList.toggle('free',!isPro);
+    filterToggle.innerHTML=IC('sliders',14)+(isPro?' Pro filters':' Filters');
     [filterGender,filterSocial,filterCharm,filterSupporter].forEach(x=>x.disabled=!isPro);
-    filterNote.textContent=isPro?'Filters apply mutually: both members must fit each other’s criteria.':'Upgrade to Tayripages GOLD to filter gender, social level, Charm rank, or Supporter status.';
+    [filterCountry,filterInterest].forEach(x=>x.disabled=false);
+    filterNote.textContent=isPro?'Filters apply mutually: both members must fit each other’s criteria.':'Country and shared interest are FREE for everyone. GOLD adds gender, social level, Charm rank, and Supporter filters.';
+  }
+  function fillFilterOptions(){
+    const seen={};
+    try{
+      Object.values(discoveryUsers||{}).forEach(p=>{ const c=countryOf((p&&p.city)||''); if(c&&c!=='Other')seen[c]=1; });
+      Object.values(CITY_COUNTRY).forEach(c=>seen[c]=1);
+      if(myProfile&&myProfile.city)seen[countryOf(myProfile.city)]=1;
+    }catch(e){}
+    const list=Object.keys(seen).sort();
+    if(!list.length)list.push('Morocco');
+    const cur=filterCountry.value||'all';
+    filterCountry.innerHTML='<option value="all">Everywhere</option>'+list.map(c=>'<option value="'+c+'">'+c+'</option>').join('');
+    filterCountry.value=cur==='all'||list.includes(cur)?cur:'all';
+    const icur=filterInterest.value||'any';
+    filterInterest.innerHTML='<option value="any">Any interest</option>'+TAGS.map(t=>'<option value="'+t+'">'+t+'</option>').join('');
+    filterInterest.value=TAGS.includes(icur)?icur:'any';
   }
   async function loadDiscoveryContext(){
     try{
       const [usersSnap,votesSnap,goldSnap]=await Promise.all([root('users').once('value'),root('socialVotes/'+weekKey()).once('value'),root('gold').once('value')]);
-      discoveryUsers=usersSnap.val()||{}; discoveryGold=goldSnap.val()||{}; discoveryScores=buildDiscoveryScores(votesSnap.val()||{}); myProfile=discoveryUsers[uid]||{}; isPro=!!discoveryGold[uid]; renderProFilters();
-    }catch(e){ console.warn('discovery context',e); discoveryUsers={}; discoveryGold={}; discoveryScores={}; isPro=false; renderProFilters(); }
+      discoveryUsers=usersSnap.val()||{}; discoveryGold=goldSnap.val()||{}; discoveryScores=buildDiscoveryScores(votesSnap.val()||{}); myProfile=discoveryUsers[uid]||{}; isPro=!!discoveryGold[uid]; renderProFilters(); fillFilterOptions();
+    }catch(e){ console.warn('discovery context',e); discoveryUsers={}; discoveryGold={}; discoveryScores={}; isPro=false; renderProFilters(); fillFilterOptions(); }
   }
   function candidateData(id,queueValue){
     const p=discoveryUsers[id]||{}; const s=discoveryScores[id]||{};
-    return {uid:id,gender:genderOf(p),social:+(s.social||0),charm:+(s.charm||0),charmRank:+(s.charmRank||999999),supporter:!!discoveryGold[id],filters:queueValue&&queueValue.filters||defaultFilters()};
+    return {uid:id,gender:genderOf(p),social:+(s.social||0),charm:+(s.charm||0),charmRank:+(s.charmRank||999999),supporter:!!discoveryGold[id],country:countryOf(p.city||''),tags:(Array.isArray(p.tags)?p.tags.map(tagTxt):[]),filters:queueValue&&queueValue.filters||defaultFilters()};
   }
   function acceptsFilter(filter,candidate){
     const f=filter||defaultFilters();
@@ -192,6 +370,8 @@ button,a{font:inherit}button{border:0;cursor:pointer}a{text-decoration:none;colo
     if((+candidate.social||0)<(+f.minSocial||0))return false;
     if(+f.maxCharmRank>0&&(+candidate.charmRank||999999)>+f.maxCharmRank)return false;
     if(f.supporterOnly&&!candidate.supporter)return false;
+    if(f.country&&f.country!=='all'&&candidate.country!==f.country)return false;
+    if(f.interest&&f.interest!=='any'&&!(candidate.tags||[]).includes(f.interest))return false;
     return true;
   }
   function compatible(a,b){ return acceptsFilter(a.filters,b)&&acceptsFilter(b.filters,a); }
@@ -228,7 +408,7 @@ button,a{font:inherit}button{border:0;cursor:pointer}a{text-decoration:none;colo
         const peer=ms.a===uid?ms.b:ms.a;
         if(!peer) return null;
         const profile=(await root('users/'+peer).once('value')).val()||{};
-        return {mid,peer,name:profile.name||'Tayripages member',em:profile.em||'💛'};
+        return {mid,peer,name:profile.name||'Tayripages member'};
       }));
       matchData=rows.filter(Boolean);
       renderMatches();
@@ -236,21 +416,15 @@ button,a{font:inherit}button{border:0;cursor:pointer}a{text-decoration:none;colo
   }
   function renderMatches(){
     if(!matchData.length){ matchList.innerHTML='<div class="match-empty">No mutual matches yet. Use Random instant video or match with someone first.</div>'; return; }
-    matchList.innerHTML=matchData.map(m=>'<button class="match-choice '+(selectedPeer===m.peer?'selected':'')+'" data-peer="'+escapeHtml(m.peer)+'"><span class="match-avatar">'+escapeHtml(m.em)+'</span><span>'+escapeHtml(m.name)+'</span></button>').join('');
+    matchList.innerHTML=matchData.map(m=>'<button class="match-choice '+(selectedPeer===m.peer?'selected':'')+'" data-peer="'+escapeHtml(m.peer)+'"><span class="match-avatar">'+escapeHtml((m.name||'T').charAt(0).toUpperCase())+'</span><span>'+escapeHtml(m.name)+'</span></button>').join('');
     matchList.querySelectorAll('.match-choice').forEach(btn=>btn.addEventListener('click',()=>selectMatch(btn.dataset.peer)));
   }
   function selectMatch(peer){
     const m=matchData.find(x=>x.peer===peer); if(!m)return;
     selectedPeer=m.peer; selectedPeerName=m.name; renderMatches(); renderStartButton(); setStatus('Ready to call '+m.name+'.','good');
   }
-  function wirePairs(){
-    pairRootRef=root('videoPairIndex');
-    pairCb=s=>{ pairSnapshot=s.val()||{}; findExistingPair(); };
-    pairRootRef.on('value',pairCb,e=>{ if(e)setStatus('Video room access was denied. Publish the updated Firebase Rules.','bad'); });
-  }
-
   async function init(){
-    renderProFilters();
+    renderProFilters(); fillFilterOptions();
     try{
       if(!firebase.apps.length){ firebase.initializeApp(TAYRI_CONFIG.firebase); }
       if(TAYRI_CONFIG.appCheck&&TAYRI_CONFIG.appCheck.recaptchaSiteKey&&firebase.appCheck){
@@ -269,6 +443,9 @@ button,a{font:inherit}button{border:0;cursor:pointer}a{text-decoration:none;colo
         identity.innerHTML='<span class="avatar">'+(safeName(u)[0]||'T')+'</span><b>'+escapeHtml(safeName(u))+'</b><span>signed in</span>';
         await loadDiscoveryContext();
         await loadMatches(); renderStartButton();
+        wirePairs(); /* passive: if a match opens a room with you, the page shows it instantly */
+        wirePresence(); /* real online counter — never faked */
+        $('micBtn').innerHTML=IC('mic',18); $('camBtn').innerHTML=IC('cam',17);
         setStatus(videoMode==='match'?'Choose a mutual match to call live.':'Ready when you are. Camera access is requested only when you start.','good');
       });
     }catch(e){ console.error(e); setStatus('Firebase could not start. Check the Tayripages configuration.','bad'); }
@@ -312,19 +489,68 @@ button,a{font:inherit}button{border:0;cursor:pointer}a{text-decoration:none;colo
     localVideo.srcObject=localStream; localEmpty.classList.add('hidden');
     return localStream;
   }
+  function rulesBlocked(e){
+    if(e&&/PERMISSION_DENIED/i.test(e.code||''))
+      setStatus('Video is locked by the database, not by your camera. Fix (2 min): Firebase Console → Realtime Database → Rules → paste ALL of firebase-rules.json → Publish. Then reload this page.','bad');
+    else setStatus('Video matching could not reach the database. Check your connection and the Firebase Rules.','bad');
+  }
   function wireQueue(){
+    if(queueCb&&queueRootRef){ try{ queueRootRef.off('value',queueCb); }catch(e){} }
+    if(pairCb&&pairRootRef){ try{ pairRootRef.off('value',pairCb); }catch(e){} }
     queueRootRef=root('videoQueue');
     pairRootRef=root('videoPairIndex');
     queueCb=s=>{ queueSnapshot=s.val()||{}; tryMatch(); };
     pairCb=s=>{ pairSnapshot=s.val()||{}; findExistingPair(); };
-    queueRootRef.on('value',queueCb,e=>{ if(e)setStatus('Video matching could not read the queue. Publish the updated Firebase Rules.','bad'); });
-    pairRootRef.on('value',pairCb,e=>{ if(e)setStatus('Video room access was denied. Publish the updated Firebase Rules.','bad'); });
+    queueRootRef.on('value',queueCb,e=>{ if(e)rulesBlocked(e); });
+    pairRootRef.on('value',pairCb,e=>{ if(e)rulesBlocked(e); });
+  }
+  /* passive listener: stays on while the page is open, so if a MATCH opens a
+     room with you, you instantly get the "press Start" prompt below */
+  function wirePairs(){
+    if(pairCb&&pairRootRef){ try{ pairRootRef.off('value',pairCb); }catch(e){} }
+    pairRootRef=root('videoPairIndex');
+    pairCb=s=>{ pairSnapshot=s.val()||{}; if(searching) findExistingPair(); else passivelyNotify(); };
+    pairRootRef.on('value',pairCb,e=>{ if(e)rulesBlocked(e); });
+  }
+  function passivelyNotify(){
+    if(currentRoomId||closing) return;
+    const found=Object.entries(pairSnapshot||{}).find(([id,v])=>v&&v.status==='ringing'&&fresh(v)&&memberOf(v));
+    if(!found) return;
+    const peer=peerOf(found[1]); const name=(discoveryUsers[peer]&&discoveryUsers[peer].name)||(videoMode==='match'?selectedPeerName:'')||'A Tayripages member';
+    setStatus('✨ '+name+' opened a video room with you — press the Start button below to join live.','good');
   }
   function searchStatus(){
     if(!searching||currentRoomId)return;
     const waiting=Object.values(queueSnapshot||{}).filter(v=>v&&v.state==='waiting'&&fresh(v)).length-1;
-    if(waiting>0) setStatus(waiting+' member'+(waiting===1?' is':'s are')+' currently scanning, but no compatible match is available. We will keep checking.','warn');
-    else if(now()-searchStartedAt>5000) setStatus('No compatible member is available at the moment. Everyone eligible may be in another conversation. Please try again shortly.','warn');
+    if(waiting>0){ hideSoloCard(); setStatus(waiting+' member'+(waiting===1?' is':'s are')+' currently scanning, but no compatible match is available. We will keep checking.','warn'); }
+    else if(now()-searchStartedAt>5000){ setStatus('Still listening — you connect automatically the moment someone arrives.','warn'); showSoloCard(); }
+  }
+  /* ---------- honest empty state: zero fake counters, organic growth ---------- */
+  function showSoloCard(){ if(soloShown)return; soloShown=true; show($('soloCard'),true); }
+  function hideSoloCard(){ if(!soloShown)return; soloShown=false; const c=$('soloCard'); if(c)c.classList.add('hidden'); }
+  function paintOnline(){
+    const pill=$('onlinePill'),num=$('onlineNum');
+    if(!pill||!num)return;
+    if(onlineNow==null){ pill.classList.add('hidden'); return; }
+    num.textContent=onlineNow;
+    pill.classList.remove('hidden');
+  }
+  function wirePresence(){
+    try{
+      presenceRef=root('presence');
+      presenceRef.on('value',s=>{
+        const v=s.val()||{}; let n=0; const t=now();
+        Object.values(v).forEach(p=>{ if(p&&p.online&&t-(+p.lastSeen||0)<130000)n++; });
+        onlineNow=n; paintOnline();
+      });
+    }catch(e){ console.warn('presence',e); }
+  }
+  async function copyInviteLink(){
+    const link=location.origin+location.pathname.replace(/\/[^/]*$/,'/')+'index.html';
+    const text='Join me on Tayripages — real people, free instant video dating, zero fake profiles: '+link;
+    try{ await navigator.clipboard.writeText(text); }
+    catch(e){ try{ const ta=document.createElement('textarea'); ta.value=text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove(); }catch(_){} }
+    const b=$('soloInvite'); if(b){ const old=b.textContent; b.textContent='Link copied — send it!'; setTimeout(()=>{ b.textContent=old; },2200); }
   }
   async function startMatch(){
     if(!authUser) return signIn();
@@ -339,8 +565,12 @@ button,a{font:inherit}button{border:0;cursor:pointer}a{text-decoration:none;colo
       await queueRef.set({uid:uid,state:'waiting',createdAt:now(),gender:genderOf(myProfile),social:+(ownScore.social||0),charm:+(ownScore.charm||0),charmRank:+(ownScore.charmRank||999999),supporter:!!discoveryGold[uid],filters:f});
       wireQueue();
       clearInterval(scanTimer); scanTimer=setInterval(()=>tryMatch(),1500);
+      setTimeout(()=>{ if(searching&&!currentRoomId) findExistingPair(); },700); /* a match may already be ringing */
       setTimeout(()=>{ if(searching&&!currentRoomId) searchStatus(); },5000);
-    }catch(e){ console.error(e); setStatus(e.message||'Camera permission is required to start.','bad'); cleanupMedia(); searching=false; show(startBtn,true); show(skipBtn,false); show(mediaActions,false); show(modeTabs,true); renderStartButton(); }
+    }catch(e){ console.error(e);
+      if(e&&/PERMISSION_DENIED/i.test(e.code||'')) rulesBlocked(e);
+      else setStatus(e.message||'Camera permission is required to start.','bad');
+      cleanupMedia(); searching=false; hideSoloCard(); show(startBtn,true); show(skipBtn,false); show(mediaActions,false); show(modeTabs,true); renderStartButton(); }
   }
   async function startDirectMatch(){
     if(!authUser) return signIn();
@@ -362,9 +592,12 @@ button,a{font:inherit}button{border:0;cursor:pointer}a{text-decoration:none;colo
       if(chosen&&chosen.a===sorted[0]&&chosen.b===sorted[1]){
         await root('videoRooms/'+id).transaction(v=>v||pair);
         await joinRoom(id,chosen);
-        setStatus('Waiting for '+selectedPeerName+' to open the video room…','good');
+        setStatus('Room open. Tell '+selectedPeerName+' to open Instant Video and press Start — you connect the moment they do.','good');
       }else throw new Error('The private video room could not be created. Please try again.');
-    }catch(e){ console.error(e); setStatus(e.message||'Could not open the private video room.','bad'); cleanupMedia(); searching=false; show(startBtn,true); show(skipBtn,false); show(mediaActions,false); show(modeTabs,true); renderStartButton(); }
+    }catch(e){ console.error(e);
+      if(e&&/PERMISSION_DENIED/i.test(e.code||'')) rulesBlocked(e);
+      else setStatus(e.message||'Could not open the private video room.','bad');
+      cleanupMedia(); searching=false; hideSoloCard(); show(startBtn,true); show(skipBtn,false); show(mediaActions,false); show(modeTabs,true); renderStartButton(); }
   }
   async function tryMatch(){
     if(!searching||currentRoomId||closing) return;
@@ -404,16 +637,20 @@ button,a{font:inherit}button{border:0;cursor:pointer}a{text-decoration:none;colo
   async function joinRoom(id,pair){
     if(currentRoomId||closing||!pair||!memberOf(pair)) return;
     currentRoomId=id; currentPair=pair; currentPeer=peerOf(pair); role=uid===pair.a?'caller':'callee';
-    clearInterval(scanTimer); scanTimer=null;
+    clearInterval(scanTimer); scanTimer=null; hideSoloCard();
     setStatus('Match found. Connecting securely…','good'); show(skipBtn,false); show(endBtn,true); remoteEmpty.classList.remove('hidden');
     try{ if(queueRef) await queueRef.remove(); }catch(e){}
     roomRef=root('videoRooms/'+id); pairRef=root('videoPairIndex/'+id);
     try{ await roomRef.onDisconnect().update({status:'ended'}); await pairRef.onDisconnect().update({status:'ended'}); }catch(e){}
     await setupPeer();
-    roomCb=async snap=>{ const data=snap.val(); if(!data||data.status==='ended') return endCall('The other member left.',false); await processRoom(data); };
+    timerMode=videoMode;
+    roomCb=async snap=>{ const data=snap.val(); lastRoomData=data; if(!data||data.status==='ended') return endCall('The other member left.',false); await processRoom(data); };
     roomRef.on('value',roomCb);
     candidateRef=roomRef.child('candidates/'+currentPeer);
     candidateCb=snap=>addCandidate(snap.val()); candidateRef.on('child_added',candidateCb);
+    msgsRef=roomRef.child('msgs').limitToLast(40);
+    msgsCb=snap=>renderCallMsg(snap.val());
+    msgsRef.on('child_added',msgsCb);
   }
   async function setupPeer(){
     callConnected=false;
@@ -424,7 +661,7 @@ button,a{font:inherit}button{border:0;cursor:pointer}a{text-decoration:none;colo
     pc.onicecandidate=e=>{ if(e.candidate&&roomRef) roomRef.child('candidates/'+uid).push(e.candidate.toJSON()).catch(()=>{}); };
     pc.onconnectionstatechange=()=>{
       const s=pc.connectionState;
-      if(s==='connected'){ callConnected=true; setStatus('Connected. Enjoy the conversation.','good'); remoteEmpty.classList.add('hidden'); }
+      if(s==='connected'){ callConnected=true; setStatus('Connected. Enjoy the conversation.','good'); remoteEmpty.classList.add('hidden'); const rp=remoteVideo.closest('.panel'); if(rp)rp.classList.add('live'); startRouletteTimer(); }
       else if(s==='connecting') setStatus('Connecting camera to your match…','good');
       else if(s==='failed') endCall('This network could not connect directly. Try again or use text chat.',false);
       else if(s==='disconnected') setStatus('Connection interrupted…','warn');
@@ -452,9 +689,51 @@ button,a{font:inherit}button{border:0;cursor:pointer}a{text-decoration:none;colo
     try{ await pc.addIceCandidate(new RTCIceCandidate(data)); }catch(e){ console.warn('candidate',e); }
   }
   async function flushCandidates(){ const list=pendingCandidates.splice(0); for(const c of list){ try{ await pc.addIceCandidate(new RTCIceCandidate(c)); }catch(e){} } }
+  /* ---------- 💬 in-call text chat (text only, inside the room — costs nothing) ---------- */
+  function paintCcDot(){ const d=$('ccDot'); if(!d)return; d.textContent=ccUnread>9?'9+':ccUnread; show(d,ccUnread>0); }
+  function toggleCallChat(on){ ccOpen=(typeof on==='boolean')?on:!ccOpen; show($('callChat'),ccOpen); if(ccOpen){ ccUnread=0; paintCcDot(); scrollCc(); } }
+  function closeCallChat(){ ccOpen=false; const c=$('callChat'); if(c)c.classList.add('hidden'); ccUnread=0; paintCcDot(); }
+  function scrollCc(){ const b=$('ccBody'); if(b)b.scrollTop=1e7; }
+  function renderCallMsg(m){
+    if(!m||!m.text)return;
+    const mine=m.from===uid;
+    if(ccOpen||mine){
+      const b=$('ccBody'); if(!b)return; const note=b.querySelector('.ccnote'); if(note)note.remove();
+      b.insertAdjacentHTML('beforeend','<div class="ccmsg '+(mine?'me':'them')+'">'+escapeHtml(m.text)+'</div>'); scrollCc();
+    } else { ccUnread++; paintCcDot(); if(callConnected)setStatus('💬 New message from your match','good'); }
+  }
+  async function sendCallMsg(){
+    const inp=$('ccInput'); const v=(inp.value||'').trim().slice(0,280);
+    if(!v)return; if(!roomRef||!currentRoomId)return setStatus('Chat connects when the room opens.','warn');
+    inp.value='';
+    try{ await roomRef.child('msgs').push({from:uid,text:v,ts:Date.now()}); }catch(e){ setStatus('Message could not be sent.','bad'); }
+  }
+  /* ---------- ⏱ roulette timer: 30 s base — BOTH tap +30s to keep talking ---------- */
+  function startRouletteTimer(){
+    if(rtTimer||timerMode!=='random')return;
+    callStartTs=Date.now();
+    show($('ringTimer'),true);
+    rtTimer=setInterval(()=>{
+      if(!currentRoomId||!callConnected){ stopRouletteTimer(); return; }
+      const evs=Object.values((lastRoomData&&lastRoomData.extends)||{}).filter(e=>e&&e.by);
+      let mine=0,theirs=0; evs.forEach(e=>{ if(e.by===uid)mine++; else theirs++; });
+      const rounds=Math.min(mine,theirs);
+      const remains=callStartTs+30000*(1+rounds)-Date.now();
+      const sec=Math.max(0,Math.ceil(remains/1000));
+      const b=$('ringTimer').querySelector('b'); if(b)b.textContent='0:'+String(sec).padStart(2,'0');
+      const hint=$('ringHint');
+      if(hint)hint.textContent=mine>theirs?'waiting for partner':(theirs>mine?'partner extended — tap +30s':'tap +30s to keep talking');
+      $('ringTimer').classList.toggle('hot',theirs>mine);
+      show($('extBtn'),mine<=theirs);
+      if(remains<=0){ stopRouletteTimer(); endCall("Time's up — nice meeting you! When both tap +30s, the conversation keeps going.",false); }
+    },500);
+  }
+  function stopRouletteTimer(){ clearInterval(rtTimer); rtTimer=null; const t=$('ringTimer'),x=$('extBtn'); if(t)t.classList.add('hidden'); if(x)x.classList.add('hidden'); }
   async function skipMatch(){ await endCall('You skipped the match.',true); }
   async function endCall(message,restart){
     if(closing) return; closing=true; searching=false; clearInterval(scanTimer); scanTimer=null;
+    stopRouletteTimer(); closeCallChat(); hideSoloCard();
+    document.querySelectorAll('.panel.live').forEach(p=>p.classList.remove('live'));
     const endedPeer=currentPeer, shouldRate=callConnected&&!!currentPeer&&!restart;
     setStatus(message||'Call ended.','warn');
     try{ if(pairRef) await pairRef.update({status:'ended'}); }catch(e){}
@@ -469,15 +748,29 @@ button,a{font:inherit}button{border:0;cursor:pointer}a{text-decoration:none;colo
   }
   function detach(){
     stopListener(queueRootRef,'value',queueCb); stopListener(pairRootRef,'value',pairCb); stopListener(roomRef,'value',roomCb); stopListener(candidateRef,'child_added',candidateCb);
+    stopListener(msgsRef,'child_added',msgsCb); msgsRef=null; msgsCb=null;
     queueRootRef=pairRootRef=roomRef=pairRef=candidateRef=null; queueCb=pairCb=roomCb=candidateCb=null;
   }
   function cleanupMedia(){ if(pc){try{pc.close();}catch(e){}} if(localStream){localStream.getTracks().forEach(t=>t.stop());localStream=null;} if(localVideo)localVideo.srcObject=null; if(remoteVideo)remoteVideo.srcObject=null; }
-  filterToggle.onclick=()=>{ if(!isPro){ setStatus('Pro filters are available to Tayripages GOLD members.','warn'); return; } show(proFilterPanel,proFilterPanel.classList.contains('hidden')); };
+  filterToggle.onclick=()=>{ show(proFilterPanel,proFilterPanel.classList.contains('hidden')); };
   [filterGender,filterSocial,filterCharm,filterSupporter].forEach(x=>x.onchange=()=>{ if(isPro)setStatus('Filters saved for your next random video match.','good'); });
+  [filterCountry,filterInterest].forEach(x=>x.onchange=()=>{ setStatus('Filters saved for your next random video match.','good'); });
+  /* 🎛️ in-call action bar icons + handlers */
+  $('micBtn').innerHTML=IC('mic',18); $('camBtn').innerHTML=IC('cam',17);
+  $('chatBtn').innerHTML=IC('chat',17)+'<span id="ccDot" class="ccdot hidden">0</span>';
+  $('extBtn').innerHTML=IC('plus',14)+'<span style="font-size:10px;font-weight:950;margin-top:-2px">30s</span>';
+  $('ccSend').innerHTML=IC('send',16);
+  $('chatBtn').onclick=()=>toggleCallChat();
+  $('ccClose').onclick=()=>toggleCallChat(false);
+  $('ccSend').onclick=sendCallMsg; window.__ccSend=sendCallMsg;
+  const soI=$('soloInvite'),soK=$('soloKeep');
+  if(soI)soI.onclick=copyInviteLink;
+  if(soK)soK.onclick=()=>{ hideSoloCard(); setStatus('Still listening — you connect automatically the moment someone arrives.','warn'); };
+  $('extBtn').onclick=()=>{ if(!roomRef||!currentRoomId)return; roomRef.child('extends').push({by:uid,ts:Date.now()}).catch(()=>{}); setStatus('Extend requested — if your match agrees too, +30 seconds.','good'); };
   $('endBtn').onclick=()=>endCall('Call ended.',false);
   $('skipBtn').onclick=skipMatch;
-  $('micBtn').onclick=()=>{ if(!localStream)return; const t=localStream.getAudioTracks()[0]; if(!t)return; t.enabled=!t.enabled; $('micBtn').classList.toggle('on',t.enabled); $('micBtn').textContent=t.enabled?'🎙️':'🔇'; };
-  $('camBtn').onclick=()=>{ if(!localStream)return; const t=localStream.getVideoTracks()[0]; if(!t)return; t.enabled=!t.enabled; $('camBtn').classList.toggle('on',t.enabled); $('camBtn').textContent=t.enabled?'📷':'🚫'; };
+  $('micBtn').onclick=()=>{ if(!localStream)return; const t=localStream.getAudioTracks()[0]; if(!t)return; t.enabled=!t.enabled; $('micBtn').classList.toggle('on',t.enabled); $('micBtn').innerHTML=IC('mic',18,!t.enabled); };
+  $('camBtn').onclick=()=>{ if(!localStream)return; const t=localStream.getVideoTracks()[0]; if(!t)return; t.enabled=!t.enabled; $('camBtn').classList.toggle('on',t.enabled); $('camBtn').innerHTML=IC('cam',17,!t.enabled); };
   sendFeedback.onclick=submitFeedback;
   skipFeedback.onclick=hideFeedback;
   window.addEventListener('beforeunload',()=>{ try{ if(queueRef)queueRef.remove(); if(roomRef)roomRef.child('status').set('ended'); if(pairRef)pairRef.child('status').set('ended'); }catch(e){} });
