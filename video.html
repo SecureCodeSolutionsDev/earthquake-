@@ -64,11 +64,18 @@ svg{display:inline-block}
 .match-choice.selected{border-color:var(--pink);background:rgba(255,78,126,.13);box-shadow:0 4px 14px rgba(255,78,126,.2)}
 .match-avatar{width:29px;height:29px;border-radius:50%;display:grid;place-items:center;background:var(--grad);color:#fff;font-size:13.5px;font-weight:950;flex:0 0 auto}
 .match-empty{color:var(--mut);font-size:12px;text-align:center;padding:10px;line-height:1.6}
+.friendrow{display:flex;gap:8px;margin:12px 0 2px}
+.friendrow input{flex:1;min-width:0;border:1px solid var(--line);background:rgba(255,255,255,.05);border-radius:13px;padding:11px 13px;color:var(--ink);font-size:12.5px;font-weight:800;letter-spacing:1px;outline:none;text-transform:uppercase}
+.friendrow input:focus{border-color:rgba(255,78,126,.55)}
+.friendrow input::placeholder{color:var(--mut);letter-spacing:0;text-transform:none;font-weight:700}
+.friendrow .btn{flex:none;min-width:0;padding:11px 14px;font-size:12px}
+.friendmsg{text-align:center;color:var(--mut);font-size:11px;margin-top:8px;min-height:14px;font-weight:750}
+.modegold{margin-left:7px;padding:2.5px 7px;border-radius:7px;background:linear-gradient(135deg,#f2c14e,#c98a12);color:#241a05;font-size:8.5px;font-weight:950;letter-spacing:.6px;vertical-align:1px}
 .videos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
 .panel{position:relative;aspect-ratio:4/3;border-radius:22px;overflow:hidden;background:radial-gradient(120% 120% at 50% 0%,#241426,#0e0710);border:1px solid rgba(255,255,255,.1);display:grid;place-items:center;transition:box-shadow .3s}
 .panel.live{box-shadow:0 0 0 1.5px rgba(255,78,126,.55),0 0 44px rgba(255,78,126,.16)}
 .panel video{width:100%;height:100%;object-fit:cover;display:block}
-.panel.remote video:not([src]){opacity:0}
+/* NOTE: remote video visibility is driven by the stream itself — never by a fragile [src] check */
 .panel-label{position:absolute;z-index:2;left:10px;bottom:10px;color:#fff;background:rgba(8,4,10,.62);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:6px 11px;font-size:9.5px;font-weight:950;letter-spacing:.8px}
 .panel-empty{position:absolute;color:rgba(255,255,255,.55);font-size:12px;font-weight:800;text-align:center;padding:20px;line-height:1.5}
 .actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}
@@ -177,6 +184,11 @@ svg{display:inline-block}
     <div class="match-panel hidden" id="matchPanel">
       <div class="match-title">Choose one of your mutual matches</div>
       <div class="match-list" id="matchList">Loading matches…</div>
+      <div class="friendrow">
+        <input id="friendId" maxlength="7" placeholder="…or enter a friend's Tayri ID" autocapitalize="characters" autocomplete="off" spellcheck="false">
+        <button class="btn" id="friendBtn">Find friend</button>
+      </div>
+      <div class="friendmsg" id="friendMsg"></div>
     </div>
     <div class="videos hidden" id="videos">
       <div class="panel">
@@ -277,7 +289,7 @@ svg{display:inline-block}
     return '<svg width="'+(px||18)+'" height="'+(px||18)+'" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:-4px" aria-hidden="true"><path d="'+P[n]+'"/>'+(off?'<line x1="4.4" y1="4.4" x2="20" y2="20" stroke="#fff" stroke-width="3.4" stroke-linecap="round" fill="none"/><line x1="4.4" y1="4.4" x2="20" y2="20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/>':'')+'</svg>';
   }
   const RTC_CONFIG=(function(){
-    const base={iceServers:[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:stun1.l.google.com:19302'}]};
+    const base={iceServers:[{urls:'stun:stun.l.google.com:19302'},{urls:'stun:stun1.l.google.com:19302'},{urls:'stun:stun.cloudflare.com:3478'}]};
     try{
       const v=(TAYRI_CONFIG&&TAYRI_CONFIG.video)||{};
       if(v.rtc&&Array.isArray(v.rtc.iceServers)&&v.rtc.iceServers.length) base.iceServers=v.rtc.iceServers.slice();
@@ -330,7 +342,11 @@ svg{display:inline-block}
     if(isPro){ f.gender=filterGender.value; f.minSocial=+filterSocial.value||0; f.maxCharmRank=+filterCharm.value||0; f.supporterOnly=filterSupporter.value==='1'; }
     return f;
   }
+  function paintModeGold(){
+    matchMode.innerHTML='Video with a match'+(isPro?'':' <span class="modegold">GOLD</span>');
+  }
   function renderProFilters(){
+    paintModeGold();
     show(proFilterBar,videoMode==='random');
     proBadge.textContent=isPro?'GOLD':'FREE';
     proBadge.classList.toggle('free',!isPro);
@@ -433,7 +449,10 @@ svg{display:inline-block}
       }
       db=firebase.database();
       randomMode.onclick=()=>setMode('random');
-      matchMode.onclick=()=>setMode('match');
+      matchMode.onclick=()=>{
+        if(authUser&&!isPro){ setStatus('Video with a match or a friend is a GOLD feature — unlock GOLD in the app (GOLD tab, one-time).','warn'); return; }
+        setMode('match');
+      };
       firebase.auth().onAuthStateChanged(async u=>{
         authUser=u; uid=u&&u.uid||'';
         if(!u){
@@ -539,6 +558,14 @@ svg{display:inline-block}
   function wirePresence(){
     try{
       presenceRef=root('presence');
+      /* this page IS part of the app: mark myself online too, so the counter is true from video visitors */
+      try{
+        const mine=presenceRef.child(uid);
+        mine.onDisconnect().update({online:false,lastSeen:Date.now()}).catch(()=>{});
+        const beat=()=>mine.update({online:true,lastSeen:Date.now(),name:safeName(authUser)}).catch(()=>{});
+        beat(); const hb=setInterval(beat,25000);
+        window.addEventListener('pagehide',()=>{ try{ clearInterval(hb); mine.update({online:false,lastSeen:Date.now()}); }catch(e){} });
+      }catch(e){}
       presenceRef.on('value',s=>{
         const v=s.val()||{}; let n=0; const t=now();
         Object.values(v).forEach(p=>{ if(p&&p.online&&t-(+p.lastSeen||0)<130000)n++; });
@@ -573,8 +600,27 @@ svg{display:inline-block}
       else setStatus(e.message||'Camera permission is required to start.','bad');
       cleanupMedia(); searching=false; hideSoloCard(); show(startBtn,true); show(skipBtn,false); show(mediaActions,false); show(modeTabs,true); renderStartButton(); }
   }
+  async function findFriend(){
+    const inp=$('friendId'),msg=$('friendMsg'); if(!inp||!msg)return;
+    const raw=(inp.value||'').trim().toUpperCase();
+    if(raw.length<4){ msg.textContent='Enter the full Tayri ID (5-7 characters).'; return; }
+    msg.textContent='Searching Tayripages…';
+    try{
+      const v=(await root('userCodes/'+raw).once('value')).val();
+      if(!v){ msg.textContent='No member owns this ID — check the code with your friend.'; return; }
+      const fuid=String(v);
+      if(fuid===uid){ msg.textContent='That is your own ID — send it to a friend instead.'; return; }
+      const prof=(await root('users/'+fuid).once('value')).val()||{};
+      selectedPeer=fuid; selectedPeerName=prof.name||'Tayripages member';
+      document.querySelectorAll('.match-choice.selected').forEach(b=>b.classList.remove('selected')); /* friend-ID overrides list pick */
+      msg.innerHTML='Found <b style="color:var(--ink)">'+escapeHtml(selectedPeerName)+'</b> — press Start to call them live. They simply open this page and tap Start.';
+      renderStartButton();
+      setStatus('Ready to call '+selectedPeerName+' by Tayri ID.','good');
+    }catch(e){ console.warn('findFriend',e); msg.textContent='Could not search right now — try again.'; }
+  }
   async function startDirectMatch(){
     if(!authUser) return signIn();
+    if(!isPro) return setStatus('Calling a specific member is GOLD — unlock in the app (one-time, forever).','warn');
     if(!selectedPeer) return setStatus('Choose a mutual match first.','warn');
     if(searching) return;
     try{
@@ -764,6 +810,9 @@ svg{display:inline-block}
   $('chatBtn').onclick=()=>toggleCallChat();
   $('ccClose').onclick=()=>toggleCallChat(false);
   $('ccSend').onclick=sendCallMsg; window.__ccSend=sendCallMsg;
+  const fB=$('friendBtn'),fI=$('friendId');
+  if(fB)fB.onclick=findFriend;
+  if(fI)fI.onkeydown=e=>{ if(e.key==='Enter')findFriend(); };
   const soI=$('soloInvite'),soK=$('soloKeep');
   if(soI)soI.onclick=copyInviteLink;
   if(soK)soK.onclick=()=>{ hideSoloCard(); setStatus('Still listening — you connect automatically the moment someone arrives.','warn'); };

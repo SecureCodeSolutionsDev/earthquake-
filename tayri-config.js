@@ -28,7 +28,7 @@ const TAYRI_CONFIG = {
 
   /* ---------- REAL PHOTOS ---------- */
   photos: {
-    maxPhotos:  4,
+    maxPhotos:  5,      // up to 5 photos per profile — swiper browses them all
     maxSize:    640,
     quality:    0.75,
     cloudinary: { cloudName: "", uploadPreset: "" }   // optional scale path
