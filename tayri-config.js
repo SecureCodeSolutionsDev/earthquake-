@@ -23,7 +23,7 @@ const TAYRI_CONFIG = {
 
   /* ---------- App Check (reCAPTCHA v3 SITE key) ---------- */
   appCheck: {
-    recaptchaSiteKey: "6LfF73QtAAAAAAS5_QpF8M15_5ohqA3B8XA4IfDq"
+    recaptchaSiteKey: ""  // App Check OFF — bots are stopped by Google sign-in + database rules + daily caps. Paste a key here to re-enable later.
   },
 
   /* ---------- REAL PHOTOS ---------- */

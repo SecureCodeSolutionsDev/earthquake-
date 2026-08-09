@@ -11,7 +11,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-check-compat.js"></script>
+
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{min-height:100vh;color:#f6eef4;background:radial-gradient(900px 520px at 12% -8%,rgba(255,78,126,.22),transparent 60%),radial-gradient(820px 500px at 92% 4%,rgba(138,92,246,.18),transparent 62%),radial-gradient(700px 460px at 50% 112%,rgba(255,138,92,.10),transparent 60%),#0b0812;background-attachment:fixed;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans Arabic",Arial,sans-serif}
@@ -113,7 +113,7 @@ async function load(){
     scores={users,byTarget};render();renderSupporters(gs.val()||{},users);show('gate',false);show('board',true);setStatus('Loaded','');
   }catch(e){console.warn(e);setStatus('Could not load the leaderboard. Check your Firebase rules.',true)}
 }
-async function signIn(){try{await firebase.auth().signInWithPopup(new firebase.auth.GoogleAuthProvider())}catch(e){if(['auth/popup-blocked','auth/operation-not-supported-in-this-environment','auth/web-storage-unsupported'].includes(e.code))return firebase.auth().signInWithRedirect(new firebase.auth.GoogleAuthProvider());setStatus('Google sign-in failed: '+(e.code||'try again'),true)}}
+async function signIn(){const prov=new firebase.auth.GoogleAuthProvider();if(/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent))return firebase.auth().signInWithRedirect(prov);try{await firebase.auth().signInWithPopup(prov)}catch(e){if(['auth/popup-blocked','auth/operation-not-supported-in-this-environment','auth/web-storage-unsupported'].includes(e.code))return firebase.auth().signInWithRedirect(prov);setStatus('Google sign-in failed: '+(e.code||'try again'),true)}}
 function tab(which){['social','charm','supporter'].forEach(x=>{show(x+'View',x===which);$(x+'Tab').classList.toggle('active',x===which)})}
 $('socialTab').onclick=()=>tab('social');$('charmTab').onclick=()=>tab('charm');$('supporterTab').onclick=()=>tab('supporter');$('signBtn').onclick=signIn;
 try{if(!firebase.apps.length)firebase.initializeApp(TAYRI_CONFIG.firebase);if(TAYRI_CONFIG.appCheck&&TAYRI_CONFIG.appCheck.recaptchaSiteKey&&firebase.appCheck){try{firebase.appCheck().activate(TAYRI_CONFIG.appCheck.recaptchaSiteKey,true)}catch(e){}}db=firebase.database();firebase.auth().onAuthStateChanged(u=>{user=u;uid=u&&u.uid||'';if(!u){setStatus('Sign in with Google to view the weekly standings.',true);return} $('identity').textContent=(u.displayName||u.email||'Signed in')+' · signed in';load()})}catch(e){setStatus('Firebase could not start.',true)}

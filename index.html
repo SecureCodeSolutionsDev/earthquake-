@@ -28,12 +28,13 @@
 <meta name="apple-mobile-web-app-title" content="Tayripages">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <script src="tayri-config.js"></script>
+<script src="tayri-i18n.js"></script>
 <script src="img-pack-1.js"></script>
 <script src="img-pack-2.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-check-compat.js"></script>
+
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none}
@@ -96,6 +97,10 @@ textarea.inp{min-height:80px;resize:none}
 .emojirow{display:flex;gap:10px;flex-wrap:wrap}
 .emojipick{width:52px;height:52px;border-radius:16px;background:#fff;border:1.5px solid var(--line);font-size:26px;display:flex;align-items:center;justify-content:center}
 .emojipick.on{border-color:var(--pk);box-shadow:var(--shadow);transform:scale(1.08)}
+/* ---------- pro avatar art ---------- */
+.avart{position:absolute;inset:0;display:block;background-size:cover;background-position:center;border-radius:inherit}
+.cav{overflow:hidden}
+.avcover{background-size:cover;background-position:center}
 .gradrow{display:flex;gap:10px}
 .gradpick{width:44px;height:44px;border-radius:50%;border:3px solid transparent}
 .gradpick.on{border-color:var(--pk);transform:scale(1.1)}
@@ -174,6 +179,36 @@ textarea.inp{min-height:80px;resize:none}
 .gift{align-self:center;background:linear-gradient(45deg,#fff2cd,#ffe7ee);border:1px solid #ffd08a;border-radius:18px;padding:12px 18px;text-align:center;font-weight:800;font-size:14px;animation:pop .35s ease}
 @keyframes pop{0%{transform:scale(.6);opacity:0}60%{transform:scale(1.05)}100%{transform:scale(1)}}
 .chatfoot{padding:8px 12px calc(12px + env(safe-area-inset-bottom));background:#fff;border-top:1px solid var(--line)}
+/* ---------- chat color themes — comfort + colorblind-friendly ---------- */
+.chatdock{background:#fff}
+.chatscr.ct-ocean .bub.me{background:linear-gradient(45deg,#1565d8,#0aa5c2);color:#fff}
+.chatscr.ct-ocean .bub.them{background:#fff3d9;border-color:#f0d9a8}
+.chatscr.ct-violet .bub.me{background:linear-gradient(45deg,#6d28d9,#a855f7);color:#fff}
+.chatscr.ct-violet .bub.them{background:#ffeede;border-color:#f6cba0}
+.chatscr.ct-mono .bub.me{background:#151515;color:#fff}
+.chatscr.ct-mono .bub.them{background:#fff;border:2px solid #151515}
+.chatscr.dark{background:#0d1117}
+.chatscr.dark .chathead{background:#161b22;border-color:#262d33;color:#e6edf3}
+.chatscr.dark .chathead .chip{background:#21262d;color:#e6edf3;border-color:#30363d}
+.chatscr.dark .chathead .mut{color:#9aa4af}
+.chatscr.dark .chatbody{background:#0d1117}
+.chatscr.dark .chatdock{background:#161b22}
+.chatscr.dark .bub.them{background:#21262d;border-color:#30363d;color:#e6edf3;box-shadow:none}
+.chatscr.dark .sys{background:#21262d;color:#79b8ff}
+.chatscr.dark .chatfoot{background:#161b22;border-color:#262d33}
+.chatscr.dark .chatrow input{background:#0d1117;border-color:#30363d;color:#e6edf3}
+.chatscr.dark .freebar{color:#c8d1da}
+.citem.hasnew .lm{color:var(--pk);font-weight:800}
+.citem.hasnew .cav{box-shadow:0 0 0 2px #fff,0 0 0 4px var(--pk)}
+.ndot{width:8px;height:8px;border-radius:50%;background:var(--pk);display:inline-block;flex:none}
+.palrow{display:flex;align-items:center;gap:11px;padding:11px 12px;border:1.5px solid var(--line);border-radius:14px;width:100%;text-align:start;background:var(--card)}
+.palrow.on{border-color:var(--pk);box-shadow:0 0 0 3px rgba(255,59,92,.12)}
+.palsamp{display:flex;gap:4px;flex:none}
+.palsamp i{width:24px;height:17px;border-radius:6px;border:1px solid var(--line)}
+#bootSplash{position:fixed;inset:0;z-index:400;display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:var(--bg)}
+body.bootwait #bootSplash{display:flex}
+.bootspin{width:32px;height:32px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--pk);animation:bsSpin 1s linear infinite}
+@keyframes bsSpin{to{transform:rotate(360deg)}}
 .freebar{display:flex;align-items:center;gap:8px;font-size:11px;font-weight:800;color:var(--mut);padding:2px 4px 8px}
 .freebar .bar{flex:1;height:6px;background:var(--soft);border-radius:99px;overflow:hidden}
 .freebar .bar i{display:block;height:100%;background:var(--grad);border-radius:99px;transition:width .3s}
@@ -392,7 +427,7 @@ textarea.inp{min-height:64px}
 /* ---------- v5 — logged-out wall, pro tag icons, rules link ---------- */
 body.preauth #tabbar{display:none!important}
 body.preauth .scr{display:none!important}
-body.preauth #scr-auth{display:block!important}
+body.preauth.authno #scr-auth{display:block!important}
 .tchip{display:inline-flex;align-items:center;gap:6px}
 .dcard .tags span{display:inline-flex;align-items:center;gap:5px}
 .linklike{color:#ffd9e4;text-decoration:underline;font-weight:800;font-size:inherit}
@@ -507,7 +542,8 @@ body.preauth #scr-auth{display:block!important}
 
 </style>
 </head>
-<body class="preauth">
+<body class="preauth bootwait">
+<div id="bootSplash"><svg width="54" height="54" viewBox="0 0 24 24" fill="url(#bootg)" aria-hidden="true"><defs><linearGradient id="bootg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff5f8f"/><stop offset="1" stop-color="#c81d5e"/></linearGradient></defs><path d="M12 21s-7.5-4.7-10-9.3C.4 8.6 2.2 4.5 6 4.1c2-.2 3.9.8 6 3.1 2.1-2.3 4-3.3 6-3.1 3.8.4 5.6 4.5 4 7.6C19.5 16.3 12 21 12 21z"/></svg><div style="font-weight:900;font-size:19px;letter-spacing:.3px">Tayripages</div><div class="bootspin"></div></div>
 <div class="app">
 <div id="toasts"></div>
 
@@ -521,7 +557,7 @@ body.preauth #scr-auth{display:block!important}
       <div class="authname grad-txt">Tayripages</div>
       <div class="brand-meaning" style="font-size:11px;margin-top:2px;color:rgba(255,255,255,.82)">Tayri — the Tamazight word for love.</div>
       <div class="authh" data-t="Real people only">Real people only</div>
-      <div class="authsub" data-t="One tap with your Google account — no bots, no fakes, no catfish farms. We never see your emails or post anything.">One tap with your Google account — no bots, no fakes, no catfish farms. We never see your emails or post anything.</div>
+      <div class="authsub" data-t="One tap with your Google account — real people only.">One tap with your Google account — real people only.</div>
       <button class="btn gbtn" id="btnGoogle" onclick="googleIn()" style="font-size:15.5px">
         <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.1H42V20H24v8h11.3c-1.6 4.7-6.1 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3l5.7-5.7C34 6.1 29.3 4 24 4 13 4 4 13 4 24s9 20 20 20 20-9 20-20c0-1.3-.1-2.7-.4-3.9z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.9 1.2 8 3l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.1H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C41 35.4 44 30.2 44 24c0-1.3-.1-2.7-.4-3.9z"/></svg>
         <span data-t="Continue with Google">Continue with Google</span>
@@ -619,7 +655,7 @@ body.preauth #scr-auth{display:block!important}
     <button class="chip" style="padding:9px 11px" onclick="chatMenu()" title="More">⋯</button>
   </div>
   <div class="chatbody" id="chatBody"></div>
-  <div style="background:#fff">
+  <div class="chatdock">
     <div class="ice" id="iceRow" style="padding-inline:14px"></div>
     <div class="chatfoot" style="border-top:1px solid var(--line)">
       <div class="freebar" id="freeBar"></div>
@@ -681,7 +717,7 @@ let uid=myUid();
 const L=load();
 function myUid(){let u=localStorage.getItem('zwin_uid');if(!u){u='u_'+Math.random().toString(36).slice(2,9)+Date.now().toString(36);localStorage.setItem('zwin_uid',u)}return u}
 function load(){try{return JSON.parse(localStorage.getItem('zwin_local'))||fresh()}catch(e){return fresh()}}
-function fresh(){return {me:null,gold:0,referralCount:0,referralGoldUntil:0,referralJoined:false,deletedForMe:{},swiped:{},matches:[],chats:{},freeLeft:{},exclusive:{},likesYou:[],likesDay:{d:'',n:0},superDay:{d:'',n:0},boostDay:'',boostUntil:0,unread:{},pendingOrders:[],seen:{},gifts:{} } }
+function fresh(){return {me:null,gold:0,referralCount:0,referralGoldUntil:0,referralJoined:false,deletedForMe:{},swiped:{},matches:[],chats:{},freeLeft:{},exclusive:{},likesYou:[],likesDay:{d:'',n:0},superDay:{d:'',n:0},boostDay:'',boostUntil:0,unread:{},readAt:{},chatTheme:'rose',chatDark:0,pendingOrders:[],seen:{},gifts:{} } }
 function goldActive(){ return !!L.gold || (+L.referralGoldUntil||0)>Date.now(); }
 function captureReferral(){
   try{ const r=new URLSearchParams(location.search).get('ref'); if(r&&r.length>5&&r.length<160&&r!==uid)localStorage.setItem('tayri_referrer',r); }catch(e){}
@@ -724,6 +760,7 @@ function goldPerks(){ return [
   [T('Unlimited likes — swipe all day'),'heart'],
   [T('Unlimited chat with every match'),'chat'],
   [T('See everyone who likes you'),'spark'],
+  [T('Match & message admirers instantly'),'chat'],
   [G.superGold+' '+T('Super Likes every day'),'spark'],
   [T('Rewind your last swipe'),'rew'],
   [T('1 free Boost every day'),'spark']]; }
@@ -781,6 +818,34 @@ function confirmGold(refid){
 function toast(m){const d=document.createElement('div');d.className='toast';d.textContent=m;$('toasts').appendChild(d);setTimeout(()=>{d.style.opacity='0';d.style.transition='opacity .3s';setTimeout(()=>d.remove(),300)},2700)}
 function show(id){$(id).classList.add('on')} function hide(id){$(id).classList.remove('on')}
 function grad(i){const G=[['#ffd1e3','#ffb3c7'],['#ffe3c2','#ffc09e'],['#d7f0ff','#b3dcff'],['#e7ffd9','#c3f5b0'],['#f5e0ff','#e6c2ff'],['#fff3c9','#ffe48a'],['#d9fff4','#a9f2df'],['#ffe0e0','#ffb0b0']];const g=G[i%G.length];return `linear-gradient(160deg,${g[0]},${g[1]})`}
+/* ============ 🎨 PRO AVATAR ENGINE — generated SVG art, zero emoji faces ============ */
+const AV_GRADS=[['#ff9a8b','#ff5f8f'],['#f6d365','#fda085'],['#a1c4fd','#c2e9fb'],['#84fab0','#8fd3f4'],['#fbc2eb','#a6c1ee'],['#fddb92','#d1fdff'],['#30cfd0','#330867'],['#f093fb','#f5576c']];
+function avHash(s){ let h=7; s=String(s||'tayri'); for(let i=0;i<s.length;i++){ h=(h*31+s.charCodeAt(i))>>>0; } return h; }
+function avaURI(p){
+  const seed=(p&&(p.id||p.uid))||'x'; const h=avHash(seed);
+  const st=(p&&p.av!=null&&p.av>=0&&p.av<8)?p.av:(h%8); const c=AV_GRADS[h%8],c1=c[0],c2=c[1];
+  const base=(inner)=>"data:image/svg+xml,"+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${c1}"/><stop offset="1" stop-color="${c2}"/></linearGradient></defs><rect width="100" height="100" fill="url(#g)"/>${inner}</svg>`);
+  switch(st){
+    case 0: return base(`<circle cx="50" cy="34" r="16" fill="#ffffff" opacity=".92"/><path d="M18 100c2-22 16-34 32-34s30 12 32 34z" fill="#ffffff" opacity=".92"/>`);
+    case 1: return base(`<g fill="none" stroke="#ffffff" stroke-width="7" opacity=".9"><circle cx="50" cy="50" r="26"/><circle cx="50" cy="50" r="12"/></g><circle cx="50" cy="50" r="4" fill="#ffffff"/>`);
+    case 2: return base(`<circle cx="72" cy="28" r="13" fill="#ffffff" opacity=".9"/><path d="M8 100 38 52l14 20 12-16 28 44z" fill="#ffffff" opacity=".85"/>`);
+    case 3: return base(`<path d="M0 62c14-12 28-12 42 0s28 12 42 0 16-10 16-10v48H0z" fill="#ffffff" opacity=".55"/><path d="M0 78c14-12 28-12 42 0s28 12 42 0 16-10 16-10v32H0z" fill="#ffffff" opacity=".85"/>`);
+    case 4: return base(`<g fill="#ffffff" opacity=".9"><circle cx="50" cy="24" r="9"/><circle cx="50" cy="76" r="9"/><circle cx="24" cy="50" r="9"/><circle cx="76" cy="50" r="9"/><circle cx="50" cy="50" r="13" opacity=".95"/></g>`);
+    case 5: return base(`<path d="M50 14 84 44 50 86 16 44z" fill="#ffffff" opacity=".9"/><path d="M50 14 64 44 50 86z" fill="#000000" opacity=".08"/>`);
+    case 6: return base(`<path d="M0 88c20-26 40-26 60 0s20 8 40-8v20H0z" fill="#ffffff" opacity=".9"/><circle cx="26" cy="30" r="11" fill="#ffffff" opacity=".75"/>`);
+    default: return base(`<g stroke="#ffffff" stroke-width="6" stroke-linecap="round" opacity=".9"><path d="M50 18v22M50 60v22M18 50h22M60 50h22"/></g><circle cx="50" cy="50" r="7" fill="#ffffff"/>`);
+  }
+}
+function peerAv(pid){ const u=(R.usersCache||[]).find(x=>x.id===pid); return (u&&u.av!=null)?u.av:null; }
+function avaGridHTML(cur,cb){ return [0,1,2,3,4,5,6,7].map(n=>`<button class="emojipick ${cur===n?'on':''}" style="position:relative;overflow:hidden" onclick="${cb}(${n})"><i class="avart" style="background-image:url('${avaURI({id:'pick_'+n,av:n})}')"></i></button>`).join(''); }
+function obAv(n){ OB.data.av=n; paintOb(); }
+/* 👤 Me-page avatar picker */
+function openAvSheet(){ const cur=(L.me.av!=null?L.me.av:avHash(uid)%8);
+  $('genBody').innerHTML=`<div class="h2" style="margin-bottom:4px">Your avatar art</div>
+  <div class="mut tiny" style="margin-bottom:8px">Shown everywhere until you add a photo — your real photo always wins.</div>
+  <div class="emojirow">${avaGridHTML(cur,'setMyAv')}</div>
+  <div style="height:8px"></div><button class="btn btn-line" onclick="hide('genSheet')">Close</button>`; show('genSheet'); }
+function setMyAv(n){ L.me.av=n; save(); if(!DEMO)syncMe(); hide('genSheet'); toast('Avatar updated 💛'); if(R.tab==='profile')renderProfile(); }
 
 /* ---------- sample people (demo + when cloud is empty) ---------- */
 const TAGS=['Travel','Foodie','Music','Books','Sea','Hiking','Art','Cats','Coffee','Cinema','Football','Cooking','Gaming','Photo','Fitness','Zen'];
@@ -849,8 +914,20 @@ function fbInit(){
   }catch(e){ showAuth(); }
 }
 let AUTHED=false;
+/* 🚀 boot repair — matches, chats, unread, stories load DETERMINISTICALLY after login (was: only on a lucky reconnect) */
+function bootCloudWatch(){ if(DEMO||!L.me)return; syncBadges().catch(e=>console.warn('badges',e)); syncLimits(); }
+/* 🔒 daily caps adopted from the cloud — clearing cache/reinstalling no longer refills free likes or supers */
+function syncLimits(){
+  const dk=Math.floor(Date.now()/86400000);
+  ref('limits/'+uid).once('value').then(s=>{ const v=s.val()||{}; let ch=false;
+    if(v.likes&&v.likes.d===dk&&(L.likesDay.d!==dk||v.likes.n>(L.likesDay.n||0))){ L.likesDay={d:dk,n:v.likes.n}; ch=true; }
+    if(v.super&&v.super.d===dk&&(L.superDay.d!==dk||v.super.n>(L.superDay.n||0))){ L.superDay={d:dk,n:v.super.n}; ch=true; }
+    if(ch){ save(); paintLikesPill(); if(R.tab==='profile')renderProfile(); }
+  }).catch(()=>{});
+}
 function onAuthed(u){
-  if(AUTHED)return; AUTHED=true; document.body.classList.remove('preauth');
+  if(AUTHED)return; AUTHED=true;
+  document.body.classList.remove('preauth'); document.body.classList.remove('bootwait'); document.body.classList.remove('authno');
   uid=u.uid; // identity IS the verified Google user from now on
   loadReferralStatus().catch(()=>{});
   // 👥 several accounts on one phone: memory belongs to an account, not to the device.
@@ -859,7 +936,7 @@ function onAuthed(u){
   document.querySelectorAll('.scr').forEach(x=>{ x.classList.remove('on'); x.style.display='none'; }); $('tabbar').style.display='flex';
   initPush();
   DB.ref('.info/connected').on('value',s=>{ if(s.val()&&L.me){heartbeat(); syncMe(); syncBadges();} });
-  if(L.me){ showTab('discover'); loadDeck().catch(e=>{ console.warn('deck',e); paintDeck(); }); }
+  if(L.me){ showTab('discover'); loadDeck().catch(e=>{ console.warn('deck',e); paintDeck(); }); bootCloudWatch(); }
   else { restoreMe(); }
 }
 /* ☁️ welcome back — the cloud remembers you. Profile lives under users/{uid}, photos under photos/{uid}.
@@ -870,14 +947,14 @@ function restoreMe(){
     if(p&&p.name){
       L.me={ name:p.name, age:p.age||22, g:p.g||'', into:(Array.isArray(p.into)&&p.into.length?p.into.slice(0,2):['w','m']),
         city:p.city||'Casablanca', bio:p.bio||'', tags:(Array.isArray(p.tags)?p.tags.slice(0,4):[]),
-        em:p.em||'😊', gi:(p.gi!=null?p.gi:0), uid:uid, photos:[] };
+        em:p.em||'😊', gi:(p.gi!=null?p.gi:0), av:(p.av!=null?p.av:null), uid:uid, photos:[] };
       L.createdAt=p.createdAt||Date.now();
       save();
       ref('photos/'+uid).once('value').then(ps=>{ const m=ps.val()||{};
         const arr=['p0','p1','p2','p3','p4','p5'].map(k=>m[k]).filter(Boolean);
         if(arr.length){ L.me.photos=arr; delete photoCache[uid]; save(); if(R.tab==='profile')renderProfile(); }
       }).catch(()=>{});
-      showTab('discover'); loadDeck().catch(e=>{ console.warn('deck',e); paintDeck(); });
+      showTab('discover'); loadDeck().catch(e=>{ console.warn('deck',e); paintDeck(); }); bootCloudWatch();
     } else startOnboard();
   }).catch(e=>{ console.warn('restore',e); startOnboard(); });
 }
@@ -885,6 +962,7 @@ function restoreMe(){
 function hardScreen(id){ document.querySelectorAll('.scr').forEach(s=>{ s.classList.remove('on'); s.style.display='none'; });
   const e=$(id); e.classList.add('on'); e.style.display=(id==='scr-discover'?'flex':'block'); e.scrollTop=0; }
 function showAuth(){
+  document.body.classList.remove('bootwait'); document.body.classList.add('authno');
   hardScreen('scr-auth'); $('tabbar').style.display='none';
   paintAuthBg();
 }
@@ -893,6 +971,8 @@ function googleIn(){
   if(!AUTH)return toast('Connect the Firebase cloud first (tayri-config.js)');
   const btn=$('btnGoogle'); btn.disabled=true; btn.style.opacity=.65;
   const prov=new firebase.auth.GoogleAuthProvider();
+  /* Phones: modern Chromium blocks popup sign-in (COOP window.closed) — redirect is bulletproof */
+  if(/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent)){ AUTH.signInWithRedirect(prov); return; }
   AUTH.signInWithPopup(prov).then(()=>{ /* onAuthStateChanged drives the rest */ })
     .catch(e=>{
       btn.disabled=false; btn.style.opacity=1;
@@ -966,7 +1046,7 @@ async function syncMe(){
   // publish my profile & coins, listen for events (likes, gifts, orders)
   await ref('users/'+uid).update({
     name:L.me.name,age:L.me.age,g:L.me.g,into:L.me.into,city:L.me.city,bio:L.me.bio,
-    tags:L.me.tags.slice(0,4),em:L.me.em,gi:L.me.gi,lastSeen:Date.now(),createdAt:L.createdAt||Date.now(),
+    tags:L.me.tags.slice(0,4),em:L.me.em,gi:L.me.gi,av:(L.me.av!=null?L.me.av:avHash(uid)%8),lastSeen:Date.now(),createdAt:L.createdAt||Date.now(),
     hasPhoto:(L.me.photos&&L.me.photos.length)?Date.now():0,
     geo:(L.geo&&L.geo.la!=null)?{la:L.geo.la,lo:L.geo.lo}:null
   });
@@ -1346,7 +1426,7 @@ function showFoundUser(pid,u){
   const already=L.matches.find(m=>m.peer===pid);
   $('genBody').innerHTML=
     '<div style="border-radius:20px;overflow:hidden;margin-bottom:12px;position:relative">'
-    +'<div style="height:230px;background:'+grad(u.gi||0)+';display:flex;align-items:center;justify-content:center;font-size:84px" id="fdPh">'+(u.em||'💛')+'</div>'
+    +'<div style="height:230px;background:'+grad(u.gi||0)+';background-image:url(\''+avaURI(Object.assign({id:pid},u))+'\');background-size:cover;background-position:center;display:flex;align-items:center;justify-content:center" id="fdPh"></div>'
     +'<div style="position:absolute;inset-inline:0;bottom:0;padding:12px;background:linear-gradient(transparent,rgba(30,10,25,.78));color:#fff">'
     +'<b style="font-size:20px">'+(u.name||'Member')+(u.age?', '+u.age:'')+' '+VB(!!VD[pid])+'</b>'
     +'<div class="tiny" style="opacity:.9;font-weight:700">'+IC('pin',12)+' '+(u.city||'Earth')+'</div></div></div>'
@@ -1359,7 +1439,7 @@ function showFoundUser(pid,u){
   ensurePhoto(Object.assign({id:pid},u),url=>{ if(url)putImg($('fdPh'),url); });
 }
 async function likeFoundUser(pid){
-  const today=new Date().toDateString();
+  const today=Math.floor(Date.now()/86400000);
   if(!goldActive()){ if(L.likesDay.d!==today)L.likesDay={d:today,n:0};
     if(L.likesDay.n>=G.likesPerDay){ hide('genSheet'); return openGold('likes'); } L.likesDay.n++; }
   L.swiped[pid]=L.swiped[pid]||{d:'like',ts:Date.now()}; save(); paintLikesPill();
@@ -1369,7 +1449,9 @@ async function likeFoundUser(pid){
     const u=(await ref('users/'+pid).once('value')).val()||{};
     const p=Object.assign({id:pid,name:'Member',em:'💛',gi:2},u);
     ref('swipes/'+uid+'/'+pid).set({d:'like',ts:Date.now()});
-    ref('incoming/'+pid+'/'+uid).set({d:'like',ts:Date.now()});
+    const upd={}; upd['incoming/'+pid+'/'+uid]={d:'like',ts:Date.now()};
+    if(!goldActive())upd['limits/'+uid+'/likes']={d:today,n:L.likesDay.n};
+    DB.ref('wasla_dating').update(upd).catch(e=>{ console.warn('like write',e); });
     const back=await ref('incoming/'+uid+'/'+pid).once('value');
     if(back.val()&&back.val().d!=='pass') return makeMatch(p);
     toast('💛 Like sent — if they like you back, it’s a match!');
@@ -1406,87 +1488,7 @@ async function startPush(announce){
 }
 
 /* ============ 🌍 LANGUAGE — EN / FR / AR (Darija-friendly) */
-const I18N={
-fr:{
-'Discover':'Découvrir','Liked you':'Ils t\'aiment','Matches':'Matchs','Coins':'Pièces','Me':'Moi',
-'GOLD':'GOLD','Tayripages GOLD':'Tayripages GOLD','GO GOLD':'Passe GOLD','They like you':'Elles t\'aiment','You':'Toi','Real people only':'Uniquement de vraies personnes','Say hi — first messages are FREE':'Dis bonjour — premiers messages GRATUITS','Keep discovering':'Continuer à découvrir','Say something nice…':'Dis quelque chose de gentil…','Edit profile':'Modifier le profil','Preview my card':'Aperçu de ma carte','My photos':'Mes photos','likes left today':'likes restants aujourd\'hui','Free likes':'Likes gratuits','Likes today':'Likes aujourd\'hui','Matches':'Matchs',
-'Real people only 💛':'Uniquement de vraies personnes 💛',
-'One tap with your Google account to enter Tayripages —<br>no bots, no fakes, no catfish farms.<br><b>We never see your emails or post anything.</b>':'Un tap avec ton compte Google pour entrer —<br>pas de bots, pas de faux profils.<br><b>On ne lit jamais tes e-mails.</b>',
-'Continue with Google':'Continuer avec Google',
-'Sign-in secured by Google · your identity stays private · 18+':'Connexion sécurisée par Google · identité privée · 18+',
-'They like you 😍':'Ils t\'adorent 😍',
-'Someone here already chose you. Reveal to see who — super-likes are always visible 💙':'Quelqu\'un t\'a déjà choisi(e). Révèle pour voir — les super-likes restent visibles 💙',
-'Matches 💘':'Matchs 💘','NEW MATCHES':'NOUVEAUX MATCHS','CHATS':'DISCUSSIONS',
-'Log out':'Déconnexion',
-'✏️ Edit profile':'✏️ Modifier le profil','👀 How others see you':'👀 Comment on te voit',
-'Tayripages v1.0 · dating, with more heart 💛':'Tayripages v1.0 · l\'amour, en plus chaud 💛',
-'Say something nice… 💌':'Dis quelque chose de gentil… 💌',
-'It’s a Match!':'C\'est un Match !',
-'💌 Say hi — first messages are FREE':'💌 Dis bonjour — premiers messages GRATUITS',
-'Keep discovering 🔥':'Continuer à découvrir 🔥',
-'Daily free coins 🔥':'Pièces gratuites du jour 🔥','Streak: ':'Série : ',
-'Come back daily — your streak grows the gift (+10%/day, up to 2×)':'Reviens chaque jour — ta série augmente le cadeau (+10%/jour, max 2×)',
-'Claim +N coins now':'Récolte +N pièces','✅ Claimed today — see you tomorrow!':'✅ Récolté — à demain !',
-'coins · claim free daily below':'pièces · récolte gratuite chaque jour',
-'EARN FREE COINS':'GAGNE DES PIÈCES','BUY COINS':'ACHETER DES PIÈCES',
-'My photos 📸':'Mes photos 📸',
-'Real photos get ~3× more matches 💛 Auto-compressed & synced — free.':'Les vraies photos = ~3× plus de matchs 💛 Compressées & synchronisées — gratuit.',
-'My stats this week':'Mes stats cette semaine','Admirers':'Admirateurs',
-'VERIFIED badge':'Badge VÉRIFIÉ','Real distance (GPS)':'Distance réelle (GPS)',
-'Lock-screen alerts':'Alertes écran verrouillé','In-app notifications':'Notifications dans l\'app',
-'Safety center':'Centre de sécurité','Help & support':'Aide & support','Language':'Langue',
-'That’s everyone nearby!':'C\'est tout pour le moment !',
-'Secure Al Barid/CMI checkout coming soon — now via bank transfer 🏦':'Paiement CMI/Al Barid bientôt — virement bancaire pour le moment 🏦',
-'💌 Free messages left':'💌 Messages gratuits restants',
-'Close':'Fermer','Filters':'Filtres','Discovery settings':'Réglages de découverte',
-'Browse everyone, or tune who appears in your deck. Matching unlocks the chat.':'Vois tout le monde, ou règle qui apparaît. Le match débloque le chat.',
-'Show me':'Me montrer','My preference':'Ma préférence','Everyone':'Tout le monde','Women':'Femmes','Men':'Hommes',
-'Country':'Pays','All countries':'Tous les pays','Apply — refresh my deck':'Appliquer — rafraîchir mon deck',
-'Reset to everyone, everywhere':'Réinitialiser : tout le monde, partout','Tune discovery filters':'Régler les filtres',
-'Filters on — deck refreshed':'Filtres actifs — deck rafraîchi','Showing everyone, everywhere':'Tout le monde, partout',
-'Tayripages Rules':'Règles Tayripages','By continuing, you agree to the':'En continuant, tu acceptes les',
-'Instant video':'Vidéo instantanée','Meet someone live — free':'Rencontre en direct — gratuit','Try it':'Essayer','Weekly leaderboard':'Classement hebdomadaire','Build your social presence':'Construis ta présence sociale','View':'Voir',
-'Add your photo':'Ajoute ta photo','A real photo matches about 3× more. An avatar works too — your call.':'Une vraie photo = ~3× plus de matchs. Un avatar marche aussi — à toi de choisir.',
-'Tap to add a photo':'Touche pour ajouter une photo','Change photo':'Changer la photo','Continue':'Continuer',
-'Continue with an avatar instead':'Continuer avec un avatar','Adding your photo…':'Ajout de ta photo…'
-},
-ar:{
-'Discover':'اكتشف','Liked you':'عجبتهم','Matches':'توافقات','Coins':'كوينز','Me':'أنا',
-'GOLD':'جولد','Tayripages GOLD':'تايريبيجز جولد','GO GOLD':'دوز جولد','They like you':'بغاوك','You':'نتا','Real people only':'غير ناس حقيقيين','Say hi — first messages are FREE':'سلام — أول رايسالات بالبلاش','Keep discovering':'كمل كنكتاشف','Say something nice…':'قول شي حاجة زوينة…','Edit profile':'بدّل البروفايل','Preview my card':'شوف كارتك','My photos':'الصور ديالي','likes left today':'لايكات باقين اليوم','Free likes':'لايكات بلاص','Likes today':'لايكات اليوم',
-'Real people only 💛':'غير ناس حقيقيين 💛',
-'One tap with your Google account to enter Tayripages —<br>no bots, no fakes, no catfish farms.<br><b>We never see your emails or post anything.</b>':'دخل بضغطة وحدة بحساب Google ديالك —<br>بلا بوتات، بلا بروفايلات مزورة.<br><b>ما كنشوفو إيميلاتك أبدا.</b>',
-'Continue with Google':'تواصل مع Google',
-'Sign-in secured by Google · your identity stays private · 18+':'تسجيل آمن عبر Google · هويتك خاصة · +18',
-'They like you 😍':'عجبتييهم 😍',
-'Someone here already chose you. Reveal to see who — super-likes are always visible 💙':'شي حد هنا اختارك ديجا. اكشف باش تعرف شكون — السوبر لايكات دائما ظاهرين 💙',
-'Matches 💘':'توافقات 💘','NEW MATCHES':'توافقات جداد','CHATS':'مراسلات',
-'Log out':'خرج',
-'✏️ Edit profile':'✏️ بدّل البروفايل','👀 How others see you':'👀 كيف كيبانوك الناس',
-'Tayripages v1.0 · dating, with more heart 💛':'Tayripages v1.0 · ديتينغ بقلب 💛',
-'Say something nice… 💌':'قول شي حاجة زوينة… 💌',
-'It’s a Match!':'توافقتو!',
-'💌 Say hi — first messages are FREE':'💌 سلام معاه — أول مساجات بالبلاش',
-'Keep discovering 🔥':'كمل كنكتاشف 🔥',
-'Daily free coins 🔥':'كوينز بلاص ديال اليوم 🔥','Streak: ':'سلسلة: ',
-'Come back daily — your streak grows the gift (+10%/day, up to 2×)':'رجع كل نهار — السلسلة كتكبّر الهدية',
-'Claim +N coins now':'خذ +N كوينز دابا','✅ Claimed today — see you tomorrow!':'✅ ربحتي اليوم — تسنا غدا!',
-'coins · claim free daily below':'كوينز · ربح البلاص كل نهار',
-'EARN FREE COINS':'ربح كوينز بالبلاص','BUY COINS':'شري الكوينز',
-'My photos 📸':'الصور ديالي 📸',
-'Real photos get ~3× more matches 💛 Auto-compressed & synced — free.':'الصور الحقيقية كتزيد التوافق 3× 💛 كيتضغطو وحداتهم بالبلاش.',
-'My stats this week':'إحصائياتي هاد السيمانة','Admirers':'معجبين',
-'VERIFIED badge':'علامة التحقق','Real distance (GPS)':'المسافة الحقيقية',
-'Lock-screen alerts':'إشعارات الشاشة المقفولة','In-app notifications':'إشعارات داخل التطبيق','Instant video':'فيديو مباشر','Meet someone live — free':'تعرّف على شي حد مباشرة — بالبلاش','Try it':'جرّب','Weekly leaderboard':'الترتيب الأسبوعي','Build your social presence':'بني الحضور الاجتماعي ديالك','View':'شوف',
-'Safety center':'مركز الأمان','Help & support':'المساعدة','Language':'اللغة',
-'That’s everyone nearby!':'سالينا الناس ديال هنا!',
-'Secure Al Barid/CMI checkout coming soon — now via bank transfer 🏦':'أداء CMI/الباريد قريبا — دابا بالتحويل البنكي 🏦',
-'💌 Free messages left':'💌 باقي مساجات بالبلاش'
-},
-es:{'Discover':'Descubrir','Liked you':'Les gustas','Matches':'Matches','Coins':'Monedas','Me':'Yo','GOLD':'GOLD','Tayripages GOLD':'Tayripages GOLD','GO GOLD':'HAZTE GOLD','They like you':'Les gustas','You':'Tú','Real people only':'Solo personas reales','Say hi — first messages are FREE':'Saluda — los primeros mensajes son GRATIS','Keep discovering':'Sigue descubriendo','Say something nice…':'Di algo bonito…','Edit profile':'Editar perfil','Preview my card':'Vista previa de mi carta','My photos':'Mis fotos','likes left today':'likes restantes hoy','Free likes':'Likes gratis','Likes today':'Likes de hoy','Real people only 💛':'Solo personas reales 💛','One tap with your Google account to enter Tayripages —<br>no bots, no fakes, no catfish farms.<br><b>We never see your emails or post anything.</b>':'Un toque con tu cuenta Google para entrar a Tayripages —<br>sin bots, sin perfiles falsos.<br><b>Nunca vemos tus correos ni publicamos nada.</b>','Continue with Google':'Continuar con Google','Sign-in secured by Google · your identity stays private · 18+':'Inicio seguro con Google · tu identidad es privada · 18+','They like you 😍':'Les gustas 😍','Someone here already chose you. Reveal to see who — super-likes are always visible 💙':'Alguien aquí ya te eligió. Revela para ver quién — los super-likes siempre son visibles 💙','Matches 💘':'Matches 💘','NEW MATCHES':'NUEVOS MATCHES','CHATS':'CHATS','Log out':'Cerrar sesión','✏️ Edit profile':'✏️ Editar perfil','👀 How others see you':'👀 Cómo te ven','Tayripages v1.0 · dating, with more heart 💛':'Tayripages v1.0 · citas, con más corazón 💛','Say something nice… 💌':'Di algo bonito… 💌','It’s a Match!':'¡Es un Match!','💌 Say hi — first messages are FREE':'💌 Saluda — los primeros mensajes son GRATIS','Keep discovering 🔥':'Sigue descubriendo 🔥','Daily free coins 🔥':'Monedas gratis diarias 🔥','Streak: ':'Racha: ','Come back daily — your streak grows the gift (+10%/day, up to 2×)':'Vuelve a diario — tu racha aumenta el regalo (+10%/día, hasta 2×)','Claim +N coins now':'Reclama +N monedas ahora','✅ Claimed today — see you tomorrow!':'✅ Reclamado hoy — ¡hasta mañana!','coins · claim free daily below':'monedas · reclama gratis cada día abajo','EARN FREE COINS':'GANA MONEDAS GRATIS','BUY COINS':'COMPRAR MONEDAS','My photos 📸':'Mis fotos 📸','Real photos get ~3× more matches 💛 Auto-compressed & synced — free.':'Las fotos reales consiguen ~3× más matches 💛 Comprimidas y sincronizadas — gratis.','My stats this week':'Mis estadísticas esta semana','Admirers':'Admiradores','VERIFIED badge':'Insignia VERIFICADO','Real distance (GPS)':'Distancia real (GPS)','Lock-screen alerts':'Alertas en pantalla de bloqueo','In-app notifications':'Notificaciones en la app','Safety center':'Centro de seguridad','Help & support':'Ayuda y soporte','Language':'Idioma','That’s everyone nearby!':'¡Eso es todo por aquí!','Secure Al Barid/CMI checkout coming soon — now via bank transfer 🏦':'Pago CMI/Al Barid pronto — por ahora por transferencia bancaria 🏦','💌 Free messages left':'💌 Mensajes gratis restantes','Close':'Cerrar','Filters':'Filtros','Discovery settings':'Ajustes de descubrimiento','Browse everyone, or tune who appears in your deck. Matching unlocks the chat.':'Ve a todos, o ajusta quién aparece. El match desbloquea el chat.','Show me':'Muéstrame','My preference':'Mi preferencia','Everyone':'Todos','Women':'Mujeres','Men':'Hombres','Country':'País','All countries':'Todos los países','Apply — refresh my deck':'Aplicar — actualizar cartas','Reset to everyone, everywhere':'Restablecer a todos, en todas partes','Tune discovery filters':'Ajustar filtros de descubrimiento','Filters on — deck refreshed':'Filtros activos — cartas actualizadas','Showing everyone, everywhere':'Mostrando a todos, en todas partes','Tayripages Rules':'Reglas de Tayripages','By continuing, you agree to the':'Al continuar, aceptas las','Instant video':'Video instantáneo','Meet someone live — free':'Conoce a alguien en vivo — gratis','Try it':'Pruébalo','Weekly leaderboard':'Clasificación semanal','Build your social presence':'Construye tu presencia social','View':'Ver','Add your photo':'Añade tu foto','A real photo matches about 3× more. An avatar works too — your call.':'Una foto real consigue ~3× más matches. Un avatar también sirve — tú decides.','Tap to add a photo':'Toca para añadir una foto','Change photo':'Cambiar foto','Continue':'Continuar','Continue with an avatar instead':'Continuar con un avatar','Adding your photo…':'Añadiendo tu foto…'},
-pt:{'Discover':'Descobrir','Liked you':'Gostaram de você','Matches':'Matches','Coins':'Moedas','Me':'Eu','GOLD':'GOLD','Tayripages GOLD':'Tayripages GOLD','GO GOLD':'SEJA GOLD','They like you':'Elas curtiram você','You':'Você','Real people only':'Só pessoas reais','Say hi — first messages are FREE':'Diga oi — primeiras mensagens GRÁTIS','Keep discovering':'Continue descobrindo','Say something nice…':'Diga algo legal…','Edit profile':'Editar perfil','Preview my card':'Pré-visualizar meu cartão','My photos':'Minhas fotos','likes left today':'likes restantes hoje','Free likes':'Likes grátis','Likes today':'Likes de hoje','Real people only 💛':'Só pessoas reais 💛','One tap with your Google account to enter Tayripages —<br>no bots, no fakes, no catfish farms.<br><b>We never see your emails or post anything.</b>':'Um toque com sua conta Google para entrar —<br>sem bots, sem perfis falsos.<br><b>Nunca vemos seus e-mails nem postamos nada.</b>','Continue with Google':'Continuar com Google','Sign-in secured by Google · your identity stays private · 18+':'Login seguro pelo Google · sua identidade é privada · 18+','They like you 😍':'Elas curtem você 😍','Someone here already chose you. Reveal to see who — super-likes are always visible 💙':'Alguém aqui já escolheu você. Revele para ver quem — super likes sempre visíveis 💙','Matches 💘':'Matches 💘','NEW MATCHES':'NOVOS MATCHES','CHATS':'CONVERSAS','Log out':'Sair','✏️ Edit profile':'✏️ Editar perfil','👀 How others see you':'👀 Como os outros te veem','Tayripages v1.0 · dating, with more heart 💛':'Tayripages v1.0 · encontros, com mais coração 💛','Say something nice… 💌':'Diga algo legal… 💌','It’s a Match!':'Deu Match!','💌 Say hi — first messages are FREE':'💌 Diga oi — primeiras mensagens GRÁTIS','Keep discovering 🔥':'Continue descobrindo 🔥','Daily free coins 🔥':'Moedas grátis diárias 🔥','Streak: ':'Sequência: ','Come back daily — your streak grows the gift (+10%/day, up to 2×)':'Volte todo dia — sua sequência aumenta o presente (+10%/dia, até 2×)','Claim +N coins now':'Resgatar +N moedas agora','✅ Claimed today — see you tomorrow!':'✅ Resgatado hoje — até amanhã!','coins · claim free daily below':'moedas · resgate grátis diário abaixo','EARN FREE COINS':'GANHE MOEDAS GRÁTIS','BUY COINS':'COMPRAR MOEDAS','My photos 📸':'Minhas fotos 📸','Real photos get ~3× more matches 💛 Auto-compressed & synced — free.':'Fotos reais têm ~3× mais matches 💛 Compactadas e sincronizadas — grátis.','My stats this week':'Minhas estatísticas esta semana','Admirers':'Admiradores','VERIFIED badge':'Selo VERIFICADO','Real distance (GPS)':'Distância real (GPS)','Lock-screen alerts':'Alertas na tela de bloqueio','In-app notifications':'Notificações no app','Safety center':'Central de segurança','Help & support':'Ajuda e suporte','Language':'Idioma','That’s everyone nearby!':'Esses são todos por perto!','Secure Al Barid/CMI checkout coming soon — now via bank transfer 🏦':'Pagamento CMI/Al Barid em breve — por enquanto por transferência 🏦','💌 Free messages left':'💌 Mensagens grátis restantes','Close':'Fechar','Filters':'Filtros','Discovery settings':'Configurações de descoberta','Browse everyone, or tune who appears in your deck. Matching unlocks the chat.':'Veja todos, ou ajuste quem aparece. O match libera o chat.','Show me':'Mostrar','My preference':'Minha preferência','Everyone':'Todos','Women':'Mulheres','Men':'Homens','Country':'País','All countries':'Todos os países','Apply — refresh my deck':'Aplicar — atualizar cartas','Reset to everyone, everywhere':'Redefinir para todos, em todo lugar','Tune discovery filters':'Ajustar filtros de descoberta','Filters on — deck refreshed':'Filtros ativos — cartas atualizadas','Showing everyone, everywhere':'Mostrando todos, em todo lugar','Tayripages Rules':'Regras da Tayripages','By continuing, you agree to the':'Ao continuar, você concorda com as','Instant video':'Vídeo instantâneo','Meet someone live — free':'Conheça alguém ao vivo — grátis','Try it':'Experimente','Weekly leaderboard':'Classificação semanal','Build your social presence':'Construa sua presença social','View':'Ver','Add your photo':'Adicione sua foto','A real photo matches about 3× more. An avatar works too — your call.':'Uma foto real tem ~3× mais matches. Um avatar também funciona — você decide.','Tap to add a photo':'Toque para adicionar foto','Change photo':'Trocar foto','Continue':'Continuar','Continue with an avatar instead':'Continuar com um avatar','Adding your photo…':'Adicionando sua foto…'},
-ru:{'Discover':'Поиск','Liked you':'Вы понравились','Matches':'Мэтчи','Coins':'Монеты','Me':'Я','GOLD':'GOLD','Tayripages GOLD':'Tayripages GOLD','GO GOLD':'СТАТЬ GOLD','They like you':'Вы им нравитесь','You':'Вы','Real people only':'Только реальные люди','Say hi — first messages are FREE':'Поздоровайтесь — первые сообщения БЕСПЛАТНО','Keep discovering':'Продолжайте поиск','Say something nice…':'Скажите что-нибудь приятное…','Edit profile':'Редактировать профиль','Preview my card':'Предпросмотр карточки','My photos':'Мои фото','likes left today':'лайков осталось сегодня','Free likes':'Бесплатные лайки','Likes today':'Лайки сегодня','Real people only 💛':'Только реальные люди 💛','One tap with your Google account to enter Tayripages —<br>no bots, no fakes, no catfish farms.<br><b>We never see your emails or post anything.</b>':'Один тап с аккаунтом Google, чтобы войти —<br>без ботов и фейков.<br><b>Мы не читаем вашу почту и ничего не публикуем.</b>','Continue with Google':'Войти через Google','Sign-in secured by Google · your identity stays private · 18+':'Безопасный вход через Google · личность защищена · 18+','They like you 😍':'Вы им нравитесь 😍','Someone here already chose you. Reveal to see who — super-likes are always visible 💙':'Кто-то уже выбрал вас. Откройте, чтобы увидеть — супер-лайки всегда видны 💙','Matches 💘':'Мэтчи 💘','NEW MATCHES':'НОВЫЕ МЭТЧИ','CHATS':'ЧАТЫ','Log out':'Выйти','✏️ Edit profile':'✏️ Редактировать профиль','👀 How others see you':'👀 Как вас видят другие','Tayripages v1.0 · dating, with more heart 💛':'Tayripages v1.0 · знакомства с душой 💛','Say something nice… 💌':'Скажите что-нибудь приятное… 💌','It’s a Match!':'Это Мэтч!','💌 Say hi — first messages are FREE':'💌 Поздоровайтесь — первые сообщения БЕСПЛАТНЫ','Keep discovering 🔥':'Продолжайте поиск 🔥','Daily free coins 🔥':'Ежедневные бесплатные монеты 🔥','Streak: ':'Серия: ','Come back daily — your streak grows the gift (+10%/day, up to 2×)':'Заходите каждый день — серия увеличивает подарок (+10%/день, до 2×)','Claim +N coins now':'Забрать +N монет сейчас','✅ Claimed today — see you tomorrow!':'✅ Сегодня получено — до завтра!','coins · claim free daily below':'монеты · забирайте бесплатно каждый день ниже','EARN FREE COINS':'ЗАРАБОТАТЬ МОНЕТЫ','BUY COINS':'КУПИТЬ МОНЕТЫ','My photos 📸':'Мои фото 📸','Real photos get ~3× more matches 💛 Auto-compressed & synced — free.':'Реальные фото дают ~3× больше мэтчей 💛 Сжимаются и синхронизируются — бесплатно.','My stats this week':'Моя статистика за неделю','Admirers':'Поклонники','VERIFIED badge':'Значок ПРОВЕРЕН','Real distance (GPS)':'Реальное расстояние (GPS)','Lock-screen alerts':'Уведомления на экране блокировки','In-app notifications':'Уведомления в приложении','Safety center':'Центр безопасности','Help & support':'Помощь и поддержка','Language':'Язык','That’s everyone nearby!':'Это все поблизости!','Secure Al Barid/CMI checkout coming soon — now via bank transfer 🏦':'Оплата CMI/Al Barid скоро — пока банковским переводом 🏦','💌 Free messages left':'💌 Осталось бесплатных сообщений','Close':'Закрыть','Filters':'Фильтры','Discovery settings':'Настройки поиска','Browse everyone, or tune who appears in your deck. Matching unlocks the chat.':'Смотрите всех или настройте, кто появляется. Мэтч открывает чат.','Show me':'Показывать','My preference':'Мои предпочтения','Everyone':'Все','Women':'Женщины','Men':'Мужчины','Country':'Страна','All countries':'Все страны','Apply — refresh my deck':'Применить — обновить карточки','Reset to everyone, everywhere':'Сбросить: все и везде','Tune discovery filters':'Настроить фильтры','Filters on — deck refreshed':'Фильтры включены — карточки обновлены','Showing everyone, everywhere':'Показываем всех и везде','Tayripages Rules':'Правила Tayripages','By continuing, you agree to the':'Продолжая, вы соглашаетесь с','Instant video':'Мгновенное видео','Meet someone live — free':'Встречайтесь вживую — бесплатно','Try it':'Попробуйте','Weekly leaderboard':'Еженедельный рейтинг','Build your social presence':'Развивайте своё присутствие','View':'Смотреть','Add your photo':'Добавьте фото','A real photo matches about 3× more. An avatar works too — your call.':'С реальным фото примерно в 3 раза больше мэтчей. Аватар тоже подойдёт — решайте сами.','Tap to add a photo':'Нажмите, чтобы добавить фото','Change photo':'Сменить фото','Continue':'Продолжить','Continue with an avatar instead':'Продолжить с аватаром','Adding your photo…':'Добавляем фото…'},
-zh:{'Discover':'发现','Liked you':'喜欢你','Matches':'配对','Coins':'金币','Me':'我','GOLD':'GOLD','Tayripages GOLD':'Tayripages GOLD','GO GOLD':'升级 GOLD','They like you':'他们喜欢你','You':'你','Real people only':'仅限真实用户','Say hi — first messages are FREE':'打个招呼 — 首条消息免费','Keep discovering':'继续发现','Say something nice…':'说点好听的…','Edit profile':'编辑资料','Preview my card':'预览我的卡片','My photos':'我的照片','likes left today':'今日剩余喜欢','Free likes':'免费喜欢','Likes today':'今日喜欢','Real people only 💛':'仅限真实用户 💛','One tap with your Google account to enter Tayripages —<br>no bots, no fakes, no catfish farms.<br><b>We never see your emails or post anything.</b>':'一键使用 Google 账号进入 Tayripages —<br>无机器人、无虚假资料。<br><b>我们绝不查看您的邮件，也不会发布任何内容。</b>','Continue with Google':'使用 Google 继续','Sign-in secured by Google · your identity stays private · 18+':'由 Google 保护登录 · 身份保密 · 18+','They like you 😍':'他们喜欢你 😍','Someone here already chose you. Reveal to see who — super-likes are always visible 💙':'这里已经有人选择了你。揭晓查看 — 超级喜欢始终可见 💙','Matches 💘':'配对 💘','NEW MATCHES':'新配对','CHATS':'聊天','Log out':'退出登录','✏️ Edit profile':'✏️ 编辑资料','👀 How others see you':'👀 别人眼中的你','Tayripages v1.0 · dating, with more heart 💛':'Tayripages v1.0 · 约会，更多真心 💛','Say something nice… 💌':'说点好听的… 💌','It’s a Match!':'配对成功！','💌 Say hi — first messages are FREE':'💌 打个招呼 — 首条消息免费','Keep discovering 🔥':'继续发现 🔥','Daily free coins 🔥':'每日免费金币 🔥','Streak: ':'连击：','Come back daily — your streak grows the gift (+10%/day, up to 2×)':'每天回来 — 连击增加奖励（每天+10%，最高 2 倍）','Claim +N coins now':'立即领取 +N 金币','✅ Claimed today — see you tomorrow!':'✅ 今日已领取 — 明天见！','coins · claim free daily below':'金币 · 下方每日免费领取','EARN FREE COINS':'赚取免费金币','BUY COINS':'购买金币','My photos 📸':'我的照片 📸','Real photos get ~3× more matches 💛 Auto-compressed & synced — free.':'真实照片可多获约 3 倍配对 💛 自动压缩同步 — 免费。','My stats this week':'本周我的数据','Admirers':'仰慕者','VERIFIED badge':'认证徽章','Real distance (GPS)':'真实距离 (GPS)','Lock-screen alerts':'锁屏提醒','In-app notifications':'应用内通知','Safety center':'安全中心','Help & support':'帮助与支持','Language':'语言','That’s everyone nearby!':'附近的人都看完了！','Secure Al Barid/CMI checkout coming soon — now via bank transfer 🏦':'CMI/Al Barid 支付即将上线 — 目前通过银行转账 🏦','💌 Free messages left':'💌 剩余免费消息','Close':'关闭','Filters':'筛选','Discovery settings':'发现设置','Browse everyone, or tune who appears in your deck. Matching unlocks the chat.':'浏览所有人，或调整谁能出现。配对后解锁聊天。','Show me':'显示','My preference':'我的偏好','Everyone':'所有人','Women':'女性','Men':'男性','Country':'国家','All countries':'所有国家','Apply — refresh my deck':'应用 — 刷新卡片','Reset to everyone, everywhere':'重置为所有人、所有地方','Tune discovery filters':'调整发现筛选','Filters on — deck refreshed':'筛选已开启 — 卡片已刷新','Showing everyone, everywhere':'显示所有人、所有地方','Tayripages Rules':'Tayripages 规则','By continuing, you agree to the':'继续即表示您同意','Instant video':'即时视频','Meet someone live — free':'实时见面 — 免费','Try it':'试试看','Weekly leaderboard':'每周排行榜','Build your social presence':'建立你的社交影响力','View':'查看','Add your photo':'添加您的照片','A real photo matches about 3× more. An avatar works too — your call.':'真实照片可多获约 3 倍配对。头像也可以 — 由你决定。','Tap to add a photo':'点按添加照片','Change photo':'更换照片','Continue':'继续','Continue with an avatar instead':'改用头像继续','Adding your photo…':'正在添加照片…'}
-};
+const I18N=window.TAYRI_I18N||{};
 function T(en){ const m=I18N[L.lang]; return (m&&m[en])||en; }
 function openLangSheet(){
   const LS=[['en','English'],['fr','Français'],['es','Español'],['pt','Português'],['ru','Русский'],['zh','中文'],['ar','العربية (دارجة)']];
@@ -1499,7 +1501,8 @@ function setLang(l){ L.lang=l; save();
   document.documentElement.dir=(l==='ar')?'rtl':'ltr'; document.documentElement.lang=l;
   skinLang(); renderTabbar();
   if(R.tab&&$('scr-'+R.tab))showTab(R.tab);
-  toast(l==='ar'?'اللغة: العربية 🇲🇦':l==='fr'?'Langue : Français 🇫🇷':'Language: English 🇬🇧'); }
+  const LN=window.TAYRI_LANG_NAMES||{en:'English'};
+  toast((l==='ar'?'اللغة : ':l==='fr'?'Langue : ':'Language: ')+(LN[l]||'English')); }
 function skinLang(){ document.querySelectorAll('[data-t]').forEach(el=>{ el.innerHTML=T(el.dataset.t); });
   document.querySelectorAll('[data-tph]').forEach(el=>{ el.placeholder=T(el.dataset.tph); }); }
 
@@ -1539,7 +1542,7 @@ function distKm(la1,lo1,la2,lo2){ const R=6371,dLa=(la2-la1)*Math.PI/180,dLo=(lo
   return Math.max(1,Math.round(R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a)))); }
 function paintGeoSlot(){ const el=$('geoSlot'); if(!el)return;
   if(L.geo||L.geoDenied){ el.innerHTML=''; return; }
-  el.innerHTML=`<div class="demobanner" style="background:#0d2233;border-color:#164a6e;color:#7ec3ff;display:flex;align-items:center;gap:8px;margin:0 18px 6px">${IC('pin',15)} <span style="flex:1">See <b>real distances</b>? Your exact spot is never stored — rounded to ~2 km only.</span><button class="pill" style="background:#123850;color:#9fd6ff" onclick="askGeo()">Turn on</button></div>`; }
+  el.innerHTML=`<div class="demobanner" style="background:#0d2233;border-color:#164a6e;color:#7ec3ff;display:flex;align-items:center;gap:8px;margin:0 18px 6px">${IC('pin',15)} <span style="flex:1">See <b>real distances</b>? Turn on GPS — stop it anytime.</span><button class="pill" style="background:#123850;color:#9fd6ff" onclick="askGeo()">Turn on</button></div>`; }
 function askGeo(){
   if(!('geolocation' in navigator))return toast('This device has no GPS 😢');
   toast('📍 Locating you (approximate, private)…');
@@ -1598,9 +1601,9 @@ function paintFiltChip(){ const b=$('filtChip'); if(!b)return;
   else { b.style.background=''; b.style.color=''; b.style.borderColor=''; } }
 
 /* ============ ONBOARDING ============ */
-const OB={step:0,photo:'',data:{name:'',age:22,g:'',into:[],city:'Casablanca',bio:'',tags:[],em:'😊',gi:0}};
+const OB={step:0,photo:'',data:{name:'',age:22,g:'',into:[],city:'Casablanca',bio:'',tags:[],em:'😊',gi:0,av:null}};
 function startOnboard(){ if(!AUTHED){ showAuth(); return; }
-  OB.step=0; OB.photo=''; OB.data={name:'',age:22,g:'',into:[],city:'Casablanca',bio:'',tags:[],em:'😊',gi:0}; paintOb();
+  OB.step=0; OB.photo=''; OB.data={name:'',age:22,g:'',into:[],city:'Casablanca',bio:'',tags:[],em:'😊',gi:0,av:avHash(uid)%8}; paintOb();
   showTab('onboard');
 }
 const WORLD_CITIES=['Casablanca', 'Rabat', 'Marrakech', 'Tangier', 'Agadir', 'Fès', 'Meknès', 'Oujda', 'Laâyoune', 'Al Hoceima', 'Essaouira', 'Chefchaouen', 'Algiers', 'Oran', 'Tunis', 'Paris', 'Marseille', 'Lyon', 'Toulouse', 'Brussels', 'Geneva', 'Madrid', 'Barcelona', 'Valencia', 'London', 'Amsterdam', 'Berlin', 'Munich', 'Rome', 'Milan', 'Lisbon', 'Cairo', 'Istanbul', 'Dubai', 'Abu Dhabi', 'Doha', 'Riyadh', 'Jeddah', 'Dakar', 'Abidjan', 'Lagos', 'Nairobi', 'New York', 'Los Angeles', 'Miami', 'Toronto', 'Montreal', 'Mexico City', 'São Paulo', 'Buenos Aires', 'Tokyo', 'Singapore', 'Bangkok', 'Seoul', 'Sydney', 'Mumbai', 'Jakarta'];
@@ -1653,8 +1656,8 @@ function paintOb(){
      <textarea class="inp" id="obBio" maxlength="140" placeholder="A line that sounds like you… (funny > perfect)">${d.bio}</textarea>
      <div class="mut small">Pick 3–4 interests (better matches):</div>
      <div class="tagwrap">${TAGS.map(t=>`<button class="tchip ${d.tags.includes(t)?'on':''}" onclick="obTag('${t}')">${TIC(t)}${t}</button>`).join('')}</div>
-     <div class="mut small">Your avatar</div>
-     <div class="emojirow">${['😊','😎','🥰','😌','🤗','😇','🦁','🌸','🦊','🐼','😽','🌟'].map(e=>`<button class="emojipick ${d.em===e?'on':''}" onclick="OB.data.em='${e}';paintOb()">${e}</button>`).join('')}</div>
+     <div class="mut small">Your avatar art</div>
+     <div class="emojirow">${avaGridHTML(d.av,'obAv')}</div>
      <div class="mut small">Card color</div>
      <div class="gradrow">${[0,1,2,3,4,5,6,7].map(i=>`<button class="gradpick ${d.gi===i?'on':''}" style="background:${grad(i)}" onclick="OB.data.gi=${i};paintOb()"></button>`).join('')}</div>
      <button class="btn btn-grad" onclick="obFinish()">Start swiping</button></div>`
@@ -1759,7 +1762,7 @@ function cardHtml(p,i){
   const isSuper=(L.likesYou.find(x=>x.uid===p.id&&x.d==='super'));
   const badge=i===0?(isSuper?'<div class="vbadge super">✨ SUPER LIKED YOU</div>':p.fresh?'<div class="vbadge new">NEW HERE</div>':''):'';
   return `<div class="dcard" data-id="${p.id}" style="z-index:${10-i};transform:scale(${1-i*0.045}) translateY(${i*10}px)">
-    <div class="ph" style="background:${grad(p.gi)}"><span>${p.em}</span></div>
+    <div class="ph avcover" style="background:${grad(p.gi)};background-image:url('${avaURI(p)}')"></div>
     <div class="pdots hidden" data-pdots></div>
     ${i===0?`<button class="rptbtn" onpointerdown="event.stopPropagation()" onpointerup="event.stopPropagation()" onclick="reportDeckAsk('${p.id}')">${IC('flag',12)}<span>Report</span></button>`:''}
     ${badge}
@@ -1808,7 +1811,7 @@ async function doSwipe(pid,dir){
   const p=R.deck.shift(); L.swiped[pid]={d:dir,ts:Date.now()};
   if(!R.deck.length||R.deck.length<3)paintDeck(); else paintDeck();
   R.lastSwipe={p,dir};
-  const _today=new Date().toDateString();
+  const _today=Math.floor(Date.now()/86400000); // UTC day — same clock the firm rules use
   if(L.likesDay.d!==_today)L.likesDay={d:_today,n:0};
   if(L.superDay.d!==_today)L.superDay={d:_today,n:0};
   if(dir==='like'&&!goldActive()){ if(L.likesDay.n>=G.likesPerDay){ undoSwipe(); return openGold('likes'); } L.likesDay.n++; }
@@ -1817,7 +1820,9 @@ async function doSwipe(pid,dir){
   if(!DEMO&&!p.sim){
     ref('swipes/'+uid+'/'+pid).set({d:dir,ts:Date.now()});
     if(dir!=='pass'){
-      ref('incoming/'+pid+'/'+uid).set({d:dir,ts:Date.now()});
+      const upd={}; upd['incoming/'+pid+'/'+uid]={d:dir,ts:Date.now()};
+      if(!goldActive()){ if(dir==='super')upd['limits/'+uid+'/super']={d:_today,n:L.superDay.n||1}; else upd['limits/'+uid+'/likes']={d:_today,n:L.likesDay.n}; }
+      DB.ref('wasla_dating').update(upd).catch(e=>{ console.warn('like write',e); toast('Network hiccup — try again','err'); });
       // 🔐 read my OWN incoming box to know (s)he liked me — peers' swipes are private under the locks
       const back=await ref('incoming/'+uid+'/'+pid).once('value');
       if(back.val()&&back.val().d!=='pass') return makeMatch(p);
@@ -1864,17 +1869,18 @@ async function makeMatch(p){
   if(L.matches.find(m=>m.mid===mid))return;
   L.matches.unshift({mid,peer:p.id,name:p.name,em:p.em,gi:p.gi,ts:Date.now()});
   L.freeLeft[mid]=C.freeChatMsgs; L.chats[mid]=L.chats[mid]||[];
+  try{watchChat(mid);}catch(e){}
   L.likesYou=L.likesYou.filter(x=>x.uid!==p.id);
   save();
   if(!DEMO&&!p.sim){
     await ref('matches/'+mid).set({a:uid,b:p.id,ts:Date.now()});
     await ref('userMatches/'+uid+'/'+mid).set(1); // peer mirrors their own side when their app sees the mutual like (locks)
-    await ref('chatMeta/'+mid).set({freeLeft:C.freeChatMsgs,ts:Date.now()});
-    ref('chats/'+mid).push({sys:1,text:'💕 You matched — be kind ✨ Tip: tap any message once to unsend it 💛',ts:Date.now()}).catch(()=>{});
+    await DB.ref('wasla_dating/chatMeta/'+mid).update({['freeLeft/'+uid]:C.freeChatMsgs,ts:Date.now()}); // 🔒 per-user permanent counter — monotonic, server-enforced
+    ref('chats/'+mid).push({sys:true,text:'💕 You matched — be kind ✨ Tip: tap any message once to unsend it 💛',ts:Date.now()}).catch(()=>{});
   }
   R.matchFlow=p;
   $('matchSub').innerHTML=`You and <b style="color:#fff">${p.name}</b> like each other 💕<br>Chance favors the brave — say something nice!`;
-  $('matchDuo').innerHTML=`<div class="ma" style="background:${grad(L.me.gi)}">${L.me.em}</div><div class="ma" style="background:${grad(p.gi)};z-index:2">${p.em}</div>`;
+  $('matchDuo').innerHTML=`<div class="ma" style="background:${grad(L.me.gi)}"><i class="avart" style="background-image:url('${avaURI({id:uid,av:L.me.av})}')"></i></div><div class="ma" style="background:${grad(p.gi)};z-index:2"><i class="avart" style="background-image:url('${avaURI(p)}')"></i></div>`;
   const duoMas=document.querySelectorAll('#matchDuo .ma'); const myPh=meFirstPhoto();
   if(myPh&&duoMas[0])putImg(duoMas[0],myPh);
   ensurePhoto(p,url=>{ const mas=document.querySelectorAll('#matchDuo .ma'); if(url&&mas[1])putImg(mas[1],url); });
@@ -1902,7 +1908,7 @@ function renderLikes(){
     const p=personOf(lk.uid); const sup=lk.d==='super'; const blur=!sup&&!lk.seen;
     return `<button class="lkcard ${blur?'blur':''}" data-lk="${i}" onclick="revealLike(${i})">
       ${sup?'<div class="lksuper">✨ SUPER LIKE</div>':''}
-      <div class="ph" style="background:${grad(p.gi)}">${p.em}</div>
+      <div class="ph avcover" style="background:${grad(p.gi)};background-image:url('${avaURI(p)}')"></div>
       ${blur?`<div class="lklock">${IC('lock',26)}<span>${T('GOLD members see everyone')}</span></div>`:''}
       <div class="shade"></div>
       <div class="over">${blur?'Someone':`${p.name}${p.age?', '+p.age:''}`}<div class="tiny" style="opacity:.85;font-weight:700">${sup?'Super liked you':'Liked you'}</div></div>
@@ -1914,10 +1920,28 @@ function renderLikes(){
 function revealLike(i){
   const lk=L.likesYou[i]; if(!lk)return;
   if(lk.d!=='super'&&!lk.seen&&!goldActive())return openGold('likesYou');
-  lk.seen=1; save(); renderLikes();
+  const first=!lk.seen; lk.seen=1; save(); renderLikes();
   const p=personOf(lk.uid);
+  if(first&&goldActive()&&!DEMO&&!p.sim){ goldMatchAsk(lk.uid); return; } // 👑 GOLD: match & message instantly
   if(DEMO&&Math.random()<0.75){ makeMatch(p); }
   else { L.deckPrio=lk.uid; }
+}
+function goldMatchAsk(pid){
+  const p=personOf(pid);
+  $('genBody').innerHTML=`<div class="h2" style="margin-bottom:6px">${p.name}${p.age?', '+p.age:''} already likes you</div>
+    <div class="mut small" style="margin-bottom:10px">GOLD power — match with ${p.name} right now and start chatting. No luck, no waiting.</div>
+    <button class="btn btn-grad" onclick="goldMatchBack('${pid}')">${IC('heart',16)} Match now — instant</button>
+    <div style="height:8px"></div>
+    <button class="btn btn-line" onclick="hide('genSheet')">Not yet — keep them in Liked you</button>`;
+  show('genSheet');
+}
+async function goldMatchBack(pid){
+  hide('genSheet');
+  let p=personOf(pid);
+  try{ const snap=await ref('users/'+pid).once('value'); p=Object.assign({id:pid,name:'Someone',em:'💛',gi:2},snap.val()||{}); }catch(e){}
+  try{ await ref('incoming/'+pid+'/'+uid).set({d:'like',ts:Date.now()}); }catch(e){} // their app mirrors their own side (locks)
+  L.swiped[pid]={d:'like',ts:Date.now()}; save();
+  makeMatch(p);
 }
 
 /* ============ MATCHES LIST ============ */
@@ -1925,7 +1949,7 @@ function unreadTotal(){ return Object.values(L.unread||{}).reduce((a,b)=>a+b,0);
 function renderMatches(){
   const freshMs=L.matches.slice(0,8);
   $('mRow').innerHTML=freshMs.length? freshMs.map((m,i)=>`<button class="mnew" data-mc="${m.mid}" onclick="${hasStory(m.peer)?`openStory('${m.peer}')`:`openChat('${m.mid}')`}">
-    <div class="av ${hasStory(m.peer)?'story-hot':''}"><div style="background:${grad(m.gi)}">${m.em}</div>${hasStory(m.peer)?'<span class="storydot"></span>':''}</div><span>${m.name}</span></button>`).join('')
+    <div class="av ${hasStory(m.peer)?'story-hot':''}"><div class="avcover" style="background:${grad(m.gi)};background-image:url('${avaURI({id:m.peer,av:peerAv(m.peer)})}')"></div>${hasStory(m.peer)?'<span class="storydot"></span>':''}</div><span>${m.name}</span></button>`).join('')
     :`<div class="mut small" style="padding:4px 0 10px">Your next match is one swipe away</div>`;
   // real faces in the circles (photo cache keeps bandwidth tiny)
   L.matches.forEach(m=>{ const pr=R.usersCache.find(u=>u.id===m.peer);
@@ -1934,14 +1958,15 @@ function renderMatches(){
       const c=document.querySelector('.citem[data-mc="'+m.mid+'"] .cav');
       if(c){ putImg(c,url); const dd=document.createElement('span'); dd.className='onl'; c.appendChild(dd); }
     }); });
-  const chats=L.matches;
+  const lastTs=m=>{ const c=L.chats[m.mid]||[]; return c.length?(c[c.length-1].ts||m.ts):(m.ts||0); };
+  const chats=L.matches.slice().sort((a,b)=>lastTs(b)-lastTs(a)); // 🔝 newest conversation first — the messenger rule
   $('chatList').innerHTML=chats.length?chats.map(m=>{
     const last=(L.chats[m.mid]||[]).slice(-1)[0];
     const un=L.unread[m.mid]||0; const excl=L.exclusive[m.mid];
     const txt=last? (last.who==='sys'?'💕 You matched!':last.who==='gift'?'🌹 A rose for you':(last.me?'You: ':'')+last.text) :'Say hi 👋';
-    return `<button class="citem ${excl?'exclwrap':''}" data-mc="${m.mid}" onclick="openChat('${m.mid}')">
-      <div class="cav ${hasStory(m.peer)?'story-hot':''}" style="background:${grad(m.gi)}" ${hasStory(m.peer)?`onclick="event.stopPropagation();openStory('${m.peer}')"`:''}>${m.em}<span class="onl"></span></div>
-      <div class="prv"><b>${m.name} ${excl?'<span class="excl">✨ EXCLUSIVE</span>':''}</b><div class="lm">${txt}</div></div>
+    return `<button class="citem ${un?'hasnew ':''}${excl?'exclwrap':''}" data-mc="${m.mid}" onclick="openChat('${m.mid}')">
+      <div class="cav ${hasStory(m.peer)?'story-hot':''}" style="background:${grad(m.gi)}" ${hasStory(m.peer)?`onclick="event.stopPropagation();openStory('${m.peer}')"`:''}><i class="avart" style="background-image:url('${avaURI({id:m.peer,av:peerAv(m.peer)})}')"></i><span class="onl"></span></div>
+      <div class="prv"><b>${un?'<span class="ndot"></span>':''}${m.name} ${excl?'<span class="excl">✨ EXCLUSIVE</span>':''}</b><div class="lm">${txt}</div></div>
       ${un?`<span class="cunr">${un}</span>`:''}</button>`;}).join('')
     :`<div class="emptybox"><div class="big">${MIMG('chat','💘',72)}</div></div>`;
   if(!chats.length)$('chatList').innerHTML=`<div class="emptybox"><div class="big">${MIMG('chat','💘',72)}</div><div class="mut small" style="max-width:260px">When you match, your chats live here.<br>Tip: the first ${C.freeChatMsgs} messages are always free</div></div>`;
@@ -1953,16 +1978,16 @@ function peerOf(mid){ const m=L.matches.find(m=>m.mid===mid); return m?personOf(
 function openChat(mid){
   const m=L.matches.find(m=>m.mid===mid); if(!m)return;
   const p=personOf(m.peer); R.chatWith=mid;
-  L.unread[mid]=0; save();
-  $('chAv').style.background=grad(m.gi); $('chAv').textContent=m.em;
+  L.unread[mid]=0; L.readAt[mid]=Date.now(); save();
+  $('chAv').style.background=grad(m.gi); $('chAv').innerHTML='<i class="avart" style="background-image:url(\''+avaURI({id:m.peer,av:peerAv(m.peer)})+'\')"></i>';
   ensurePhoto(p,url=>{ if(url&&R.chatWith===mid){ $('chAv').style.background='none'; putImg($('chAv'),url); } });
   $('chName').innerHTML=`${m.name} ${VB(VD[m.peer])}${L.exclusive[mid]?'<span class="excl">✨ EXCLUSIVE</span>':''}`;
   $('chatHead').classList.toggle('excl',!!L.exclusive[mid]);
   $('chState').textContent=p?`${p.city||''} · matched ${new Date(m.ts).toLocaleDateString()}`:'';
-  $('chatScr').classList.add('on');
+  paintChatTheme(); $('chatScr').classList.add('on');
   paintFreeBar(); paintIce(); paintMsgs();
   paintChatStory();
-  listenChat(mid);
+  watchChat(mid); pullHistory(mid);
 }
 function closeChat(){ $('chatScr').classList.remove('on'); R.chatWith=null; renderMatches(); }
 function paintFreeBar(){
@@ -2030,14 +2055,19 @@ async function sendMsg(){
   const v=$('chatIn').value.trim(); if(!v)return;
   const mid=R.chatWith; const m=L.matches.find(m=>m.mid===mid); if(!m)return;
   const p=personOf(m.peer);
-  // first messages free, then GOLD wall (immediate) — no coins anywhere
-  if((L.freeLeft[mid]||0)>0){ L.freeLeft[mid]--; if(L.freeLeft[mid]===0)setTimeout(()=>toast('Free messages used — GOLD = unlimited chat with '+m.name),400); }
-  else if(!goldActive()){ return openGold('chat'); }
+  const gold=goldActive();
+  let left=(L.freeLeft[mid]!==undefined?L.freeLeft[mid]:C.freeChatMsgs);
+  if(!gold&&left<=0)return openGold('chat'); // 🔒 0 stays 0 until GOLD — permanent per match, database-enforced
   $('chatIn').value='';
   const serverRef=(!DEMO&&!p.sim)?ref('chats/'+mid).push():null;
   const msg={who:'msg',text:v,me:true,from:uid,key:serverRef?serverRef.key:'local_'+Date.now(),ts:Date.now()}; (L.chats[mid]=L.chats[mid]||[]).push(msg);
+  if(!gold){ L.freeLeft[mid]=left-1; if(L.freeLeft[mid]===0)setTimeout(()=>toast('Free messages used — GOLD = unlimited chat with '+m.name),400); }
   save(); pushBubble(msg); paintFreeBar(); paintIce();
-  if(serverRef){ try{ await serverRef.set({from:uid,fromName:L.me.name,text:v,ts:msg.ts}); }catch(e){ toast('Message could not be sent.','err'); } }
+  if(serverRef){ try{
+    const upd={}; upd['chats/'+mid+'/'+serverRef.key]={from:uid,fromName:L.me.name,text:v,ts:msg.ts};
+    if(!gold)upd['chatMeta/'+mid+'/freeLeft/'+uid]=L.freeLeft[mid];
+    await DB.ref('wasla_dating').update(upd);
+  }catch(e){ toast('Message could not be sent.','err'); } }
   if(p&&p.sim)botReply(mid,p);
 }
 function botReply(mid,p){
@@ -2055,31 +2085,50 @@ function botReply(mid,p){
     },900+Math.random()*1400);
   },600+Math.random()*1200);
 }
-/* live chat for real users */
-let chatQuery=null;
-function listenChat(mid){
-  if(chatQuery){try{chatQuery.off();}catch(e){} chatQuery=null;}
-  if(DEMO)return;
-  const p=peerOf(mid);
-  chatQuery=ref('chats/'+mid).limitToLast(30);
-  chatQuery.on('child_added',s=>{
-    const m=s.val(); if(!m)return;
-    if(m.from&&m.from!==uid){
-      const key=s.key; if(L.seen['cm'+key]||isDeletedForMe(mid,key))return; L.seen['cm'+key]=1;
-      const msg={who:'msg',text:m.text,me:false,from:m.from,key:key,ts:m.ts||Date.now()};
-      (L.chats[mid]=L.chats[mid]||[]).push(msg); save();
-      if(R.chatWith===mid)pushBubble(msg);
-      else { L.unread[mid]=(L.unread[mid]||0)+1; toast(`💬 ${peerOf(mid)?peerOf(mid).name:'Match'}: ${m.text.slice(0,40)}…`); paintBadges(); }
+/* 📡 live chat — always-on watcher per match (instant after login, no digging, no cross-chat bleed) */
+const BOOTLIVE=Date.now();
+let CHATW={};
+function watchChat(mid){
+  if(DEMO||!mid||CHATW[mid])return; CHATW[mid]=1;
+  const q=ref('chats/'+mid).limitToLast(12);
+  q.on('child_added',s=>{
+    const m=s.val(); if(!m||!m.text||m.sys)return; const key=s.key;
+    if(L.seen['cm'+key]||isDeletedForMe(mid,key))return; L.seen['cm'+key]=1;
+    const mine=m.from===uid;
+    if((L.chats[mid]||[]).some(x=>x.key===key))return; // already have it (own send / history pull)
+    (L.chats[mid]=L.chats[mid]||[]).push({who:'msg',text:String(m.text).slice(0,900),me:mine,from:m.from||'',key:key,ts:m.ts||Date.now()});
+    L.chats[mid].sort((a,b)=>(a.ts||0)-(b.ts||0));
+    if(R.chatWith===mid){ L.readAt[mid]=Date.now(); paintMsgs(); }
+    else if(!mine&&(m.ts||0)>(L.readAt[mid]||0)){
+      L.unread[mid]=(L.unread[mid]||0)+1;
+      if(m.ts>BOOTLIVE-10000)toast(`💬 ${peerOf(mid)?peerOf(mid).name:'Match'}: ${String(m.text).slice(0,40)}…`);
+      paintBadges();
     }
-    if(m.fromName&&!m.from){ /* system */ }
+    save();
   });
-  chatQuery.on('child_removed',s=>{
-    const key=s.key; L.chats[mid]=(L.chats[mid]||[]).filter(x=>x.key!==key); save(); if(R.chatWith===mid)paintMsgs();
+  q.on('child_removed',s=>{ // unsend works even while the chat is closed
+    const key=s.key; L.chats[mid]=(L.chats[mid]||[]).filter(x=>x.key!==key); save();
+    if(R.chatWith===mid)paintMsgs(); else renderMatches();
   });
   // freeLeft sync
-  ref('chatMeta/'+mid+'/freeLeft').on('value',s=>{ if(s.val()!==null&&s.val()!==L.freeLeft[mid]){L.freeLeft[mid]=s.val();save();if(R.chatWith===mid)paintFreeBar();} });
+  ref('chatMeta/'+mid+'/freeLeft/'+uid).on('value',s=>{ if(s.val()!==null&&s.val()!==L.freeLeft[mid]){L.freeLeft[mid]=s.val();save();if(R.chatWith===mid)paintFreeBar();} });
   // exclusive sync
   ref('chatMeta/'+mid+'/exclusive').on('value',s=>{ if(s.val()&&!L.exclusive[mid]){L.exclusive[mid]=1;save();} });
+}
+/* ☁️ cloud-first thread: rebuild BOTH sides of the history when a chat opens — nothing ever disappears, no fragments */
+function pullHistory(mid){
+  if(DEMO)return;
+  ref('chats/'+mid).limitToLast(60).once('value').then(s=>{
+    const all=s.val()||{}; let ch=false;
+    Object.entries(all).forEach(([key,m])=>{
+      if(!m||!m.text||m.sys||isDeletedForMe(mid,key))return;
+      if((L.chats[mid]||[]).some(x=>x.key===key))return;
+      L.seen['cm'+key]=1;
+      (L.chats[mid]=L.chats[mid]||[]).push({who:'msg',text:String(m.text).slice(0,900),me:m.from===uid,from:m.from||'',key:key,ts:m.ts||Date.now()}); ch=true;
+    });
+    if(ch){ L.chats[mid].sort((a,b)=>(a.ts||0)-(b.ts||0)); save(); }
+    if(R.chatWith===mid)paintMsgs();
+  }).catch(()=>{});
 }
 let lastType=0;
 function typingNow(){ if(DEMO)return; const now=Date.now(); if(now-lastType>2000){ lastType=now;
@@ -2089,11 +2138,34 @@ function chatMenu(){
   $('genBody').innerHTML=`<div class="h2" style="margin-bottom:10px">${m?m.name:'Options'}</div>
     <button class="btn btn-line" onclick="viewPeerProfile()">View profile</button>
     <div style="height:8px"></div>
+    <button class="btn btn-line" onclick="openThemeSheet()">Chat colors & dark mode</button>
+    <div style="height:8px"></div>
     <button class="btn btn-line" onclick="unmatchAsk()">Unmatch</button>
     <div style="height:8px"></div>
     <button class="btn btn-line" style="color:#ff7a7a" onclick="reportAsk()">${IC('flag',15)} Report & block</button>`;
   show('genSheet');
 }
+/* 🎨 chat comfort — colorblind-friendly palettes + dark chat */
+function paintChatTheme(){ const cs=$('chatScr'); if(!cs)return;
+  cs.classList.remove('ct-ocean','ct-violet','ct-mono','dark');
+  const th=L.chatTheme||'rose'; if(th!=='rose')cs.classList.add('ct-'+th);
+  if(L.chatDark)cs.classList.add('dark'); }
+function openThemeSheet(){
+  const th=L.chatTheme||'rose';
+  const row=(id,name,desc,c1,c2)=>`<button class="palrow ${th===id?'on':''}" onclick="setChatTheme('${id}')"><span class="palsamp"><i style="background:${c1}"></i><i style="background:${c2}"></i></span><span style="flex:1"><b>${name}</b><div class="mut tiny">${desc}</div></span>${th===id?IC('check',16):''}</button>`;
+  $('genBody').innerHTML=`<div class="h2" style="margin-bottom:4px">Chat colors</div>
+    <div class="mut tiny" style="margin-bottom:8px">Comfort-first palettes — Ocean is designed for red-green color vision (the most common), Violet for blue-yellow, Mono for maximum contrast.</div>`
+    +row('rose','Rose — classic','Warm Tayri pink, our signature','#ff5f8f','#ffffff')
+    +row('ocean','Ocean — red-green friendly','Blue vs soft amber, easiest for deuteranopia','#1565d8','#ffe3ae')
+    +row('violet','Violet — blue-yellow friendly','Purple vs warm peach, easiest for tritanopia','#7c3aed','#ffd9b3')
+    +row('mono','Mono — max contrast','Black on white, vision-friendly','#151515','#ffffff')
+    +`<div style="height:8px"></div>
+    <button class="palrow ${L.chatDark?'on':''}" onclick="toggleChatDark()"><span class="palsamp"><i style="background:#0d1117"></i><i style="background:#21262d"></i></span><span style="flex:1"><b>Dark chat</b><div class="mut tiny">Easy on the eyes at night — only the chat screen changes</div></span><span class="pill ${L.chatDark?'pon':''}">${L.chatDark?'ON':'OFF'}</span></button>
+    <div style="height:8px"></div><button class="btn btn-line" onclick="hide('genSheet')">Close</button>`;
+  show('genSheet');
+}
+function setChatTheme(id){ L.chatTheme=id; save(); paintChatTheme(); openThemeSheet(); }
+function toggleChatDark(){ L.chatDark=L.chatDark?0:1; save(); paintChatTheme(); openThemeSheet(); }
 /* 👀 your public card — Unmatch sits at the bottom */
 function viewPeerProfile(){
   const p=peerOf(R.chatWith); if(!p)return toast('Profile still loading…');
@@ -2169,7 +2241,9 @@ async function doUnmatch(reported,reason,proofIndex){
       await ref('matches/'+mid).set({dead:1,a:uid,b:peerId,by:uid,ts:Date.now()}).catch(()=>{});
       await ref('userMatches/'+uid+'/'+mid).remove().catch(()=>{});
       await ref('chats/'+mid).remove().catch(()=>{});
-      await ref('chatMeta/'+mid).remove().catch(()=>{});
+      await ref('chatMeta/'+mid+'/freeLeft/'+uid).remove().catch(()=>{});
+      await ref('chatMeta/'+mid+'/ts').remove().catch(()=>{});
+      await ref('chatMeta/'+mid+'/exclusive').remove().catch(()=>{});
       await ref('typing/'+mid).remove().catch(()=>{});
     }catch(e){ toast('The report could not be sent. Please try again.','err'); }
   }
@@ -2274,7 +2348,7 @@ function previewMe(){
   if(!L.me)return toast('Create your profile first');
   const mp=(L.me.photos||[]).filter(Boolean)[0]||null; const tags=(L.me.tags||[]).slice(0,4);
   $('genBody').innerHTML=`<div style="border-radius:22px;overflow:hidden;position:relative;box-shadow:0 16px 40px rgba(0,0,0,.55)">
-    <div style="height:330px;background:${grad(L.me.gi)};display:flex;align-items:center;justify-content:center;font-size:110px">${mp?`<img src="${mp}" style="width:100%;height:100%;object-fit:cover" alt="my photo">`:L.me.em}</div>
+    <div style="height:330px;background:${grad(L.me.gi)};display:flex;align-items:center;justify-content:center;font-size:110px;position:relative;overflow:hidden">${mp?`<img src="${mp}" style="width:100%;height:100%;object-fit:cover" alt="my photo">`:`<i class="avart" style="background-image:url('${avaURI({id:uid,av:L.me.av})}')"></i>`}</div>
     <div style="position:absolute;inset-inline:0;bottom:58px;padding:14px;background:linear-gradient(transparent,rgba(8,3,10,.9) 82%);color:#fff">
       <div style="font-size:24px;font-weight:900;display:flex;align-items:center;gap:8px">${L.me.name}, ${L.me.age} ${VB(L.verified)}</div>
       <div style="font-size:12px;opacity:.92;font-weight:700;margin-top:4px">${IC('pin',12)} ${L.me.city}</div>
@@ -2342,13 +2416,14 @@ function renderProfile(){
           <div><b style="font-size:20px">${L.matches.length}</b><div class="mut tiny">${T('Matches')}</div></div>
           <div><b style="font-size:20px">${Object.keys(L.likesYou).length||L.likesYou.length}</b><div class="mut tiny">${T('Admirers')}</div></div>
           <div><b style="font-size:20px">${L.likesDay.n||0}</b><div class="mut tiny">${T('Likes today')}</div></div>
-          <div><b style="font-size:20px">${goldActive()?'∞':Math.max(0,G.likesPerDay-(L.likesDay.d===new Date().toDateString()?(L.likesDay.n||0):0))}</b><div class="mut tiny">${T('Free likes')}</div></div>
+          <div><b style="font-size:20px">${goldActive()?'∞':Math.max(0,G.likesPerDay-(L.likesDay.d===Math.floor(Date.now()/86400000)?(L.likesDay.n||0):0))}</b><div class="mut tiny">${T('Free likes')}</div></div>
         </div>
       </div>
       <div class="seclab">Settings & more</div>
       <div class="setcard" style="margin:0 0 12px">
         <button class="mprow" onclick="openLangSheet()"><div class="mico mic-a">${IC('globe',22)}</div><div class="mtxt"><b>${T('Language')}</b><div>English · Français · Español · Português · Русский · 中文 · العربية</div></div><span class="pill">${(L.lang||'en').toUpperCase()}</span></button>
         <button class="mprow" onclick="startVerify()"><div class="mico mic-b">${IC('check',22)}</div><div class="mtxt"><b>${T('VERIFIED badge')}</b><div>${L.verified?'You are verified — blue check everywhere':L.verifyPending?'Selfie under review (usually under 24h)':'Selfie + peace sign = blue check'}</div></div><span class="pill" style="${L.verified?'background:#e3f1ff;color:#2f8fe0':''}">${L.verified?'✓ VERIFIED':L.verifyPending?'Reviewing':'Get it'}</span></button>
+        <button class="mprow" onclick="openAvSheet()"><div class="mico mic-c">${IC('person',22)}</div><div class="mtxt"><b>Avatar art</b><div>Pick your vibe — your photo always wins</div></div><span class="pill">8 arts</span></button>
         <button class="mprow" onclick="toggleGeo()"><div class="mico mic-c">${IC('pin',22)}</div><div class="mtxt"><b>${T('Real distance (GPS)')}</b><div>${L.geo?'Tap to turn OFF — you control your location':'Real kilometres — always free'}</div></div><span class="pill ${L.geo?'pon':''}">${L.geo?'ON · tap to stop':'Turn on'}</span></button>
         <button class="mprow" onclick="location.href='video.html'"><div class="mico mic-e">${IC('video',22)}</div><div class="mtxt"><b>${T('Instant video')}</b><div>${T('Meet someone live — free')}</div></div><span class="chev">›</span></button>
         <button class="mprow" onclick="location.href='leaderboard.html'"><div class="mico mic-d">${IC('medal',22)}</div><div class="mtxt"><b>${T('Weekly leaderboard')}</b><div>${T('Build your social presence')}</div></div><span class="chev">›</span></button>
@@ -2367,7 +2442,7 @@ function paintGold(){ const el=$('goldTop'); if(el)el.textContent=goldActive()?T
 
 /* ============ INIT ============ */
 setTimeout(()=>{ const dk=$('deck'); if(AUTHED&&R.tab==='discover'&&dk&&!dk.children.length){ try{paintDeck();}catch(e){} } }, 5200);
-const TAYRI_BUILD='v12'; /* bump this number on every release — every phone self-updates once, no cache games */
+const TAYRI_BUILD='v15'; /* bump this number on every release — every phone self-updates once, no cache games */
 try{ if(location.search.indexOf(TAYRI_BUILD)<0){ localStorage.setItem('tayri_boot_'+TAYRI_BUILD,'1'); const q=location.search; location.replace(location.pathname+(q?(q+'&'):'?')+TAYRI_BUILD); } }catch(e){}
 fbInit();
 paintGold();
@@ -2395,12 +2470,21 @@ async function syncBadges(){
     const peer=m.a===uid?m.b:m.a;
     const p=(await ref('users/'+peer).once('value')).val()||{name:'Match',em:'💛',gi:1};
     L.matches.unshift({mid,peer,name:p.name,em:p.em,gi:p.gi,ts:m.ts});
-    const fl=(await ref('chatMeta/'+mid+'/freeLeft').once('value')).val();
-    L.freeLeft[mid]=fl===null?C.freeChatMsgs:fl;
     L.chats[mid]=L.chats[mid]||[];
+    syncFreeLeft(mid);
   }
   save();
+  L.matches.forEach(m=>{ try{watchChat(m.mid);}catch(e){} try{syncFreeLeft(m.mid);}catch(e){} }); // 📡 always-on chat watchers: instant messages after login
   refreshStories().catch(()=>{});
+}
+/* 🔒 cloud-firm free-message counter: permanent per user per match — 0 stays 0 until GOLD */
+async function syncFreeLeft(mid){
+  if(DEMO||!mid)return;
+  try{ const s=await ref('chatMeta/'+mid+'/freeLeft/'+uid).once('value');
+    if(s.val()===null){ await ref('chatMeta/'+mid+'/freeLeft/'+uid).set(C.freeChatMsgs); L.freeLeft[mid]=C.freeChatMsgs; }
+    else L.freeLeft[mid]=s.val();
+    save(); if(R.chatWith===mid)paintFreeBar();
+  }catch(e){}
 }
 setInterval(()=>{ save(); },30000);
 </script>

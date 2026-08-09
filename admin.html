@@ -9,7 +9,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-check-compat.js"></script>
+
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 :root{--bg:#160d12;--card:#1f1219;--card2:#291722;--line:#37202e;--txt:#fff2f7;--mut:#b193a3;--pk:#ff4e7e;--or:#ff8a5c;--green:#2fbf71;--warn:#ffb020;--red:#ff6b6b;--r:16px}
@@ -163,10 +163,15 @@ function tryPin(){
       if(k&&!/^PASTE|^$/.test(k)&&firebase.appCheck){ firebase.appCheck().activate(k,true); } }catch(e){}
   }
   $('gatePin').style.display='none'; $('gatePhone').style.display='block';
+  /* Auto-enter when a sign-in is already done (e.g. returning from mobile redirect) */
+  try{ firebase.auth().onAuthStateChanged(u=>{ if(u&&PIN_OK) enter(); }); }catch(e){}
 }
 function adminGoogle(){
   const btn=$('aBtn'); btn.disabled=true; btn.textContent='Opening Google…';
+  if(firebase.auth().currentUser){ enter(); return; }
   const prov=new firebase.auth.GoogleAuthProvider();
+  /* Phones: redirect instead of popup (COOP-proof) */
+  if(/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent)){ firebase.auth().signInWithRedirect(prov); return; }
   firebase.auth().signInWithPopup(prov).then(()=>{ enter(); })
     .catch(e=>{ btn.disabled=false; btn.textContent='Continue with Google';
       if(e.code==='auth/popup-blocked'||e.code==='auth/operation-not-supported-in-this-environment'){ firebase.auth().signInWithRedirect(prov); return; }

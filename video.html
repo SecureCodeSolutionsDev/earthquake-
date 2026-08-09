@@ -11,7 +11,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-check-compat.js"></script>
+
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{--bg:#0b0812;--card:rgba(24,15,29,.78);--card2:rgba(255,255,255,.045);--ink:#f6eef4;--mut:#a794b0;--line:rgba(255,255,255,.09);--pink:#ff4e7e;--orange:#ff9a5c;--grad:linear-gradient(135deg,#ff4e7e,#ff8a5c);--gold:linear-gradient(135deg,#f2c14e,#c98a12);--shadow:0 30px 80px rgba(0,0,0,.52);--green:#3fdc85;--warn:#ffb020;--bad:#ff6b8a}
@@ -496,6 +496,8 @@ svg{display:inline-block}
   function hideFeedback(){ show(feedback,false); feedbackPeer=null; sendFeedback.disabled=false; }
   async function signIn(){
     const provider=new firebase.auth.GoogleAuthProvider();
+    /* Phones: redirect instead of popup (COOP-proof) */
+    if(/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent)) return firebase.auth().signInWithRedirect(provider);
     try{ await firebase.auth().signInWithPopup(provider); }
     catch(e){
       if(e&&['auth/popup-blocked','auth/operation-not-supported-in-this-environment','auth/web-storage-unsupported'].includes(e.code)) return firebase.auth().signInWithRedirect(provider);
