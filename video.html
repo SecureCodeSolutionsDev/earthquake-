@@ -283,6 +283,7 @@ svg{display:inline-block}
       if(v.rtc&&Array.isArray(v.rtc.iceServers)&&v.rtc.iceServers.length) base.iceServers=v.rtc.iceServers.slice();
       const t=v.turn||{};
       if(t.urls&&t.username&&!/PASTE/i.test(String(t.username))) base.iceServers.push({urls:t.urls,username:t.username,credential:t.credential});
+      (Array.isArray(v.turns)?v.turns:[]).forEach(sv=>{ if(sv&&sv.urls&&sv.username&&!/PASTE/i.test(String(sv.username))) base.iceServers.push({urls:sv.urls,username:sv.username,credential:sv.credential}); });
     }catch(e){}
     return base;
   })();

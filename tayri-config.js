@@ -48,17 +48,38 @@ const TAYRI_CONFIG = {
         { urls: "stun:stun1.l.google.com:19302" }
       ]
     },
-    /* 🔌 FREE TURN relay (recommended for revenue — saves calls on restrictive
-       routers / 4G. Both cost $0 to start:
-       · Cloudflare Calls → 1 TB egress/month free, no card (dash.cloudflare.com → Calls → App Secret)
-       · metered.ca → 50 GB/month free (dashboard → API → TURN credentials)
-       Paste the ONE credential set they give you below. While it says PASTE_,
-       Tayripages uses the free STUN path exactly as before — nothing breaks. */
+    /* 🔌 FREE TURN relay stack — set once, forget forever:
+       1) metered.ca account credentials below → 500 MB/month, AUTO-RENEWING (you never touch it)
+       2) Open Relay (public metered community relay) → no account, no expiry, unlimited-ish —
+          automatic backup when quota runs out. WebRTC picks the fastest that answers.
+       (Cloudflare 1 TB needs short-lived keys + a backend, so it waits for the first GOLD income.) */
     turn: {
-      urls: "turn:global.relay.metered.ca:80?transport=tcp",
-      username: "PASTE_TURN_USERNAME",
-      credential: "PASTE_TURN_CREDENTIAL"
-    }
+      urls: [
+        "turn:global.relay.metered.ca:80",
+        "turn:global.relay.metered.ca:80?transport=tcp",
+        "turn:global.relay.metered.ca:443",
+        "turn:global.relay.metered.ca:443s?transport=tcp"
+      ],
+      username: "efc38c840c1c62b58e8f1d3f",
+      credential: "EqJsIb4KUD3EbYNL"
+    },
+    turns: [
+      { urls: [
+          "turn:global.relay.metered.ca:80",
+          "turn:global.relay.metered.ca:80?transport=tcp",
+          "turn:global.relay.metered.ca:443",
+          "turn:global.relay.metered.ca:443s?transport=tcp"
+        ],
+        username: "efc38c840c1c62b58e8f1d3f",
+        credential: "EqJsIb4KUD3EbYNL" },
+      { urls: [
+          "turn:openrelay.metered.ca:80",
+          "turn:openrelay.metered.ca:443",
+          "turn:openrelay.metered.ca:443?transport=tcp"
+        ],
+        username: "openrelayproject",
+        credential: "openrelayproject" }
+    ]
   },
 
   /* ---------- PRO MEDIA (art packs load first; these are only overrides) */
