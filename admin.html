@@ -157,10 +157,6 @@ function eh(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt
 function ref(p){return DB.ref('wasla_dating/'+p)} // matches firebase-rules.json root
 function ts(t){return t?new Date(t).toLocaleString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}):''}
 let PIN_OK = localStorage.getItem('tayri_admin_pin_ok')==='1';
-if(PIN_OK && tayriCloudReady() && window.firebase && firebase.apps.length && firebase.auth().currentUser){
-  // already passed PIN before redirect, auto-show gatePhone
-  setTimeout(()=>{ try{ $('gatePin').style.display='none'; $('gatePhone').style.display='block'; }catch(e){} }, 200);
-}
 function tryPin(){
   if($('pinIn').value!==TAYRI_CONFIG.adminPin){toast('Wrong PIN','err');$('pinIn').value='';return}
   PIN_OK=true;
@@ -357,12 +353,14 @@ function paintUs(rows){
    :'<tr><td class="mut">No users yet — share the app link!</td></tr>')+'</tbody>';
 }
 function paintBank(){
+  const el=$('bankGrid'); if(!el) return;
   const c=TAYRI_CONFIG.company;
-  $('bankGrid').innerHTML=[['Account name',c.accountName],['Bank',c.bank],['RIB',c.rib],['IBAN',c.iban],['SWIFT',c.swift],['ICE',c.ice],['Support email',c.supportEmail],['Support phone',c.supportPhone]]
+  el.innerHTML=[['Account name',c.accountName],['Bank',c.bank],['RIB',c.rib],['IBAN',c.iban],['SWIFT',c.swift],['ICE',c.ice],['Support email',c.supportEmail],['Support phone',c.supportPhone]]
   .map(([l,v])=>`<div class="bankrow"><span class="mut tiny">${l.toUpperCase()}</span><br><b>${v}</b></div>`).join('');
 }
 function paintEcon(){
-  $('econList').innerHTML=[
+  const el=$('econList'); if(!el) return;
+  el.innerHTML=[
     ['GOLD price (one-time)',G.priceDH+' DH'],['Free likes per day',G.likesPerDay],
     ['Free messages per match',G.msgsPerMatch],['Free Super Like per day',G.superPerDay],['GOLD Super Likes per day',G.superGold]
   ].map(([k,v])=>`<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line)"><span class="mut">${k}</span><b>${v}</b></div>`).join('')
