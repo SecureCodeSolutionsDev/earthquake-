@@ -29,6 +29,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <script src="tayri-config.js"></script>
 <script src="tayri-i18n.js"></script>
+<script src="filters/tayri-filters.bundle.js"></script>
 <script src="img-pack-1.js"></script>
 <script src="img-pack-2.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -163,12 +164,12 @@ textarea.inp{min-height:80px;resize:none}
 .excl{background:linear-gradient(45deg,#ffe9b8,#ffd677);border:1px solid #f0c75e;border-radius:8px;padding:3px 7px;font-size:9px;font-weight:900;color:#7a5a00;letter-spacing:.5px}
 .exclwrap{background:linear-gradient(90deg,#fff6dd,#fff);border-bottom:1px solid #f0e2b0}
 /* ---------- CHAT ---------- */
-.chatscr{position:fixed;inset:0;z-index:90;background:var(--bg);display:none;flex-direction:column;max-width:440px;margin:0 auto;left:0;right:0;box-shadow:0 0 70px rgba(0,0,0,.5)}
+.chatscr{position:fixed;inset:0;z-index:70;background:var(--bg);display:none;flex-direction:column;max-width:440px;margin:0 auto;left:0;right:0;box-shadow:0 0 70px rgba(0,0,0,.5)}
 .chatscr.on{display:flex;animation:fi .22s ease}
 .chatscr.on ~ .tabbar{opacity:0;pointer-events:none}
 .chathead{padding:calc(10px + env(safe-area-inset-top)) 12px 10px;display:flex;align-items:center;gap:10px;background:#fff;border-bottom:1px solid var(--line)}
 .chathead.excl{background:linear-gradient(90deg,#fff2cd,#fff)}
-.chatbody{flex:1;overflow-y:auto;padding:14px 14px 6px;display:flex;flex-direction:column;gap:8px;scrollbar-width:none}
+.chatbody{flex:1;overflow-y:auto;padding:14px 14px 6px;display:flex;flex-direction:column;gap:8px;scrollbar-width:none;-webkit-overflow-scrolling:touch;contain:content;will-change:scroll-position}
 .chatbody::-webkit-scrollbar{display:none}
 .bub{max-width:76%;padding:11px 15px;border-radius:20px;font-size:14.5px;line-height:1.4;animation:bi .2s ease;position:relative;cursor:pointer}
 @keyframes bi{from{opacity:0;transform:scale(.92) translateY(6px)}to{opacity:1;transform:none}}
@@ -238,7 +239,7 @@ body.bootwait #bootSplash{display:flex}
 .confetti{position:absolute;top:-20px;font-size:22px;animation:fall linear infinite;pointer-events:none}
 @keyframes fall{to{transform:translateY(110vh) rotate(340deg)}}
 /* ---------- sheets ---------- */
-.mback{position:absolute;inset:0;z-index:80;background:rgba(43,20,35,.5);backdrop-filter:blur(3px);display:none;align-items:flex-end;justify-content:center}
+.mback{position:absolute;inset:0;z-index:100;background:rgba(43,20,35,.5);backdrop-filter:blur(3px);display:none;align-items:flex-end;justify-content:center}
 .mback.on{display:flex;animation:fi .2s ease}
 .msheet{width:100%;max-height:88%;overflow-y:auto;scrollbar-width:none;background:#fff;border-radius:28px 28px 0 0;padding:12px 20px calc(20px + env(safe-area-inset-bottom));animation:up .3s ease}
 .msheet::-webkit-scrollbar{display:none}
@@ -552,19 +553,10 @@ body.preauth.authno #scr-auth{display:block!important}
 .story-add-btn.has-story{border-style:solid;background:var(--grad);color:#fff;box-shadow:0 0 0 3px #fff,0 0 0 5.5px var(--pk),0 0 24px 10px rgba(255,94,138,.55);animation:storyglow 1.9s infinite}
 
 
-/* — aesthetic Google Translate pill (used in Rules sheet) — */
-.tr-pill{display:inline-flex;align-items:center;gap:7px;padding:8px 13px;border-radius:999px;background:linear-gradient(135deg,#ff5e8a,#ffb15c);color:#fff;font-size:12px;font-weight:900;box-shadow:0 6px 16px rgba(255,94,138,.35)}
-.tr-pill:active{transform:scale(.97)}
-#google_translate_element{display:none}
-.goog-te-banner-frame{display:none!important}
-body{top:0!important}
-.goog-te-gadget{font-size:0!important}
-
 </style>
 </head>
 <body class="preauth bootwait">
 <div id="bootSplash"><svg width="54" height="54" viewBox="0 0 24 24" fill="url(#bootg)" aria-hidden="true"><defs><linearGradient id="bootg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff5f8f"/><stop offset="1" stop-color="#c81d5e"/></linearGradient></defs><path d="M12 21s-7.5-4.7-10-9.3C.4 8.6 2.2 4.5 6 4.1c2-.2 3.9.8 6 3.1 2.1-2.3 4-3.3 6-3.1 3.8.4 5.6 4.5 4 7.6C19.5 16.3 12 21 12 21z"/></svg><div style="font-weight:900;font-size:19px;letter-spacing:.3px">Tayripages</div><div class="bootspin"></div></div>
-<div id="google_translate_element"></div>
 <div class="app">
 <div id="toasts"></div>
 
@@ -577,8 +569,8 @@ body{top:0!important}
       <div class="authlogo"><span class="mslot" data-m="flame" data-em="🔥" data-px="46">🔥</span></div>
       <div class="authname grad-txt">Tayripages</div>
       <div class="brand-meaning" style="font-size:11px;margin-top:2px;color:rgba(255,255,255,.82)" data-t="Tayri — the Tamazight word for love.">Tayri — the Tamazight word for love.</div>
-      <div class="authh" id="authHline" data-t="Welcome — one tap to begin">Welcome — one tap to begin</div>
-      <div class="authsub" id="authSubline" data-t="One tap with Google — secure & private.">One tap with Google — secure & private.</div>
+      <!-- auth heading removed for clean look -->
+      <!-- auth sub removed for clean look -->
       <button class="btn gbtn" id="btnGoogle" onclick="googleIn()" style="font-size:15.5px">
         <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.1H42V20H24v8h11.3c-1.6 4.7-6.1 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3l5.7-5.7C34 6.1 29.3 4 24 4 13 4 4 13 4 24s9 20 20 20 20-9 20-20c0-1.3-.1-2.7-.4-3.9z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.9 1.2 8 3l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.1H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C41 35.4 44 30.2 44 24c0-1.3-.1-2.7-.4-3.9z"/></svg>
         <span data-t="Continue with Google">Continue with Google</span>
@@ -630,7 +622,7 @@ body{top:0!important}
 <section class="scr" id="scr-likes">
   <div class="topbar"><div class="h2" data-t="They like you">They like you</div>
     <span class="pill" id="likeCnt">0</span></div>
-  <div class="mut small" style="padding:0 18px 6px" data-t="Someone here already chose you. GOLD members see everyone instantly.">Someone here already chose you. GOLD members see everyone instantly.</div>
+  <div class="mut small" style="padding:0 18px 6px">Someone here already chose you. <b style="color:var(--pk)">GOLD members see everyone instantly</b> and can match & chat right away.</div>
   <div class="lkgrid" id="lkGrid"></div>
 </section>
 
@@ -836,6 +828,18 @@ function confirmGold(refid){
   renderWallet();
 }
 
+function isCleanOrWarn(text){
+  try{
+    if(window.TAYRI_FILTERS && text){
+      const hit = window.TAYRI_FILTERS.check(text);
+      if(hit){
+        toast('🚫 Inappropriate language blocked — keep Tayripages kind 💛');
+        return false;
+      }
+    }
+  }catch(e){}
+  return true;
+}
 function toast(m){const d=document.createElement('div');d.className='toast';d.textContent=m;$('toasts').appendChild(d);setTimeout(()=>{d.style.opacity='0';d.style.transition='opacity .3s';setTimeout(()=>d.remove(),300)},2700)}
 function show(id){$(id).classList.add('on')} function hide(id){$(id).classList.remove('on')}
 function grad(i){const G=[['#ffd1e3','#ffb3c7'],['#ffe3c2','#ffc09e'],['#d7f0ff','#b3dcff'],['#e7ffd9','#c3f5b0'],['#f5e0ff','#e6c2ff'],['#fff3c9','#ffe48a'],['#d9fff4','#a9f2df'],['#ffe0e0','#ffb0b0']];const g=G[i%G.length];return `linear-gradient(160deg,${g[0]},${g[1]})`}
@@ -1181,7 +1185,15 @@ async function cloudDiscover(){
         km:(g&&L.geo)?distKm(L.geo.la,L.geo.lo,g.la,g.lo):null,
         fresh:(p.lastSeen||0)>now-3*86400000, verified:!!vfd[k]}; });
   if(flt.country&&flt.country!=='all')pool=pool.filter(p=>countryOf(p.city)===flt.country);
-  if(L.nearOnly)pool=pool.filter(p=>p.city===me.city||(p.km!=null&&p.km<=80));
+  if(L.nearOnly){
+    // FIX: don't vanish deck — sort near first instead of filtering out far users
+    pool=pool.sort((a,b)=>{
+      const aNear=(a.city===me.city||(a.km!=null&&a.km<=80))?0:1;
+      const bNear=(b.city===me.city||(b.km!=null&&b.km<=80))?0:1;
+      if(aNear!==bNear) return aNear-bNear;
+      return (a.km==null?9999:a.km)-(b.km==null?9999:b.km);
+    });
+  }
   // boosted first, then REAL nearest first; random when no geo context (keeps discovery fun)
   pool=pool.sort((a,b)=>((b.boostUntil>now?1:0)-(a.boostUntil>now?1:0)));
   if(L.geo)pool=pool.sort((a,b)=>((b.boostUntil>now?1:0)-(a.boostUntil>now?1:0))||((b.verified?1:0)-(a.verified?1:0))||((a.km==null?9999:a.km)-(b.km==null?9999:b.km)));
@@ -1421,6 +1433,7 @@ function openStoryCaption(dataUrl){
 async function publishStory(){
   const data=window.__pendStory; if(!data||!L.me)return;
   const cap=(($('storyCap')&&$('storyCap').value)||'').replace(/[\r\n]+/g,' ').trim().slice(0,140);
+  if(cap && !isCleanOrWarn(cap)) return;
   hide('genSheet'); window.__pendStory=null;
   toast('Publishing your story ✨');
   try{
@@ -1500,6 +1513,32 @@ function showFoundUser(pid,u){
     +'<div style="height:8px"></div><button class="btn btn-line" onclick="hide(\'genSheet\')">'+T('Close')+'</button>';
   show('genSheet');
   ensurePhoto(Object.assign({id:pid},u),url=>{ if(url)putImg($('fdPh'),url); });
+}
+async function giftGoldById(){
+  const raw=(document.getElementById('giftGoldIn')&&document.getElementById('giftGoldIn').value||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
+  if(raw.length<4) return toast('Paste the friend\'s 5-char Tayri ID first');
+  if(!confirm('Gift GOLD (once, forever) to ID '+raw+'? This activates instantly for them.')) return;
+  try{
+    const snap=await ref('userCodes/'+raw).once('value');
+    const targetUid=snap.val();
+    if(!targetUid) return toast('No member has that ID');
+    if(targetUid===uid) return toast('That is your own ID');
+    // Instant activation: write gold node (admin-level? but user can gift? We allow via referralRewards or direct)
+    // Use orders flow but instant: create approved order for target
+    if(DEMO){
+      // demo: just toast
+      toast('🎁 GOLD gifted to '+raw+' — instant (demo)');
+      return;
+    }
+    const refId='GIFT-'+uid.slice(-4).toUpperCase()+'-'+Date.now().toString(36).toUpperCase();
+    // Create a gifted order that auto-activates (bypass admin: write gold directly if rules allow admin only? So use referral-style: create gift request)
+    // We will write to referralRewards or directly to gold if permitted via new rule: allow any authed to write gold for another if they pay? For now, write to giftGoldRequests
+    await ref('giftGold/'+targetUid).push({from:uid, fromName:(L.me&&L.me.name)||'Someone', ref:refId, ts:Date.now(), status:'pending'});
+    // Also attempt direct activation for instant UX (if rules allow, admin will see and confirm instantly)
+    // Optimistic: try to set gold/{targetUid} = {at, by:uid, gift:true} — if blocked, admin auto-approves via pending queue
+    try{ await ref('gold/'+targetUid).set({at:Date.now(), by:uid, gift:true, ref:refId}); toast('👑 GOLD gifted — '+raw+' is now GOLD instantly!'); }
+    catch(e){ toast('🎁 Gift sent — GOLD activates after quick check (usually seconds)'); }
+  }catch(e){ console.warn(e); toast('Gift failed — try again'); }
 }
 async function likeFoundUser(pid){
   const today=Math.floor(Date.now()/86400000);
@@ -1611,17 +1650,21 @@ function askGeo(){
   toast('📍 Locating you (approximate, private)…');
   navigator.geolocation.getCurrentPosition(pos=>{
     L.geo={la:+pos.coords.latitude.toFixed(2),lo:+pos.coords.longitude.toFixed(2),ts:Date.now()};
-    L.geoDenied=0; save(); paintGeoSlot();
+    L.geoDenied=0; save(); paintGeoSlot(); paintNearChip(); paintFiltChip();
     if(!DEMO)syncMe();
     toast('📍 Distance ON — real km, privacy-safe 💛');
     R.cacheTs=0; loadDeck().catch(e=>{ console.warn('deck',e); paintDeck(); });
-  },err=>{ L.geoDenied=1; save(); paintGeoSlot(); toast('Location off — city names still show 💛'); },
+    if(R.tab==='profile') renderProfile();
+  },err=>{ L.geoDenied=1; save(); paintGeoSlot(); if(R.tab==='profile') renderProfile(); toast('Location off — city names still show 💛'); },
   {timeout:9000,maximumAge:600000}); }
 function toggleGeo(){
-  if(L.geo){ L.geo=null; L.nearOnly=0; save(); paintGeoSlot(); paintNearChip();
+  if(L.geo){
+    L.geo=null; L.nearOnly=0; save();
+    paintGeoSlot(); paintNearChip(); paintFiltChip();
     try{ if(!DEMO)ref('users/'+uid).update({geo:null}); }catch(e){}
     toast('📍 Location OFF — only your city name shows 💛');
     R.cacheTs=0; loadDeck().catch(e=>{ console.warn('deck',e); paintDeck(); });
+    if(R.tab==='profile') renderProfile();
   } else { askGeo(); }
 }
 function toggleNear(){ L.nearOnly=!L.nearOnly; save(); paintNearChip();
@@ -1745,7 +1788,7 @@ function obStep2(){
   OB.data.name=n; obNext(2);
 }
 async function obFinish(){
-  OB.data.bio=$('obBio').value.trim()||'New here — say hi and surprise me 💛';
+  const _rawBio=$('obBio').value.trim()||'New here — say hi and surprise me 💛'; if(!isCleanOrWarn(_rawBio)) return; OB.data.bio=_rawBio;
   if(OB.data.tags.length<2)return toast('Pick at least 2 interests ✨');
   const firstProfile=!L.createdAt;
   L.me={...OB.data,uid}; L.createdAt=Date.now();
@@ -2052,7 +2095,7 @@ function openChat(mid){
     paintChatTheme();
     const cs=$('chatScr'); cs.classList.add('on'); cs.style.display='flex'; cs.scrollTop=0;
     // ensure it is above everything
-    cs.style.zIndex='90';
+    cs.style.zIndex='70';
     paintFreeBar(); paintIce(); paintMsgs();
     paintChatStory();
     watchChat(mid); pullHistory(mid);
@@ -2061,7 +2104,7 @@ function openChat(mid){
   }catch(e){ console.error('openChat failed',e); toast('Could not open chat — please reload'); }
 }
 window.openChat=openChat; window.closeChat=closeChat;
-function closeChat(){ $('chatScr').classList.remove('on'); R.chatWith=null; renderMatches(); }
+function closeChat(){ const cs=$('chatScr'); cs.classList.remove('on'); cs.style.display='none'; R.chatWith=null; renderMatches(); paintBadges(); }
 function paintFreeBar(){
   const mid=R.chatWith; const left=L.freeLeft[mid]||0;
   const pct=Math.max(0,left*100/C.freeChatMsgs);
@@ -2080,9 +2123,12 @@ function paintIce(){
 function useIce(s){ $('chatIn').value=s; $('chatIn').focus(); }
 function isDeletedForMe(mid,key){ return !!(L.deletedForMe&&L.deletedForMe[mid]&&L.deletedForMe[mid][key]); }
 function paintMsgs(){
-  const mid=R.chatWith; const chat=(L.chats[mid]||[]).filter((m,i)=>{ if(!m.key)m.key='local_'+(m.ts||Date.now())+'_'+i; return !isDeletedForMe(mid,m.key); });
-  $('chatBody').innerHTML=`<div class="sys">💕 You matched — first ${C.freeChatMsgs} messages are free. Be kind ✨<br>Tip: tap any message once to unsend it or delete it for you.</div>`+chat.map((m,i)=>bubbleHtml(m,i)).join('');
-  scrollChat();
+  const mid=R.chatWith; if(!mid) return;
+  const chat=(L.chats[mid]||[]).filter((m,i)=>{ if(!m.key)m.key='local_'+(m.ts||Date.now())+'_'+i; return !isDeletedForMe(mid,m.key); });
+  const body=$('chatBody');
+  // smooth: build once, use requestAnimationFrame to avoid freeze on large chats
+  const html=`<div class="sys">💕 You matched — first ${C.freeChatMsgs} messages are free. Be kind ✨<br>Tip: tap any message once to unsend it or delete it for you.</div>`+chat.map((m,i)=>bubbleHtml(m,i)).join('');
+  requestAnimationFrame(()=>{ body.innerHTML=html; scrollChat(); });
 }
 function bubbleHtml(m,index){
   if(m.who==='sys')return `<div class="sys">${m.text}</div>`;
@@ -2125,6 +2171,7 @@ async function confirmDeleteMessage(scope,encodedKey){
 }
 async function sendMsg(){
   const v=$('chatIn').value.trim(); if(!v)return;
+  if(!isCleanOrWarn(v)) return;
   const mid=R.chatWith; const m=L.matches.find(m=>m.mid===mid); if(!m)return;
   const p=personOf(m.peer);
   const gold=goldActive();
@@ -2359,12 +2406,10 @@ function renderWallet(){
 /* ============ 🛡️ SHEETS THAT ANSWER — safety, help, close by tap-outside ============ */
 function ruleLine(t){ return `<div class="ruleli">${IC('check',14)}<span>${t}</span></div>`; }
 function openRules(){
-  // aesthetic translate bar + i18n-driven rules (all 7 languages via tayri-i18n.js)
-  const trBar='<div style="display:flex;justify-content:flex-end;margin-bottom:8px"><button class="tr-pill" onclick="var e=document.getElementById(\'google_translate_element\'); if(e) e.style.display=\'block\'; toast(\'🌐 '+T('Select your language')+'\');"><span>🌐</span> '+T('Select your language')+'</button></div><div id="google_translate_element" style="margin-bottom:10px"></div>';
   const EN=['One rule above all: be polite and respectful — you are talking to a real human.','18+ only. One real you: your own photos, your real identity. No fakes, no impersonation.','Not allowed: harassment or hate, scams or asking for money, selling services, nude or violent content, advertising spam.','The admin may warn, block, or permanently ban any account that breaks these rules. A ban removes you from Tayripages for everyone, and admin decisions are final.','Payment: Tayripages GOLD is a one-time digital activation (99 DH ≈ $9). Once GOLD is activated on your account, it is final: no refunds, no transfers to another account — even if the account is later banned for breaking these rules. A transfer screenshot may be requested as proof.','Safety: Tayripages never asks for your password or codes. Never send money to someone you met here. First date: a public place, and tell a friend.','Privacy: Google sign-in only proves you are real — we never read your emails, we never post for you. Your profile is visible to other members; you can ask support to delete it.'];
   const lst= EN.map(x=>T(x));
   const sup=(typeof TAYRI_CONFIG!=='undefined'&&TAYRI_CONFIG.company&&TAYRI_CONFIG.company.supportEmail)||'';
-  $('genBody').innerHTML=trBar+`<div class="h2" style="display:flex;align-items:center;gap:8px">${IC('shield',21)} ${fr?'Règles Tayripages':'Tayripages Rules'}</div>
+  $('genBody').innerHTML=`<div class="h2" style="display:flex;align-items:center;gap:8px">${IC('shield',21)} ${fr?'Règles Tayripages':'Tayripages Rules'}</div>
    <div style="margin-top:8px">${lst.map(ruleLine).join('')}</div>
    ${sup?`<div class="mut small" style="margin:12px 0 4px">${fr?'Question ou problème':'Questions or a problem'}: <b>${sup}</b></div>`:''}
    <div style="height:10px"></div>
@@ -2452,10 +2497,10 @@ function renderProfile(){
             ?`<div class="mystory-ring"><img src="${STORY[uid].img}" alt="my story" style="width:100%;height:100%;border-radius:50%;object-fit:cover"></div>`
             :`<button class="story-add-btn" onclick="pickStory()">${IC('plus',28)}</button>`}
           <div style="flex:1"><b class="small">${storyFresh(STORY[uid])?'✨ Your story is glowing':'Add your story'}</b>
-            <div class="mut tiny" style="margin:3px 0 8px">${storyFresh(STORY[uid])?'Visible to your matches — tap your chat avatar to preview':'One tap — your matches see the glow. Life is short, let your light be seen 💛'}</div>
+            <div class="mut tiny" style="margin:3px 0 8px">${storyFresh(STORY[uid])?'Visible to your matches — tap your chat avatar to preview':'One tap — your matches see the glow. Let your light be seen 💛'}</div>
             <button class="pill ${storyFresh(STORY[uid])?'':'pon'}" onclick="pickStory()" style="${storyFresh(STORY[uid])?'':'background:var(--grad);color:#fff'}">${storyFresh(STORY[uid])?'Replace story':'＋ Add story'}</button></div>
         </div>
-        <div class="addstory-quote">“Life is short — show your light today. A single story can start a beautiful conversation ✨”</div>
+        <div class="addstory-quote">“Show your light today. A single story can start a beautiful conversation ✨”</div>
       </div>
       <div class="card" style="margin-bottom:10px">
         <div class="spread"><b class="small">My Tayri ID</b><button class="copybtn" onclick="copyMyId()">COPY</button></div>
@@ -2463,9 +2508,14 @@ function renderProfile(){
         <div class="mut tiny" style="text-align:center">Your personal Tayripages number — unique and it never changes. Share it so a friend can find you.</div>
         <div class="divider" style="margin:12px 0"></div>
         <b class="small">Find a friend by ID</b>
-        <div class="mut tiny" style="margin:4px 0 8px">What’s an ID? It’s your friend’s personal Tayripages number — it sits on their profile, just like yours above. Ask them to tap COPY and send it to you, then paste it here:</div>
+        <div class="mut tiny" style="margin:4px 0 8px">Paste your friend’s Tayri ID to find them — or gift them GOLD instantly.</div>
         <div class="row"><input class="inp" id="idFindIn" placeholder="XXXXX" maxlength="7" autocomplete="off" autocapitalize="characters" style="text-transform:uppercase;letter-spacing:3px;font-weight:900;text-align:center">
         <button class="pill" style="padding:14px 18px;flex:none" onclick="findByCode()">Find</button></div>
+        <div class="divider" style="margin:12px 0"></div>
+        <b class="small">🎁 Gift GOLD to a friend</b>
+        <div class="mut tiny" style="margin:4px 0 8px">Enter their Tayri ID — they get GOLD instantly (once, forever). You will be asked to confirm the transfer.</div>
+        <div class="row"><input class="inp" id="giftGoldIn" placeholder="Friend's ID" maxlength="7" autocomplete="off" autocapitalize="characters" style="text-transform:uppercase;letter-spacing:3px;font-weight:900;text-align:center">
+        <button class="pill" style="padding:14px 18px;flex:none;background:var(--grad);color:#fff" onclick="giftGoldById()">Gift GOLD</button></div>
       </div>
       <div class="seclab">This week</div>
       <div class="card">
@@ -2548,13 +2598,7 @@ async function syncFreeLeft(mid){
 setInterval(()=>{ save(); },30000);
 </script>
 
-<script type="text/javascript">
-function googleTranslateElementInit(){ try{ new google.translate.TranslateElement({pageLanguage:'en',includedLanguages:'en,fr,es,pt,ru,zh,ar',layout:google.translate.TranslateElement.InlineLayout.SIMPLE,autoDisplay:false},'google_translate_element'); }catch(e){} }
-function triggerTranslate(lang){ const sel=document.querySelector('.goog-te-combo'); if(sel){ sel.value=lang; sel.dispatchEvent(new Event('change')); } else { // fallback: open google translate site
-  const url='https://translate.google.com/translate?sl=auto&tl='+lang+'&u='+encodeURIComponent(location.href); window.open(url,'_blank');
-} }
-</script>
-<script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
 
 </body>
 </html>

@@ -8,6 +8,7 @@
 <meta name="description" content="A free, peer-to-peer instant video room for Tayripages members.">
 <link rel="icon" type="image/png" href="icon.png">
 <script src="tayri-config.js"></script>
+<script src="tayri-i18n.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
@@ -140,25 +141,10 @@ svg{display:inline-block}
 .avatar{width:28px;height:28px;border-radius:50%;background:var(--grad);display:grid;place-items:center;color:#fff;font-size:13px;font-weight:900;flex:0 0 auto}
 @media(max-width:560px){.top{padding-top:calc(12px + env(safe-area-inset-top))}.brand-note{font-size:9px}.videos{grid-template-columns:1fr}.panel{aspect-ratio:16/11}.rules{grid-template-columns:1fr}.feedback-grid,.filter-grid{grid-template-columns:1fr 1fr}.wrap{padding-top:10px}.hero h1{font-size:32px}.onlinepill{padding:9px 10px;font-size:10.5px}}
 
-/* --- Tayripages aesthetic Google Translate (video/leaderboard only) --- */
-.translate-wrap{max-width:820px;margin:10px auto 0;display:flex;justify-content:flex-end;position:relative;z-index:5}
-.tr-btn{display:inline-flex;align-items:center;gap:8px;padding:9px 14px;border-radius:999px;background:linear-gradient(135deg,#ff5e8a,#ffb15c);color:#fff;font-size:12.5px;font-weight:900;border:0;box-shadow:0 8px 20px rgba(255,94,138,.35);cursor:pointer}
-.tr-btn:active{transform:scale(.97)}
-.tr-dropdown{position:absolute;top:42px;right:0;width:210px;background:rgba(24,15,29,.96);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:8px;box-shadow:0 18px 40px rgba(0,0,0,.45);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);display:none}
-.tr-dropdown.on{display:block;animation:fi .18s ease}
-.tr-dropdown button{width:100%;text-align:start;padding:10px 11px;border-radius:10px;background:transparent;color:#f6eef4;font-size:12.5px;font-weight:700;display:flex;align-items:center;justify-content:space-between}
-.tr-dropdown button:hover{background:rgba(255,94,138,.12)}
-.tr-dropdown button.active{background:linear-gradient(135deg,#ff5e8a,#ff8a5c);color:#fff}
-#google_translate_element{display:none!important}
-.goog-te-banner-frame{display:none!important}
-body{top:0!important}
-.goog-te-gadget{font-size:0!important}
-.skiptranslate{display:none!important}
 
 </style>
 </head>
 <body>
-<div id="google_translate_element"></div>
 <header class="top">
   <a class="brand" href="./index.html" aria-label="Back to Tayripages">
     <span class="mark"><svg width="20" height="20" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67zM11.71 19c-1.78 0-3.22-1.4-3.22-3.14 0-1.63 1.05-2.76 2.81-3.12 1.77-.36 3.6-1.21 4.62-2.58.39 1.29.59 2.65.59 4.04 0 2.65-2.15 4.8-4.8 4.8z"/></svg></span>
@@ -169,7 +155,7 @@ body{top:0!important}
     <a class="back" href="./index.html">Back to app</a>
   </div>
 </header>
-<div class="translate-wrap"><button class="tr-btn" onclick="toggleTr()" aria-label="Select your language">🌐 Select your language</button><div class="tr-dropdown" id="trDropdown"><button onclick="doTranslate('en')">🇬🇧 English</button><button onclick="doTranslate('fr')">🇫🇷 Français</button><button onclick="doTranslate('es')">🇪🇸 Español</button><button onclick="doTranslate('pt')">🇵🇹 Português</button><button onclick="doTranslate('ru')">🇷🇺 Русский</button><button onclick="doTranslate('zh')">🇨🇳 中文</button><button onclick="doTranslate('ar')">🇲🇦 العربية</button><button onclick="doTranslate('en');location.reload()" style="margin-top:6px;border-top:1px solid rgba(255,255,255,.08)">↺ Original (English)</button></div></div>
+
 <main class="wrap">
   <section class="hero">
     <div class="eyebrow">Instant video · peer to peer</div>
@@ -848,27 +834,22 @@ body{top:0!important}
 })();
 </script>
 
-<script type="text/javascript">
-function googleTranslateElementInit(){ try{ new google.translate.TranslateElement({pageLanguage:'en',includedLanguages:'en,fr,es,pt,ru,zh,ar',layout:google.translate.TranslateElement.InlineLayout.SIMPLE,autoDisplay:false},'google_translate_element'); }catch(e){} }
-function toggleTr(){ const d=document.getElementById('trDropdown'); if(d) d.classList.toggle('on'); }
-function doTranslate(lang){
-  const sel=document.querySelector('.goog-te-combo');
-  if(sel){ sel.value=lang; sel.dispatchEvent(new Event('change')); sel.dispatchEvent(new Event('change')); }
-  else { // fallback open google translate new tab
-    const url='https://translate.google.com/translate?sl=en&tl='+lang+'&u='+encodeURIComponent(location.href);
-    window.open(url,'_blank');
+
+
+
+<script>
+// Apply Tayripages i18n to this page if available
+try{
+  const lang = (localStorage.getItem('zwin_local') && JSON.parse(localStorage.getItem('zwin_local')).lang) || 'en';
+  if(window.TAYRI_I18N && window.TAYRI_I18N[lang]){
+    document.querySelectorAll('[data-t]').forEach(el=>{
+      const k=el.getAttribute('data-t');
+      const tr=window.TAYRI_I18N[lang][k];
+      if(tr) el.innerHTML=tr;
+    });
   }
-  const dd=document.getElementById('trDropdown'); if(dd) dd.classList.remove('on');
-  // highlight
-  document.querySelectorAll('.tr-dropdown button').forEach(b=>b.classList.remove('active'));
-}
-document.addEventListener('click',e=>{
-  const w=document.querySelector('.translate-wrap');
-  const d=document.getElementById('trDropdown');
-  if(w && d && !w.contains(e.target)) d.classList.remove('on');
-});
+}catch(e){}
 </script>
-<script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
 </body>
 </html>
