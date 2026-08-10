@@ -15,7 +15,7 @@
 :root{--bg:#160d12;--card:#1f1219;--card2:#291722;--line:#37202e;--txt:#fff2f7;--mut:#b193a3;--pk:#ff4e7e;--or:#ff8a5c;--green:#2fbf71;--warn:#ffb020;--red:#ff6b6b;--r:16px}
 body{background:var(--bg);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;min-height:100vh}
 button{font-family:inherit;border:none;cursor:pointer;background:none;color:inherit}
-input{font-family:inherit;color:inherit;outline:none}
+input,textarea{font-family:inherit;color:inherit;outline:none}
 .mut{color:var(--mut)}.small{font-size:12px}.tiny{font-size:11px}
 .grn{color:var(--green)}.wrn{color:var(--warn)}
 .wrap{max-width:1060px;margin:0 auto;padding:18px}
@@ -34,10 +34,11 @@ table{width:100%;border-collapse:collapse;font-size:13px}
 th{text-align:start;font-size:10.5px;text-transform:uppercase;letter-spacing:.7px;color:var(--mut);padding:10px;border-bottom:1px solid var(--line)}
 td{padding:10px;border-bottom:1px solid var(--line);vertical-align:middle}
 tr:last-child td{border-bottom:none}
-.btn{padding:9px 14px;border-radius:10px;font-size:12px;font-weight:800}
+.btn{padding:9px 14px;border-radius:10px;font-size:12px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;gap:6px}
 .btn-g{background:rgba(47,191,113,.15);color:var(--green);border:1px solid rgba(47,191,113,.35)}
 .btn-r{background:rgba(255,107,107,.12);color:var(--red);border:1px solid rgba(255,107,107,.3)}
-.badge{padding:4px 9px;border-radius:8px;font-size:10.5px;font-weight:800;text-transform:uppercase}
+.btn-line{background:var(--card2);border:1px solid var(--line);color:var(--txt)}
+.badge{padding:4px 9px;border-radius:8px;font-size:10.5px;font-weight:800;text-transform:uppercase;display:inline-block}
 .b-live{background:rgba(255,176,32,.14);color:var(--warn)}
 .b-done{background:rgba(47,191,113,.14);color:var(--green)}
 .b-x{background:rgba(255,107,107,.12);color:var(--red)}
@@ -45,7 +46,7 @@ tr:last-child td{border-bottom:none}
 #gate .card{width:100%;max-width:360px;text-align:center}
 #toasts{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:200;display:flex;flex-direction:column;gap:8px}
 .toast{background:#241019;border:1px solid var(--line);border-inline-start:3px solid var(--green);padding:12px 16px;border-radius:12px;font-size:13px;font-weight:700;box-shadow:0 12px 30px rgba(0,0,0,.5)}
-.inp{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:15px}
+.inp{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:15px;width:100%}
 .banner{background:rgba(255,176,32,.1);border:1px solid rgba(255,176,32,.35);color:var(--warn);border-radius:12px;padding:10px 12px;font-size:12.5px;font-weight:700;margin:10px 0}
 .sec{margin:18px 0 8px;font-size:15px;font-weight:800}
 .bankgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;word-break:break-word}
@@ -72,16 +73,16 @@ tr:last-child td{border-bottom:none}
   <div class="card" id="gatePin">
     <div class="logo" style="margin:0 auto 12px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg></div>
     <div class="h2">Tayripages HQ</div>
-    <!-- gate text removed to keep clear as requested -->
-    <input class="inp" id="pinIn" type="password" inputmode="numeric" placeholder="••••" style="text-align:center;font-size:22px;letter-spacing:6px;width:160px" onkeydown="if(event.key==='Enter')tryPin()">
+    <div class="mut small" style="margin:6px 0 14px">Admin access verification</div>
+    <input class="inp" id="pinIn" type="password" inputmode="numeric" placeholder="••••" style="text-align:center;font-size:22px;letter-spacing:6px;width:160px;margin:0 auto;display:block" onkeydown="if(event.key==='Enter')tryPin()">
     <div style="height:12px"></div>
     <button class="btn btn-g" style="width:100%;padding:14px;font-size:15px;font-weight:900" onclick="tryPin()">Continue</button>
   </div>
   <div class="card" id="gatePhone" style="display:none">
     <div class="logo" style="margin:0 auto 12px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg></div>
-    <div class="h2">Verify it's you</div>
-    <div class="mut small" style="margin:6px 0 14px">Sign in with the OWNER'S Google account.<br>Your UID will be your admin key.</div>
-    <button class="btn btn-g" id="aBtn" onclick="adminGoogle()">Continue with Google</button>
+    <div class="h2">Verify Owner Account</div>
+    <div class="mut small" style="margin:6px 0 14px">Sign in with the OWNER'S Google account.<br>Your Firebase UID will authenticate full database access.</div>
+    <button class="btn btn-g" id="aBtn" style="width:100%;padding:14px;font-size:15px;font-weight:900" onclick="adminGoogle()">Continue with Google</button>
   </div>
 </div>
 
@@ -91,7 +92,8 @@ tr:last-child td{border-bottom:none}
       <div class="logo"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg></div>
       <div><b style="font-size:18px">Tayripages HQ</b><div class="mut tiny" id="connState">connecting…</div></div>
     </div>
-    <div style="display:flex;align-items:center;gap:12px">
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+      <div id="adminUserInfo" style="display:none;align-items:center;gap:8px"></div>
       <button class="btn btn-g" id="aBtnDash" onclick="adminGoogle()" style="display:none">Sign in with Google</button>
       <div class="mut small">Revenue (orders): <b class="grn" id="topRev" style="font-size:16px">0 DH</b></div>
     </div>
@@ -112,7 +114,7 @@ tr:last-child td{border-bottom:none}
     <div class="sec">Business notes</div>
     <div class="card small mut" style="line-height:1.9">
       <b style="color:var(--warn)">GOLD pass</b> is a one-time bank transfer (price in Settings). You validate orders in <b>GOLD orders</b> → the user's app unlocks everything instantly.<br>
-      <b>Viral hook</b>: free users get <span id="bnLikes">30</span> likes/day + <span id="bnMsgs">10</span> free messages per match — sweet enough to stay, short enough to convert.<br>
+      <b>Viral hook</b>: free users get <span id="bnLikes">50</span> likes/day + <span id="bnMsgs">10</span> free messages per match — sweet enough to stay, short enough to convert.<br>
       First messages are free on purpose: the spark moment is never paywalled (Tinder's biggest complaint — we fixed it).
     </div>
     <div class="sec">Recent activity</div>
@@ -135,7 +137,6 @@ tr:last-child td{border-bottom:none}
     <div class="card scrollcard"><table id="tblBanned"><tbody></tbody></table></div>
   </div>
   <div id="pg-ms" style="display:none">
-    <!-- Broadcast to all removed to save Spark quota — use direct message to specific users below (from Reports / Verify / GOLD) -->
     <div class="card">
       <b>✉️ Message a specific user</b><div class="mut tiny">Enter UID or pick from Reports / Verify / GOLD tabs via the ✉️ buttons. Message goes to that user's inbox.</div>
       <input class="inp" id="directUid" placeholder="Target UID (e.g. u_abc123...)" style="margin:10px 0">
@@ -145,9 +146,13 @@ tr:last-child td{border-bottom:none}
   </div>
 
   <div id="pg-st" style="display:none">
+    <div class="sec">Company bank details</div>
+    <div class="bankgrid" id="bankGrid"></div>
+    <div class="sec">Live economy configuration</div>
+    <div class="card" id="econList"></div>
     <div class="sec">Danger zone</div>
     <div class="card" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-      <span class="mut small">Wipe ALL cloud data (users, chats, orders)</span>
+      <span class="mut small">Wipe ALL cloud data (users, chats, orders) — keeps banned UIDs & emails</span>
       <button class="btn btn-r" onclick="wipe()">Reset database</button>
     </div>
   </div>
@@ -157,118 +162,181 @@ tr:last-child td{border-bottom:none}
 const $=id=>document.getElementById(id);
 let DB=null, DEMO=false, D={};
 const G=TAYRI_CONFIG.gold;
-function toast(m,k){const d=document.createElement('div');d.className='toast';d.textContent=m;$('toasts').appendChild(d);setTimeout(()=>d.remove(),2600)}
+function toast(m,k){const d=document.createElement('div');d.className='toast';d.textContent=m;if(k==='err')d.style.borderInlineStartColor='var(--red)';$('toasts').appendChild(d);setTimeout(()=>d.remove(),3200)}
 function fmt(n){return `${(+n).toFixed(0)} DH`}
 function eh(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function ref(p){return DB.ref('wasla_dating/'+p)} // matches firebase-rules.json root
 function ts(t){return t?new Date(t).toLocaleString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}):''}
+
 let PIN_OK = localStorage.getItem('tayri_admin_pin_ok')==='1';
+
 function tryPin(){
-  if($('pinIn').value!==TAYRI_CONFIG.adminPin){toast('Wrong PIN','err');$('pinIn').value='';return}
-  PIN_OK=true;
-  localStorage.setItem('tayri_admin_pin_ok','1');
-  enter();
+  const val = ($('pinIn').value||'').trim();
+  if(val !== TAYRI_CONFIG.adminPin){
+    toast('Wrong PIN','err');
+    $('pinIn').value='';
+    return;
+  }
+  PIN_OK = true;
+  try{ localStorage.setItem('tayri_admin_pin_ok','1'); }catch(e){}
+  
+  const u = firebase.auth().currentUser;
+  if(u && !u.isAnonymous){
+    enter();
+  } else {
+    // Show Google verification card to ensure real owner UID is signed in
+    $('gatePin').style.display='none';
+    $('gatePhone').style.display='block';
+  }
 }
+
 function adminGoogle(){
-  const btn=$('aBtn'); btn.disabled=true; btn.textContent='Opening Google…';
-  if(firebase.auth().currentUser){ enter(); return; }
-  const prov=new firebase.auth.GoogleAuthProvider();
-  /* Phones: redirect instead of popup (COOP-proof) */
-  if(/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent)){ firebase.auth().signInWithRedirect(prov); return; }
-  firebase.auth().signInWithPopup(prov).then(()=>{ enter(); })
-    .catch(e=>{ btn.disabled=false; btn.textContent='Continue with Google';
-      if(e.code==='auth/popup-blocked'||e.code==='auth/operation-not-supported-in-this-environment'){ firebase.auth().signInWithRedirect(prov); return; }
-      if(e.code==='auth/popup-closed-by-user'||e.code==='auth/cancelled-popup-request')return;
-      toast('Sign-in failed: '+e.code,'err'); });
+  const btn = $('aBtn') || $('aBtnDash');
+  if(btn){ btn.disabled=true; btn.textContent='Opening Google…'; }
+  const u = firebase.auth().currentUser;
+  if(u && !u.isAnonymous){
+    enter();
+    return;
+  }
+  const prov = new firebase.auth.GoogleAuthProvider();
+  prov.setCustomParameters({ prompt: 'select_account' });
+  
+  if(/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent)){
+    firebase.auth().signInWithRedirect(prov);
+    return;
+  }
+  firebase.auth().signInWithPopup(prov).then(()=>{
+    enter();
+  }).catch(e=>{
+    if(btn){ btn.disabled=false; btn.textContent='Continue with Google'; }
+    if(e.code==='auth/popup-blocked'||e.code==='auth/operation-not-supported-in-this-environment'){
+      firebase.auth().signInWithRedirect(prov);
+      return;
+    }
+    if(e.code==='auth/popup-closed-by-user'||e.code==='auth/cancelled-popup-request') return;
+    toast('Sign-in failed: '+(e.message||e.code),'err');
+  });
 }
+
+function adminSignOut(){
+  try{ localStorage.removeItem('tayri_admin_pin_ok'); }catch(e){}
+  PIN_OK = false;
+  firebase.auth().signOut().then(()=>{
+    location.reload();
+  }).catch(()=>location.reload());
+}
+
 function enter(){ 
   try{ localStorage.setItem('tayri_admin_pin_ok','1'); }catch(e){}
-  $('gate').style.display='none'; $('dash').style.display=''; boot(); 
+  $('gate').style.display='none';
+  $('dash').style.display='';
+  boot(); 
 }
-// Robust global auth: handles fast login, reload, and redirect
+
+// Global Auth initializer
 (function setupAdminAuth(){
   try{
     if(!tayriCloudReady()) return;
-    // Ensure Firebase is initialized
     if(!window.firebase || !firebase.apps.length){
       try{ firebase.initializeApp(TAYRI_CONFIG.firebase); }catch(e){}
     }
     if(!window.firebase || !firebase.apps.length) return;
-    // Handle redirect result first
+
+    // Handle mobile redirect sign-in
     try{
       firebase.auth().getRedirectResult().then(res=>{
-        if(res && res.user && localStorage.getItem('tayri_admin_pin_ok')==='1'){
-          enter();
+        if(res && res.user && !res.user.isAnonymous){
+          if(localStorage.getItem('tayri_admin_pin_ok')==='1'){
+            enter();
+          } else {
+            $('gatePin').style.display='block';
+            $('gatePhone').style.display='none';
+          }
         }
       }).catch(()=>{});
     }catch(e){}
-    // Global listener for auth restore (covers fast login without popup + reload)
+
+    // Global listener for auth state changes
     try{
       firebase.auth().onAuthStateChanged(u=>{
-        if(u && localStorage.getItem('tayri_admin_pin_ok')==='1'){
-          const gate = document.getElementById('gate');
-          // If we are still on gate (PIN or Google screen), auto-enter
-          if(gate && gate.style.display !== 'none'){
-            // Also ensure gatePhone is hidden and dash shown via enter()
-            enter();
+        if(u && !u.isAnonymous){
+          if(localStorage.getItem('tayri_admin_pin_ok')==='1'){
+            const gate = document.getElementById('gate');
+            if(gate && gate.style.display !== 'none'){
+              enter();
+            } else {
+              boot();
+            }
+          } else {
+            $('gatePin').style.display='block';
+            $('gatePhone').style.display='none';
+          }
+        } else {
+          // If anonymous or logged out, clear gatePhone if on dash
+          const dash = $('dash');
+          if(dash && dash.style.display !== 'none'){
+            $('aBtnDash').style.display='inline-block';
           }
         }
       });
     }catch(e){}
   }catch(e){}
 })();
-// Also, if already authenticated and PIN was previously entered, try to auto-enter after a short delay (covers reload case where auth restores slightly later)
-setTimeout(()=>{
-  try{
-    if(localStorage.getItem('tayri_admin_pin_ok')==='1' && window.firebase && firebase.apps.length && firebase.auth().currentUser){
-      const gate = document.getElementById('gate');
-      if(gate && gate.style.display !== 'none'){
-        enter();
-      }
-    }
-  }catch(e){}
-}, 800);
-function tab(p,el){ ['ov','or','rp','vf','us','ms','st'].forEach(x=>$('pg-'+x).style.display=x===p?'':'none');
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on')); el.classList.add('on'); }
+
+function tab(p,el){
+  ['ov','or','rp','vf','us','ms','st'].forEach(x=>$('pg-'+x).style.display=x===p?'':'none');
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
+  if(el) el.classList.add('on');
+}
 
 function boot(){
   paintBank(); paintEcon();
   try{ $('bnLikes').textContent=G.likesPerDay; $('bnMsgs').textContent=G.msgsPerMatch; }catch(e){}
-  if(!tayriCloudReady()){ DEMO=true;
+  if(!tayriCloudReady()){
+    DEMO=true;
     $('demoSlot').innerHTML=`<div class="banner">Firebase not configured — edit <b>tayri-config.js</b> (README.md, 5-min free setup) to go live.</div>`;
-    $('connState').textContent='DEMO — offline'; return; }
+    $('connState').textContent='DEMO — offline';
+    return;
+  }
   if(!window.firebase.apps.length){
     firebase.initializeApp(TAYRI_CONFIG.firebase);
-    try{ const k=(TAYRI_CONFIG.appCheck&&TAYRI_CONFIG.appCheck.recaptchaSiteKey)||'';
-      if(k&&!/^PASTE|^$/.test(k)&&firebase.appCheck){ firebase.appCheck().activate(k,true); } }catch(e){}
   }
-  try{
-    if(!firebase.auth().currentUser){
-      firebase.auth().signInAnonymously().catch(()=>{});
+
+  const u = firebase.auth().currentUser;
+  if(u && !u.isAnonymous){
+    const adInfo = $('adminUserInfo');
+    if(adInfo){
+      adInfo.innerHTML = `<span class="mut tiny">Admin: <b style="color:var(--txt)">${eh(u.email||u.displayName||'Owner')}</b> <span class="badge b-done" style="font-size:9px">${u.uid.slice(0,5)}…</span></span> <button class="btn btn-line" style="padding:4px 8px;font-size:10.5px" onclick="adminSignOut()">Sign out</button>`;
+      adInfo.style.display = 'flex';
     }
-  }catch(e){}
-  try{
-    firebase.auth().onAuthStateChanged(u=>{
-      const btn = $('aBtnDash');
-      if(btn) {
-        if(u && !u.isAnonymous){
-          btn.style.display='none';
-        } else {
-          btn.style.display='inline-block';
-        }
-      }
-    });
-  }catch(e){}
+    const btnDash = $('aBtnDash');
+    if(btnDash) btnDash.style.display = 'none';
+  } else {
+    const btnDash = $('aBtnDash');
+    if(btnDash) btnDash.style.display = 'inline-block';
+  }
+
   DB=firebase.database();
-  DB.ref('.info/connected').on('value',s=>{$('connState').textContent=s.val()?'● live':'○ offline'; $('connState').style.color=s.val()?'#2fbf71':'#ff6b6b'});
-  // 🔐 read pieces separately — locked rules don't allow root reads
+  DB.ref('.info/connected').on('value',s=>{
+    $('connState').textContent=s.val()?'● live':'○ offline';
+    $('connState').style.color=s.val()?'#2fbf71':'#ff6b6b';
+  });
+
+  // Read pieces separately — locked rules enforce admin UID check
   ['users','presence','matches','chats','orders','reports','gold','verifyReq','photos','verified','banned','bannedEmails'].forEach(k=>{
-    ref(k).on('value',s=>{ D[k]=s.val()||{}; paintAll(); },e=>{
+    ref(k).on('value',s=>{
+      D[k]=s.val()||{};
+      paintAll();
+    },e=>{
       console.error('Firebase read failed for '+k,e);
-      if(['orders','gold'].includes(k)) toast('Admin access denied for '+k+' — confirm this Google UID is in wasla_dating/admins','err');
+      if(['orders','gold','reports','verifyReq','bannedEmails'].includes(k)){
+        const curUid = (firebase.auth().currentUser && firebase.auth().currentUser.uid) || 'unauthenticated';
+        toast('Admin access denied for '+k+' — confirm UID ('+curUid+') is in wasla_dating/admins','err');
+      }
     });
   });
 }
+
 function paintAll(){
   const users=Object.entries(D.users||{});
   const pres=Object.values(D.presence||{}).filter(p=>p.online&&(Date.now()-(p.lastSeen||0))<180000).length; // online = flag + heartbeat < 3 min ago
@@ -276,7 +344,7 @@ function paintAll(){
   const msgs=Object.values(D.chats||{}).reduce((a,c)=>a+Object.keys(c||{}).length,0);
   // orders are nested: orders/{uid}/{oid} — flatten for display
   const orders=Object.entries(D.orders||{}).flatMap(([uid,os])=>Object.entries(os||{}).map(([oid,o])=>[oid,{...o,uid}]));
-  const goldCnt=Object.keys(D.gold||{}).length; // giftsFor retired with the coin era
+  const goldCnt=Object.keys(D.gold||{}).length;
   const rev=orders.filter(([k,o])=>o.status==='approved').reduce((a,[k,o])=>a+(+o.price||0),0);
   const pendOr=orders.filter(([k,o])=>o.status==='pending');
   const reports=Object.entries(D.reports||{});
@@ -284,37 +352,39 @@ function paintAll(){
   $('kpis').innerHTML=[
     ['Users',users.length],['Online now',pres],['Matches',matches],
     ['Messages',msgs],['GOLD members',goldCnt],
-    ['Coin revenue',fmt(rev),'grn'],['Pending orders',pendOr.length,'wrn'],['Reports',reports.length,reports.length?'wrn':'']
+    ['Revenue',fmt(rev),'grn'],['Pending orders',pendOr.length,'wrn'],['Reports',reports.length,reports.length?'wrn':'']
   ].map(([l,v,c])=>`<div class="kpi"><div class="in"><b class="${c||''}">${v}</b><span>${l}</span></div></div>`).join('');
   $('cntOr').textContent=pendOr.length?`(${pendOr.length})`:'';
   $('cntRp').textContent=reports.length?`(${reports.length})`:'';
   paintVf(); paintBanned();
   // activity = latest 40 things across orders/matches
   const acts=[
-    ...orders.map(([k,o])=>({ts:o.ts,txt:`GOLD pass · ${o.name} · ${o.price} DH · <span class="badge ${o.status==='pending'?'b-live':o.status==='approved'?'b-done':'b-x'}">${o.status}</span>`})),
+    ...orders.map(([k,o])=>({ts:o.ts,txt:`GOLD pass · ${eh(o.name)} · ${o.price} DH · <span class="badge ${o.status==='pending'?'b-live':o.status==='approved'?'b-done':'b-x'}">${o.status}</span>`})),
     ...Object.entries(D.matches||{}).map(([k,m])=>({ts:m.ts,txt:`New match created`})),
-    ...reports.map(([k,r])=>({ts:r.ts,txt:`Report filed`}))
+    ...reports.map(([k,r])=>({ts:r.ts,txt:`Report filed: ${eh(r.reason||'Report')}`}))
   ].sort((a,b)=>b.ts-a.ts).slice(0,40);
   $('tblAct').innerHTML='<tbody>'+(acts.length?`<tr><th>Event</th><th>When</th></tr>`+acts.map(a=>`<tr><td>${a.txt}</td><td class="mut tiny">${ts(a.ts)}</td></tr>`).join(''):'<tr><td class="mut">Quiet so far…</td></tr>')+'</tbody>';
   paintOr(pendOr,orders); paintRp(reports); paintUs(users);
 }
+
 function paintOr(pend,all){
   const rows=all.sort((a,b)=>b[1].ts-a[1].ts).slice(0,40);
-  // 📱 mobile: big thumb-proof activate cards first — the button can never hide off-screen
+  // 📱 mobile: big thumb-proof activate cards first
   $('orMobile').innerHTML=pend.sort((a,b)=>b[1].ts-a[1].ts).slice(0,10).map(([id,o])=>
    `<div class="card"><div style="display:flex;justify-content:space-between;gap:8px;align-items:center">
-      <div><b style="font-size:15px">${o.name}</b><div class="mut tiny">${o.ref} · ${ts(o.ts)}</div></div>
+      <div><b style="font-size:15px">${eh(o.name)}</b><div class="mut tiny">${eh(o.ref)} · ${ts(o.ts)}</div></div>
       <b style="color:var(--warn);font-size:17px">${fmt(o.price)}</b></div>
     <button class="bigact" onclick="approve('${id}','${o.uid}')">ACTIVATE GOLD</button>
     <div style="height:6px"></div>
     <button class="btn btn-r" style="width:100%" onclick="reject('${id}','${o.uid}')">Reject</button></div>`).join('');
   $('tblOr').innerHTML='<tbody>'+(rows.length?`<tr><th>Ref</th><th>User</th><th class="passcol">Pass</th><th>Amount</th><th>Status</th><th></th></tr>`+
-   rows.map(([id,o])=>`<tr><td class="tiny">${o.ref}<div class="mut tiny">${ts(o.ts)}</div></td>
-    <td>${o.name}</td><td class="passcol"><span style="color:var(--warn);font-weight:900">GOLD</span></td><td><b>${fmt(o.price)}</b></td>
+   rows.map(([id,o])=>`<tr><td class="tiny">${eh(o.ref)}<div class="mut tiny">${ts(o.ts)}</div></td>
+    <td>${eh(o.name)}</td><td class="passcol"><span style="color:var(--warn);font-weight:900">GOLD</span></td><td><b>${fmt(o.price)}</b></td>
     <td><span class="badge ${o.status==='pending'?'b-live':o.status==='approved'?'b-done':'b-x'}">${o.status}</span></td>
     <td style="text-align:end">${o.status==='pending'?`<button class="btn btn-g" onclick="approve('${id}','${o.uid}')">Activate GOLD</button> <button class="btn" style="background:rgba(74,168,255,.15);color:#4aa8ff;border:1px solid rgba(74,168,255,.3)" onclick="messageUser('${o.uid}')">✉️</button> <button class="btn btn-r" onclick="reject('${id}','${o.uid}')">Reject</button>`:''}</td></tr>`).join('')
    :'<tr><td class="mut">No GOLD orders yet.</td></tr>')+'</tbody>';
 }
+
 async function approve(id,ouid){
   const o=(D.orders||{})[ouid]?.[id]; if(!o||o.status!=='pending')return;
   const updates={
@@ -330,10 +400,12 @@ async function approve(id,ouid){
     toast('Approval failed: '+(e.code||'permission denied')+' — confirm your Google UID is in wasla_dating/admins','err');
   }
 }
+
 async function reject(id,ouid){
   try{ await ref('orders/'+ouid+'/'+id).update({status:'rejected'}); toast('Order rejected'); }
   catch(e){ console.error(e); toast('Reject failed: '+(e.code||'permission denied'),'err'); }
 }
+
 function paintRp(rows){
   const sorted=rows.sort((a,b)=>(b[1].ts||0)-(a[1].ts||0)).slice(0,60);
   const html=sorted.map(([id,r])=>{
@@ -348,11 +420,12 @@ function paintRp(rows){
   }).join('');
   $('tblRp').innerHTML='<tbody>'+(sorted.length?'<tr><th>Report and evidence</th><th>When/status</th><th></th></tr>'+html:'<tr><td class="mut">No reports — healthy community.</td></tr>')+'</tbody>';
 }
+
 async function reviewReport(id){
   try{ await ref('reports/'+id).update({status:'reviewed',reviewedAt:Date.now(),reviewedBy:firebase.auth().currentUser.uid}); toast('Report marked reviewed'); }
   catch(e){ toast('Could not mark report reviewed: '+(e.code||'permission denied'),'err'); }
 }
-/* 🗑️ bulk audit removed — review reports one by one: read the proof, then act */
+
 function banUser(u){
   if(!u||!confirm('Ban this user? Their profile will be removed and their email blocked forever.'))return;
   const userData=(D.users||{})[u]||{};
@@ -371,7 +444,6 @@ function banUser(u){
   updates['presence/'+u]= null;
   DB.ref('wasla_dating').update(updates).then(()=>{
     toast(email?'User banned — email blocked forever 🚫':'User banned (UID only — email not found)');
-    // Auto-thank reporter(s): find reports where against==u and send admin no-reply message
     try{
       const reports = D.reports||{};
       const reporters = new Set();
@@ -381,13 +453,14 @@ function banUser(u){
       const thanks = "Thank you for keeping Tayripages safe 💛 — The user you reported has been reviewed and removed for violating our community rules. Your courage helps everyone. If you see anything else, please report again. — Tayripages Team";
       reporters.forEach(reporterUid=>{
         DB.ref('wasla_dating/adminMessages/'+reporterUid).push({text: thanks, from:'admin', by:firebase.auth().currentUser.uid, ts:Date.now(), adminOnly:true, reason:'ban-thanks'});
-        // Also mark those reports as reviewed
       });
       if(reporters.size) toast('Reporter(s) will receive a thank-you admin message');
     }catch(e){ console.warn('auto thanks failed',e); }
   }).catch(e=>{ console.error(e); toast('Ban failed: '+(e.code||e.message)); });
 }
+
 function dismissRp(id){ ref('reports/'+id).remove(); toast('Dismissed'); }
+
 function paintVf(){
   const rows=Object.entries(D.verifyReq||{}).sort((a,b)=>(b[1].ts||0)-(a[1].ts||0));
   $('cntVf').textContent=rows.length?`(${rows.length})`:'';
@@ -396,7 +469,7 @@ function paintVf(){
     const u=(D.users||{})[id]||{};
     const ph=((D.photos||{})[id]||{}).p0;
     return `<div class="card" style="margin:10px 0">
-      <div class="small"><b>${u.name||r.name||'?'}</b> · ${u.city||'—'} · ${ts(r.ts)}</div>
+      <div class="small"><b>${eh(u.name||r.name||'?')}</b> · ${eh(u.city||'—')} · ${ts(r.ts)}</div>
       <div style="display:flex;gap:10px;margin:10px 0">
         <div style="flex:1;text-align:center"><div class="mut tiny" style="font-weight:800">SELFIE</div><img src="${r.img}" style="width:100%;border-radius:12px;max-height:300px;object-fit:cover"></div>
         <div style="flex:1;text-align:center"><div class="mut tiny" style="font-weight:800">PROFILE PHOTO</div>${ph?`<img src="${ph}" style="width:100%;border-radius:12px;max-height:300px;object-fit:cover">`:'<div class="mut" style="padding:30px 0">no photo yet</div>'}</div>
@@ -407,25 +480,29 @@ function paintVf(){
       <button class="btn btn-r" onclick="ref('verifyReq/${id}').remove();toast('Rejected — user can retry with a clearer selfie')">Reject</button>
     </div>`;}).join(''):'<div class="card mut">No pending verifications — all clear.</div>';
 }
+
 function verifyUser(id){
   ref('verified/'+id).set({at:Date.now(),by:'admin'});
   ref('verifyReq/'+id).remove();
   toast('Verified — badge live');
 }
+
 function paintUs(rows){
   $('tblUs').innerHTML='<tbody>'+(rows.length?`<tr><th>User</th><th>City</th><th>Plan</th><th>Last seen</th></tr>`+
    rows.sort((a,b)=>(b[1].lastSeen||0)-(a[1].lastSeen||0)).slice(0,200).map(([id,u])=>`<tr>
-    <td class="small"><b>${u.name||'?'}</b> <span class="mut tiny">${u.age||''} · ${u.g==='w'?'F':'M'}</span></td>
-    <td class="small">${u.city||'—'}</td><td><b>${(D.gold||{})[id]?'<span style="color:var(--warn)">GOLD</span>':'free'}</b></td>
+    <td class="small"><b>${eh(u.name||'?')}</b> <span class="mut tiny">${eh(String(u.age||''))} · ${u.g==='w'?'F':'M'}</span></td>
+    <td class="small">${eh(u.city||'—')}</td><td><b>${(D.gold||{})[id]?'<span style="color:var(--warn)">GOLD</span>':'free'}</b></td>
     <td class="mut tiny">${ts(u.lastSeen)}</td></tr>`).join('')
    :'<tr><td class="mut">No users yet — share the app link!</td></tr>')+'</tbody>';
 }
+
 function paintBank(){
   const el=$('bankGrid'); if(!el) return;
   const c=TAYRI_CONFIG.company;
   el.innerHTML=[['Account name',c.accountName],['Bank',c.bank],['RIB',c.rib],['IBAN',c.iban],['SWIFT',c.swift],['ICE',c.ice],['Support email',c.supportEmail],['Support phone',c.supportPhone]]
-  .map(([l,v])=>`<div class="bankrow"><span class="mut tiny">${l.toUpperCase()}</span><br><b>${v}</b></div>`).join('');
+  .map(([l,v])=>`<div class="bankrow"><span class="mut tiny">${l.toUpperCase()}</span><br><b>${eh(v)}</b></div>`).join('');
 }
+
 function paintEcon(){
   const el=$('econList'); if(!el) return;
   el.innerHTML=[
@@ -434,6 +511,7 @@ function paintEcon(){
   ].map(([k,v])=>`<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line)"><span class="mut">${k}</span><b>${v}</b></div>`).join('')
   + `<div class="mut tiny" style="margin-top:8px">Edit in tayri-config.js — everything updates instantly.</div>`;
 }
+
 async function sendDirect(){
   const uid=document.getElementById('directUid').value.trim();
   const txt=document.getElementById('directMsg').value.trim();
@@ -444,13 +522,16 @@ async function sendDirect(){
     toast('✉️ Message sent to '+uid);
   }catch(e){ toast('Failed: '+(e.code||e.message)); }
 }
+
 function messageUser(uid){
   if(!uid) return;
-  const msTab = Array.from(document.querySelectorAll('.tab')).find(el=>el.getAttribute('onclick')?.includes("tab('ms'")); tab('ms', msTab || document.querySelectorAll('.tab')[5]);
+  const msTab = Array.from(document.querySelectorAll('.tab')).find(el=>el.getAttribute('onclick')?.includes("tab('ms'"));
+  tab('ms', msTab || document.querySelectorAll('.tab')[5]);
   document.getElementById('directUid').value=uid;
   document.getElementById('directMsg').focus();
   toast('✉️ Messaging '+uid);
 }
+
 function unbanUser(uid, emailKey){
   if(!uid) return;
   const wiseAdvice = "Dear friend,\n\nYou have been given a second chance on Tayripages. We believe in growth and respect.\nPlease cherish this community: be kind, be truthful, be respectful to every heart you meet.\nA single unkind act can hurt deeply — choose to be the reason someone smiles today.\n\nWith hope and trust,\nThe Tayripages Team 💛";
@@ -458,14 +539,13 @@ function unbanUser(uid, emailKey){
   const updates={};
   updates['banned/'+uid]=null;
   if(emailKey) updates['bannedEmails/'+emailKey]=null;
-  // Also try to find emailKey if not provided
   DB.ref('wasla_dating').update(updates).then(()=>{
-    // Send wise advice via adminMessages
     DB.ref('wasla_dating/adminMessages/'+uid).push({text: wiseAdvice, from:'admin', by:firebase.auth().currentUser.uid, ts:Date.now()});
     toast('User unbanned — wise advice sent 💛');
     paintBanned();
   }).catch(e=>toast('Unban failed: '+(e.code||e.message)));
 }
+
 function paintBanned(){
   const tbl=document.getElementById('tblBanned');
   if(!tbl) return;
@@ -474,7 +554,6 @@ function paintBanned(){
   if(!rows.length){ tbl.innerHTML='<tbody><tr><td class="mut">No banned users — community is healthy.</td></tr></tbody>'; return; }
   tbl.innerHTML='<tbody><tr><th>User</th><th>Since</th><th></th></tr>'+rows.map(([uid,info])=>{
     const when=info && info.at ? new Date(info.at).toLocaleDateString() : '';
-    // Find emailKey that points to this uid
     let emailKey='';
     try{
       for(const [k,v] of Object.entries(D.bannedEmails||{})){
@@ -482,12 +561,12 @@ function paintBanned(){
       }
     }catch(e){}
     const emailDisplay = emailKey ? emailKey.replace(/_/g,'.') : '—';
-    return `<tr><td class="small"><b>${uid}</b><div class="mut tiny">${emailDisplay}</div></td><td class="mut tiny">${when}</td><td style="text-align:end"><button class="btn btn-g" onclick="unbanUser('${uid}','${emailKey}')">Unban + wise advice</button></td></tr>`;
+    return `<tr><td class="small"><b>${eh(uid)}</b><div class="mut tiny">${eh(emailDisplay)}</div></td><td class="mut tiny">${when}</td><td style="text-align:end"><button class="btn btn-g" onclick="unbanUser('${eh(uid)}','${eh(emailKey)}')">Unban + wise advice</button></td></tr>`;
   }).join('')+'</tbody>';
 }
+
 function wipe(){
-  if(!confirm('Really delete ALL data? This will KEEP banned UIDs & bannedEmails forever (as requested). Continue?'))return;
-  // wipe everything except banned & bannedEmails
+  if(!confirm('Really delete ALL data? This will KEEP banned UIDs & bannedEmails forever. Continue?'))return;
   DB.ref('wasla_dating').once('value').then(s=>{
     const val=s.val()||{};
     const keepBanned=val.banned||null;
@@ -502,5 +581,5 @@ function wipe(){
   });
 }
 </script>
-</body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a2917a4d78d1f31b',t:'MTc4NjM5MDg4Mw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>

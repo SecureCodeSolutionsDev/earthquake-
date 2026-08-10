@@ -739,8 +739,11 @@ function captureReferral(){
   try{ const r=new URLSearchParams(location.search).get('ref'); if(r&&r.length>5&&r.length<160&&r!==uid)localStorage.setItem('tayri_referrer',r); }catch(e){}
 }
 captureReferral();
-function save(){localStorage.setItem('zwin_local',JSON.stringify(L));
-  paintGold();paintBadges()}
+function save(){
+  try{ localStorage.setItem('zwin_local',JSON.stringify(L)); }catch(e){}
+  paintGold();
+  renderTabbar();
+}
 
 /* ============ 🖤 TAYRIPAGES ICON ENGINE — inline SVG, zero emoji chrome */
 function IC(n,px){ const P={
@@ -781,6 +784,7 @@ function paintGold(){ const el=$('goldTop'); if(el)el.textContent=goldActive()?T
 function goldPerks(){ return [
   [T('Unlimited likes — swipe all day'),'heart'],
   [T('Unlimited chat with every match'),'chat'],
+  [T('Search & filter any country worldwide'),'globe'],
   [T('See everyone who likes you'),'spark'],
   [T('Match & message admirers instantly'),'chat'],
   [G.superGold+' '+T('Super Likes every day'),'spark'],
@@ -794,7 +798,8 @@ function paintLikesPill(){ const el=$('quotaSlot'); if(!el)return;
 function openGold(why){
   const W={likes:T('Your free likes for today are used'),chat:T('Your free messages with this match are used'),
     super:T('Your free Super Like for today is used'),rewind:T('Rewind is a GOLD superpower'),
-    boost:T('Boost is a GOLD superpower'),likesYou:T('GOLD members see instantly who likes them')}[why]||'';
+    boost:T('Boost is a GOLD superpower'),likesYou:T('GOLD members see instantly who likes them'),
+    countryFilter:T('Filter deck by specific worldwide country is a GOLD superpower')}[why]||'';
   $('shopBody').innerHTML='<div style="text-align:center;padding:6px 0 4px">'
     +'<div class="gcr big">'+IC('crown',54)+'</div>'
     +'<div class="h1" style="margin-top:8px">Tayripages GOLD</div>'
@@ -1289,7 +1294,15 @@ async function cloudDiscover(){
       return {...p,id:k,sim:false,
         km:(g&&L.geo)?distKm(L.geo.la,L.geo.lo,g.la,g.lo):null,
         fresh:(p.lastSeen||0)>now-3*86400000, verified:!!vfd[k]}; });
-  if(flt.country&&flt.country!=='all')pool=pool.filter(p=>countryOf(p.city)===flt.country);
+  if(flt.country && flt.country !== 'all'){
+    const cTarget = flt.country.trim().toLowerCase();
+    pool = pool.filter(p => {
+      const pC = (p.country || '').trim().toLowerCase();
+      const pCityC = countryOf(p.city || '').trim().toLowerCase();
+      const pCity = (p.city || '').trim().toLowerCase();
+      return pC === cTarget || pCityC === cTarget || pCity.includes(cTarget);
+    });
+  }
   if(flt.ageRange&&flt.ageRange!=='all'){
     pool=pool.filter(p=>{
       const age=p.age||22;
@@ -1907,43 +1920,162 @@ function paintNearChip(){ const b=$('nearChip'); if(!b)return;
   if(L.nearOnly){ b.style.background='var(--grad)'; b.style.color='#fff'; b.innerHTML=IC('pin',13)+' Near'; }
   else { b.style.background=''; b.style.color=''; b.innerHTML=IC('pin',15); } }
 /* ============ 🌍 DISCOVERY FILTERS — everyone browsable, you tune who appears ============ */
-const CITY_COUNTRY={Casablanca:'Morocco',Rabat:'Morocco',Marrakech:'Morocco',Tangier:'Morocco',Agadir:'Morocco','Fès':'Morocco','Meknès':'Morocco',Oujda:'Morocco','Laâyoune':'Morocco','Al Hoceima':'Morocco',Essaouira:'Morocco',Chefchaouen:'Morocco',Algiers:'Algeria',Oran:'Algeria',Tunis:'Tunisia',Paris:'France',Marseille:'France',Lyon:'France',Toulouse:'France',Brussels:'Belgium',Geneva:'Switzerland',Madrid:'Spain',Barcelona:'Spain',Valencia:'Spain',London:'United Kingdom',Amsterdam:'Netherlands',Berlin:'Germany',Munich:'Germany',Rome:'Italy',Milan:'Italy',Lisbon:'Portugal',Cairo:'Egypt',Istanbul:'Turkey',Dubai:'UAE','Abu Dhabi':'UAE',Doha:'Qatar',Riyadh:'Saudi Arabia',Jeddah:'Saudi Arabia',Dakar:'Senegal',Abidjan:"Côte d'Ivoire",Lagos:'Nigeria',Nairobi:'Kenya','New York':'USA','Los Angeles':'USA',Miami:'USA',Toronto:'Canada',Montreal:'Canada','Mexico City':'Mexico','São Paulo':'Brazil','Buenos Aires':'Argentina',Tokyo:'Japan',Singapore:'Singapore',Bangkok:'Thailand',Seoul:'South Korea',Sydney:'Australia',Mumbai:'India',Jakarta:'Indonesia'};
-function countryOf(city){ return CITY_COUNTRY[city]||city||'Morocco'; }
-function F(){ if(!L.filters)L.filters={show:'auto',country:'all', profession:'all', education:'all', relation:'all', body:'all', income:'all', smoke:'all', drink:'all', religion:'all', intent:'all', ageRange:'all'}; if(!L.filters.ageRange) L.filters.ageRange='all'; return L.filters; }
-function filtersActive(){ const f=F(); return f.country!=='all'||f.show!=='auto'||f.profession!=='all'||f.education!=='all'||f.relation!=='all'||f.body!=='all'||f.income!=='all'||f.smoke!=='all'||f.drink!=='all'||f.religion!=='all'||f.intent!=='all'||f.ageRange!=='all'; }
+const ALL_WORLD_COUNTRIES = [
+  "Afghanistan", "Albania", "Algeria", "Andorra", "Angola", "Argentina", "Armenia", "Australia", "Austria", "Azerbaijan",
+  "Bahamas", "Bahrain", "Bangladesh", "Barbados", "Belarus", "Belgium", "Belize", "Benin", "Bolivia", "Bosnia and Herzegovina", "Botswana", "Brazil", "Bulgaria",
+  "Cambodia", "Cameroon", "Canada", "Chile", "China", "Colombia", "Congo", "Costa Rica", "Croatia", "Cuba", "Cyprus", "Czech Republic",
+  "Denmark", "Djibouti", "Dominican Republic", "Ecuador", "Egypt", "Estonia", "Ethiopia", "Finland", "France",
+  "Gabon", "Georgia", "Germany", "Ghana", "Greece", "Guatemala", "Guinea", "Haiti", "Honduras", "Hungary",
+  "Iceland", "India", "Indonesia", "Iran", "Iraq", "Ireland", "Italy", "Ivory Coast", "Jamaica", "Japan", "Jordan",
+  "Kazakhstan", "Kenya", "Kuwait", "Lebanon", "Libya", "Lithuania", "Luxembourg", "Madagascar", "Malaysia", "Mali", "Malta", "Mauritania", "Mauritius", "Mexico", "Moldova", "Monaco", "Montenegro", "Morocco",
+  "Netherlands", "New Zealand", "Nigeria", "Norway", "Oman", "Pakistan", "Palestine", "Panama", "Paraguay", "Peru", "Philippines", "Poland", "Portugal",
+  "Qatar", "Romania", "Russia", "Rwanda", "Saudi Arabia", "Senegal", "Serbia", "Singapore", "Slovakia", "Slovenia", "South Africa", "South Korea", "Spain", "Sudan", "Sweden", "Switzerland", "Syria",
+  "Tanzania", "Thailand", "Tunisia", "Turkey", "Uganda", "Ukraine", "United Arab Emirates", "United Kingdom", "United States", "Uruguay", "Uzbekistan", "Venezuela", "Vietnam", "Yemen", "Zimbabwe"
+];
+
+const CITY_COUNTRY = {
+  Casablanca:'Morocco',Rabat:'Morocco',Marrakech:'Morocco',Tangier:'Morocco',Agadir:'Morocco','Fès':'Morocco','Meknès':'Morocco',Oujda:'Morocco','Laâyoune':'Morocco','Al Hoceima':'Morocco',Essaouira:'Morocco',Chefchaouen:'Morocco',Tétouan:'Morocco',Nador:'Morocco',Kenitra:'Morocco',
+  Algiers:'Algeria',Oran:'Algeria',Constantine:'Algeria',
+  Tunis:'Tunisia',Sousse:'Tunisia',Sfax:'Tunisia',
+  Paris:'France',Marseille:'France',Lyon:'France',Toulouse:'France',Nice:'France',Nantes:'France',Bordeaux:'France',Lille:'France',
+  Brussels:'Belgium',Antwerp:'Belgium',Liege:'Belgium',
+  Geneva:'Switzerland',Zurich:'Switzerland',Lausanne:'Switzerland',
+  Madrid:'Spain',Barcelona:'Spain',Valencia:'Spain',Seville:'Spain',Malaga:'Spain',Bilbao:'Spain',
+  London:'United Kingdom',Manchester:'United Kingdom',Birmingham:'United Kingdom',Edinburgh:'United Kingdom',
+  Amsterdam:'Netherlands',Rotterdam:'Netherlands','The Hague':'Netherlands',
+  Berlin:'Germany',Munich:'Germany',Frankfurt:'Germany',Hamburg:'Germany',Cologne:'Germany',
+  Rome:'Italy',Milan:'Italy',Naples:'Italy',Turin:'Italy',Florence:'Italy',
+  Lisbon:'Portugal',Porto:'Portugal',
+  Cairo:'Egypt',Alexandria:'Egypt',Giza:'Egypt',
+  Istanbul:'Turkey',Ankara:'Turkey',Izmir:'Turkey',Antalya:'Turkey',
+  Dubai:'United Arab Emirates','Abu Dhabi':'United Arab Emirates',Sharjah:'United Arab Emirates',
+  Doha:'Qatar',
+  Riyadh:'Saudi Arabia',Jeddah:'Saudi Arabia',Mecca:'Saudi Arabia',Medina:'Saudi Arabia',Dammam:'Saudi Arabia',
+  Kuwait:'Kuwait',Muscat:'Oman',Manama:'Bahrain',Beirut:'Lebanon',Amman:'Jordan',Baghdad:'Iraq',
+  Dakar:'Senegal',Abidjan:"Ivory Coast",Lagos:'Nigeria',Abuja:'Nigeria',Nairobi:'Kenya',Accra:'Ghana',Johannesburg:'South Africa','Cape Town':'South Africa',
+  'New York':'United States','Los Angeles':'United States',Chicago:'United States',Houston:'United States',Miami:'United States','San Francisco':'United States',Boston:'United States',Washington:'United States',
+  Toronto:'Canada',Montreal:'Canada',Vancouver:'Canada',Ottawa:'Canada',Calgary:'Canada',
+  'Mexico City':'Mexico',Guadalajara:'Mexico',Monterrey:'Mexico',
+  'São Paulo':'Brazil','Rio de Janeiro':'Brazil',Brasilia:'Brazil',
+  'Buenos Aires':'Argentina',Santiago:'Chile',Bogota:'Colombia',Lima:'Peru',
+  Tokyo:'Japan',Osaka:'Japan',Kyoto:'Japan',
+  Singapore:'Singapore',Bangkok:'Thailand',Phuket:'Thailand',
+  Seoul:'South Korea',Busan:'South Korea',
+  Sydney:'Australia',Melbourne:'Australia',Brisbane:'Australia',Perth:'Australia',
+  Mumbai:'India',Delhi:'India',Bangalore:'India',
+  Jakarta:'Indonesia',Bali:'Indonesia','Kuala Lumpur':'Malaysia',Manila:'Philippines'
+};
+
+function countryOf(city){
+  if(!city) return 'Morocco';
+  const cTrim = String(city).trim();
+  if(CITY_COUNTRY[cTrim]) return CITY_COUNTRY[cTrim];
+  const found = ALL_WORLD_COUNTRIES.find(c => c.toLowerCase() === cTrim.toLowerCase());
+  if(found) return found;
+  return cTrim;
+}
+
+function F(){
+  if(!L.filters) L.filters = {show:'auto',country:'all', profession:'all', education:'all', relation:'all', body:'all', income:'all', smoke:'all', drink:'all', religion:'all', intent:'all', ageRange:'all'};
+  if(!L.filters.ageRange) L.filters.ageRange='all';
+  if(!L.filters.country) L.filters.country='all';
+  return L.filters;
+}
+
+function filtersActive(){
+  const f=F();
+  return f.country!=='all'||f.show!=='auto'||f.profession!=='all'||f.education!=='all'||f.relation!=='all'||f.body!=='all'||f.income!=='all'||f.smoke!=='all'||f.drink!=='all'||f.religion!=='all'||f.intent!=='all'||f.ageRange!=='all';
+}
+
+function selectCountryFilter(c){
+  if(c === 'all'){
+    F().country = 'all';
+    openFilters();
+    return;
+  }
+  if(goldActive()){
+    F().country = c;
+    openFilters();
+  } else {
+    openGold('countryFilter');
+  }
+}
+
+function filterCountryChips(query){
+  const box = $('countryChipsBox');
+  if(!box) return;
+  const q = (query||'').trim().toLowerCase();
+  box.querySelectorAll('.country-chip-item').forEach(el => {
+    const name = (el.dataset.name||'').toLowerCase();
+    if(!q || name.includes(q)){
+      el.style.display = 'inline-flex';
+    } else {
+      el.style.display = 'none';
+    }
+  });
+}
+
 function openFilters(){
   const f=F();
-  const seen={}; const countries=[];
-  R.usersCache.forEach(p=>{ const c=countryOf(p.city); if(!seen[c]){seen[c]=1;countries.push(c);} });
-  ['Morocco','France','Spain','UAE','Turkey','United Kingdom','USA'].forEach(c=>{ if(!seen[c]){seen[c]=1;countries.push(c);} });
+  const seen={}; const activeCountries=[];
+  (R.usersCache||[]).forEach(p=>{ const c=countryOf(p.city); if(c && !seen[c]){seen[c]=1;activeCountries.push(c);} });
+  ['Morocco','France','Spain','United Arab Emirates','Saudi Arabia','Turkey','United Kingdom','United States','Canada','Germany','Italy','Algeria','Tunisia'].forEach(c=>{ if(!seen[c]){seen[c]=1;activeCountries.push(c);} });
+  
+  const allCountriesCombined = Array.from(new Set([...activeCountries, ...ALL_WORLD_COUNTRIES])).sort((a,b)=>a.localeCompare(b));
+  const isGold = goldActive();
+  
   const segB=(val,label)=>`<button class="${f.show===val?'on':''}" onclick="F().show='${val}';openFilters()">${label}</button>`;
   const chipFor=(key,val,label)=>`<button class="tchip ${F()[key]===val?'on':''}" onclick="F().${key}='${val}';openFilters()">${label}</button>`;
+
   $('genBody').innerHTML=`<div class="h2" style="display:flex;align-items:center;gap:8px">${IC('sliders',21)} ${T('Discovery settings')}</div>
     <div class="mut small" style="margin:6px 0 12px;line-height:1.6">${T('Browse everyone, or tune who appears in your deck. Matching unlocks the chat.')}</div>
+    
     <div class="mut small" style="font-weight:900">${T('Show me')}</div>
     <div class="seg" style="margin:6px 0 8px">${segB('auto',T('My preference'))}${segB('e',T('Everyone'))}</div>
     <div class="seg" style="margin:0 0 14px">${segB('w',T('Women'))}${segB('m',T('Men'))}</div>
+
     <div class="mut small" style="font-weight:900">${T('Age')}</div>
     <div class="tagwrap" style="margin:6px 0 14px">${['all','18-25','26-35','36-45','46+'].map(v=>chipFor('ageRange',v, v==='all'?T('All'):v)).join('')}</div>
-    <div class="mut small" style="font-weight:900">${T('Country')}</div>
-    <div class="tagwrap" style="margin:6px 0 10px;max-height:120px;overflow-y:auto">
-      <button class="tchip ${f.country==='all'?'on':''}" onclick="F().country='all';openFilters()">${T('All countries')}</button>
-      ${countries.map(c=>`<button class="tchip ${f.country===c?'on':''}" onclick="F().country='${c}';openFilters()">${c}</button>`).join('')}
+
+    <div style="display:flex;align-items:center;justify-content:space-between;margin:6px 0 6px">
+      <div class="mut small" style="font-weight:900">🌍 ${T('Country')} (Worldwide)</div>
+      <span class="badge ${isGold?'b-done':'b-live'}" style="font-size:10px">${isGold?'👑 GOLD UNLOCKED':'👑 GOLD FILTER'}</span>
     </div>
+    
+    <div class="card small" style="padding:10px;margin-bottom:12px;background:rgba(255,255,255,.04);border:1px solid var(--line)">
+      <div style="display:flex;gap:6px;align-items:center;margin-bottom:8px">
+        <button class="tchip ${f.country==='all'?'on':''}" style="flex:1;text-align:center" onclick="selectCountryFilter('all')">🌍 Worldwide (${T('All countries')})</button>
+      </div>
+      <input class="inp" id="countrySearchIn" placeholder="🔍 Search specific country (e.g. France, USA, Japan)…" style="font-size:13px;padding:9px 12px;margin-bottom:8px" oninput="filterCountryChips(this.value)">
+      <div id="countryChipsBox" class="tagwrap" style="max-height:130px;overflow-y:auto;gap:6px">
+        ${allCountriesCombined.map(c=>`<button class="tchip country-chip-item ${f.country===c?'on':''}" data-name="${c}" onclick="selectCountryFilter('${c}')">${isGold?'':'👑 '}${c}</button>`).join('')}
+      </div>
+      ${!isGold ? `<div class="mut tiny" style="margin-top:6px;color:var(--warn)">💡 Selecting a specific country is a GOLD feature. Worldwide is free for all members.</div>` : ''}
+    </div>
+
     <div class="mut small" style="font-weight:900">Profession</div>
     <div class="tagwrap" style="margin:6px 0 10px">${['all','Student','Employee','Entrepreneur','Freelance'].map(v=>chipFor('profession',v, v==='all'?T('All'):v)).join('')}</div>
+
     <div class="mut small" style="font-weight:900">Looking for</div>
     <div class="tagwrap" style="margin:6px 0 10px">${['all','Marriage','Serious relationship','Friendship','Other'].map(v=>chipFor('intent',v, v==='all'?T('All'):T(v))).join('')}</div>
+
     <div class="mut small" style="font-weight:900">Education</div>
     <div class="tagwrap" style="margin:6px 0 10px">${['all','High School','Bachelor','Master','PhD'].map(v=>chipFor('education',v, v==='all'?T('All'):T(v))).join('')}</div>
+
     <button class="btn btn-grad" onclick="applyFilters()">${T('Apply — refresh my deck')}</button>
     <div style="height:8px"></div>
-    <button class="btn btn-line" onclick="L.filters={show:'auto',country:'all',ageRange:'all'};save();applyFilters()">${T('Reset to everyone, everywhere')}</button>`;
+    <button class="btn btn-line" onclick="L.filters={show:'auto',country:'all',ageRange:'all',profession:'all',education:'all',intent:'all'};save();applyFilters()">${T('Reset to everyone, everywhere')}</button>`;
   show('genSheet');
 }
-function applyFilters(){ save(); hide('genSheet'); R.cacheTs=0; paintFiltChip();
+
+function applyFilters(){
+  save();
+  hide('genSheet');
+  R.cacheTs=0;
+  paintFiltChip();
   loadDeck().catch(e=>{ console.warn('deck',e); paintDeck(); });
-  toast(filtersActive()?'✨ '+T('Filters on — deck refreshed'):'🌍 '+T('Showing everyone, everywhere')); }
+  toast(filtersActive()?'✨ '+T('Filters on — deck refreshed'):'🌍 '+T('Showing everyone, everywhere'));
+}
 function paintFiltChip(){ const b=$('filtChip'); if(!b)return;
   if(filtersActive()){ b.style.background='var(--grad)'; b.style.color='#fff'; b.style.borderColor='transparent'; }
   else { b.style.background=''; b.style.color=''; b.style.borderColor=''; } }
@@ -2104,7 +2236,7 @@ function showTab(t){
   if(t==='discover'){ $('demoSlot').innerHTML=DEMO?`<div class="demobanner">⚡ DEMO MODE — Firebase not set up yet (see README.md). Everyone here is a starter profile; connect the free cloud to meet real people.</div>`:'';
     paintGeoSlot(); paintNearChip(); paintFiltChip(); paintLikesPill(); }
 }
-function paintBadges(){renderTabbar(); if(R.tab==='matches')renderMatches();}
+function paintBadges(){ renderTabbar(); }
 
 /* ============ DISCOVERY DECK ============ */
 async function loadDeck(){
@@ -2356,28 +2488,46 @@ function unreadTotal(){ return Object.values(L.unread||{}).reduce((a,b)=>a+b,0);
 function renderMatches(){
   // Deduplicate matches by peer for display (extra safety against ghost duplicates)
   const uniqByPeer=new Map();
-  for(const m of L.matches){
+  for(const m of (L.matches||[])){
     if(m && m.peer && m.peer !== uid && !uniqByPeer.has(m.peer)) {
       uniqByPeer.set(m.peer, m);
     }
   }
   L.matches = [...uniqByPeer.values()];
-  save();
+  try{ localStorage.setItem('zwin_local',JSON.stringify(L)); }catch(e){}
+
+  const mRowEl = $('mRow');
+  const chatListEl = $('chatList');
+  if(!mRowEl || !chatListEl) return;
+
   const dedupedMatches=L.matches;
   const freshMs=dedupedMatches.filter(m => m.peer !== 'admin' && hasStory(m.peer)).slice(0,8);
-  $('mRow').innerHTML=freshMs.length? freshMs.map((m,i)=>`<button class="mnew" data-mc="${m.mid}" onclick="${hasStory(m.peer)?`openStory('${m.peer}')`:`openChat('${m.mid}')`}">
+  mRowEl.innerHTML=freshMs.length? freshMs.map((m,i)=>`<button class="mnew" data-mc="${m.mid}" onclick="${hasStory(m.peer)?`openStory('${m.peer}')`:`openChat('${m.mid}')`}">
     <div class="av ${hasStory(m.peer)?'story-hot':''}"><div class="avcover" style="background:${grad(m.gi)};background-image:url('${avaURI({id:m.peer,av:peerAv(m.peer)})}')"></div>${hasStory(m.peer)?'<span class="storydot"></span>':''}</div><span>${m.name}</span></button>`).join('')
     :`<div class="mut small" style="padding:4px 0 10px">Your next match is one swipe away</div>`;
+
   // real faces in the circles (photo cache keeps bandwidth tiny)
-  L.matches.forEach(m=>{ const pr=R.usersCache.find(u=>u.id===m.peer);
-    ensurePhoto(pr||{id:m.peer,hasPhoto:1,sim:false},url=>{ if(!url)return;
+  L.matches.forEach(m=>{
+    const pr=(R.usersCache||[]).find(u=>u.id===m.peer);
+    ensurePhoto(pr||{id:m.peer,hasPhoto:1,sim:false},url=>{
+      if(!url)return;
       const a=document.querySelector('.mnew[data-mc="'+m.mid+'"] .av div'); if(a)putImg(a,url);
       const c=document.querySelector('.citem[data-mc="'+m.mid+'"] .cav');
-      if(c){ putImg(c,url); const dd=document.createElement('span'); dd.className='onl'; c.appendChild(dd); }
-    }); });
+      if(c){
+        c.style.backgroundImage=`url('${url}')`;
+        c.style.backgroundSize='cover';
+        c.style.backgroundPosition='center';
+        if(!c.querySelector('.onl')){
+          const dd=document.createElement('span'); dd.className='onl'; c.appendChild(dd);
+        }
+      }
+    });
+  });
+
   const lastTs=m=>{ const c=L.chats[m.mid]||[]; return c.length?(c[c.length-1].ts||m.ts):(m.ts||0); };
   const chats=L.matches.slice().sort((a,b)=>{ const sa=hasStory(a.peer)?1:0, sb=hasStory(b.peer)?1:0; if(sb!==sa) return sb-sa; return lastTs(b)-lastTs(a); }); // 🔝 stories first, then newest message first
-  $('chatList').innerHTML=chats.length?chats.map(m=>{
+
+  chatListEl.innerHTML=chats.length?chats.map(m=>{
     const last=(L.chats[m.mid]||[]).slice(-1)[0];
     const un=L.unread[m.mid]||0; const excl=L.exclusive[m.mid];
     const txt=last? (last.who==='sys'?'💕 You matched!':last.who==='gift'?'🌹 A rose for you':(last.me?'You: ':'')+last.text) :'Say hi 👋';
@@ -2984,5 +3134,5 @@ setInterval(()=>{ save(); },30000);
 
 
 
-</body>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a291721f4a33e208',t:'MTc4NjM5MDU0OA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
