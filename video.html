@@ -244,6 +244,7 @@ svg{display:inline-block}
       <button class="btn primary" id="startBtn" disabled><span data-t="Start instant video">Start instant video</span></button>
       <button class="btn danger hidden" id="skipBtn">Skip &amp; find another</button>
       <button class="btn danger hidden" id="endBtn">End call</button>
+      <button class="btn hidden" id="reportVideoBtn" style="background:rgba(255,107,107,.12);color:#ff6b6b;border:1px solid rgba(255,107,107,.3)" onclick="reportVideoUser()">🚩 Report</button>
     </div>
     <div class="solocard hidden" id="soloCard">
       <div class="solo-ic"><svg width="30" height="30" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg></div>
@@ -477,7 +478,19 @@ svg{display:inline-block}
     const m=matchData.find(x=>x.peer===peer); if(!m)return;
     selectedPeer=m.peer; selectedPeerName=m.name; renderMatches(); renderStartButton(); setStatus('Ready to call '+m.name+'.','good');
   }
-  async function init(){
+  async function reportVideoUser(){
+  if(!currentPeer) return toast('No user to report');
+  const reason = prompt('Report reason:\n1: Under 18\n2: Fake profile\n3: Nudity/Harassment\n4: Scam\nEnter number or text:');
+  if(!reason) return;
+  const labels={ '1':'Under 18 — minor (video)', '2':'Fake profile (video)', '3':'Inappropriate content (video)', '4':'Scam (video)'};
+  const finalReason = labels[reason.trim()] || reason.trim().slice(0,200);
+  try{
+    const db = firebase.database();
+    await db.ref('wasla_dating/reports').push({from: firebase.auth().currentUser ? firebase.auth().currentUser.uid : 'anon', against: currentPeer, reason: finalReason, ts: Date.now(), status:'open', source:'video', peerName: selectedPeerName || ''});
+    toast('Report sent — admin will review');
+  }catch(e){ toast('Report failed: '+(e.code||e.message)); }
+}
+async function init(){
     renderProFilters(); fillFilterOptions();
     try{
       if(!firebase.apps.length){ firebase.initializeApp(TAYRI_CONFIG.firebase); }
@@ -755,7 +768,7 @@ svg{display:inline-block}
     if(currentRoomId||closing||!pair||!memberOf(pair)) return;
     currentRoomId=id; currentPair=pair; currentPeer=peerOf(pair); role=uid===pair.a?'caller':'callee';
     clearInterval(scanTimer); scanTimer=null; hideSoloCard();
-    setStatus('Match found. Connecting securely…','good'); show(skipBtn,false); show(endBtn,true); remoteEmpty.classList.remove('hidden');
+    setStatus('Match found. Connecting securely…','good'); show(skipBtn,false); show(endBtn,true); show(document.getElementById('reportVideoBtn'),true); remoteEmpty.classList.remove('hidden');
     try{ if(queueRef) await queueRef.remove(); }catch(e){}
     roomRef=root('videoRooms/'+id); pairRef=root('videoPairIndex/'+id);
     try{ await roomRef.onDisconnect().update({status:'ended'}); await pairRef.onDisconnect().update({status:'ended'}); }catch(e){}
@@ -850,6 +863,7 @@ svg{display:inline-block}
   async function endCall(message,restart){
     if(closing) return; closing=true; searching=false; clearInterval(scanTimer); scanTimer=null;
     stopRouletteTimer(); closeCallChat(); hideSoloCard();
+    show(document.getElementById('reportVideoBtn'),false);
     document.querySelectorAll('.panel.live').forEach(p=>p.classList.remove('live'));
     const endedPeer=currentPeer, shouldRate=callConnected&&!!currentPeer&&!restart;
     setStatus(message||'Call ended.','warn');

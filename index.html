@@ -849,6 +849,32 @@ function isCleanOrWarn(text){
   }catch(e){}
   return true;
 }
+// ANTI-SPAM: smooth, local, no UX harm — 1.2s between messages, burst 3, then throttle
+const _spam = { last:0, count:0, window:0 };
+function canSendWithAntiSpam(){
+  const now=Date.now();
+  if(now - _spam.last < 1200){
+    // too fast — allow burst of 3 in 8s, but not more
+    if(_spam.count>=3 && now - _spam.window < 8000){
+      toast('⏳ Too fast — please wait a second');
+      return false;
+    }
+  }
+  // reset window if 8s passed
+  if(now - _spam.window > 8000){ _spam.window=now; _spam.count=0; }
+  _spam.last=now; _spam.count++;
+  return true;
+}
+const _adminSpam = {};
+function canAdminRequest(key, limitMs=5000){
+  const now=Date.now();
+  if(_adminSpam[key] && now - _adminSpam[key] < limitMs){
+    toast('⏳ Please wait a moment before trying again');
+    return false;
+  }
+  _adminSpam[key]=now;
+  return true;
+}
 function toast(m){const d=document.createElement('div');d.className='toast';d.textContent=m;$('toasts').appendChild(d);setTimeout(()=>{d.style.opacity='0';d.style.transition='opacity .3s';setTimeout(()=>d.remove(),300)},2700)}
 function show(id){$(id).classList.add('on')} function hide(id){$(id).classList.remove('on')}
 function grad(i){const G=[['#ffd1e3','#ffb3c7'],['#ffe3c2','#ffc09e'],['#d7f0ff','#b3dcff'],['#e7ffd9','#c3f5b0'],['#f5e0ff','#e6c2ff'],['#fff3c9','#ffe48a'],['#d9fff4','#a9f2df'],['#ffe0e0','#ffb0b0']];const g=G[i%G.length];return `linear-gradient(160deg,${g[0]},${g[1]})`}
@@ -982,14 +1008,14 @@ function onAuthed(u){
       // check client-side bannedEmails list (also enforced server-side via admin disabled flag)
       DB.ref('wasla_dating/bannedEmails/'+key).once('value').then(s=>{
         if(s.val()){
-          document.body.innerHTML='<div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;background:#100610;color:#f8eef4"><div style="font-size:64px">🚫</div><div style="font-size:22px;font-weight:900;margin-top:12px">This email is banned from Tayripages</div><div style="color:#b48ba2;margin-top:8px;max-width:340px;line-height:1.6">This email address has been flagged and cannot be used again — not even with a new account. If you think this is a mistake, contact support: '+(TAYRI_CONFIG.company.supportEmail||'support')+'</div><button onclick="firebase.auth().signOut().then(()=>location.reload())" style="margin-top:18px;padding:12px 22px;border-radius:999px;background:linear-gradient(45deg,#ff5e8a,#ffb15c);color:#fff;font-weight:900;border:0">Sign out</button></div>';
+          document.body.innerHTML=`<div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;background:#100610;color:#f8eef4"><div style="font-size:64px">🚫</div><div style="font-size:22px;font-weight:900;margin-top:12px">This email is banned from Tayripages</div><div style="color:#b48ba2;margin-top:8px;max-width:340px;line-height:1.6">This email address has been flagged and cannot be used again — not even with a new account. If you think this is a mistake, you can contact support. We review every appeal with care.</div><div style="display:flex;gap:10px;justify-content:center;margin-top:18px;flex-wrap:wrap"><button onclick="window.location.href='mailto:'+(TAYRI_CONFIG.company.supportEmail||'support@tayripages.com')+'?subject=Ban Appeal — '+encodeURIComponent(email)" style="padding:12px 22px;border-radius:999px;background:#fff;color:#100610;font-weight:900;border:0">Contact support</button><button onclick="firebase.auth().signOut().then(()=>location.reload())" style="padding:12px 22px;border-radius:999px;background:linear-gradient(45deg,#ff5e8a,#ffb15c);color:#fff;font-weight:900;border:0">Sign out</button></div></div>`;
           try{ firebase.auth().signOut(); }catch(e){}
           return;
         }
       });
       DB.ref('wasla_dating/banned/'+u.uid).once('value').then(s=>{
         if(s.val()){
-          document.body.innerHTML='<div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;background:#100610;color:#f8eef4"><div style="font-size:64px">🚫</div><div style="font-size:22px;font-weight:900;margin-top:12px">You are banned from Tayripages</div><div style="color:#b48ba2;margin-top:8px;max-width:340px;line-height:1.6">Your account has been suspended. You cannot access Tayripages with this identity again.</div><button onclick="firebase.auth().signOut().then(()=>location.reload())" style="margin-top:18px;padding:12px 22px;border-radius:999px;background:linear-gradient(45deg,#ff5e8a,#ffb15c);color:#fff;font-weight:900;border:0">Sign out</button></div>';
+          document.body.innerHTML=`<div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;background:#100610;color:#f8eef4"><div style="font-size:64px">🚫</div><div style="font-size:22px;font-weight:900;margin-top:12px">You are banned from Tayripages</div><div style="color:#b48ba2;margin-top:8px;max-width:340px;line-height:1.6">Your account has been suspended. You cannot access Tayripages with this identity again.<br>If you believe this was a mistake, you may contact support for a second chance.</div><div style="display:flex;gap:10px;justify-content:center;margin-top:18px;flex-wrap:wrap"><button onclick="window.location.href='mailto:'+(TAYRI_CONFIG.company.supportEmail||'support@tayripages.com')+'?subject=Ban Appeal — '+encodeURIComponent(u.email||uid)" style="padding:12px 22px;border-radius:999px;background:#fff;color:#100610;font-weight:900;border:0">Contact support</button><button onclick="firebase.auth().signOut().then(()=>location.reload())" style="padding:12px 22px;border-radius:999px;background:linear-gradient(45deg,#ff5e8a,#ffb15c);color:#fff;font-weight:900;border:0">Sign out</button></div></div>`;
           try{ firebase.auth().signOut(); }catch(e){}
         }
       });
@@ -1007,13 +1033,53 @@ function onAuthed(u){
   try{ if(typeof refreshStories==='function') refreshStories(); }catch(e){}
   // Auto-activate precise location in background (no banner, silent) — user can still toggle off via Me or Near
   setTimeout(()=>{ try{ autoGeo(); }catch(e){} }, 1200);
-  // ADMIN MESSAGES — listen for direct messages from HQ (broadcast removed to save Spark)
+  // ADMIN MESSAGES — no-reply, single chat room, perfect dedup
   try{
-    ref('adminMessages/'+uid).limitToLast(5).on('child_added', s=>{
-      const m=s.val(); if(!m||!m.text) return;
-      if(m.ts && Date.now()-m.ts>86400000) return; // only recent
-      toast('📩 Admin: '+m.text);
-    });
+    if(window._adminMsgSetup) {} else {
+      window._adminMsgSetup=true;
+      const adminMid='admin_'+uid;
+      // Use a Set to track processed message keys to prevent triple creation
+      window._adminMsgKeys = window._adminMsgKeys || new Set();
+      ref('adminMessages/'+uid).limitToLast(10).on('child_added', s=>{
+        const m=s.val(); if(!m||!m.text) return;
+        if(m.ts && Date.now()-m.ts>7*86400000) return;
+        const key=s.key;
+        if(window._adminMsgKeys.has(key)) return;
+        window._adminMsgKeys.add(key);
+        const adminMid2='admin_'+uid;
+        L.chats[adminMid2]=L.chats[adminMid2]||[];
+        if(L.chats[adminMid2].some(x=>x.key===key || (x.ts===m.ts && x.text===m.text))) return;
+        if(!L.matches.find(mm=>mm.mid===adminMid2)){
+          // Remove any duplicate admin matches first
+          L.matches=L.matches.filter(mm=>mm.mid!==adminMid2);
+          L.matches.unshift({mid:adminMid2, peer:'admin', name:'Tayripages Admin', em:'🛡️', gi:7, ts:m.ts});
+        }
+        L.chats[adminMid2].push({who:'msg', text:m.text, me:false, from:'admin', adminOnly:true, ts:m.ts||Date.now(), key:key});
+        L.chats[adminMid2].sort((a,b)=>(a.ts||0)-(b.ts||0));
+        // Ensure only one admin chat exists
+        L.matches=L.matches.filter((m,i,arr)=> arr.findIndex(x=>x.mid===m.mid)===i );
+        save();
+        if(R.chatWith===adminMid2){ paintMsgs(); }
+        else {
+          L.unread[adminMid2]=(L.unread[adminMid2]||0)+1;
+          toast('📩 Admin: '+m.text.slice(0,60));
+          paintBadges();
+        }
+        if(R.tab==='matches')renderMatches();
+      });
+      // Also check for existing admin messages on load to create the chat if needed (but only once)
+      ref('adminMessages/'+uid).limitToLast(1).once('value').then(snap=>{
+        if(snap.exists() && !L.matches.find(m=>m.mid===adminMid)){
+          // Only create if there is at least one message and not already there
+          let hasMsg=false; snap.forEach(()=>{hasMsg=true});
+          if(hasMsg){
+            L.matches.unshift({mid:adminMid, peer:'admin', name:'Tayripages Admin', em:'🛡️', gi:7, ts:Date.now()});
+            L.chats[adminMid]=L.chats[adminMid]||[];
+            save(); if(R.tab==='matches')renderMatches();
+          }
+        }
+      });
+    }
   }catch(e){}
   // AUTO REFRESH — mimics location click refresh but automatic after login (fast)
   setTimeout(()=>{ try{ R.cacheTs=0; loadDeck().catch(()=>paintDeck()); }catch(e){} try{ syncBadges(); }catch(e){} try{ refreshStories(); }catch(e){} try{ paintGold(); paintLikesPill(); }catch(e){} if(R.tab==='profile') renderProfile(); }, 600);
@@ -1224,6 +1290,16 @@ async function cloudDiscover(){
         km:(g&&L.geo)?distKm(L.geo.la,L.geo.lo,g.la,g.lo):null,
         fresh:(p.lastSeen||0)>now-3*86400000, verified:!!vfd[k]}; });
   if(flt.country&&flt.country!=='all')pool=pool.filter(p=>countryOf(p.city)===flt.country);
+  if(flt.profession&&flt.profession!=='all')pool=pool.filter(p=> (p.profession||'')===flt.profession);
+  if(flt.education&&flt.education!=='all')pool=pool.filter(p=> (p.education||'')===flt.education);
+  if(flt.relation&&flt.relation!=='all')pool=pool.filter(p=> (p.relation||'')===flt.relation);
+  if(flt.kids&&flt.kids!=='all')pool=pool.filter(p=> (p.kids||'')===flt.kids);
+  if(flt.body&&flt.body!=='all')pool=pool.filter(p=> (p.body||'')===flt.body);
+  if(flt.income&&flt.income!=='all')pool=pool.filter(p=> (p.income||'')===flt.income);
+  if(flt.smoke&&flt.smoke!=='all')pool=pool.filter(p=> (p.smoke||'')===flt.smoke);
+  if(flt.drink&&flt.drink!=='all')pool=pool.filter(p=> (p.drink||'')===flt.drink);
+  if(flt.religion&&flt.religion!=='all')pool=pool.filter(p=> (p.religion||'')===flt.religion);
+  if(flt.intent&&flt.intent!=='all')pool=pool.filter(p=> (p.intent||'')===flt.intent);
   if(L.nearOnly){
     // FIX: don't vanish deck — sort near first instead of filtering out far users
     pool=pool.sort((a,b)=>{
@@ -1416,6 +1492,7 @@ function reportDeckAsk(pid){
   show('genSheet');
 }
 async function doReportDeck(pid,type){
+  if(!canAdminRequest('report_'+pid, 8000)) return;
   const p=R.deck.find(x=>x.id===pid)||personOf(pid); if(!p)return;
   hide('genSheet');
   const labels={photo:'Inappropriate or fake photos (deck report)',bio:'Inappropriate bio text (deck report)',both:'Fake profile — photo + bio (deck report)'};
@@ -1436,7 +1513,21 @@ function hasStory(id){ return storyFresh(STORY[id]); }
 async function refreshStories(){
   if(DEMO||!L.me||!L.matches)return;
   const ids=[uid,...L.matches.slice(0,12).map(m=>m.peer)];
-  await Promise.all(ids.map(id=>ref('stories/'+id).once('value').then(s=>{ STORY[id]=s.val(); }).catch(()=>{})));
+  // Use a temporary map to avoid race where STORY is partially updated and rendered twice
+  const fresh={};
+  await Promise.all(ids.map(id=>ref('stories/'+id).once('value').then(s=>{ 
+    const v=s.val();
+    // Ensure deep copy and only keep fresh stories
+    fresh[id]= v ? JSON.parse(JSON.stringify(v)) : null; 
+  }).catch(()=>{ fresh[id]=null; })));
+  // Atomically update STORY
+  for(const id of ids){ STORY[id]=fresh[id]; }
+  // Clean up stale stories for users not in current matches (avoid ghost duplicates)
+  for(const k of Object.keys(STORY)){
+    if(!ids.includes(k) && k!==uid){
+      // keep for 24h anyway, but don't delete immediately
+    }
+  }
   if(R.tab==='matches')renderMatches();
   if(R.tab==='profile')renderProfile();
   if(R.chatWith)paintChatStory();
@@ -1497,13 +1588,20 @@ async function publishStory(){
   const data=window.__pendStory; if(!data||!L.me)return;
   const cap=(($('storyCap')&&$('storyCap').value)||'').replace(/[\r\n]+/g,' ').trim().slice(0,140);
   if(cap && !isCleanOrWarn(cap)) return;
+  // Limit: 5 stories per day (calendar day)
+  const today = new Date().toISOString().slice(0,10);
+  L.storyDay = L.storyDay||{d:'',n:0};
+  if(L.storyDay.d!==today){ L.storyDay={d:today,n:0}; }
+  if(L.storyDay.n>=5){ toast('⏳ Story limit: 5 per day — try tomorrow'); return; }
   hide('genSheet'); window.__pendStory=null;
   toast('Publishing your story ✨');
   try{
     const rec={img:data,ts:Date.now(),name:String(L.me.name||'').slice(0,36)};
     if(cap)rec.caption=cap;
     if(!DEMO)await ref('stories/'+uid).set(rec);
-    STORY[uid]=rec;
+    // Clean fix: ensure STORY is a fresh copy, not shared reference, and clear any stale cache for this uid
+    STORY[uid]=JSON.parse(JSON.stringify(rec));
+    L.storyDay.n++; save();
     toast('Story live for 24h — your matches see the glow ✨');
     renderProfile(); if(R.tab==='matches')renderMatches();
   }catch(e){ toast('That didn’t work — try again'); }
@@ -1578,6 +1676,7 @@ function showFoundUser(pid,u){
   ensurePhoto(Object.assign({id:pid},u),url=>{ if(url)putImg($('fdPh'),url); });
 }
 async function giftGoldToMatch(){
+  if(!canAdminRequest('gift', 10000)) return;
   const sel=document.getElementById('giftMatchSel');
   const pid=sel&&sel.value;
   if(!pid) return toast('Choose a match first');
@@ -1621,12 +1720,15 @@ async function confirmGiftGold(refId){
   }catch(e){ toast('Gift failed — try again'); }
 }
 async function giftGoldById(){
+  if(!canAdminRequest('gift', 10000)) return;
   const raw=(document.getElementById('giftGoldIn')&&document.getElementById('giftGoldIn').value||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
   if(raw.length<4) return toast('Paste the friend\'s 5-char Tayri ID first');
   try{
     const snap=await ref('userCodes/'+raw).once('value');
     const targetUid=snap.val();
     if(!targetUid) return toast('No member has that ID');
+    // Anti-spam: one pending gift per target per day per gifter
+    const gkey='gift_'+targetUid; if(!canAdminRequest(gkey, 86400000)){ toast('🎁 You already gifted this person recently — try tomorrow'); return; }
     if(targetUid===uid) return toast('That is your own ID');
     const snap2=await ref('users/'+targetUid).once('value');
     const u=snap2.val()||{name:raw};
@@ -1785,24 +1887,33 @@ function paintNearChip(){ const b=$('nearChip'); if(!b)return;
 /* ============ 🌍 DISCOVERY FILTERS — everyone browsable, you tune who appears ============ */
 const CITY_COUNTRY={Casablanca:'Morocco',Rabat:'Morocco',Marrakech:'Morocco',Tangier:'Morocco',Agadir:'Morocco','Fès':'Morocco','Meknès':'Morocco',Oujda:'Morocco','Laâyoune':'Morocco','Al Hoceima':'Morocco',Essaouira:'Morocco',Chefchaouen:'Morocco',Algiers:'Algeria',Oran:'Algeria',Tunis:'Tunisia',Paris:'France',Marseille:'France',Lyon:'France',Toulouse:'France',Brussels:'Belgium',Geneva:'Switzerland',Madrid:'Spain',Barcelona:'Spain',Valencia:'Spain',London:'United Kingdom',Amsterdam:'Netherlands',Berlin:'Germany',Munich:'Germany',Rome:'Italy',Milan:'Italy',Lisbon:'Portugal',Cairo:'Egypt',Istanbul:'Turkey',Dubai:'UAE','Abu Dhabi':'UAE',Doha:'Qatar',Riyadh:'Saudi Arabia',Jeddah:'Saudi Arabia',Dakar:'Senegal',Abidjan:"Côte d'Ivoire",Lagos:'Nigeria',Nairobi:'Kenya','New York':'USA','Los Angeles':'USA',Miami:'USA',Toronto:'Canada',Montreal:'Canada','Mexico City':'Mexico','São Paulo':'Brazil','Buenos Aires':'Argentina',Tokyo:'Japan',Singapore:'Singapore',Bangkok:'Thailand',Seoul:'South Korea',Sydney:'Australia',Mumbai:'India',Jakarta:'Indonesia'};
 function countryOf(city){ return CITY_COUNTRY[city]||'Other'; }
-function F(){ if(!L.filters)L.filters={show:'auto',country:'all'}; return L.filters; }
-function filtersActive(){ const f=F(); return f.country!=='all'||f.show!=='auto'; }
+function F(){ if(!L.filters)L.filters={show:'auto',country:'all', profession:'all', education:'all', relation:'all', kids:'all', body:'all', income:'all', smoke:'all', drink:'all', religion:'all', intent:'all'}; return L.filters; }
+function filtersActive(){ const f=F(); return f.country!=='all'||f.show!=='auto'||f.profession!=='all'||f.education!=='all'||f.relation!=='all'||f.kids!=='all'||f.body!=='all'||f.income!=='all'||f.smoke!=='all'||f.drink!=='all'||f.religion!=='all'||f.intent!=='all'; }
 function openFilters(){
   const f=F();
   const seen={}; const countries=[];
   R.usersCache.forEach(p=>{ const c=countryOf(p.city); if(!seen[c]){seen[c]=1;countries.push(c);} });
   ['Morocco','France','Spain','UAE','Turkey','United Kingdom','USA','Other'].forEach(c=>{ if(!seen[c]){seen[c]=1;countries.push(c);} });
   const segB=(val,label)=>`<button class="${f.show===val?'on':''}" onclick="F().show='${val}';openFilters()">${label}</button>`;
+  const chipFor=(key,val,label)=>`<button class="tchip ${F()[key]===val?'on':''}" onclick="F().${key}='${val}';openFilters()">${label}</button>`;
   $('genBody').innerHTML=`<div class="h2" style="display:flex;align-items:center;gap:8px">${IC('sliders',21)} ${T('Discovery settings')}</div>
     <div class="mut small" style="margin:6px 0 12px;line-height:1.6">${T('Browse everyone, or tune who appears in your deck. Matching unlocks the chat.')}</div>
     <div class="mut small" style="font-weight:900">${T('Show me')}</div>
     <div class="seg" style="margin:6px 0 8px">${segB('auto',T('My preference'))}${segB('e',T('Everyone'))}</div>
     <div class="seg" style="margin:0 0 14px">${segB('w',T('Women'))}${segB('m',T('Men'))}</div>
     <div class="mut small" style="font-weight:900">${T('Country')}</div>
-    <div class="tagwrap" style="margin:6px 0 16px;max-height:180px;overflow-y:auto">
+    <div class="tagwrap" style="margin:6px 0 10px;max-height:120px;overflow-y:auto">
       <button class="tchip ${f.country==='all'?'on':''}" onclick="F().country='all';openFilters()">${T('All countries')}</button>
       ${countries.map(c=>`<button class="tchip ${f.country===c?'on':''}" onclick="F().country='${c}';openFilters()">${c}</button>`).join('')}
     </div>
+    <div class="mut small" style="font-weight:900">Profession</div>
+    <div class="tagwrap" style="margin:6px 0 10px">${['all','Student','Employee','Entrepreneur','Freelance'].map(v=>chipFor('profession',v, v==='all'?T('All'):v)).join('')}</div>
+    <div class="mut small" style="font-weight:900">Looking for</div>
+    <div class="tagwrap" style="margin:6px 0 10px">${['all','Marriage','Serious relationship','Friendship','Casual'].map(v=>chipFor('intent',v, v==='all'?T('All'):T(v))).join('')}</div>
+    <div class="mut small" style="font-weight:900">Education</div>
+    <div class="tagwrap" style="margin:6px 0 10px">${['all','High School','Bachelor','Master','PhD'].map(v=>chipFor('education',v, v==='all'?T('All'):T(v))).join('')}</div>
+    <div class="mut small" style="font-weight:900">Kids</div>
+    <div class="tagwrap" style="margin:6px 0 16px">${['all','0','1','2','3+'].map(v=>chipFor('kids',v, v==='all'?T('All'):v)).join('')}</div>
     <button class="btn btn-grad" onclick="applyFilters()">${T('Apply — refresh my deck')}</button>
     <div style="height:8px"></div>
     <button class="btn btn-line" onclick="L.filters={show:'auto',country:'all'};save();applyFilters()">${T('Reset to everyone, everywhere')}</button>`;
@@ -2137,6 +2248,7 @@ function matchIdOf(a,b){return [a,b].sort().join('_')}
 async function makeMatch(p){
   const mid=matchIdOf(uid,p.id);
   if(L.matches.find(m=>m.mid===mid))return;
+  if(L.matches.find(m=>m.peer===p.id))return; // prevent duplicate peer
   L.matches.unshift({mid,peer:p.id,name:p.name,em:p.em,gi:p.gi,ts:Date.now()});
   if(L.freeLeft[mid]===undefined) L.freeLeft[mid]=C.freeChatMsgs; // cloud-backed: don't reset if already 0
   L.chats[mid]=L.chats[mid]||[];
@@ -2218,7 +2330,11 @@ async function goldMatchBack(pid){
 /* ============ MATCHES LIST ============ */
 function unreadTotal(){ return Object.values(L.unread||{}).reduce((a,b)=>a+b,0); }
 function renderMatches(){
-  const freshMs=L.matches.slice(0,8);
+  // Deduplicate matches by peer for display (extra safety against ghost duplicates)
+  const uniqByPeer=new Map();
+  for(const m of L.matches){ if(!uniqByPeer.has(m.peer)) uniqByPeer.set(m.peer,m); }
+  const dedupedMatches=[...uniqByPeer.values()];
+  const freshMs=dedupedMatches.slice(0,8);
   freshMs.sort((a,b)=> (hasStory(b.peer)?1:0) - (hasStory(a.peer)?1:0));
   $('mRow').innerHTML=freshMs.length? freshMs.map((m,i)=>`<button class="mnew" data-mc="${m.mid}" onclick="${hasStory(m.peer)?`openStory('${m.peer}')`:`openChat('${m.mid}')`}">
     <div class="av ${hasStory(m.peer)?'story-hot':''}"><div class="avcover" style="background:${grad(m.gi)};background-image:url('${avaURI({id:m.peer,av:peerAv(m.peer)})}')"></div>${hasStory(m.peer)?'<span class="storydot"></span>':''}</div><span>${m.name}</span></button>`).join('')
@@ -2289,15 +2405,30 @@ function useIce(s){ $('chatIn').value=s; $('chatIn').focus(); }
 function isDeletedForMe(mid,key){ return !!(L.deletedForMe&&L.deletedForMe[mid]&&L.deletedForMe[mid][key]); }
 function paintMsgs(){
   const mid=R.chatWith; if(!mid) return;
+  const isAdminChat = mid.startsWith('admin_');
   const chat=(L.chats[mid]||[]).filter((m,i)=>{ if(!m.key)m.key='local_'+(m.ts||Date.now())+'_'+i; return !isDeletedForMe(mid,m.key); });
   const body=$('chatBody');
-  // smooth: build once, use requestAnimationFrame to avoid freeze on large chats
-  const html=`<div class="sys">💕 You matched — first ${C.freeChatMsgs} messages are free. Be kind ✨<br>Tip: tap any message once to unsend it or delete it for you.</div>`+chat.map((m,i)=>bubbleHtml(m,i)).join('');
-  requestAnimationFrame(()=>{ body.innerHTML=html; scrollChat(); });
+  const adminHeader = isAdminChat ? `<div class="sys" style="background:linear-gradient(45deg,#1a0f14,#2a1322);border:1px solid #3a1f31">🛡️ <b>Admin only — no reply</b> · you can only read</div>` : `<div class="sys">💕 You matched — first ${C.freeChatMsgs} messages are free. Be kind ✨<br>Tip: tap any message once to unsend it or delete it for you.</div>`;
+  const html=adminHeader+chat.map((m,i)=>bubbleHtml(m,i)).join('');
+  requestAnimationFrame(()=>{ 
+    body.innerHTML=html; 
+    scrollChat(); 
+    // Hide input for admin no-reply
+    const foot=document.querySelector('.chatfoot');
+    const freeBar=document.getElementById('freeBar');
+    if(isAdminChat){
+      if(foot) foot.style.display='none';
+      if(freeBar) freeBar.style.display='none';
+    } else {
+      if(foot) foot.style.display='';
+      if(freeBar) freeBar.style.display='';
+    }
+  });
 }
 function bubbleHtml(m,index){
   if(m.who==='sys')return `<div class="sys">${m.text}</div>`;
   if(m.who==='gift')return `<div class="gift">🌹 ${m.fromName} ${T('sent you a rose')}<div class="tiny mut" style="margin-top:3px">${T('Sweet gesture')}</div></div>`;
+  if(m.adminOnly) return `<div class="bub them" style="background:linear-gradient(45deg,#1a0f14,#2a1322);border:1px solid #3a1f31"><span style="font-size:11px;font-weight:900;color:var(--gold)">🛡️ Admin</span><br>${m.text}<span class="tm">${new Date(m.ts).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})} · read only</span></div>`;
   if(!m.key)m.key='local_'+(m.ts||Date.now())+'_'+(index||0);
   const tm=new Date(m.ts).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
   const key=encodeURIComponent(m.key);
@@ -2337,6 +2468,7 @@ async function confirmDeleteMessage(scope,encodedKey){
 async function sendMsg(){
   const v=$('chatIn').value.trim(); if(!v)return;
   if(!isCleanOrWarn(v)) return;
+  if(!canSendWithAntiSpam()) return;
   const mid=R.chatWith; const m=L.matches.find(m=>m.mid===mid); if(!m)return;
   const p=personOf(m.peer);
   const gold=goldActive();
@@ -2417,12 +2549,24 @@ function pullHistory(mid){
 let lastType=0;
 function typingNow(){ if(DEMO)return; const now=Date.now(); if(now-lastType>2000){ lastType=now;
   ref('typing/'+R.chatWith+'/'+uid).set(now); ref('typing/'+R.chatWith+'/'+uid).onDisconnect().remove(); } }
+function clearChatForMe(){
+  const mid=R.chatWith; if(!mid) return;
+  if(!confirm('Clear this conversation for you only? The other person will still see the messages until they clear it too.')) return;
+  const chat=L.chats[mid]||[];
+  L.deletedForMe=L.deletedForMe||{}; L.deletedForMe[mid]=L.deletedForMe[mid]||{};
+  chat.forEach(m=>{ if(m.key) L.deletedForMe[mid][m.key]=1; });
+  L.chats[mid]=[];
+  save(); paintMsgs(); hide('genSheet'); toast('Chat cleared for you — other person still sees it');
+}
 function chatMenu(){
   const m=L.matches.find(m=>m.mid===R.chatWith);
   $('genBody').innerHTML=`<div class="h2" style="margin-bottom:10px">${m?m.name:'Options'}</div>
     <button class="btn btn-line" onclick="viewPeerProfile()">View profile</button>
     <div style="height:8px"></div>
     <button class="btn btn-line" onclick="openThemeSheet()">Chat colors & dark mode</button>
+    <div style="height:8px"></div>
+    <button class="btn btn-line" onclick="clearChatForMe()">🧹 Clear chat for me</button>
+    <div class="mut tiny" style="text-align:center;margin:4px 0">Only for you — other person keeps the chat until they clear too</div>
     <div style="height:8px"></div>
     <button class="btn btn-line" onclick="unmatchAsk()">Unmatch</button>
     <div style="height:8px"></div>
@@ -2513,6 +2657,7 @@ function reportProofAsk(reason){
   show('genSheet');
 }
 async function doUnmatch(reported,reason,proofIndex){
+  if(reported && !canAdminRequest('report', 5000)) return;
   hide('genSheet');
   const mid=R.chatWith; const m=L.matches.find(m=>m.mid===mid); if(!m)return;
   const peerId=m.peer;
@@ -2743,10 +2888,23 @@ skinLang();
 /* live mode: AUTH.onAuthStateChanged drives the boot — phone verify first, 🔐 locks on */
 async function syncBadges(){
   if(DEMO||!L.me)return;
+  // Deduplicate L.matches by mid and peer before syncing (fix duplication bug)
+  const seenMids=new Set(), seenPeers=new Set();
+  L.matches=L.matches.filter(m=>{
+    if(seenMids.has(m.mid) || seenPeers.has(m.peer)) return false;
+    seenMids.add(m.mid); seenPeers.add(m.peer);
+    return true;
+  });
   // pull my cloud matches to render chats
   const snap=await ref('userMatches/'+uid).once('value'); const map=snap.val()||{};
   for(const mid of Object.keys(map)){
     if(L.matches.find(m=>m.mid===mid))continue;
+    // Also ensure peer not already in matches (prevent duplicate peer with different mid)
+    const mCheck=(await ref('matches/'+mid).once('value')).val();
+    if(mCheck){
+      const peerCheck=mCheck.a===uid?mCheck.b:mCheck.a;
+      if(L.matches.find(mm=>mm.peer===peerCheck)) continue;
+    }
     const m=(await ref('matches/'+mid).once('value')).val();
     if(!m||m.dead){ // the other person unmatched — clean MY side too
       await ref('userMatches/'+uid+'/'+mid).remove().catch(()=>{});

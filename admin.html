@@ -127,7 +127,10 @@ tr:last-child td{border-bottom:none}
     <div class="card scrollcard"><table id="tblRp"><tbody></tbody></table></div>
   </div>
   <div id="pg-vf" style="display:none"><div id="vfList"></div></div>
-  <div id="pg-us" style="display:none"><div class="card scrollcard"><table id="tblUs"><tbody></tbody></table></div></div>
+  <div id="pg-us" style="display:none"><div class="card scrollcard"><table id="tblUs"><tbody></tbody></table></div>
+    <div class="sec">Banned users — second chance</div>
+    <div class="card scrollcard"><table id="tblBanned"><tbody></tbody></table></div>
+  </div>
   <div id="pg-ms" style="display:none">
     <!-- Broadcast to all removed to save Spark quota — use direct message to specific users below (from Reports / Verify / GOLD) -->
     <div class="card">
@@ -169,6 +172,13 @@ function tryPin(){
       if(k&&!/^PASTE|^$/.test(k)&&firebase.appCheck){ firebase.appCheck().activate(k,true); } }catch(e){}
   }
   $('gatePin').style.display='none'; $('gatePhone').style.display='block';
+  // If already signed in (fast login, no popup needed), go straight to dash
+  try{
+    if(firebase.auth().currentUser){
+      enter();
+      return;
+    }
+  }catch(e){}
   /* Auto-enter when a sign-in is already done (e.g. returning from mobile redirect) */
   try{ firebase.auth().onAuthStateChanged(u=>{ if(u && (PIN_OK || localStorage.getItem('tayri_admin_pin_ok')==='1')) enter(); }); }catch(e){}
 }
@@ -184,7 +194,53 @@ function adminGoogle(){
       if(e.code==='auth/popup-closed-by-user'||e.code==='auth/cancelled-popup-request')return;
       toast('Sign-in failed: '+e.code,'err'); });
 }
-function enter(){ $('gate').style.display='none'; $('dash').style.display=''; boot(); }
+function enter(){ 
+  try{ localStorage.setItem('tayri_admin_pin_ok','1'); }catch(e){}
+  $('gate').style.display='none'; $('dash').style.display=''; boot(); 
+}
+// Robust global auth: handles fast login, reload, and redirect
+(function setupAdminAuth(){
+  try{
+    if(!tayriCloudReady()) return;
+    // Ensure Firebase is initialized
+    if(!window.firebase || !firebase.apps.length){
+      try{ firebase.initializeApp(TAYRI_CONFIG.firebase); }catch(e){}
+    }
+    if(!window.firebase || !firebase.apps.length) return;
+    // Handle redirect result first
+    try{
+      firebase.auth().getRedirectResult().then(res=>{
+        if(res && res.user && localStorage.getItem('tayri_admin_pin_ok')==='1'){
+          enter();
+        }
+      }).catch(()=>{});
+    }catch(e){}
+    // Global listener for auth restore (covers fast login without popup + reload)
+    try{
+      firebase.auth().onAuthStateChanged(u=>{
+        if(u && localStorage.getItem('tayri_admin_pin_ok')==='1'){
+          const gate = document.getElementById('gate');
+          // If we are still on gate (PIN or Google screen), auto-enter
+          if(gate && gate.style.display !== 'none'){
+            // Also ensure gatePhone is hidden and dash shown via enter()
+            enter();
+          }
+        }
+      });
+    }catch(e){}
+  }catch(e){}
+})();
+// Also, if already authenticated and PIN was previously entered, try to auto-enter after a short delay (covers reload case where auth restores slightly later)
+setTimeout(()=>{
+  try{
+    if(localStorage.getItem('tayri_admin_pin_ok')==='1' && window.firebase && firebase.apps.length && firebase.auth().currentUser){
+      const gate = document.getElementById('gate');
+      if(gate && gate.style.display !== 'none'){
+        enter();
+      }
+    }
+  }catch(e){}
+}, 800);
 function tab(p,el){ ['ov','or','rp','vf','us','ms','st'].forEach(x=>$('pg-'+x).style.display=x===p?'':'none');
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on')); el.classList.add('on'); }
 
@@ -202,7 +258,7 @@ function boot(){
   DB=firebase.database();
   DB.ref('.info/connected').on('value',s=>{$('connState').textContent=s.val()?'● live':'○ offline'; $('connState').style.color=s.val()?'#2fbf71':'#ff6b6b'});
   // 🔐 read pieces separately — locked rules don't allow root reads
-  ['users','presence','matches','chats','orders','reports','gold','verifyReq','photos','verified'].forEach(k=>{
+  ['users','presence','matches','chats','orders','reports','gold','verifyReq','photos','verified','banned','bannedEmails'].forEach(k=>{
     ref(k).on('value',s=>{ D[k]=s.val()||{}; paintAll(); },e=>{
       console.error('Firebase read failed for '+k,e);
       if(['orders','gold'].includes(k)) toast('Admin access denied for '+k+' — confirm this Google UID is in wasla_dating/admins','err');
@@ -228,7 +284,7 @@ function paintAll(){
   ].map(([l,v,c])=>`<div class="kpi"><div class="in"><b class="${c||''}">${v}</b><span>${l}</span></div></div>`).join('');
   $('cntOr').textContent=pendOr.length?`(${pendOr.length})`:'';
   $('cntRp').textContent=reports.length?`(${reports.length})`:'';
-  paintVf();
+  paintVf(); paintBanned();
   // activity = latest 40 things across orders/matches
   const acts=[
     ...orders.map(([k,o])=>({ts:o.ts,txt:`GOLD pass · ${o.name} · ${o.price} DH · <span class="badge ${o.status==='pending'?'b-live':o.status==='approved'?'b-done':'b-x'}">${o.status}</span>`})),
@@ -296,27 +352,35 @@ async function reviewReport(id){
 function banUser(u){
   if(!u||!confirm('Ban this user? Their profile will be removed and their email blocked forever.'))return;
   const userData=(D.users||{})[u]||{};
-  // email is now stored in users/{uid}/email (patched index.html stores it)
   let email=(userData.email||'').toLowerCase().trim();
   if(!email){
-    // fallback: ask admin to paste email if not found (old accounts)
     email=prompt('Email not found in database — paste the user\'s Google email to block it forever (leave empty to only ban UID):','')||'';
     email=email.toLowerCase().trim();
   }
   const updates={};
-  // UID ban — rules already block this UID from reading users
   updates['banned/'+u]= {at:Date.now(), by: (firebase.auth().currentUser&&firebase.auth().currentUser.uid)||'admin'};
   if(email){
     const key=email.replace(/[.\#\$\[\]]/g,'_');
     updates['bannedEmails/'+key]= {email: email, uid: u, at: Date.now()};
   }
-  // remove profile & presence to hide immediately
   updates['users/'+u]= null;
   updates['presence/'+u]= null;
-  // optional: remove their stories/photos? keep for audit but hide
-  // keep wasla_dating/stories, photos for evidence but client won't show banned users
   DB.ref('wasla_dating').update(updates).then(()=>{
     toast(email?'User banned — email blocked forever 🚫':'User banned (UID only — email not found)');
+    // Auto-thank reporter(s): find reports where against==u and send admin no-reply message
+    try{
+      const reports = D.reports||{};
+      const reporters = new Set();
+      for(const [rid, r] of Object.entries(reports)){
+        if(r && r.against===u && r.from) reporters.add(r.from);
+      }
+      const thanks = "Thank you for keeping Tayripages safe 💛 — The user you reported has been reviewed and removed for violating our community rules. Your courage helps everyone. If you see anything else, please report again. — Tayripages Team";
+      reporters.forEach(reporterUid=>{
+        DB.ref('wasla_dating/adminMessages/'+reporterUid).push({text: thanks, from:'admin', by:firebase.auth().currentUser.uid, ts:Date.now(), adminOnly:true, reason:'ban-thanks'});
+        // Also mark those reports as reviewed
+      });
+      if(reporters.size) toast('Reporter(s) will receive a thank-you admin message');
+    }catch(e){ console.warn('auto thanks failed',e); }
   }).catch(e=>{ console.error(e); toast('Ban failed: '+(e.code||e.message)); });
 }
 function dismissRp(id){ ref('reports/'+id).remove(); toast('Dismissed'); }
@@ -382,6 +446,40 @@ function messageUser(uid){
   document.getElementById('directUid').value=uid;
   document.getElementById('directMsg').focus();
   toast('✉️ Messaging '+uid);
+}
+function unbanUser(uid, emailKey){
+  if(!uid) return;
+  const wiseAdvice = "Dear friend,\n\nYou have been given a second chance on Tayripages. We believe in growth and respect.\nPlease cherish this community: be kind, be truthful, be respectful to every heart you meet.\nA single unkind act can hurt deeply — choose to be the reason someone smiles today.\n\nWith hope and trust,\nThe Tayripages Team 💛";
+  if(!confirm('Unban '+uid+'?\nHe will receive this wise advice via inbox.\n\n"'+wiseAdvice+'"')) return;
+  const updates={};
+  updates['banned/'+uid]=null;
+  if(emailKey) updates['bannedEmails/'+emailKey]=null;
+  // Also try to find emailKey if not provided
+  DB.ref('wasla_dating').update(updates).then(()=>{
+    // Send wise advice via adminMessages
+    DB.ref('wasla_dating/adminMessages/'+uid).push({text: wiseAdvice, from:'admin', by:firebase.auth().currentUser.uid, ts:Date.now()});
+    toast('User unbanned — wise advice sent 💛');
+    paintBanned();
+  }).catch(e=>toast('Unban failed: '+(e.code||e.message)));
+}
+function paintBanned(){
+  const tbl=document.getElementById('tblBanned');
+  if(!tbl) return;
+  const banned=D.banned||{};
+  const rows=Object.entries(banned);
+  if(!rows.length){ tbl.innerHTML='<tbody><tr><td class="mut">No banned users — community is healthy.</td></tr></tbody>'; return; }
+  tbl.innerHTML='<tbody><tr><th>User</th><th>Since</th><th></th></tr>'+rows.map(([uid,info])=>{
+    const when=info && info.at ? new Date(info.at).toLocaleDateString() : '';
+    // Find emailKey that points to this uid
+    let emailKey='';
+    try{
+      for(const [k,v] of Object.entries(D.bannedEmails||{})){
+        if(v && v.uid===uid){ emailKey=k; break; }
+      }
+    }catch(e){}
+    const emailDisplay = emailKey ? emailKey.replace(/_/g,'.') : '—';
+    return `<tr><td class="small"><b>${uid}</b><div class="mut tiny">${emailDisplay}</div></td><td class="mut tiny">${when}</td><td style="text-align:end"><button class="btn btn-g" onclick="unbanUser('${uid}','${emailKey}')">Unban + wise advice</button></td></tr>`;
+  }).join('')+'</tbody>';
 }
 function wipe(){
   if(!confirm('Really delete ALL data? This will KEEP banned UIDs & bannedEmails forever (as requested). Continue?'))return;
