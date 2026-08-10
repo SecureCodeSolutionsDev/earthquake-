@@ -773,7 +773,7 @@ function shop(){ openGold(); } // legacy shim
 /* ============ 👑 TAYRIPAGES GOLD — one-time pass, unlimited forever (no coins) */
 function extraInfosHtml(p){
   const fields=[
-    [p.profession, '💼'],[p.education,'🎓'],[p.relation,'❤️'],[p.kids!==''?p.kids+' kids':'' ,'👶'],[p.height? p.height+' cm':'' ,'📏'],[p.body,'👤'],[p.income,'💰'],[p.smoke,'🚬'],[p.drink,'🍷'],[p.religion,'🕌'],[p.intent,'🎯']
+    [p.profession, '💼'],[p.education,'🎓'],[p.relation,'❤️'],[p.height? p.height+' cm':'' ,'📏'],[p.body,'👤'],[p.income,'💰'],[p.smoke,'🚬'],[p.drink,'🍷'],[p.religion,'🕌'],[p.intent,'🎯']
   ];
   return fields.filter(f=>f[0]).map(f=>`<span class="chip" style="font-size:11px">${f[1]} ${f[0]}</span>`).join('');
 }
@@ -1290,10 +1290,19 @@ async function cloudDiscover(){
         km:(g&&L.geo)?distKm(L.geo.la,L.geo.lo,g.la,g.lo):null,
         fresh:(p.lastSeen||0)>now-3*86400000, verified:!!vfd[k]}; });
   if(flt.country&&flt.country!=='all')pool=pool.filter(p=>countryOf(p.city)===flt.country);
+  if(flt.ageRange&&flt.ageRange!=='all'){
+    pool=pool.filter(p=>{
+      const age=p.age||22;
+      if(flt.ageRange==='18-25') return age>=18 && age<=25;
+      if(flt.ageRange==='26-35') return age>=26 && age<=35;
+      if(flt.ageRange==='36-45') return age>=36 && age<=45;
+      if(flt.ageRange==='46+') return age>=46;
+      return true;
+    });
+  }
   if(flt.profession&&flt.profession!=='all')pool=pool.filter(p=> (p.profession||'')===flt.profession);
   if(flt.education&&flt.education!=='all')pool=pool.filter(p=> (p.education||'')===flt.education);
   if(flt.relation&&flt.relation!=='all')pool=pool.filter(p=> (p.relation||'')===flt.relation);
-  if(flt.kids&&flt.kids!=='all')pool=pool.filter(p=> (p.kids||'')===flt.kids);
   if(flt.body&&flt.body!=='all')pool=pool.filter(p=> (p.body||'')===flt.body);
   if(flt.income&&flt.income!=='all')pool=pool.filter(p=> (p.income||'')===flt.income);
   if(flt.smoke&&flt.smoke!=='all')pool=pool.filter(p=> (p.smoke||'')===flt.smoke);
@@ -1393,8 +1402,15 @@ async function cloudUpload(dataUrl){ /* optional Cloudinary (free 25GB) — else
   }
   return dataUrl;
 }
+const _uploadSpam = { last: 0 };
 function pickPhoto(){
   if(!L.me)return;
+  const now = Date.now();
+  if (now - _uploadSpam.last < 5000) {
+    toast('⏳ Please wait 5 seconds between uploads');
+    return;
+  }
+  _uploadSpam.last = now;
   const inp=document.createElement('input'); inp.type='file'; inp.accept='image/*';
   inp.onchange=async()=>{ const f=inp.files&&inp.files[0]; if(!f)return;
     toast('📸 Polishing your photo…');
@@ -1563,6 +1579,12 @@ async function openStory(peer){
 function closeStory(){ clearTimeout(window._svT); const v=$('storyV'); if(v)v.classList.remove('on'); }
 function pickStory(){
   if(!L.me)return;
+  const now = Date.now();
+  if (now - _uploadSpam.last < 5000) {
+    toast('⏳ Please wait 5 seconds between uploads');
+    return;
+  }
+  _uploadSpam.last = now;
   const inp=document.createElement('input'); inp.type='file'; inp.accept='image/*';
   inp.onchange=async()=>{ const f=inp.files&&inp.files[0]; if(!f)return;
     toast('📸 Polishing your photo…');
@@ -1886,14 +1908,14 @@ function paintNearChip(){ const b=$('nearChip'); if(!b)return;
   else { b.style.background=''; b.style.color=''; b.innerHTML=IC('pin',15); } }
 /* ============ 🌍 DISCOVERY FILTERS — everyone browsable, you tune who appears ============ */
 const CITY_COUNTRY={Casablanca:'Morocco',Rabat:'Morocco',Marrakech:'Morocco',Tangier:'Morocco',Agadir:'Morocco','Fès':'Morocco','Meknès':'Morocco',Oujda:'Morocco','Laâyoune':'Morocco','Al Hoceima':'Morocco',Essaouira:'Morocco',Chefchaouen:'Morocco',Algiers:'Algeria',Oran:'Algeria',Tunis:'Tunisia',Paris:'France',Marseille:'France',Lyon:'France',Toulouse:'France',Brussels:'Belgium',Geneva:'Switzerland',Madrid:'Spain',Barcelona:'Spain',Valencia:'Spain',London:'United Kingdom',Amsterdam:'Netherlands',Berlin:'Germany',Munich:'Germany',Rome:'Italy',Milan:'Italy',Lisbon:'Portugal',Cairo:'Egypt',Istanbul:'Turkey',Dubai:'UAE','Abu Dhabi':'UAE',Doha:'Qatar',Riyadh:'Saudi Arabia',Jeddah:'Saudi Arabia',Dakar:'Senegal',Abidjan:"Côte d'Ivoire",Lagos:'Nigeria',Nairobi:'Kenya','New York':'USA','Los Angeles':'USA',Miami:'USA',Toronto:'Canada',Montreal:'Canada','Mexico City':'Mexico','São Paulo':'Brazil','Buenos Aires':'Argentina',Tokyo:'Japan',Singapore:'Singapore',Bangkok:'Thailand',Seoul:'South Korea',Sydney:'Australia',Mumbai:'India',Jakarta:'Indonesia'};
-function countryOf(city){ return CITY_COUNTRY[city]||'Other'; }
-function F(){ if(!L.filters)L.filters={show:'auto',country:'all', profession:'all', education:'all', relation:'all', kids:'all', body:'all', income:'all', smoke:'all', drink:'all', religion:'all', intent:'all'}; return L.filters; }
-function filtersActive(){ const f=F(); return f.country!=='all'||f.show!=='auto'||f.profession!=='all'||f.education!=='all'||f.relation!=='all'||f.kids!=='all'||f.body!=='all'||f.income!=='all'||f.smoke!=='all'||f.drink!=='all'||f.religion!=='all'||f.intent!=='all'; }
+function countryOf(city){ return CITY_COUNTRY[city]||city||'Morocco'; }
+function F(){ if(!L.filters)L.filters={show:'auto',country:'all', profession:'all', education:'all', relation:'all', body:'all', income:'all', smoke:'all', drink:'all', religion:'all', intent:'all', ageRange:'all'}; if(!L.filters.ageRange) L.filters.ageRange='all'; return L.filters; }
+function filtersActive(){ const f=F(); return f.country!=='all'||f.show!=='auto'||f.profession!=='all'||f.education!=='all'||f.relation!=='all'||f.body!=='all'||f.income!=='all'||f.smoke!=='all'||f.drink!=='all'||f.religion!=='all'||f.intent!=='all'||f.ageRange!=='all'; }
 function openFilters(){
   const f=F();
   const seen={}; const countries=[];
   R.usersCache.forEach(p=>{ const c=countryOf(p.city); if(!seen[c]){seen[c]=1;countries.push(c);} });
-  ['Morocco','France','Spain','UAE','Turkey','United Kingdom','USA','Other'].forEach(c=>{ if(!seen[c]){seen[c]=1;countries.push(c);} });
+  ['Morocco','France','Spain','UAE','Turkey','United Kingdom','USA'].forEach(c=>{ if(!seen[c]){seen[c]=1;countries.push(c);} });
   const segB=(val,label)=>`<button class="${f.show===val?'on':''}" onclick="F().show='${val}';openFilters()">${label}</button>`;
   const chipFor=(key,val,label)=>`<button class="tchip ${F()[key]===val?'on':''}" onclick="F().${key}='${val}';openFilters()">${label}</button>`;
   $('genBody').innerHTML=`<div class="h2" style="display:flex;align-items:center;gap:8px">${IC('sliders',21)} ${T('Discovery settings')}</div>
@@ -1901,6 +1923,8 @@ function openFilters(){
     <div class="mut small" style="font-weight:900">${T('Show me')}</div>
     <div class="seg" style="margin:6px 0 8px">${segB('auto',T('My preference'))}${segB('e',T('Everyone'))}</div>
     <div class="seg" style="margin:0 0 14px">${segB('w',T('Women'))}${segB('m',T('Men'))}</div>
+    <div class="mut small" style="font-weight:900">${T('Age')}</div>
+    <div class="tagwrap" style="margin:6px 0 14px">${['all','18-25','26-35','36-45','46+'].map(v=>chipFor('ageRange',v, v==='all'?T('All'):v)).join('')}</div>
     <div class="mut small" style="font-weight:900">${T('Country')}</div>
     <div class="tagwrap" style="margin:6px 0 10px;max-height:120px;overflow-y:auto">
       <button class="tchip ${f.country==='all'?'on':''}" onclick="F().country='all';openFilters()">${T('All countries')}</button>
@@ -1909,14 +1933,12 @@ function openFilters(){
     <div class="mut small" style="font-weight:900">Profession</div>
     <div class="tagwrap" style="margin:6px 0 10px">${['all','Student','Employee','Entrepreneur','Freelance'].map(v=>chipFor('profession',v, v==='all'?T('All'):v)).join('')}</div>
     <div class="mut small" style="font-weight:900">Looking for</div>
-    <div class="tagwrap" style="margin:6px 0 10px">${['all','Marriage','Serious relationship','Friendship','Casual'].map(v=>chipFor('intent',v, v==='all'?T('All'):T(v))).join('')}</div>
+    <div class="tagwrap" style="margin:6px 0 10px">${['all','Marriage','Serious relationship','Friendship','Other'].map(v=>chipFor('intent',v, v==='all'?T('All'):T(v))).join('')}</div>
     <div class="mut small" style="font-weight:900">Education</div>
     <div class="tagwrap" style="margin:6px 0 10px">${['all','High School','Bachelor','Master','PhD'].map(v=>chipFor('education',v, v==='all'?T('All'):T(v))).join('')}</div>
-    <div class="mut small" style="font-weight:900">Kids</div>
-    <div class="tagwrap" style="margin:6px 0 16px">${['all','0','1','2','3+'].map(v=>chipFor('kids',v, v==='all'?T('All'):v)).join('')}</div>
     <button class="btn btn-grad" onclick="applyFilters()">${T('Apply — refresh my deck')}</button>
     <div style="height:8px"></div>
-    <button class="btn btn-line" onclick="L.filters={show:'auto',country:'all'};save();applyFilters()">${T('Reset to everyone, everywhere')}</button>`;
+    <button class="btn btn-line" onclick="L.filters={show:'auto',country:'all',ageRange:'all'};save();applyFilters()">${T('Reset to everyone, everywhere')}</button>`;
   show('genSheet');
 }
 function applyFilters(){ save(); hide('genSheet'); R.cacheTs=0; paintFiltChip();
@@ -1995,10 +2017,7 @@ function paintOb(){
      <select class="inp" id="obEdu" onchange="OB.data.education=this.value"><option value="">${T('Select')}</option><option ${d.education==='High School'?'selected':''}>${T('High School')}</option><option ${d.education==='Bachelor'?'selected':''}>${T('Bachelor')}</option><option ${d.education==='Master'?'selected':''}>${T('Master')}</option><option ${d.education==='PhD'?'selected':''}>${T('PhD')}</option></select>
      <div class="mut small">${T('Relationship status')}</div>
      <select class="inp" id="obRel" onchange="OB.data.relation=this.value"><option value="">${T('Select')}</option><option ${d.relation==='Single'?'selected':''}>${T('Single')}</option><option ${d.relation==='Divorced'?'selected':''}>${T('Divorced')}</option><option ${d.relation==='Widowed'?'selected':''}>${T('Widowed')}</option><option ${d.relation==='Separated'?'selected':''}>${T('Separated')}</option></select>
-     <div class="row" style="gap:8px">
-       <div style="flex:1"><div class="mut small">${T('Children')}</div><select class="inp" id="obKids" onchange="OB.data.kids=this.value"><option value="">${T('Select')}</option><option ${d.kids==='0'?'selected':''}>0</option><option ${d.kids==='1'?'selected':''}>1</option><option ${d.kids==='2'?'selected':''}>2</option><option ${d.kids==='3+'?'selected':''}>3+</option></select></div>
-       <div style="flex:1"><div class="mut small">${T('Height (cm)')}</div><input class="inp" id="obHeight" type="number" min="140" max="210" value="${d.height||''}" placeholder="170" oninput="OB.data.height=this.value"></div>
-     </div>
+     <div class="mut small">${T('Height (cm)')}</div><input class="inp" id="obHeight" type="number" min="140" max="210" value="${d.height||''}" placeholder="170" oninput="OB.data.height=this.value">
      <div class="mut small">${T('Body type')}</div>
      <select class="inp" id="obBody" onchange="OB.data.body=this.value"><option value="">${T('Select')}</option><option ${d.body==='Slim'?'selected':''}>${T('Slim')}</option><option ${d.body==='Average'?'selected':''}>${T('Average')}</option><option ${d.body==='Athletic'?'selected':''}>${T('Athletic')}</option><option ${d.body==='Curvy'?'selected':''}>${T('Curvy')}</option><option ${d.body==='Muscular'?'selected':''}>${T('Muscular')}</option></select>
      <div class="mut small">${T('Income')}</div>
@@ -2010,7 +2029,7 @@ function paintOb(){
      <div class="mut small">${T('Religion')}</div>
      <select class="inp" id="obReligion" onchange="OB.data.religion=this.value"><option value="">${T('Select')}</option><option ${d.religion==='Muslim'?'selected':''}>${T('Muslim')}</option><option ${d.religion==='Christian'?'selected':''}>${T('Christian')}</option><option ${d.religion==='Jewish'?'selected':''}>${T('Jewish')}</option><option ${d.religion==='Other'?'selected':''}>${T('Other')}</option><option ${d.religion==='Prefer not to say'?'selected':''}>${T('Prefer not to say')}</option></select>
      <div class="mut small">${T('Looking for')}</div>
-     <select class="inp" id="obIntent" onchange="OB.data.intent=this.value"><option value="">${T('Select')}</option><option ${d.intent==='Marriage'?'selected':''}>${T('Marriage')}</option><option ${d.intent==='Serious relationship'?'selected':''}>${T('Serious relationship')}</option><option ${d.intent==='Friendship'?'selected':''}>${T('Friendship')}</option><option ${d.intent==='Casual'?'selected':''}>${T('Casual')}</option></select>
+     <select class="inp" id="obIntent" onchange="OB.data.intent=this.value"><option value="">${T('Select')}</option><option ${d.intent==='Marriage'?'selected':''}>${T('Marriage')}</option><option ${d.intent==='Serious relationship'?'selected':''}>${T('Serious relationship')}</option><option ${d.intent==='Friendship'?'selected':''}>${T('Friendship')}</option><option ${d.intent==='Other'?'selected':''}>${T('Other')}</option></select>
      <div style="height:6px"></div>
      <button class="btn btn-grad" onclick="obFinish()">Start swiping</button>
      <div class="mut tiny" style="text-align:center;margin-top:6px">All fields required — helps matches know you, shown on your profile.</div>
@@ -2040,7 +2059,6 @@ async function obFinish(){
   const _prof=document.getElementById('obProf'); if(_prof) OB.data.profession=_prof.value;
   const _edu=document.getElementById('obEdu'); if(_edu) OB.data.education=_edu.value;
   const _rel=document.getElementById('obRel'); if(_rel) OB.data.relation=_rel.value;
-  const _kids=document.getElementById('obKids'); if(_kids) OB.data.kids=_kids.value;
   const _height=document.getElementById('obHeight'); if(_height) OB.data.height=_height.value;
   const _body=document.getElementById('obBody'); if(_body) OB.data.body=_body.value;
   const _income=document.getElementById('obIncome'); if(_income) OB.data.income=_income.value;
@@ -2049,7 +2067,7 @@ async function obFinish(){
   const _relig=document.getElementById('obReligion'); if(_relig) OB.data.religion=_relig.value;
   const _intent=document.getElementById('obIntent'); if(_intent) OB.data.intent=_intent.value;
   // If on step 4 (those elements exist), validate all required
-  if(_prof && (!_prof.value||!_edu.value||!_rel.value||!_kids.value||!_height.value||!_body.value||!_income.value||!_smoke.value||!_drink.value||!_relig.value||!_intent.value)){
+  if(_prof && (!_prof.value||!_edu.value||!_rel.value||!_height.value||!_body.value||!_income.value||!_smoke.value||!_drink.value||!_relig.value||!_intent.value)){
     return toast('Please fill all fields — they help the right match find you 💛');
   }
   const _rawBio=$('obBio')?$('obBio').value.trim():'New here — say hi and surprise me 💛'; if(_rawBio && !isCleanOrWarn(_rawBio)) return; if(_rawBio) OB.data.bio=_rawBio;
@@ -2188,7 +2206,13 @@ function bindTopCard(){
   R.flyTop=fly;
 }
 function swipeBtn(dir){ if(!R.deck.length)return toast('No cards right now — refresh the deck'); if(R.flyTop)R.flyTop(dir); }
+const _swipeSpam = { last: 0 };
 async function doSwipe(pid,dir){
+  const now = Date.now();
+  if (now - _swipeSpam.last < 300) {
+    return;
+  }
+  _swipeSpam.last = now;
   const p=R.deck.shift(); L.swiped[pid]={d:dir,ts:Date.now()};
   if(!R.deck.length||R.deck.length<3)paintDeck(); else paintDeck();
   R.lastSwipe={p,dir};
@@ -2332,10 +2356,15 @@ function unreadTotal(){ return Object.values(L.unread||{}).reduce((a,b)=>a+b,0);
 function renderMatches(){
   // Deduplicate matches by peer for display (extra safety against ghost duplicates)
   const uniqByPeer=new Map();
-  for(const m of L.matches){ if(!uniqByPeer.has(m.peer)) uniqByPeer.set(m.peer,m); }
-  const dedupedMatches=[...uniqByPeer.values()];
-  const freshMs=dedupedMatches.slice(0,8);
-  freshMs.sort((a,b)=> (hasStory(b.peer)?1:0) - (hasStory(a.peer)?1:0));
+  for(const m of L.matches){
+    if(m && m.peer && m.peer !== uid && !uniqByPeer.has(m.peer)) {
+      uniqByPeer.set(m.peer, m);
+    }
+  }
+  L.matches = [...uniqByPeer.values()];
+  save();
+  const dedupedMatches=L.matches;
+  const freshMs=dedupedMatches.filter(m => m.peer !== 'admin' && hasStory(m.peer)).slice(0,8);
   $('mRow').innerHTML=freshMs.length? freshMs.map((m,i)=>`<button class="mnew" data-mc="${m.mid}" onclick="${hasStory(m.peer)?`openStory('${m.peer}')`:`openChat('${m.mid}')`}">
     <div class="av ${hasStory(m.peer)?'story-hot':''}"><div class="avcover" style="background:${grad(m.gi)};background-image:url('${avaURI({id:m.peer,av:peerAv(m.peer)})}')"></div>${hasStory(m.peer)?'<span class="storydot"></span>':''}</div><span>${m.name}</span></button>`).join('')
     :`<div class="mut small" style="padding:4px 0 10px">Your next match is one swipe away</div>`;
@@ -2408,7 +2437,7 @@ function paintMsgs(){
   const isAdminChat = mid.startsWith('admin_');
   const chat=(L.chats[mid]||[]).filter((m,i)=>{ if(!m.key)m.key='local_'+(m.ts||Date.now())+'_'+i; return !isDeletedForMe(mid,m.key); });
   const body=$('chatBody');
-  const adminHeader = isAdminChat ? `<div class="sys" style="background:linear-gradient(45deg,#1a0f14,#2a1322);border:1px solid #3a1f31">🛡️ <b>Admin only — no reply</b> · you can only read</div>` : `<div class="sys">💕 You matched — first ${C.freeChatMsgs} messages are free. Be kind ✨<br>Tip: tap any message once to unsend it or delete it for you.</div>`;
+  const adminHeader = isAdminChat ? '' : `<div class="sys">💕 You matched — first ${C.freeChatMsgs} messages are free. Be kind ✨<br>Tip: tap any message once to unsend it or delete it for you.</div>`;
   const html=adminHeader+chat.map((m,i)=>bubbleHtml(m,i)).join('');
   requestAnimationFrame(()=>{ 
     body.innerHTML=html; 
@@ -2428,7 +2457,7 @@ function paintMsgs(){
 function bubbleHtml(m,index){
   if(m.who==='sys')return `<div class="sys">${m.text}</div>`;
   if(m.who==='gift')return `<div class="gift">🌹 ${m.fromName} ${T('sent you a rose')}<div class="tiny mut" style="margin-top:3px">${T('Sweet gesture')}</div></div>`;
-  if(m.adminOnly) return `<div class="bub them" style="background:linear-gradient(45deg,#1a0f14,#2a1322);border:1px solid #3a1f31"><span style="font-size:11px;font-weight:900;color:var(--gold)">🛡️ Admin</span><br>${m.text}<span class="tm">${new Date(m.ts).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})} · read only</span></div>`;
+  if(m.adminOnly) return `<div class="bub them" style="background:#151515; border:1px solid #2f202c; color:#ffffff;"><span style="font-size:11px;font-weight:900;color:var(--pk)">🛡️ Admin</span><br>${m.text}<span class="tm" style="color:#b193a3">${new Date(m.ts).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}</span></div>`;
   if(!m.key)m.key='local_'+(m.ts||Date.now())+'_'+(index||0);
   const tm=new Date(m.ts).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
   const key=encodeURIComponent(m.key);
@@ -2470,6 +2499,12 @@ async function sendMsg(){
   if(!isCleanOrWarn(v)) return;
   if(!canSendWithAntiSpam()) return;
   const mid=R.chatWith; const m=L.matches.find(m=>m.mid===mid); if(!m)return;
+  const history = L.chats[mid] || [];
+  const lastMsg = history.length ? history[history.length - 1] : null;
+  if (lastMsg && lastMsg.text === v && Date.now() - (lastMsg.ts || 0) < 30000) {
+    toast('⏳ You already sent this message — let them reply!');
+    return;
+  }
   const p=personOf(m.peer);
   const gold=goldActive();
   let left=(L.freeLeft[mid]!==undefined?L.freeLeft[mid]:C.freeChatMsgs);
@@ -2574,10 +2609,22 @@ function chatMenu(){
   show('genSheet');
 }
 /* 🎨 chat comfort — colorblind-friendly palettes + dark chat */
-function paintChatTheme(){ const cs=$('chatScr'); if(!cs)return;
+function paintChatTheme(){
+  const cs=$('chatScr'); if(!cs)return;
   cs.classList.remove('ct-ocean','ct-violet','ct-mono','dark');
-  const th=L.chatTheme||'rose'; if(th!=='rose')cs.classList.add('ct-'+th);
-  if(L.chatDark)cs.classList.add('dark'); }
+  const isAdmin = R.chatWith && R.chatWith.startsWith('admin_');
+  if(isAdmin) {
+    cs.style.background = '#000000';
+    const body = $('chatBody');
+    if (body) body.style.background = '#000000';
+  } else {
+    cs.style.background = '';
+    const body = $('chatBody');
+    if (body) body.style.background = '';
+    const th=L.chatTheme||'rose'; if(th!=='rose')cs.classList.add('ct-'+th);
+    if(L.chatDark)cs.classList.add('dark');
+  }
+}
 function openThemeSheet(){
   const th=L.chatTheme||'rose';
   const row=(id,name,desc,c1,c2)=>`<button class="palrow ${th===id?'on':''}" onclick="setChatTheme('${id}')"><span class="palsamp"><i style="background:${c1}"></i><i style="background:${c2}"></i></span><span style="flex:1"><b>${name}</b><div class="mut tiny">${desc}</div></span>${th===id?IC('check',16):''}</button>`;
@@ -2770,7 +2817,7 @@ function previewMe(){
       <div style="font-size:13.5px;margin-top:8px;line-height:1.5">${L.me.bio||''}</div>
       <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:9px">${tags.map(t=>`<span style="background:rgba(255,255,255,.18);padding:5px 10px;border-radius:999px;font-size:11.5px;font-weight:700">${t}</span>`).join('')}</div>
     </div>
-    <div style="height:58px;background:#0b050c;display:flex;align-items:center;justify-content:center;color:var(--mut);font-size:10.5px;font-weight:900;letter-spacing:1px">THIS IS WHAT OTHERS SEE</div>
+    <div style="height:58px;background:#0b050c;display:flex;align-items:center;justify-content:center;color:var(--mut);font-size:10.5px;font-weight:900;letter-spacing:1px">${T('THIS IS WHAT OTHERS SEE')}</div>
   </div>
   <div style="height:10px"></div>
   <button class="btn btn-line" onclick="hide('genSheet')">${T('Close')}</button>`;
@@ -2786,7 +2833,7 @@ function renderProfile(){
     <div class="pcard">
       <div class="ph" style="background:${grad(L.me.gi)}">${mp?`<img src="${mp}" alt="my photo">`:`<div class="pletter">${(L.me.name||'T')[0].toUpperCase()}</div>`}</div>
       <div class="pbody">
-        <div class="nm h2" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">${L.me.name}, ${L.me.age} ${VB(L.verified)} <span class="phbadge ${L.verified?'blue':''}">${L.verified?'VERIFIED':(mp?'PHOTO PROFILE':'GOOGLE VERIFIED')}</span></div>
+        <div class="nm h2" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">${L.me.name}, ${L.me.age} ${VB(L.verified)} <span class="phbadge ${L.verified?'blue':''}">${L.verified?T('VERIFIED'):(mp?T('PHOTO PROFILE'):T('GOOGLE VERIFIED'))}</span></div>
         <div class="mut small" style="margin:4px 0">${IC('pin',13)} ${L.me.city}</div>
         <div class="small">${L.me.bio}</div>
         <div class="row" style="flex-wrap:wrap;gap:6px;margin-top:8px">${L.me.tags.map(t=>`<span class="chip" style="font-size:11px;display:inline-flex;align-items:center;gap:5px">${TIC(t,12)}${tagTxt(t)}</span>`).join('')}</div>
@@ -2795,10 +2842,10 @@ function renderProfile(){
     </div>
     <div style="padding:4px 18px">
       <div class="card" style="margin-bottom:10px">
-        <div class="spread"><b class="small">${T('My photos')}</b><span class="mut tiny">${photos.length}/${maxPh} · first = main</span></div>
+        <div class="spread"><b class="small">${T('My photos')}</b><span class="mut tiny">${photos.length}/${maxPh} · ${T('first = main')}</span></div>
         <div class="mut tiny" style="margin:4px 0 10px">${T('Real photos get ~3× more matches. Auto-compressed & synced — free.')}</div>
         <div class="photogrid">
-          ${photos.map((u,i)=>`<div class="phslot full"><button class="del" onclick="delPhoto(${i})">✕</button>${i===0?'<span class="main">MAIN</span>':''}<img src="${u}" alt=""></div>`).join('')}
+          ${photos.map((u,i)=>`<div class="phslot full"><button class="del" onclick="delPhoto(${i})">✕</button>${i===0?'<span class="main">'+T('MAIN')+'</span>':''}<img src="${u}" alt=""></div>`).join('')}
           ${photos.length<maxPh?`<button class="phslot" onclick="pickPhoto()">＋</button>`:''}
         </div>
       </div>
@@ -2830,9 +2877,9 @@ function renderProfile(){
         <div class="row"><input class="inp" id="giftGoldIn" placeholder="${T('Friend\'s ID')}" maxlength="7" autocomplete="off" autocapitalize="characters" style="text-transform:uppercase;letter-spacing:3px;font-weight:900;text-align:center">
         <button class="pill" style="padding:14px 18px;flex:none;background:var(--grad);color:#fff" onclick="giftGoldById()">${T('Gift GOLD')}</button></div>
         <div class="divider" style="margin:12px 0"></div>
-        <b class="small">🎁 Gift GOLD to a match</b>
-        <div class="mut tiny" style="margin:4px 0 8px">Choose one of your matches — they get GOLD instantly too. Combined with ID gifting in one place.</div>
-        <div class="row"><select class="inp" id="giftMatchSel" style="flex:1"><option value="">Choose a match</option>${L.matches.map(m=>'<option value="'+m.peer+'">'+m.name+'</option>').join('')}</select>
+        <b class="small">${T('🎁 Gift GOLD to a match')}</b>
+        <div class="mut tiny" style="margin:4px 0 8px">${T('Choose one of your matches — they get GOLD instantly too. Combined with ID gifting in one place.')}</div>
+        <div class="row"><select class="inp" id="giftMatchSel" style="flex:1"><option value="">${T('Choose a match')}</option>${L.matches.map(m=>'<option value="'+m.peer+'">'+m.name+'</option>').join('')}</select>
         <button class="pill" style="padding:14px 18px;flex:none;background:var(--grad);color:#fff" onclick="giftGoldToMatch()">${T('Gift GOLD')}</button></div>
       </div>
       <div class="seclab" data-t="This week">This week</div>
@@ -2849,14 +2896,14 @@ function renderProfile(){
       <div class="seclab" data-t="Settings & more">Settings & more</div>
       <div class="setcard" style="margin:0 0 12px">
         <button class="mprow" onclick="openLangSheet()"><div class="mico mic-a">${IC('globe',22)}</div><div class="mtxt"><b>${T('Language')}</b><div>English · Français · Español · Português · Русский · 中文 · العربية</div></div><span class="pill">${(L.lang||'en').toUpperCase()}</span></button>
-        <button class="mprow" onclick="startVerify()"><div class="mico mic-b">${IC('check',22)}</div><div class="mtxt"><b>${T('VERIFIED badge')}</b><div>${L.verified?'You are verified — blue check everywhere':L.verifyPending?'Selfie under review (usually under 24h)':'Selfie + peace sign = blue check'}</div></div><span class="pill" style="${L.verified?'background:#e3f1ff;color:#2f8fe0':''}">${L.verified?'✓ VERIFIED':L.verifyPending?'Reviewing':'Get it'}</span></button>
-        <button class="mprow" onclick="openAvSheet()"><div class="mico mic-c">${IC('person',22)}</div><div class="mtxt"><b>Avatar art</b><div>Pick your vibe — your photo always wins</div></div><span class="pill">8 arts</span></button>
-        <button class="mprow" onclick="toggleGeo()"><div class="mico mic-c">${IC('pin',22)}</div><div class="mtxt"><b>${T('Real distance (GPS)')}</b><div>${L.geo?'Tap to turn OFF — you control your location':'Real kilometres — always free'}</div></div><span class="pill ${L.geo?'pon':''}">${L.geo?'ON · tap to stop':'Turn on'}</span></button>
+        <button class="mprow" onclick="startVerify()"><div class="mico mic-b">${IC('check',22)}</div><div class="mtxt"><b>${T('VERIFIED badge')}</b><div>${L.verified?T('You are verified — blue check everywhere'):L.verifyPending?T('Selfie under review (usually under 24h)'):T('Selfie + peace sign = blue check')}</div></div><span class="pill" style="${L.verified?'background:#e3f1ff;color:#2f8fe0':''}">${L.verified?'✓ '+T('VERIFIED'):L.verifyPending?T('Reviewing'):T('Get it')}</span></button>
+        <button class="mprow" onclick="openAvSheet()"><div class="mico mic-c">${IC('person',22)}</div><div class="mtxt"><b>${T('Avatar art')}</b><div>${T('Pick your vibe — your photo always wins')}</div></div><span class="pill">${T('8 arts')}</span></button>
+        <button class="mprow" onclick="toggleGeo()"><div class="mico mic-c">${IC('pin',22)}</div><div class="mtxt"><b>${T('Real distance (GPS)')}</b><div>${L.geo?T('Tap to turn OFF — you control your location'):T('Real kilometres — always free')}</div></div><span class="pill ${L.geo?'pon':''}">${L.geo?T('ON · tap to stop'):T('Turn on')}</span></button>
         <button class="mprow" onclick="location.href='video.html'"><div class="mico mic-e">${IC('video',22)}</div><div class="mtxt"><b>${T('Instant video')}</b><div>${T('Meet someone live — free')}</div></div><span class="chev">›</span></button>
         <button class="mprow" onclick="location.href='leaderboard.html'"><div class="mico mic-d">${IC('medal',22)}</div><div class="mtxt"><b>${T('Weekly leaderboard')}</b><div>${T('Build your social presence')}</div></div><span class="chev">›</span></button>
-        <button class="mprow" onclick="toggleNotif()"><div class="mico mic-f">${IC('bell',22)}</div><div class="mtxt"><b>${T('In-app notifications')}</b><div>Toasts while the app is open</div></div><div class="toggle ${L.notif===false?'':'on'}" id="notifT"></div></button>
-        <button class="mprow" onclick="openSafety()"><div class="mico mic-g">${IC('shield',22)}</div><div class="mtxt"><b>${T('Safety center')}</b><div>Block, report, dating tips</div></div><span class="chev">›</span></button>
-        <button class="mprow" onclick="openHelp()"><div class="mico mic-h">${IC('chat',22)}</div><div class="mtxt"><b>${T('Help & support')}</b><div>Answers, payments, contact</div></div><span class="chev">›</span></button>
+        <button class="mprow" onclick="toggleNotif()"><div class="mico mic-f">${IC('bell',22)}</div><div class="mtxt"><b>${T('In-app notifications')}</b><div>${T('Toasts while the app is open')}</div></div><div class="toggle ${L.notif===false?'':'on'}" id="notifT"></div></button>
+        <button class="mprow" onclick="openSafety()"><div class="mico mic-g">${IC('shield',22)}</div><div class="mtxt"><b>${T('Safety center')}</b><div>${T('Block, report, dating tips')}</div></div><span class="chev">›</span></button>
+        <button class="mprow" onclick="openHelp()"><div class="mico mic-h">${IC('chat',22)}</div><div class="mtxt"><b>${T('Help & support')}</b><div>${T('Answers, payments, contact')}</div></div><span class="chev">›</span></button>
       </div>
     </div>`;
 }
@@ -2867,7 +2914,7 @@ async function resetAll(){ /* one tap = logged out. No popup, no drama — the c
   location.reload(); }
 function extraInfosHtml(p){
   const fields=[
-    [p.profession, '💼'],[p.education,'🎓'],[p.relation,'❤️'],[p.kids!==''?p.kids+' kids':'' ,'👶'],[p.height? p.height+' cm':'' ,'📏'],[p.body,'👤'],[p.income,'💰'],[p.smoke,'🚬'],[p.drink,'🍷'],[p.religion,'🕌'],[p.intent,'🎯']
+    [p.profession, '💼'],[p.education,'🎓'],[p.relation,'❤️'],[p.height? p.height+' cm':'' ,'📏'],[p.body,'👤'],[p.income,'💰'],[p.smoke,'🚬'],[p.drink,'🍷'],[p.religion,'🕌'],[p.intent,'🎯']
   ];
   return fields.filter(f=>f[0]).map(f=>`<span class="chip" style="font-size:11px">${f[1]} ${f[0]}</span>`).join('');
 }

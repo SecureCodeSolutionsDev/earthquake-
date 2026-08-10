@@ -168,7 +168,7 @@ svg{display:inline-block}
 <header class="top">
   <a class="brand" href="./index.html" aria-label="Back to Tayripages">
     <span class="mark"><svg width="20" height="20" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67zM11.71 19c-1.78 0-3.22-1.4-3.22-3.14 0-1.63 1.05-2.76 2.81-3.12 1.77-.36 3.6-1.21 4.62-2.58.39 1.29.59 2.65.59 4.04 0 2.65-2.15 4.8-4.8 4.8z"/></svg></span>
-    <span class="brand-copy"><span class="brand-name">Tayripages Video</span></span>
+    <span class="brand-copy"><span class="brand-name" data-t="Tayripages Video">Tayripages Video</span></span>
   </a>
   <div class="top-r">
     <span class="onlinepill hidden" id="onlinePill"><span class="opdot"></span><span id="onlineNum">0</span>&nbsp;online now</span>
@@ -186,7 +186,7 @@ svg{display:inline-block}
 
   <section class="card" id="card">
     <div class="identity" id="identity"></div>
-    <div class="status" id="status">Checking your secure connection…</div>
+    <div class="status" id="status" data-t="Checking your secure connection…">Checking your secure connection…</div>
     <div class="mode-tabs" id="modeTabs">
       <button class="mode active" id="randomMode"><span data-t="Random instant video">Random instant video</span></button>
       <button class="mode" id="matchMode"><span data-t="Video with a match">Video with a match</span></button>
@@ -197,21 +197,21 @@ svg{display:inline-block}
     <div class="pro-filter-panel hidden" id="proFilterPanel">
       <div class="filter-title"><span data-t="Choose who you meet">Choose who you meet</span></div>
       <div class="filter-grid">
-        <label><span data-t="Country">Country</span><span class="free-tag">FREE</span><select id="filterCountry"><option value="all">Everywhere</option></select></label>
-        <label><span data-t="Shared interest">Shared interest</span><span class="free-tag">FREE</span><select id="filterInterest"><option value="any">Any interest</option></select></label>
-        <label><span data-t="Gender">Gender</span><select id="filterGender"><option value="any">Everyone</option><option value="w">Women</option><option value="m">Men</option></select></label>
-        <label><span data-t="Minimum social score">Minimum social score</span><select id="filterSocial"><option value="0">Any level</option><option value="3.1">Silver or higher</option><option value="3.55">Gold or higher</option><option value="3.9">Platinum or higher</option><option value="4.25">Diamond or higher</option></select></label>
-        <label><span data-t="Tayri Charm rank">Tayri Charm rank</span><select id="filterCharm"><option value="0">Any rank</option><option value="100">Top 100</option><option value="50">Top 50</option><option value="10">Top 10</option><option value="3">Top 3</option></select></label>
-        <label><span data-t="Supporter status">Supporter status</span><select id="filterSupporter"><option value="0">Everyone</option><option value="1">Supporters only</option></select></label>
+        <label><span data-t="Country">Country</span><span class="free-tag">FREE</span><select id="filterCountry"><option value="all" data-t="Everywhere">Everywhere</option></select></label>
+        <label><span data-t="Shared interest">Shared interest</span><span class="free-tag">FREE</span><select id="filterInterest"><option value="any" data-t="Any interest">Any interest</option></select></label>
+        <label><span data-t="Gender">Gender</span><select id="filterGender"><option value="any" data-t="Everyone">Everyone</option><option value="w" data-t="Women">Women</option><option value="m" data-t="Men">Men</option></select></label>
+        <label><span data-t="Minimum social score">Minimum social score</span><select id="filterSocial"><option value="0" data-t="Any level">Any level</option><option value="3.1" data-t="Silver or higher">Silver or higher</option><option value="3.55" data-t="Gold or higher">Gold or higher</option><option value="3.9" data-t="Platinum or higher">Platinum or higher</option><option value="4.25" data-t="Diamond or higher">Diamond or higher</option></select></label>
+        <label><span data-t="Tayri Charm rank">Tayri Charm rank</span><select id="filterCharm"><option value="0" data-t="Any rank">Any rank</option><option value="100" data-t="Top 100">Top 100</option><option value="50" data-t="Top 50">Top 50</option><option value="10" data-t="Top 10">Top 10</option><option value="3" data-t="Top 3">Top 3</option></select></label>
+        <label><span data-t="Supporter status">Supporter status</span><select id="filterSupporter"><option value="0" data-t="Everyone">Everyone</option><option value="1" data-t="Supporters only">Supporters only</option></select></label>
       </div>
-      <div class="filter-note" id="filterNote">Filters are applied mutually: both members must fit each other’s criteria.</div>
+      <div class="filter-note" id="filterNote" data-t="Filters are applied mutually: both members must fit each other’s criteria.">Filters are applied mutually: both members must fit each other’s criteria.</div>
     </div>
     <div class="match-panel hidden" id="matchPanel">
       <div class="match-title"><span data-t="Choose one of your mutual matches">Choose one of your mutual matches</span></div>
-      <div class="match-list" id="matchList">Loading matches…</div>
+      <div class="match-list" id="matchList" data-t="Loading matches…">Loading matches…</div>
       <div class="friendrow">
-        <input id="friendId" maxlength="7" placeholder="…or enter a friend's Tayri ID" autocapitalize="characters" autocomplete="off" spellcheck="false">
-        <button class="btn" id="friendBtn">Find friend</button>
+        <input id="friendId" maxlength="7" data-tph="…or enter a friend's Tayri ID" placeholder="…or enter a friend's Tayri ID" autocapitalize="characters" autocomplete="off" spellcheck="false">
+        <button class="btn" id="friendBtn" data-t="Find friend">Find friend</button>
       </div>
       <div class="friendmsg" id="friendMsg"></div>
     </div>
@@ -219,42 +219,42 @@ svg{display:inline-block}
       <div class="panel pro" id="localPanel">
         <video id="localVideo" autoplay muted playsinline></video>
         <div class="panel-empty" id="localEmpty"><span data-t="Your camera preview">Your camera preview</span></div>
-        <div class="panel-label">YOU</div>
+        <div class="panel-label" data-t="YOU">YOU</div>
       </div>
       <div class="panel remote pro" id="remotePanel">
         <video id="remoteVideo" autoplay playsinline></video>
         <div class="panel-empty" id="remoteEmpty"><span data-t="Waiting for your match…">Waiting for your match…</span></div>
         <div class="ringtimer hidden" id="ringTimer"><b>0:30</b><span id="ringHint">left to extend</span></div>
-        <div class="panel-label">TAYRIPAGES MEMBER</div>
+        <div class="panel-label" data-t="TAYRIPAGES MEMBER">TAYRIPAGES MEMBER</div>
       </div>
     </div>
     <div class="pro-controls hidden" id="proControls">
-      <label>Quality
-        <select id="qualitySel"><option value="480">Standard (480p) — CooMeet default</option><option value="720" selected>HD (720p) — Pro</option><option value="1080">Full HD (1080p)</option></select>
+      <label><span data-t="Quality">Quality</span>
+        <select id="qualitySel"><option value="480" data-t="Standard (480p) — CooMeet default">Standard (480p) — CooMeet default</option><option value="720" data-t="HD (720p) — Pro" selected>HD (720p) — Pro</option><option value="1080" data-t="Full HD (1080p)">Full HD (1080p)</option></select>
       </label>
-      <label>Frame
-        <select id="frameSel"><option value="cover" selected>Fill (cover)</option><option value="contain">Fit (contain)</option></select>
+      <label><span data-t="Frame">Frame</span>
+        <select id="frameSel"><option value="cover" data-t="Fill (cover)" selected>Fill (cover)</option><option value="contain" data-t="Fit (contain)">Fit (contain)</option></select>
       </label>
-      <label>Size
-        <select id="sizeSel"><option value="normal">Normal</option><option value="large">Large (CooMeet pro)</option><option value="fullscreen">Fullscreen</option></select>
+      <label><span data-t="Size">Size</span>
+        <select id="sizeSel"><option value="normal" data-t="Normal">Normal</option><option value="large" data-t="Large (CooMeet pro)">Large (CooMeet pro)</option><option value="fullscreen" data-t="Fullscreen">Fullscreen</option></select>
       </label>
-      <button id="proFullscreen" onclick="toggleVideoFullscreen()">⛶ Fullscreen</button>
+      <button id="proFullscreen" onclick="toggleVideoFullscreen()" data-t="Fullscreen">⛶ Fullscreen</button>
     </div>
     <div class="actions">
       <button class="btn primary" id="startBtn" disabled><span data-t="Start instant video">Start instant video</span></button>
-      <button class="btn danger hidden" id="skipBtn">Skip &amp; find another</button>
-      <button class="btn danger hidden" id="endBtn">End call</button>
-      <button class="btn hidden" id="reportVideoBtn" style="background:rgba(255,107,107,.12);color:#ff6b6b;border:1px solid rgba(255,107,107,.3)" onclick="reportVideoUser()">🚩 Report</button>
+      <button class="btn danger hidden" id="skipBtn" data-t="Skip &amp; find another">Skip &amp; find another</button>
+      <button class="btn danger hidden" id="endBtn" data-t="End call">End call</button>
+      <button class="btn hidden" id="reportVideoBtn" style="background:rgba(255,107,107,.12);color:#ff6b6b;border:1px solid rgba(255,107,107,.3)" onclick="reportVideoUser()" data-t="Report">🚩 Report</button>
     </div>
     <div class="solocard hidden" id="soloCard">
       <div class="solo-ic"><svg width="30" height="30" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg></div>
-      <h3>Nobody is live right now — and that's real</h3>
-      <p>We show you the truth: at this moment no other member is searching for a video chat. <b>We never fake online counters or invent profiles</b> — every Tayripages account is a real, organic signup. Share Tayripages with a friend and let's grow together.</p>
+      <h3 data-t="Nobody is live right now — and that's real">Nobody is live right now — and that's real</h3>
+      <p data-t="We show you the truth: at this moment no other member is searching for a video chat. We never fake online counters or invent profiles — every Tayripages account is a real, organic signup. Share Tayripages with a friend and let's grow together.">We show you the truth: at this moment no other member is searching for a video chat. <b>We never fake online counters or invent profiles</b> — every Tayripages account is a real, organic signup. Share Tayripages with a friend and let's grow together.</p>
       <div class="solo-actions">
-        <button class="btn primary" id="soloInvite">Copy invite link</button>
-        <button class="btn" id="soloKeep">Keep waiting</button>
+        <button class="btn primary" id="soloInvite" data-t="Copy invite link">Copy invite link</button>
+        <button class="btn" id="soloKeep" data-t="Keep waiting">Keep waiting</button>
       </div>
-      <div class="solo-note">This page keeps listening — you'll connect the second someone arrives.</div>
+      <div class="solo-note" data-t="This page keeps listening — you'll connect the second someone arrives.">This page keeps listening — you'll connect the second someone arrives.</div>
     </div>
     <div class="mini-actions hidden" id="mediaActions">
       <button class="round on" id="micBtn" title="Mute microphone"></button>
@@ -263,27 +263,27 @@ svg{display:inline-block}
       <button class="round hidden" id="extBtn" title="Ask for 30 more seconds"></button>
     </div>
     <div class="callchat hidden" id="callChat">
-      <div class="callchat-h"><span>Chat during the call</span><button id="ccClose" title="Close chat"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
-      <div class="callchat-b" id="ccBody"><div class="ccnote">Say hello — a kind word goes a long way 💛</div></div>
-      <div class="callchat-f"><input id="ccInput" maxlength="280" placeholder="Message…" onkeydown="if(event.key==='Enter')window.__ccSend()"><button id="ccSend" title="Send"></button></div>
+      <div class="callchat-h"><span data-t="Chat during the call">Chat during the call</span><button id="ccClose" title="Close chat"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+      <div class="callchat-b" id="ccBody"><div class="ccnote" data-t="Say hello — a kind word goes a long way 💛">Say hello — a kind word goes a long way 💛</div></div>
+      <div class="callchat-f"><input id="ccInput" maxlength="280" data-tph="Message…" placeholder="Message…" onkeydown="if(event.key==='Enter')window.__ccSend()"><button id="ccSend" title="Send"></button></div>
     </div>
     <div class="feedback hidden" id="feedback">
-      <div class="feedback-title">How did the conversation feel?</div>
+      <div class="feedback-title" data-t="How did the conversation feel?">How did the conversation feel?</div>
       <div class="feedback-grid">
-        <label>Social energy<select id="voteSocial"><option value="5">Excellent</option><option value="4">Good</option><option value="3" selected>Okay</option><option value="2">Needs work</option><option value="1">Poor</option></select></label>
-        <label>Respect<select id="voteRespect"><option value="5">Excellent</option><option value="4">Good</option><option value="3" selected>Okay</option><option value="2">Needs work</option><option value="1">Poor</option></select></label>
-        <label>Charm &amp; style<select id="voteCharm"><option value="5">Excellent</option><option value="4">Good</option><option value="3" selected>Okay</option><option value="2">Needs work</option><option value="1">Poor</option></select></label>
+        <label><span data-t="Social energy">Social energy</span><select id="voteSocial"><option value="5" data-t="Excellent">Excellent</option><option value="4" data-t="Good">Good</option><option value="3" data-t="Okay" selected>Okay</option><option value="2" data-t="Needs work">Needs work</option><option value="1" data-t="Poor">Poor</option></select></label>
+        <label><span data-t="Respect">Respect</span><select id="voteRespect"><option value="5" data-t="Excellent">Excellent</option><option value="4" data-t="Good">Good</option><option value="3" data-t="Okay" selected>Okay</option><option value="2" data-t="Needs work">Needs work</option><option value="1" data-t="Poor">Poor</option></select></label>
+        <label><span data-t="Charm &amp; style">Charm &amp; style</span><select id="voteCharm"><option value="5" data-t="Excellent">Excellent</option><option value="4" data-t="Good">Good</option><option value="3" data-t="Okay" selected>Okay</option><option value="2" data-t="Needs work">Needs work</option><option value="1" data-t="Poor">Poor</option></select></label>
       </div>
-      <div class="feedback-actions"><button class="btn primary" id="sendFeedback">Submit private feedback</button><button class="btn" id="skipFeedback">Skip</button></div>
-      <div class="feedback-note">Your individual vote is private. It helps build weekly Tayripages scores.</div>
+      <div class="feedback-actions"><button class="btn primary" id="sendFeedback" data-t="Submit private feedback">Submit private feedback</button><button class="btn" id="skipFeedback" data-t="Skip">Skip</button></div>
+      <div class="feedback-note" data-t="Your individual vote is private. It helps build weekly Tayripages scores.">Your individual vote is private. It helps build weekly Tayripages scores.</div>
     </div>
   </section>
 
   <div class="notice"><b><span data-t="Connection tips:">Connection tips:</span></b> direct peer-to-peer video works on most networks. If a call says the network could not connect, ask both members to try Wi-Fi or mobile data (some restrictive routers block direct video). Calling a match works best when both of you have this page open and press Start.</div>
   <div class="rules">
-    <div class="rule"><span class="r-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2h-1V8a5 5 0 0 0-5-5zm-3 8V8a3 3 0 1 1 6 0v3H9z"/></svg></span><b>Private by design</b>No recording or media upload.</div>
-    <div class="rule violet"><span class="r-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/></svg></span><b>One-to-one</b>Only two signed-in members per room.</div>
-    <div class="rule gold"><span class="r-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2 4.5 4.8v6.1c0 4.9 3.2 9.5 7.5 11.1 4.3-1.6 7.5-6.2 7.5-11.1V4.8L12 2z"/></svg></span><b>Stay respectful</b>End, skip, block, or report from the app.</div>
+    <div class="rule"><span class="r-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2h-1V8a5 5 0 0 0-5-5zm-3 8V8a3 3 0 1 1 6 0v3H9z"/></svg></span><b data-t="Private by design">Private by design</b><span data-t="No recording or media upload.">No recording or media upload.</span></div>
+    <div class="rule violet"><span class="r-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/></svg></span><b data-t="One-to-one">One-to-one</b><span data-t="Only two signed-in members per room.">Only two signed-in members per room.</span></div>
+    <div class="rule gold"><span class="r-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2 4.5 4.8v6.1c0 4.9 3.2 9.5 7.5 11.1 4.3-1.6 7.5-6.2 7.5-11.1V4.8L12 2z"/></svg></span><b data-t="Stay respectful">Stay respectful</b><span data-t="End, skip, block, or report from the app.">End, skip, block, or report from the app.</span></div>
   </div>
 </main>
 <script>
