@@ -3602,7 +3602,7 @@ function paintGold(){ const el=$('goldTop'); if(el)el.textContent=goldActive()?T
 
 /* ============ INIT ============ */
 setTimeout(()=>{ const dk=$('deck'); if(AUTHED&&R.tab==='discover'&&dk&&!dk.children.length){ try{paintDeck();}catch(e){} } }, 5200);
-const TAYRI_BUILD='v15'; /* bump this number on every release — every phone self-updates once, no cache games */
+const TAYRI_BUILD='v16'; /* bump this number on every release — every phone self-updates once, no cache games */
 try{ if(location.search.indexOf(TAYRI_BUILD)<0){ localStorage.setItem('tayri_boot_'+TAYRI_BUILD,'1'); const q=location.search; location.replace(location.pathname+(q?(q+'&'):'?')+TAYRI_BUILD); } }catch(e){}
 fbInit();
 paintGold();
