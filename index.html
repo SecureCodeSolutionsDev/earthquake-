@@ -70,7 +70,10 @@ input,textarea{font-family:inherit;color:inherit;outline:none}
 .h1{font-size:27px;font-weight:900;letter-spacing:-.4px}
 .h2{font-size:19px;font-weight:900}
 .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;box-shadow:0 4px 18px rgba(255,78,126,.06)}
-.topbar{padding:calc(12px + env(safe-area-inset-top)) 18px 8px;display:flex;align-items:center;justify-content:space-between;z-index:5}
+.topbar{padding:calc(12px + env(safe-area-inset-top)) 18px 8px;display:flex;align-items:center;justify-content:space-between;z-index:5;gap:8px;flex-wrap:wrap}
+.topbar .logo{flex:1;min-width:0}
+.topbar .logo .brand-copy{flex:1;min-width:0}
+#nearChip,#filtChip{flex:none}
 .logo{font-size:21px;font-weight:900;display:flex;gap:7px;align-items:center;min-width:0}
 .logo .flame{width:34px;height:34px;border-radius:12px;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:17px;box-shadow:var(--shadow);flex:0 0 auto}
 .brand-copy{display:flex;flex-direction:column;min-width:0;line-height:1.05}
@@ -463,7 +466,7 @@ body.preauth.authno #scr-auth{display:block!important}
 .obphoto{width:132px;height:132px;border-radius:28px;margin:8px auto 4px;border:2px dashed var(--pk);background:#fff;display:flex;flex-direction:column;gap:6px;align-items:center;justify-content:center;overflow:hidden;position:relative;color:var(--pk)}
 .obphoto img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 
-/* ---------- v9 — 📖 STORIES — Instagram-style luminous rings + viewer ---------- */
+/* ---------- v9 — 📖 STORIES — luminous rings + viewer ---------- */
 .story-hot{animation:storyglow 1.8s ease-in-out infinite;box-shadow:0 0 0 2.6px var(--pk),0 0 16px 5px rgba(255,94,138,.8)}
 .mnew .av.story-hot{box-shadow:0 0 16px 6px rgba(255,94,138,.85),0 0 30px 12px rgba(255,157,92,.35)}
 @keyframes storyglow{0%,100%{box-shadow:0 0 0 2.6px var(--pk),0 0 13px 4px rgba(255,94,138,.65)}50%{box-shadow:0 0 0 2.6px var(--or),0 0 24px 9px rgba(255,157,92,.85)}}
@@ -622,7 +625,7 @@ body.preauth.authno #scr-auth{display:block!important}
 <section class="scr" id="scr-likes">
   <div class="topbar"><div class="h2" data-t="They like you">They like you</div>
     <span class="pill" id="likeCnt">0</span></div>
-  <div class="mut small" style="padding:0 18px 6px">Someone here already chose you. <b style="color:var(--pk)">GOLD members see everyone instantly</b> and can match & chat right away.</div>
+  <div class="mut small" style="padding:0 18px 6px">${T('Someone here already chose you.')} <b style="color:var(--pk)">${T('GOLD members see everyone instantly')}</b> ${T('and can match & chat right away.')}</div>
   <div class="lkgrid" id="lkGrid"></div>
 </section>
 
@@ -692,7 +695,7 @@ body.preauth.authno #scr-auth{display:block!important}
   <button class="btn" style="max-width:300px;background:rgba(255,255,255,.12);color:#ffd7e3" onclick="$('matchOv').classList.remove('on')" data-t="Keep discovering">Keep discovering</button>
 </div>
 
-<!-- story viewer — Instagram style, tap outside to close -->
+<!-- story viewer — tap outside to close -->
 <div class="storyv" id="storyV" onclick="closeStory()">
   <div class="storyv-card" onclick="event.stopPropagation()">
     <div class="storyv-prog"><i id="storyBar"></i></div>
@@ -988,6 +991,13 @@ function onAuthed(u){
   }catch(e){}
   document.body.classList.remove('preauth'); document.body.classList.remove('bootwait'); document.body.classList.remove('authno');
   uid=u.uid; // identity IS the verified Google user from now on
+  // INSTANT LOAD: ensure everything appears right after login (ID, Gold, verified, matches, stories, liked you, messages)
+  try{ paintGold(); paintLikesPill(); }catch(e){}
+  try{ ensureMyCode(); }catch(e){}
+  try{ if(typeof syncMe==='function') syncMe(); }catch(e){}
+  try{ if(typeof heartbeat==='function' && L.me) heartbeat(); }catch(e){}
+  try{ if(typeof bootCloudWatch==='function') bootCloudWatch(); }catch(e){}
+  try{ if(typeof refreshStories==='function') refreshStories(); }catch(e){}
   loadReferralStatus().catch(()=>{});
   // 👥 several accounts on one phone: memory belongs to an account, not to the device.
   // Different uid = wipe local memory, then the cloud rebuilds it (profile, photos, matches, likes).
@@ -1194,10 +1204,32 @@ async function cloudDiscover(){
       return (a.km==null?9999:a.km)-(b.km==null?9999:b.km);
     });
   }
-  // boosted first, then REAL nearest first; random when no geo context (keeps discovery fun)
-  pool=pool.sort((a,b)=>((b.boostUntil>now?1:0)-(a.boostUntil>now?1:0)));
-  if(L.geo)pool=pool.sort((a,b)=>((b.boostUntil>now?1:0)-(a.boostUntil>now?1:0))||((b.verified?1:0)-(a.verified?1:0))||((a.km==null?9999:a.km)-(b.km==null?9999:b.km)));
-  else pool=pool.sort(()=>Math.random()-.5);
+  // TINDER-LIKE SCORING: boost + verified + hasPhoto + fresh + lastSeen + distance + jitter
+  const scored=pool.map(p=>{
+    let s=0;
+    if(p.boostUntil&&p.boostUntil>now) s+=100;
+    if(p.verified) s+=30;
+    if(p.hasPhoto) s+=20; else s-=50;
+    if(p.fresh) s+=10;
+    if(p.lastSeen&&p.lastSeen>now-86400000) s+=15;
+    if(p.km!=null) s-= Math.min(30, p.km*0.4); // distance penalty, max -30
+    // if previously passed long ago, lower score so they appear later
+    const sw=L.swiped[p.id];
+    if(sw && sw.d==='pass' && (now-(sw.ts||0))>7*86400000) s-=15;
+    if(sw && (sw.d==='like'||sw.d==='super') && (now-(sw.ts||0))>30*86400000) s-=25;
+    s+= Math.random()*10; // jitter for exploration
+    return {...p, _score:s};
+  });
+  // sort by score desc
+  scored.sort((a,b)=>b._score-a._score);
+  // small shuffle within top 20 to avoid deterministic order (Tinder does stochastic)
+  for(let i=0;i<Math.min(20,scored.length-1);i++){
+    if(Math.random()<0.35){
+      const j=i+1+Math.floor(Math.random()*3);
+      if(j<scored.length){ const tmp=scored[i]; scored[i]=scored[j]; scored[j]=tmp; }
+    }
+  }
+  pool=scored;
   R.usersCache=pool; R.cacheTs=now;
   return pool;
 }
@@ -1366,7 +1398,7 @@ async function doReportDeck(pid,type){
   toast('Report sent with evidence — our team reviews within 24h');
 }
 
-/* ============ 📖 STORIES — one photo, 24h, luminous ring in Matches & chat head (Instagram style) ============ */
+/* ============ 📖 STORIES — one photo, 24h, luminous ring in Matches & chat head  ============ */
 const STORY={}; // uid -> {img,ts,name}
 function storyFresh(s){ return !!(s&&s.img&&Date.now()-(+s.ts||0)<86400000); }
 function hasStory(id){ return storyFresh(STORY[id]); }
@@ -1834,7 +1866,18 @@ async function loadDeck(){
   if(!DEMO){ try{ cloudPool=await cloudDiscover(); }catch(e){} }
   const all=[...cloudPool,...demoPool.filter(p=>!cloudPool.find(c=>c.name===p.name))];
   // unseen first, and never who swiped me rejected? show fresh + unscored
-  R.deck=all.filter(p=>!L.swiped[p.id]&&!L.matches.find(m=>m.peer===p.id));
+  // TINDER-LIKE: passes resurface after 7 days, likes never resurface (or after 30 days if deck empty)
+  const nowTs=Date.now();
+  const RESHOW_PASS_MS=7*86400000, RESHOW_LIKE_MS=30*86400000;
+  R.deck=all.filter(p=>{
+    if(L.matches.find(m=>m.peer===p.id)) return false;
+    const sw=L.swiped[p.id];
+    if(!sw) return true;
+    const age=nowTs-(sw.ts||0);
+    if(sw.d==='pass') return age>RESHOW_PASS_MS; // pass -> reshow after 7 days
+    // like/super -> keep hidden for 30 days, then low-priority reshow if deck would be empty
+    return age>RESHOW_LIKE_MS;
+  });
   paintDeck();
   maybeIncoming();
 }
@@ -2409,9 +2452,9 @@ function openRules(){
   const EN=['One rule above all: be polite and respectful — you are talking to a real human.','18+ only. One real you: your own photos, your real identity. No fakes, no impersonation.','Not allowed: harassment or hate, scams or asking for money, selling services, nude or violent content, advertising spam.','The admin may warn, block, or permanently ban any account that breaks these rules. A ban removes you from Tayripages for everyone, and admin decisions are final.','Payment: Tayripages GOLD is a one-time digital activation (99 DH ≈ $9). Once GOLD is activated on your account, it is final: no refunds, no transfers to another account — even if the account is later banned for breaking these rules. A transfer screenshot may be requested as proof.','Safety: Tayripages never asks for your password or codes. Never send money to someone you met here. First date: a public place, and tell a friend.','Privacy: Google sign-in only proves you are real — we never read your emails, we never post for you. Your profile is visible to other members; you can ask support to delete it.'];
   const lst= EN.map(x=>T(x));
   const sup=(typeof TAYRI_CONFIG!=='undefined'&&TAYRI_CONFIG.company&&TAYRI_CONFIG.company.supportEmail)||'';
-  $('genBody').innerHTML=`<div class="h2" style="display:flex;align-items:center;gap:8px">${IC('shield',21)} ${fr?'Règles Tayripages':'Tayripages Rules'}</div>
+  $('genBody').innerHTML=`<div class="h2" style="display:flex;align-items:center;gap:8px">${IC('shield',21)} ${T('Tayripages Rules')}</div>
    <div style="margin-top:8px">${lst.map(ruleLine).join('')}</div>
-   ${sup?`<div class="mut small" style="margin:12px 0 4px">${fr?'Question ou problème':'Questions or a problem'}: <b>${sup}</b></div>`:''}
+   ${sup?`<div class="mut small" style="margin:12px 0 4px">${T('Question ou problème')}: <b>${sup}</b></div>`:''}
    <div style="height:10px"></div>
    <button class="btn btn-line" onclick="hide('genSheet')">${T('Close')}</button>`;
   show('genSheet');
@@ -2491,7 +2534,7 @@ function renderProfile(){
       </div>
       <div class="card" style="margin-bottom:10px">
         <div class="spread"><b class="small">${T('My story')}</b>${storyFresh(STORY[uid])?'<span class="pill" style="background:var(--grad);color:#fff;box-shadow:0 0 12px 4px rgba(255,94,138,.7)">LIVE · 24h</span>':''}</div>
-        <div class="mut tiny" style="margin:4px 0 10px">${T('One photo, 24 hours. A glowing ring appears around your chat avatar — your matches tap it to view (Instagram style).')}</div>
+        <div class="mut tiny" style="margin:4px 0 10px">${T('One photo, 24 hours. A glowing ring appears around your chat avatar — your matches tap it to view.')}</div>
         <div class="mysrc">
           ${storyFresh(STORY[uid])
             ?`<div class="mystory-ring"><img src="${STORY[uid].img}" alt="my story" style="width:100%;height:100%;border-radius:50%;object-fit:cover"></div>`
@@ -2505,17 +2548,17 @@ function renderProfile(){
       <div class="card" style="margin-bottom:10px">
         <div class="spread"><b class="small">My Tayri ID</b><button class="copybtn" onclick="copyMyId()">COPY</button></div>
         <div class="idBig" style="text-align:center;margin:6px 0 2px">${L.myCode||'· · · · ·'}</div>
-        <div class="mut tiny" style="text-align:center">Your personal Tayripages number — unique and it never changes. Share it so a friend can find you.</div>
+        <div class="mut tiny" style="text-align:center">${T('Your personal Tayripages number — unique and it never changes. Share it so a friend can find you.')}</div>
         <div class="divider" style="margin:12px 0"></div>
-        <b class="small">Find a friend by ID</b>
-        <div class="mut tiny" style="margin:4px 0 8px">Paste your friend’s Tayri ID to find them — or gift them GOLD instantly.</div>
+        <b class="small">${T('Find a friend by ID')}</b>
+        <div class="mut tiny" style="margin:4px 0 8px">${T('Paste your friend’s Tayri ID to find them — or gift them GOLD instantly.')}</div>
         <div class="row"><input class="inp" id="idFindIn" placeholder="XXXXX" maxlength="7" autocomplete="off" autocapitalize="characters" style="text-transform:uppercase;letter-spacing:3px;font-weight:900;text-align:center">
-        <button class="pill" style="padding:14px 18px;flex:none" onclick="findByCode()">Find</button></div>
+        <button class="pill" style="padding:14px 18px;flex:none" onclick="findByCode()">${T('Find')}</button></div>
         <div class="divider" style="margin:12px 0"></div>
-        <b class="small">🎁 Gift GOLD to a friend</b>
-        <div class="mut tiny" style="margin:4px 0 8px">Enter their Tayri ID — they get GOLD instantly (once, forever). You will be asked to confirm the transfer.</div>
-        <div class="row"><input class="inp" id="giftGoldIn" placeholder="Friend's ID" maxlength="7" autocomplete="off" autocapitalize="characters" style="text-transform:uppercase;letter-spacing:3px;font-weight:900;text-align:center">
-        <button class="pill" style="padding:14px 18px;flex:none;background:var(--grad);color:#fff" onclick="giftGoldById()">Gift GOLD</button></div>
+        <b class="small">${T('🎁 Gift GOLD to a friend')}</b>
+        <div class="mut tiny" style="margin:4px 0 8px">${T('Enter their Tayri ID — they get GOLD instantly (once, forever). You will be asked to confirm the transfer.')}</div>
+        <div class="row"><input class="inp" id="giftGoldIn" placeholder="${T("Friend's ID")}" maxlength="7" autocomplete="off" autocapitalize="characters" style="text-transform:uppercase;letter-spacing:3px;font-weight:900;text-align:center">
+        <button class="pill" style="padding:14px 18px;flex:none;background:var(--grad);color:#fff" onclick="giftGoldById()">${T('Gift GOLD')}</button></div>
       </div>
       <div class="seclab">This week</div>
       <div class="card">
