@@ -1,0 +1,288 @@
+{
+  "rules": {
+    "wasla_dating": {
+      "admins": {
+        ".read": false,
+        ".write": false
+      },
+      "banned": {
+        ".read": "auth != null",
+        ".write": "root.child('wasla_dating/admins/'+auth.uid).exists()"
+      },
+      "bannedEmails": {
+        ".read": "root.child('wasla_dating/admins/'+auth.uid).exists()",
+        ".write": "root.child('wasla_dating/admins/'+auth.uid).exists()"
+      },
+      "users": {
+        ".read": "auth != null && !root.child('wasla_dating/banned/'+auth.uid).exists()",
+        "$uid": {
+          ".write": "(auth != null && auth.uid === $uid) || root.child('wasla_dating/admins/'+auth.uid).exists()"
+        }
+      },
+      "verified": {
+        ".read": "auth != null",
+        ".write": "root.child('wasla_dating/admins/'+auth.uid).exists()"
+      },
+      "verifyReq": {
+        ".read": "root.child('wasla_dating/admins/'+auth.uid).exists()",
+        "$uid": {
+          ".read": "auth != null && auth.uid === $uid",
+          ".write": "(auth != null && auth.uid === $uid) || root.child('wasla_dating/admins/'+auth.uid).exists()",
+          "img": {
+            ".validate": "newData.isString() && newData.val().length < 400000"
+          }
+        }
+      },
+      "photos": {
+        ".read": "auth != null && !root.child('wasla_dating/banned/'+auth.uid).exists()",
+        "$uid": {
+          ".write": "(auth != null && auth.uid === $uid) || root.child('wasla_dating/admins/'+auth.uid).exists()",
+          "$slot": {
+            ".validate": "newData.isString() && newData.val().length < 400000"
+          }
+        }
+      },
+      "fcmTokens": {
+        ".read": "root.child('wasla_dating/admins/'+auth.uid).exists()",
+        "$uid": {
+          ".read": "auth != null && auth.uid === $uid",
+          ".write": "auth != null && auth.uid === $uid",
+          "$tid": {
+            ".validate": "newData.isString() && newData.val().length < 400"
+          }
+        }
+      },
+      "presence": {
+        ".read": "auth != null",
+        "$uid": {
+          ".write": "auth != null && auth.uid === $uid"
+        }
+      },
+      "swipes": {
+        ".read": "root.child('wasla_dating/admins/'+auth.uid).exists()",
+        "$uid": {
+          ".read": "auth != null && auth.uid === $uid",
+          ".write": "auth != null && auth.uid === $uid"
+        }
+      },
+      "limits": {
+        ".read": "root.child('wasla_dating/admins/'+auth.uid).exists()",
+        "$uid": {
+          ".read": "auth != null && auth.uid === $uid",
+          "likes": {
+            ".write": "auth != null && auth.uid === $uid && newData.exists()",
+            ".validate": "newData.hasChildren(['d','n']) && newData.child('d').isNumber() && newData.child('n').isNumber() && newData.child('n').val() >= 1 && ((!data.exists() && newData.child('n').val() === 1) || (data.exists() && newData.child('d').val() === data.child('d').val() && newData.child('n').val() === data.child('n').val() + 1) || (data.exists() && newData.child('d').val() > data.child('d').val() && newData.child('n').val() === 1)) && (root.child('wasla_dating/gold/'+$uid).val() === true || newData.child('n').val() <= 50)"
+          },
+          "super": {
+            ".write": "auth != null && auth.uid === $uid && newData.exists()",
+            ".validate": "newData.hasChildren(['d','n']) && newData.child('d').isNumber() && newData.child('n').isNumber() && newData.child('n').val() >= 1 && ((!data.exists() && newData.child('n').val() === 1) || (data.exists() && newData.child('d').val() === data.child('d').val() && newData.child('n').val() === data.child('n').val() + 1) || (data.exists() && newData.child('d').val() > data.child('d').val() && newData.child('n').val() === 1)) && (root.child('wasla_dating/gold/'+$uid).val() === true || newData.child('n').val() <= 1)"
+          }
+        }
+      },
+      "incoming": {
+        ".read": "root.child('wasla_dating/admins/'+auth.uid).exists()",
+        "$uid": {
+          ".read": "auth != null && auth.uid === $uid",
+          "$from": {
+            ".write": "auth != null && auth.uid === $from",
+            ".validate": "newData.hasChildren(['d','ts']) && newData.child('ts').isNumber() && (newData.child('d').val() === 'like' || newData.child('d').val() === 'super') && (root.child('wasla_dating/gold/'+$from).val() === true || (newData.child('d').val() === 'like' && (!root.child('wasla_dating/limits/'+$from+'/likes').exists() || root.child('wasla_dating/limits/'+$from+'/likes/d').val() * 86400000 <= now - 86400000 || root.child('wasla_dating/limits/'+$from+'/likes/n').val() <= 50)) || (newData.child('d').val() === 'super' && (!root.child('wasla_dating/limits/'+$from+'/super').exists() || root.child('wasla_dating/limits/'+$from+'/super/d').val() * 86400000 <= now - 86400000 || root.child('wasla_dating/limits/'+$from+'/super/n').val() <= 1)))"
+          }
+        }
+      },
+      "userMatches": {
+        ".read": "root.child('wasla_dating/admins/'+auth.uid).exists()",
+        "$uid": {
+          ".read": "auth != null && auth.uid === $uid",
+          ".write": "auth != null && auth.uid === $uid"
+        }
+      },
+      "matches": {
+        ".read": "root.child('wasla_dating/admins/'+auth.uid).exists()",
+        "$mid": {
+          ".read": "auth != null && $mid.contains(auth.uid)",
+          ".write": "auth != null && $mid.contains(auth.uid)"
+        }
+      },
+      "chatMeta": {
+        ".read": "root.child('wasla_dating/admins/'+auth.uid).exists()",
+        "$mid": {
+          ".read": "auth != null && $mid.contains(auth.uid)",
+          "freeLeft": {
+            ".validate": "!newData.isNumber() && !newData.isString() && !newData.isBoolean()",
+            "$u": {
+              ".write": "auth != null && auth.uid === $u && $mid.contains(auth.uid)",
+              ".validate": "newData.isNumber() && ((!data.exists() && newData.val() === 10) || (data.exists() && newData.val() >= 0 && newData.val() === data.val() - 1))"
+            }
+          },
+          "ts": {
+            ".write": "auth != null && $mid.contains(auth.uid)"
+          },
+          "exclusive": {
+            ".write": "auth != null && $mid.contains(auth.uid)"
+          }
+        }
+      },
+      "chats": {
+        ".read": "root.child('wasla_dating/admins/'+auth.uid).exists()",
+        "$mid": {
+          ".read": "auth != null && $mid.contains(auth.uid)",
+          "$msgid": {
+            ".write": "auth != null && $mid.contains(auth.uid)",
+            ".validate": "newData.hasChildren(['text','ts']) && newData.child('text').isString() && newData.child('text').val().length > 0 && newData.child('text').val().length <= 900 && newData.child('ts').isNumber() && (newData.child('sys').val() === true || newData.child('from').val() === auth.uid) && (newData.child('sys').val() === true || root.child('wasla_dating/gold/'+auth.uid).val() === true || (root.child('wasla_dating/chatMeta/'+$mid+'/freeLeft/'+auth.uid).isNumber() && root.child('wasla_dating/chatMeta/'+$mid+'/freeLeft/'+auth.uid).val() > 0))"
+          }
+        }
+      },
+      "typing": {
+        ".read": "root.child('wasla_dating/admins/'+auth.uid).exists()",
+        "$mid": {
+          ".read": "auth != null && $mid.contains(auth.uid)",
+          ".write": "auth != null && $mid.contains(auth.uid)"
+        }
+      },
+      "orders": {
+        ".read": "root.child('wasla_dating/admins/'+auth.uid).exists()",
+        "$uid": {
+          ".read": "auth != null && auth.uid === $uid",
+          "$oid": {
+            ".write": "(auth != null && auth.uid === $uid) || root.child('wasla_dating/admins/'+auth.uid).exists()"
+          }
+        }
+      },
+      "reports": {
+        ".read": "root.child('wasla_dating/admins/'+auth.uid).exists()",
+        "$rid": {
+          ".write": "auth != null"
+        }
+      },
+      "gold": {
+        ".read": "auth != null",
+        ".write": "root.child('wasla_dating/admins/'+auth.uid).exists()"
+      },
+      "videoQueue": {
+        ".read": "auth != null",
+        "$uid": {
+          ".write": "auth != null && auth.uid === $uid",
+          ".validate": "newData.hasChildren(['uid','state','createdAt']) && newData.child('uid').isString() && newData.child('uid').val() === $uid && newData.child('state').val() === 'waiting' && newData.child('createdAt').isNumber()"
+        },
+        ".indexOn": [
+          "state",
+          "createdAt"
+        ]
+      },
+      "videoPairIndex": {
+        ".read": "auth != null",
+        "$roomId": {
+          ".write": "auth != null && ((data.exists() && (data.child('a').val() === auth.uid || data.child('b').val() === auth.uid)) || (!data.exists() && (newData.child('a').val() === auth.uid || newData.child('b').val() === auth.uid)))",
+          ".validate": "newData.hasChildren(['a','b','status','createdAt']) && newData.child('a').isString() && newData.child('b').isString() && newData.child('a').val() !== newData.child('b').val() && newData.child('status').isString() && (newData.child('status').val() === 'ringing' || newData.child('status').val() === 'ended') && newData.child('createdAt').isNumber()"
+        },
+        ".indexOn": [
+          "a",
+          "b",
+          "status",
+          "createdAt"
+        ]
+      },
+      "videoRooms": {
+        "$roomId": {
+          ".read": "auth != null && data.exists() && (data.child('a').val() === auth.uid || data.child('b').val() === auth.uid)",
+          ".write": "auth != null && ((data.exists() && (data.child('a').val() === auth.uid || data.child('b').val() === auth.uid)) || (!data.exists() && (newData.child('a').val() === auth.uid || newData.child('b').val() === auth.uid)))",
+          ".validate": "newData.hasChildren(['a','b','status','createdAt']) && newData.child('a').isString() && newData.child('b').isString() && newData.child('a').val() !== newData.child('b').val() && newData.child('status').isString() && (newData.child('status').val() === 'ringing' || newData.child('status').val() === 'ended') && newData.child('createdAt').isNumber()",
+          "offer": {
+            ".validate": "newData.hasChildren(['type','sdp']) && newData.child('type').isString() && newData.child('sdp').isString() && newData.child('sdp').val().length < 30000"
+          },
+          "answer": {
+            ".validate": "newData.hasChildren(['type','sdp']) && newData.child('type').isString() && newData.child('sdp').isString() && newData.child('sdp').val().length < 30000"
+          },
+          "candidates": {
+            "$uid": {
+              "$candidateId": {
+                ".validate": "newData.hasChildren(['candidate']) && newData.child('candidate').isString() && newData.child('candidate').val().length < 5000"
+              }
+            }
+          },
+          "msgs": {
+            "$msgId": {
+              ".validate": "newData.hasChildren(['from','text','ts']) && newData.child('from').isString() && newData.child('from').val() === auth.uid && newData.child('text').isString() && newData.child('text').val().length > 0 && newData.child('text').val().length <= 280 && newData.child('ts').isNumber()"
+            }
+          }
+        }
+      },
+      "stories": {
+        ".read": "auth != null && !root.child('wasla_dating/banned/'+auth.uid).exists()",
+        "$uid": {
+          ".write": "(auth != null && auth.uid === $uid) || root.child('wasla_dating/admins/'+auth.uid).exists()",
+          ".validate": "newData.hasChildren(['img','ts'])",
+          "img": {
+            ".validate": "newData.isString() && newData.val().length < 400000"
+          },
+          "ts": {
+            ".validate": "newData.isNumber()"
+          },
+          "name": {
+            ".validate": "newData.isString() && newData.val().length < 40"
+          },
+          "caption": {
+            ".validate": "newData.isString() && newData.val().length <= 140"
+          }
+        }
+      },
+      "userCodes": {
+        ".read": "auth != null",
+        "$code": {
+          ".write": "auth != null",
+          ".validate": "newData.isString() && newData.val() === auth.uid && (!data.exists() || data.val() === newData.val())"
+        }
+      },
+      "socialVotes": {
+        ".read": "auth != null",
+        "$week": {
+          "$from": {
+            ".read": "auth != null && auth.uid === $from",
+            "$to": {
+              ".write": "auth != null && auth.uid === $from && $from !== $to",
+              ".validate": "newData.hasChildren(['to','sociability','respect','charm','ts']) && newData.child('to').isString() && newData.child('to').val() === $to && newData.child('sociability').isNumber() && newData.child('sociability').val() >= 1 && newData.child('sociability').val() <= 5 && newData.child('respect').isNumber() && newData.child('respect').val() >= 1 && newData.child('respect').val() <= 5 && newData.child('charm').isNumber() && newData.child('charm').val() >= 1 && newData.child('charm').val() <= 5 && newData.child('ts').isNumber()"
+            }
+          }
+        },
+        ".indexOn": [
+          "to",
+          "ts"
+        ]
+      },
+      "referrals": {
+        "$referrer": {
+          ".read": "auth != null && auth.uid === $referrer",
+          "$referred": {
+            ".write": "auth != null && auth.uid === $referred && $referred !== $referrer",
+            ".validate": "newData.hasChildren(['referrer','referred','status','createdAt']) && newData.child('referrer').val() === $referrer && newData.child('referred').val() === $referred && newData.child('status').val() === 'qualified' && newData.child('createdAt').isNumber()"
+          }
+        }
+      },
+      "referralRewards": {
+        "$uid": {
+          ".read": "auth != null && auth.uid === $uid",
+          ".write": "auth != null && auth.uid === $uid",
+          ".validate": "newData.hasChildren(['until','grantedCount','updatedAt']) && newData.child('until').isNumber() && newData.child('grantedCount').isNumber() && newData.child('grantedCount').val() >= 0 && newData.child('updatedAt').isNumber()"
+        }
+      },
+      "giftGold": {
+        ".read": "root.child('wasla_dating/admins/'+auth.uid).exists()",
+        "$targetUid": {
+          ".write": "auth != null",
+          ".validate": "newData.hasChildren(['from','ts']) && newData.child('from').val() === auth.uid"
+        }
+      },
+      "broadcasts": {
+        ".read": "auth != null",
+        ".write": "root.child('wasla_dating/admins/'+auth.uid).exists()"
+      },
+      "adminMessages": {
+        ".read": "root.child('wasla_dating/admins/'+auth.uid).exists()",
+        "$uid": {
+          ".read": "auth != null && auth.uid === $uid",
+          ".write": "root.child('wasla_dating/admins/'+auth.uid).exists()"
+        }
+      }
+    }
+  }
+}
