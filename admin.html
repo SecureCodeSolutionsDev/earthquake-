@@ -9,6 +9,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-check-compat.js"></script>
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -73,15 +74,15 @@ tr:last-child td{border-bottom:none}
   <div class="card" id="gatePin">
     <div class="logo" style="margin:0 auto 12px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg></div>
     <div class="h2">Tayripages HQ</div>
-    <div class="mut small" style="margin:6px 0 14px">Admin access verification</div>
+    <div class="mut small" style="margin:6px 0 14px">Company dashboard — enter admin PIN</div>
     <input class="inp" id="pinIn" type="password" inputmode="numeric" placeholder="••••" style="text-align:center;font-size:22px;letter-spacing:6px;width:160px;margin:0 auto;display:block" onkeydown="if(event.key==='Enter')tryPin()">
     <div style="height:12px"></div>
     <button class="btn btn-g" style="width:100%;padding:14px;font-size:15px;font-weight:900" onclick="tryPin()">Continue</button>
   </div>
   <div class="card" id="gatePhone" style="display:none">
     <div class="logo" style="margin:0 auto 12px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg></div>
-    <div class="h2">Verify Owner Account</div>
-    <div class="mut small" style="margin:6px 0 14px">Sign in with the OWNER'S Google account.<br>Your Firebase UID will authenticate full database access.</div>
+    <div class="h2">Verify it's you</div>
+    <div class="mut small" style="margin:6px 0 14px">Sign in with the OWNER'S Google account.<br>Your UID will be your admin key.</div>
     <button class="btn btn-g" id="aBtn" style="width:100%;padding:14px;font-size:15px;font-weight:900" onclick="adminGoogle()">Continue with Google</button>
   </div>
 </div>
@@ -93,8 +94,6 @@ tr:last-child td{border-bottom:none}
       <div><b style="font-size:18px">Tayripages HQ</b><div class="mut tiny" id="connState">connecting…</div></div>
     </div>
     <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-      <div id="adminUserInfo" style="display:none;align-items:center;gap:8px"></div>
-      <button class="btn btn-g" id="aBtnDash" onclick="adminGoogle()" style="display:none">Sign in with Google</button>
       <div class="mut small">Revenue (orders): <b class="grn" id="topRev" style="font-size:16px">0 DH</b></div>
     </div>
   </div>
@@ -132,7 +131,8 @@ tr:last-child td{border-bottom:none}
     <div class="card scrollcard"><table id="tblRp"><tbody></tbody></table></div>
   </div>
   <div id="pg-vf" style="display:none"><div id="vfList"></div></div>
-  <div id="pg-us" style="display:none"><div class="card scrollcard"><table id="tblUs"><tbody></tbody></table></div>
+  <div id="pg-us" style="display:none">
+    <div class="card scrollcard"><table id="tblUs"><tbody></tbody></table></div>
     <div class="sec">Banned users — second chance</div>
     <div class="card scrollcard"><table id="tblBanned"><tbody></tbody></table></div>
   </div>
@@ -146,13 +146,14 @@ tr:last-child td{border-bottom:none}
   </div>
 
   <div id="pg-st" style="display:none">
-    <div class="sec">Company bank details</div>
-    <div class="bankgrid" id="bankGrid"></div>
-    <div class="sec">Live economy configuration</div>
-    <div class="card" id="econList"></div>
+    <div class="sec">Company bank account (shown when users activate GOLD)</div>
+    <div class="card bankgrid" id="bankGrid"></div>
+    <div class="banner">Edit these in <b>tayri-config.js</b> — everything updates everywhere instantly.</div>
+    <div class="sec">GOLD pass (live from config)</div>
+    <div class="card small" id="econList"></div>
     <div class="sec">Danger zone</div>
     <div class="card" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-      <span class="mut small">Wipe ALL cloud data (users, chats, orders) — keeps banned UIDs & emails</span>
+      <span class="mut small">Wipe ALL cloud data (users, chats, orders) — preserves banned UIDs & emails</span>
       <button class="btn btn-r" onclick="wipe()">Reset database</button>
     </div>
   </div>
@@ -168,39 +169,35 @@ function eh(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt
 function ref(p){return DB.ref('wasla_dating/'+p)} // matches firebase-rules.json root
 function ts(t){return t?new Date(t).toLocaleString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}):''}
 
-let PIN_OK = localStorage.getItem('tayri_admin_pin_ok')==='1';
+let PIN_OK=false;
 
 function tryPin(){
-  const val = ($('pinIn').value||'').trim();
-  if(val !== TAYRI_CONFIG.adminPin){
-    toast('Wrong PIN','err');
-    $('pinIn').value='';
+  if($('pinIn').value!==TAYRI_CONFIG.adminPin){toast('Wrong PIN','err');$('pinIn').value='';return}
+  PIN_OK=true;
+  if(!tayriCloudReady()){ enter(); return; }
+  // 🔐 second lock: Google sign-in as owner — Firebase must be initialized first
+  if(!window.firebase.apps.length){
+    firebase.initializeApp(TAYRI_CONFIG.firebase);
+    try{ const k=(TAYRI_CONFIG.appCheck&&TAYRI_CONFIG.appCheck.recaptchaSiteKey)||'';
+      if(k&&!/^PASTE|^$/.test(k)&&firebase.appCheck){ firebase.appCheck().activate(k,true); } }catch(e){}
+  }
+  
+  // If already signed in with Google, enter directly
+  if(firebase.auth().currentUser && !firebase.auth().currentUser.isAnonymous){
+    enter();
     return;
   }
-  PIN_OK = true;
-  try{ localStorage.setItem('tayri_admin_pin_ok','1'); }catch(e){}
   
-  const u = firebase.auth().currentUser;
-  if(u && !u.isAnonymous){
-    enter();
-  } else {
-    // Show Google verification card to ensure real owner UID is signed in
-    $('gatePin').style.display='none';
-    $('gatePhone').style.display='block';
-  }
+  $('gatePin').style.display='none';
+  $('gatePhone').style.display='block';
 }
 
 function adminGoogle(){
-  const btn = $('aBtn') || $('aBtnDash');
-  if(btn){ btn.disabled=true; btn.textContent='Opening Google…'; }
-  const u = firebase.auth().currentUser;
-  if(u && !u.isAnonymous){
-    enter();
-    return;
-  }
-  const prov = new firebase.auth.GoogleAuthProvider();
+  const btn=$('aBtn'); btn.disabled=true; btn.textContent='Opening Google…';
+  const prov=new firebase.auth.GoogleAuthProvider();
   prov.setCustomParameters({ prompt: 'select_account' });
   
+  /* Phones: redirect instead of popup (COOP-proof) */
   if(/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent)){
     firebase.auth().signInWithRedirect(prov);
     return;
@@ -208,7 +205,8 @@ function adminGoogle(){
   firebase.auth().signInWithPopup(prov).then(()=>{
     enter();
   }).catch(e=>{
-    if(btn){ btn.disabled=false; btn.textContent='Continue with Google'; }
+    btn.disabled=false;
+    btn.textContent='Continue with Google';
     if(e.code==='auth/popup-blocked'||e.code==='auth/operation-not-supported-in-this-environment'){
       firebase.auth().signInWithRedirect(prov);
       return;
@@ -218,69 +216,28 @@ function adminGoogle(){
   });
 }
 
-function adminSignOut(){
-  try{ localStorage.removeItem('tayri_admin_pin_ok'); }catch(e){}
-  PIN_OK = false;
-  firebase.auth().signOut().then(()=>{
-    location.reload();
-  }).catch(()=>location.reload());
-}
-
-function enter(){ 
-  try{ localStorage.setItem('tayri_admin_pin_ok','1'); }catch(e){}
+function enter(){
   $('gate').style.display='none';
   $('dash').style.display='';
-  boot(); 
+  boot();
 }
 
-// Global Auth initializer
-(function setupAdminAuth(){
-  try{
-    if(!tayriCloudReady()) return;
-    if(!window.firebase || !firebase.apps.length){
+// Auto-check redirect result on mobile
+(function initAuthCheck(){
+  if(tayriCloudReady() && window.firebase){
+    if(!firebase.apps.length){
       try{ firebase.initializeApp(TAYRI_CONFIG.firebase); }catch(e){}
     }
-    if(!window.firebase || !firebase.apps.length) return;
-
-    // Handle mobile redirect sign-in
-    try{
-      firebase.auth().getRedirectResult().then(res=>{
-        if(res && res.user && !res.user.isAnonymous){
-          if(localStorage.getItem('tayri_admin_pin_ok')==='1'){
+    if(firebase.apps.length){
+      try{
+        firebase.auth().getRedirectResult().then(res=>{
+          if(res && res.user){
             enter();
-          } else {
-            $('gatePin').style.display='block';
-            $('gatePhone').style.display='none';
           }
-        }
-      }).catch(()=>{});
-    }catch(e){}
-
-    // Global listener for auth state changes
-    try{
-      firebase.auth().onAuthStateChanged(u=>{
-        if(u && !u.isAnonymous){
-          if(localStorage.getItem('tayri_admin_pin_ok')==='1'){
-            const gate = document.getElementById('gate');
-            if(gate && gate.style.display !== 'none'){
-              enter();
-            } else {
-              boot();
-            }
-          } else {
-            $('gatePin').style.display='block';
-            $('gatePhone').style.display='none';
-          }
-        } else {
-          // If anonymous or logged out, clear gatePhone if on dash
-          const dash = $('dash');
-          if(dash && dash.style.display !== 'none'){
-            $('aBtnDash').style.display='inline-block';
-          }
-        }
-      });
-    }catch(e){}
-  }catch(e){}
+        }).catch(()=>{});
+      }catch(e){}
+    }
+  }
 })();
 
 function tab(p,el){
@@ -300,29 +257,16 @@ function boot(){
   }
   if(!window.firebase.apps.length){
     firebase.initializeApp(TAYRI_CONFIG.firebase);
+    try{ const k=(TAYRI_CONFIG.appCheck&&TAYRI_CONFIG.appCheck.recaptchaSiteKey)||'';
+      if(k&&!/^PASTE|^$/.test(k)&&firebase.appCheck){ firebase.appCheck().activate(k,true); } }catch(e){}
   }
-
-  const u = firebase.auth().currentUser;
-  if(u && !u.isAnonymous){
-    const adInfo = $('adminUserInfo');
-    if(adInfo){
-      adInfo.innerHTML = `<span class="mut tiny">Admin: <b style="color:var(--txt)">${eh(u.email||u.displayName||'Owner')}</b> <span class="badge b-done" style="font-size:9px">${u.uid.slice(0,5)}…</span></span> <button class="btn btn-line" style="padding:4px 8px;font-size:10.5px" onclick="adminSignOut()">Sign out</button>`;
-      adInfo.style.display = 'flex';
-    }
-    const btnDash = $('aBtnDash');
-    if(btnDash) btnDash.style.display = 'none';
-  } else {
-    const btnDash = $('aBtnDash');
-    if(btnDash) btnDash.style.display = 'inline-block';
-  }
-
   DB=firebase.database();
   DB.ref('.info/connected').on('value',s=>{
     $('connState').textContent=s.val()?'● live':'○ offline';
     $('connState').style.color=s.val()?'#2fbf71':'#ff6b6b';
   });
 
-  // Read pieces separately — locked rules enforce admin UID check
+  // 🔐 read pieces separately — locked rules don't allow root reads
   ['users','presence','matches','chats','orders','reports','gold','verifyReq','photos','verified','banned','bannedEmails'].forEach(k=>{
     ref(k).on('value',s=>{
       D[k]=s.val()||{};
@@ -330,8 +274,7 @@ function boot(){
     },e=>{
       console.error('Firebase read failed for '+k,e);
       if(['orders','gold','reports','verifyReq','bannedEmails'].includes(k)){
-        const curUid = (firebase.auth().currentUser && firebase.auth().currentUser.uid) || 'unauthenticated';
-        toast('Admin access denied for '+k+' — confirm UID ('+curUid+') is in wasla_dating/admins','err');
+        toast('Admin access denied for '+k+' — confirm this Google UID is in wasla_dating/admins','err');
       }
     });
   });
@@ -344,7 +287,7 @@ function paintAll(){
   const msgs=Object.values(D.chats||{}).reduce((a,c)=>a+Object.keys(c||{}).length,0);
   // orders are nested: orders/{uid}/{oid} — flatten for display
   const orders=Object.entries(D.orders||{}).flatMap(([uid,os])=>Object.entries(os||{}).map(([oid,o])=>[oid,{...o,uid}]));
-  const goldCnt=Object.keys(D.gold||{}).length;
+  const goldCnt=Object.keys(D.gold||{}).length; // giftsFor retired with the coin era
   const rev=orders.filter(([k,o])=>o.status==='approved').reduce((a,[k,o])=>a+(+o.price||0),0);
   const pendOr=orders.filter(([k,o])=>o.status==='pending');
   const reports=Object.entries(D.reports||{});
@@ -369,7 +312,7 @@ function paintAll(){
 
 function paintOr(pend,all){
   const rows=all.sort((a,b)=>b[1].ts-a[1].ts).slice(0,40);
-  // 📱 mobile: big thumb-proof activate cards first
+  // 📱 mobile: big thumb-proof activate cards first — the button can never hide off-screen
   $('orMobile').innerHTML=pend.sort((a,b)=>b[1].ts-a[1].ts).slice(0,10).map(([id,o])=>
    `<div class="card"><div style="display:flex;justify-content:space-between;gap:8px;align-items:center">
       <div><b style="font-size:15px">${eh(o.name)}</b><div class="mut tiny">${eh(o.ref)} · ${ts(o.ts)}</div></div>
@@ -497,15 +440,13 @@ function paintUs(rows){
 }
 
 function paintBank(){
-  const el=$('bankGrid'); if(!el) return;
   const c=TAYRI_CONFIG.company;
-  el.innerHTML=[['Account name',c.accountName],['Bank',c.bank],['RIB',c.rib],['IBAN',c.iban],['SWIFT',c.swift],['ICE',c.ice],['Support email',c.supportEmail],['Support phone',c.supportPhone]]
+  $('bankGrid').innerHTML=[['Account name',c.accountName],['Bank',c.bank],['RIB',c.rib],['IBAN',c.iban],['SWIFT',c.swift],['ICE',c.ice],['Support email',c.supportEmail],['Support phone',c.supportPhone]]
   .map(([l,v])=>`<div class="bankrow"><span class="mut tiny">${l.toUpperCase()}</span><br><b>${eh(v)}</b></div>`).join('');
 }
 
 function paintEcon(){
-  const el=$('econList'); if(!el) return;
-  el.innerHTML=[
+  $('econList').innerHTML=[
     ['GOLD price (one-time)',G.priceDH+' DH'],['Free likes per day',G.likesPerDay],
     ['Free messages per match',G.msgsPerMatch],['Free Super Like per day',G.superPerDay],['GOLD Super Likes per day',G.superGold]
   ].map(([k,v])=>`<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line)"><span class="mut">${k}</span><b>${v}</b></div>`).join('')
@@ -581,5 +522,5 @@ function wipe(){
   });
 }
 </script>
-<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a2917a4d78d1f31b',t:'MTc4NjM5MDg4Mw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</body>
 </html>
