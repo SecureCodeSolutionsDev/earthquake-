@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#160d12">
+<meta name="theme-color" content="#000000">
 <title>Tayripages HQ — Company Dashboard</title>
 <script src="tayri-config.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -12,7 +12,7 @@
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#160d12;--card:#1f1219;--card2:#291722;--line:#37202e;--txt:#fff2f7;--mut:#b193a3;--pk:#ff4e7e;--or:#ff8a5c;--green:#2fbf71;--warn:#ffb020;--red:#ff6b6b;--r:16px}
+:root{--bg:#000000;--card:#0f0f12;--card2:#18181c;--line:#26262d;--txt:#fff2f7;--mut:#b193a3;--pk:#ff4e7e;--or:#ff8a5c;--green:#2fbf71;--warn:#ffb020;--red:#ff6b6b;--r:16px}
 body{background:var(--bg);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;min-height:100vh}
 button{font-family:inherit;border:none;cursor:pointer;background:none;color:inherit}
 input{font-family:inherit;color:inherit;outline:none}
@@ -41,7 +41,7 @@ tr:last-child td{border-bottom:none}
 .b-live{background:rgba(255,176,32,.14);color:var(--warn)}
 .b-done{background:rgba(47,191,113,.14);color:var(--green)}
 .b-x{background:rgba(255,107,107,.12);color:var(--red)}
-#gate{position:fixed;inset:0;z-index:50;background:rgba(12,6,10,.97);display:flex;align-items:center;justify-content:center;padding:20px}
+#gate{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.97);display:flex;align-items:center;justify-content:center;padding:20px}
 #gate .card{width:100%;max-width:360px;text-align:center}
 #toasts{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:200;display:flex;flex-direction:column;gap:8px}
 .toast{background:#241019;border:1px solid var(--line);border-inline-start:3px solid var(--green);padding:12px 16px;border-radius:12px;font-size:13px;font-weight:700;box-shadow:0 12px 30px rgba(0,0,0,.5)}
@@ -337,8 +337,8 @@ async function reject(id,ouid){
 function paintRp(rows){
   const sorted=rows.sort((a,b)=>(b[1].ts||0)-(a[1].ts||0)).slice(0,60);
   const html=sorted.map(([id,r])=>{
-    const p=r.proof&&r.proof.text?`<div style="margin-top:6px;padding:8px;border-radius:9px;background:#160d12;color:#ffd8e5;font-size:12px;line-height:1.45"><b>PROOF · ${eh(r.proof.fromName||'Message')}</b><br>${eh(r.proof.text)}<div style="color:#b193a3;font-size:10px;margin-top:4px">${ts(r.proof.ts)}</div></div>`:'<span class="mut tiny">No message attached</span>';
-    const ev=r.evidence?`<div style="margin-top:6px;padding:9px;border-radius:10px;background:#1a0e18;border:1px solid #37202e;font-size:11.5px">
+    const p=r.proof&&r.proof.text?`<div style="margin-top:6px;padding:8px;border-radius:9px;background:#08080a;border:1px solid #26262d;color:#ffd8e5;font-size:12px;line-height:1.45"><b>PROOF · ${eh(r.proof.fromName||'Message')}</b><br>${eh(r.proof.text)}<div style="color:#b193a3;font-size:10px;margin-top:4px">${ts(r.proof.ts)}</div></div>`:'<span class="mut tiny">No message attached</span>';
+    const ev=r.evidence?`<div style="margin-top:6px;padding:9px;border-radius:10px;background:#0d0d10;border:1px solid #26262d;font-size:11.5px">
       <b style="color:var(--warn)">EVIDENCE (${eh(r.evidence.type||'profile')})</b> <span class="mut tiny">${eh(r.evidence.name||'')} · ${eh(r.evidence.city||'')} · age ${eh(String(r.evidence.age||''))}</span>
       ${Array.isArray(r.evidence.photos)&&r.evidence.photos.length?'<div style="display:flex;gap:6px;margin-top:7px;flex-wrap:wrap">'+r.evidence.photos.slice(0,3).map(u=>`<img src="${u}" style="width:72px;height:96px;object-fit:cover;border-radius:9px;border:1px solid #4a273a">`).join('')+'</div>':''}
       ${r.evidence.bio?`<div class="mut" style="margin-top:6px;line-height:1.45">“${eh(String(r.evidence.bio).slice(0,220))}”</div>`:''}
