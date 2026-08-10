@@ -44,23 +44,22 @@ tr:last-child td{border-bottom:none}
 .b-done{background:rgba(47,191,113,.14);color:var(--green)}
 .b-x{background:rgba(255,107,107,.12);color:var(--red)}
 #gate{position:fixed;inset:0;z-index:50;background:rgba(12,6,10,.97);display:flex;align-items:center;justify-content:center;padding:20px}
-#gate .card{width:100%;max-width:360px;text-align:center}
+#gate .card{width:100%;max-width:380px;text-align:center}
 #toasts{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:200;display:flex;flex-direction:column;gap:8px}
 .toast{background:#241019;border:1px solid var(--line);border-inline-start:3px solid var(--green);padding:12px 16px;border-radius:12px;font-size:13px;font-weight:700;box-shadow:0 12px 30px rgba(0,0,0,.5)}
-.inp{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:15px;width:100%}
+.inp{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:14.5px;width:100%}
 .banner{background:rgba(255,176,32,.1);border:1px solid rgba(255,176,32,.35);color:var(--warn);border-radius:12px;padding:10px 12px;font-size:12.5px;font-weight:700;margin:10px 0}
 .sec{margin:18px 0 8px;font-size:15px;font-weight:800}
 .bankgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;word-break:break-word}
 .bankrow{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:12px}
 .bankrow b{color:var(--pk);font-size:14px}
-/* 📱 mobile-proof tables: never trap the action buttons off-screen */
 .scrollcard{overflow-x:auto;-webkit-overflow-scrolling:touch}
 .scrollcard table{min-width:520px}
 .orbox{display:none}
 @media(max-width:700px){
   th,td{padding:8px 6px;font-size:12px}
   .btn{padding:8px 10px;font-size:11px}
-  #pg-or table .passcol{display:none} /* keeps Activate GOLD visible without swiping */
+  #pg-or table .passcol{display:none}
   .orbox{display:flex;flex-direction:column;gap:10px;margin-bottom:12px}
   .orbox .card{background:linear-gradient(145deg,#3a2607,#241a08);border:1px solid #7a5514}
   .orbox .bigact{display:block;width:100%;margin-top:10px;padding:15px;border-radius:12px;background:linear-gradient(45deg,#2fbf71,#1f9d59);color:#fff;font-size:15px;font-weight:900;box-shadow:0 10px 24px rgba(47,191,113,.3)}
@@ -71,6 +70,7 @@ tr:last-child td{border-bottom:none}
 <div id="toasts"></div>
 
 <div id="gate">
+  <!-- Step 1: Admin PIN Verification -->
   <div class="card" id="gatePin">
     <div class="logo" style="margin:0 auto 12px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg></div>
     <div class="h2">Tayripages HQ</div>
@@ -79,11 +79,29 @@ tr:last-child td{border-bottom:none}
     <div style="height:12px"></div>
     <button class="btn btn-g" style="width:100%;padding:14px;font-size:15px;font-weight:900" onclick="tryPin()">Continue</button>
   </div>
+
+  <!-- Step 2: Owner Auth (Google 1-Click + Email/Password Option) -->
   <div class="card" id="gatePhone" style="display:none">
     <div class="logo" style="margin:0 auto 12px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg></div>
-    <div class="h2">Verify it's you</div>
-    <div class="mut small" style="margin:6px 0 14px">Sign in with the OWNER'S Google account.<br>Your UID will be your admin key.</div>
-    <button class="btn btn-g" id="aBtn" style="width:100%;padding:14px;font-size:15px;font-weight:900" onclick="adminGoogle()">Continue with Google</button>
+    <div class="h2">Verify Owner Account</div>
+    <div class="mut small" style="margin:6px 0 14px">Authenticate with your admin Google or Email account:</div>
+    
+    <!-- 1. Google 1-Click Popup -->
+    <button class="btn btn-g" id="aBtn" style="width:100%;padding:13px;font-size:14px;font-weight:800;margin-bottom:12px" onclick="adminGoogle()">
+      <svg width="18" height="18" viewBox="0 0 48 48" style="vertical-align:middle;margin-right:6px"><path fill="#FFC107" d="M43.6 20.1H42V20H24v8h11.3c-1.6 4.7-6.1 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3l5.7-5.7C34 6.1 29.3 4 24 4 13 4 4 13 4 24s9 20 20 20 20-9 20-20c0-1.3-.1-2.7-.4-3.9z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.9 1.2 8 3l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.1H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C41 35.4 44 30.2 44 24c0-1.3-.1-2.7-.4-3.9z"/></svg>
+      Continue with Google
+    </button>
+    
+    <div style="display:flex;align-items:center;gap:10px;margin:10px 0">
+      <div style="flex:1;height:1px;background:var(--line)"></div>
+      <span class="mut tiny" style="font-weight:700">OR WITH ADMIN EMAIL</span>
+      <div style="flex:1;height:1px;background:var(--line)"></div>
+    </div>
+    
+    <!-- 2. Email & Password (Zero-redirect, zero missing-initial-state) -->
+    <input class="inp" id="adminEmailIn" type="email" placeholder="Admin email (e.g. admin@...)" style="margin-bottom:8px;font-size:13px;padding:10px 12px">
+    <input class="inp" id="adminPassIn" type="password" placeholder="Admin password" style="margin-bottom:12px;font-size:13px;padding:10px 12px" onkeydown="if(event.key==='Enter')adminEmailLogin()">
+    <button class="btn btn-line" id="adminEmailBtn" style="width:100%;padding:12px;font-size:13px;font-weight:800" onclick="adminEmailLogin()">Sign In with Email</button>
   </div>
 </div>
 
@@ -94,6 +112,8 @@ tr:last-child td{border-bottom:none}
       <div><b style="font-size:18px">Tayripages HQ</b><div class="mut tiny" id="connState">connecting…</div></div>
     </div>
     <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+      <div id="adminUserTag" class="mut tiny"></div>
+      <button class="btn btn-line" style="padding:5px 9px;font-size:11px" onclick="adminSignOut()">Sign out</button>
       <div class="mut small">Revenue (orders): <b class="grn" id="topRev" style="font-size:16px">0 DH</b></div>
     </div>
   </div>
@@ -169,21 +189,27 @@ function eh(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt
 function ref(p){return DB.ref('wasla_dating/'+p)} // matches firebase-rules.json root
 function ts(t){return t?new Date(t).toLocaleString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}):''}
 
-let PIN_OK=false;
+let PIN_OK = false;
 
 function tryPin(){
-  if($('pinIn').value!==TAYRI_CONFIG.adminPin){toast('Wrong PIN','err');$('pinIn').value='';return}
-  PIN_OK=true;
+  const val = ($('pinIn').value||'').trim();
+  if(val !== TAYRI_CONFIG.adminPin){
+    toast('Wrong PIN','err');
+    $('pinIn').value='';
+    return;
+  }
+  PIN_OK = true;
   if(!tayriCloudReady()){ enter(); return; }
-  // 🔐 second lock: Google sign-in as owner — Firebase must be initialized first
+  
   if(!window.firebase.apps.length){
     firebase.initializeApp(TAYRI_CONFIG.firebase);
     try{ const k=(TAYRI_CONFIG.appCheck&&TAYRI_CONFIG.appCheck.recaptchaSiteKey)||'';
       if(k&&!/^PASTE|^$/.test(k)&&firebase.appCheck){ firebase.appCheck().activate(k,true); } }catch(e){}
   }
   
-  // If already signed in with Google, enter directly
-  if(firebase.auth().currentUser && !firebase.auth().currentUser.isAnonymous){
+  // If already authenticated as non-anonymous user, enter directly
+  const cur = firebase.auth().currentUser;
+  if(cur && !cur.isAnonymous){
     enter();
     return;
   }
@@ -193,27 +219,73 @@ function tryPin(){
 }
 
 function adminGoogle(){
-  const btn=$('aBtn'); btn.disabled=true; btn.textContent='Opening Google…';
-  const prov=new firebase.auth.GoogleAuthProvider();
+  const btn = $('aBtn');
+  if(btn){ btn.disabled=true; btn.textContent='Opening Google…'; }
+  
+  if(!window.firebase || !firebase.apps.length){
+    try{ firebase.initializeApp(TAYRI_CONFIG.firebase); }catch(e){}
+  }
+  
+  const auth = firebase.auth();
+  const prov = new firebase.auth.GoogleAuthProvider();
   prov.setCustomParameters({ prompt: 'select_account' });
   
-  /* Phones: redirect instead of popup (COOP-proof) */
-  if(/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent)){
-    firebase.auth().signInWithRedirect(prov);
+  // Use LOCAL persistence and Popup to eliminate 'auth/missing-initial-state'
+  auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+    .then(()=>{
+      return auth.signInWithPopup(prov);
+    })
+    .then(()=>{
+      enter();
+    })
+    .catch(e=>{
+      if(btn){ btn.disabled=false; btn.textContent='Continue with Google'; }
+      if(e.code==='auth/popup-closed-by-user'||e.code==='auth/cancelled-popup-request') return;
+      if(e.code==='auth/missing-initial-state' || e.code==='auth/popup-blocked'){
+        toast('Google popup was blocked or storage partitioned — use Email sign-in below for 100% reliability', 'err');
+      } else {
+        toast('Sign-in failed: '+(e.message||e.code),'err');
+      }
+    });
+}
+
+function adminEmailLogin(){
+  const email = ($('adminEmailIn') && $('adminEmailIn').value || '').trim();
+  const pass = ($('adminPassIn') && $('adminPassIn').value || '').trim();
+  const btn = $('adminEmailBtn');
+  
+  if(!email || !pass){
+    toast('Please enter both admin email and password', 'err');
     return;
   }
-  firebase.auth().signInWithPopup(prov).then(()=>{
-    enter();
-  }).catch(e=>{
-    btn.disabled=false;
-    btn.textContent='Continue with Google';
-    if(e.code==='auth/popup-blocked'||e.code==='auth/operation-not-supported-in-this-environment'){
-      firebase.auth().signInWithRedirect(prov);
-      return;
-    }
-    if(e.code==='auth/popup-closed-by-user'||e.code==='auth/cancelled-popup-request') return;
-    toast('Sign-in failed: '+(e.message||e.code),'err');
-  });
+  
+  if(!window.firebase || !firebase.apps.length){
+    try{ firebase.initializeApp(TAYRI_CONFIG.firebase); }catch(e){}
+  }
+  
+  if(btn){ btn.disabled = true; btn.textContent = 'Verifying…'; }
+  
+  const auth = firebase.auth();
+  auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+    .then(()=>{
+      return auth.signInWithEmailAndPassword(email, pass);
+    })
+    .then(()=>{
+      enter();
+    })
+    .catch(e=>{
+      if(btn){ btn.disabled = false; btn.textContent = 'Sign In with Email'; }
+      toast('Login failed: ' + (e.message || e.code), 'err');
+    });
+}
+
+function adminSignOut(){
+  PIN_OK = false;
+  if(window.firebase && firebase.apps.length){
+    firebase.auth().signOut().then(()=>location.reload()).catch(()=>location.reload());
+  } else {
+    location.reload();
+  }
 }
 
 function enter(){
@@ -221,24 +293,6 @@ function enter(){
   $('dash').style.display='';
   boot();
 }
-
-// Auto-check redirect result on mobile
-(function initAuthCheck(){
-  if(tayriCloudReady() && window.firebase){
-    if(!firebase.apps.length){
-      try{ firebase.initializeApp(TAYRI_CONFIG.firebase); }catch(e){}
-    }
-    if(firebase.apps.length){
-      try{
-        firebase.auth().getRedirectResult().then(res=>{
-          if(res && res.user){
-            enter();
-          }
-        }).catch(()=>{});
-      }catch(e){}
-    }
-  }
-})();
 
 function tab(p,el){
   ['ov','or','rp','vf','us','ms','st'].forEach(x=>$('pg-'+x).style.display=x===p?'':'none');
@@ -260,6 +314,15 @@ function boot(){
     try{ const k=(TAYRI_CONFIG.appCheck&&TAYRI_CONFIG.appCheck.recaptchaSiteKey)||'';
       if(k&&!/^PASTE|^$/.test(k)&&firebase.appCheck){ firebase.appCheck().activate(k,true); } }catch(e){}
   }
+  
+  const u = firebase.auth().currentUser;
+  if(u && !u.isAnonymous){
+    const tag = $('adminUserTag');
+    if(tag){
+      tag.innerHTML = `Admin: <b>${eh(u.email||u.displayName||'Owner')}</b> (${u.uid.slice(0,5)}…)`;
+    }
+  }
+
   DB=firebase.database();
   DB.ref('.info/connected').on('value',s=>{
     $('connState').textContent=s.val()?'● live':'○ offline';
@@ -274,7 +337,8 @@ function boot(){
     },e=>{
       console.error('Firebase read failed for '+k,e);
       if(['orders','gold','reports','verifyReq','bannedEmails'].includes(k)){
-        toast('Admin access denied for '+k+' — confirm this Google UID is in wasla_dating/admins','err');
+        const uidStr = (firebase.auth().currentUser && firebase.auth().currentUser.uid) || 'unauthenticated';
+        toast('Admin access denied for '+k+' — confirm UID ('+uidStr+') is in wasla_dating/admins','err');
       }
     });
   });
@@ -282,12 +346,12 @@ function boot(){
 
 function paintAll(){
   const users=Object.entries(D.users||{});
-  const pres=Object.values(D.presence||{}).filter(p=>p.online&&(Date.now()-(p.lastSeen||0))<180000).length; // online = flag + heartbeat < 3 min ago
+  const pres=Object.values(D.presence||{}).filter(p=>p.online&&(Date.now()-(p.lastSeen||0))<180000).length;
   const matches=Object.keys(D.matches||{}).length;
   const msgs=Object.values(D.chats||{}).reduce((a,c)=>a+Object.keys(c||{}).length,0);
   // orders are nested: orders/{uid}/{oid} — flatten for display
   const orders=Object.entries(D.orders||{}).flatMap(([uid,os])=>Object.entries(os||{}).map(([oid,o])=>[oid,{...o,uid}]));
-  const goldCnt=Object.keys(D.gold||{}).length; // giftsFor retired with the coin era
+  const goldCnt=Object.keys(D.gold||{}).length;
   const rev=orders.filter(([k,o])=>o.status==='approved').reduce((a,[k,o])=>a+(+o.price||0),0);
   const pendOr=orders.filter(([k,o])=>o.status==='pending');
   const reports=Object.entries(D.reports||{});
