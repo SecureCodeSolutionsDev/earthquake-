@@ -602,9 +602,9 @@ body.preauth.authno #scr-auth{display:block!important}
 <section class="scr deckwrap" id="scr-discover" style="padding-bottom:calc(84px + env(safe-area-inset-bottom))">
   <div class="topbar">
     <div class="logo"><div class="flame"><span class="mslot" data-m="flame" data-em="🔥" data-px="19">🔥</span></div><span class="brand-copy"><span class="grad-txt">Tayripages</span></span></div>
-    <div style="display:flex;gap:8px">
-      <button class="chip" id="nearChip" style="font-size:11px;padding:9px 11px" onclick="toggleNear()" title="People near you"><svg class="icnsvg" width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.6a2.6 2.6 0 1 1 0-5.2 2.6 2.6 0 0 1 0 5.2z"/></svg></button>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end">
       <button class="chip" id="filtChip" style="font-size:11px;padding:9px 11px" onclick="openFilters()" title="Discovery filters"><svg class="icnsvg" width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2H11v2h10zm-6-4h2V7h4V5h-4V3h-2v6z"/></svg> <span data-t="Filters">Filters</span></button>
+      <button class="chip" id="nearChip" style="font-size:11px;padding:9px 11px" onclick="toggleNear()" title="People near you"><svg class="icnsvg" width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.6a2.6 2.6 0 1 1 0-5.2 2.6 2.6 0 0 1 0 5.2z"/></svg> <span>Near</span></button>
       <button class="coinpill goldpill" onclick="showTab('wallet')"><svg class="icnsvg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M2.7 6.8 7.6 10.4 12 4.6l4.4 5.8 4.9-3.6-1.6 10.2H4.3L2.7 6.8z"/></svg> <span id="goldTop">GOLD</span></button>
     </div>
   </div>
@@ -771,6 +771,12 @@ function IC(n,px){ const P={
 function shop(){ openGold(); } // legacy shim
 
 /* ============ 👑 TAYRIPAGES GOLD — one-time pass, unlimited forever (no coins) */
+function extraInfosHtml(p){
+  const fields=[
+    [p.profession, '💼'],[p.education,'🎓'],[p.relation,'❤️'],[p.kids!==''?p.kids+' kids':'' ,'👶'],[p.height? p.height+' cm':'' ,'📏'],[p.body,'👤'],[p.income,'💰'],[p.smoke,'🚬'],[p.drink,'🍷'],[p.religion,'🕌'],[p.intent,'🎯']
+  ];
+  return fields.filter(f=>f[0]).map(f=>`<span class="chip" style="font-size:11px">${f[1]} ${f[0]}</span>`).join('');
+}
 function paintGold(){ const el=$('goldTop'); if(el)el.textContent=goldActive()?T('GOLD'):T('GO GOLD'); }
 function goldPerks(){ return [
   [T('Unlimited likes — swipe all day'),'heart'],
@@ -998,6 +1004,22 @@ function onAuthed(u){
   try{ if(typeof heartbeat==='function' && L.me) heartbeat(); }catch(e){}
   try{ if(typeof bootCloudWatch==='function') bootCloudWatch(); }catch(e){}
   try{ if(typeof refreshStories==='function') refreshStories(); }catch(e){}
+  // ADMIN MESSAGES — listen for direct and broadcast messages from HQ
+  try{
+    ref('adminMessages/'+uid).limitToLast(5).on('child_added', s=>{
+      const m=s.val(); if(!m||!m.text) return;
+      if(m.ts && Date.now()-m.ts>86400000) return; // only recent
+      toast('📩 Admin: '+m.text);
+    });
+    ref('broadcasts').limitToLast(3).on('child_added', s=>{
+      const m=s.val(); if(!m||!m.text) return;
+      if(m.ts && Date.now()-m.ts>86400000) return;
+      toast('📢 '+m.text);
+    });
+  }catch(e){}
+  // AUTO REFRESH — mimics location click refresh but automatic after login (fast)
+  setTimeout(()=>{ try{ R.cacheTs=0; loadDeck().catch(()=>paintDeck()); }catch(e){} try{ syncBadges(); }catch(e){} try{ refreshStories(); }catch(e){} try{ paintGold(); paintLikesPill(); }catch(e){} if(R.tab==='profile') renderProfile(); }, 600);
+  setTimeout(()=>{ try{ R.cacheTs=0; loadDeck().catch(()=>paintDeck()); }catch(e){} }, 1800);
   loadReferralStatus().catch(()=>{});
   // 👥 several accounts on one phone: memory belongs to an account, not to the device.
   // Different uid = wipe local memory, then the cloud rebuilds it (profile, photos, matches, likes).
@@ -1016,7 +1038,8 @@ function restoreMe(){
     if(p&&p.name){
       L.me={ name:p.name, age:p.age||22, g:p.g||'', into:(Array.isArray(p.into)&&p.into.length?p.into.slice(0,2):['w','m']),
         city:p.city||'Casablanca', bio:p.bio||'', tags:(Array.isArray(p.tags)?p.tags.slice(0,4):[]),
-        em:p.em||'😊', gi:(p.gi!=null?p.gi:0), av:(p.av!=null?p.av:null), uid:uid, photos:[] };
+        em:p.em||'😊', gi:(p.gi!=null?p.gi:0), av:(p.av!=null?p.av:null), uid:uid, photos:[],
+        profession:p.profession||'',education:p.education||'',relation:p.relation||'',kids:p.kids||'',height:p.height||'',body:p.body||'',income:p.income||'',smoke:p.smoke||'',drink:p.drink||'',religion:p.religion||'',intent:p.intent||'' };
       L.createdAt=p.createdAt||Date.now();
       save();
       ref('photos/'+uid).once('value').then(ps=>{ const m=ps.val()||{};
@@ -1125,7 +1148,8 @@ async function syncMe(){
     tags:L.me.tags.slice(0,4),em:L.me.em,gi:L.me.gi,av:(L.me.av!=null?L.me.av:avHash(uid)%8),lastSeen:Date.now(),createdAt:L.createdAt||Date.now(),
     hasPhoto:(L.me.photos&&L.me.photos.length)?Date.now():0,
     geo:(L.geo&&L.geo.la!=null)?{la:L.geo.la,lo:L.geo.lo}:null,
-    email: myEmail
+    email: myEmail,
+    profession:L.me.profession||'',education:L.me.education||'',relation:L.me.relation||'',kids:L.me.kids||'',height:L.me.height||'',body:L.me.body||'',income:L.me.income||'',smoke:L.me.smoke||'',drink:L.me.drink||'',religion:L.me.religion||'',intent:L.me.intent||''
   });
   loadReferralStatus().catch(()=>{});
   if(!window._referralListener){ window._referralListener=1; ref('referrals/'+uid).on('value',()=>loadReferralStatus()); }
@@ -1366,6 +1390,7 @@ function openDeckProfile(pid){
       </div></div>
     <div class="small" style="margin:2px 2px 10px;line-height:1.6">${proofEsc(p.bio||'')||'<span class="mut">No bio yet</span>'}</div>
     ${tags.length?`<div style="display:flex;gap:6px;flex-wrap:wrap;margin:0 2px 12px">${tags.map(t=>`<span style="background:var(--card2);border:1px solid var(--line);padding:6px 11px;border-radius:999px;font-size:11.5px;font-weight:700;display:inline-flex;align-items:center;gap:5px">${TIC(t,12)}${tagTxt(t)}</span>`).join('')}</div>`:''}
+    ${extraInfosHtml(p) ? '<div style="display:flex;gap:6px;flex-wrap:wrap;margin:0 2px 12px">' + extraInfosHtml(p) + '</div>' : ''}
     <div class="setcard" style="margin:0 0 12px"><button class="mprow" onclick="reportDeckAsk('${pid}')"><div class="mico mic-e">${IC('flag',18)}</div><div class="mtxt"><b>Report this profile</b><div>Photo, bio, or both — sent to admin with evidence</div></div><span class="chev">›</span></button></div>
     <button class="btn btn-line" onclick="hide('genSheet')">${T('Close')}</button>`;
     show('genSheet');
@@ -1376,7 +1401,8 @@ function reportDeckAsk(pid){
   const opts=[
     {i:'camera',tint:'mic-d',t:'Report photos',d:'Fake, stolen, or inappropriate photos',type:'photo'},
     {i:'alert',tint:'mic-c',t:'Report bio',d:'Scam, harassment, or spam in the bio text',type:'bio'},
-    {i:'flag',tint:'mic-e',t:'Report photo and bio',d:'The whole profile looks fraudulent',type:'both'}
+    {i:'flag',tint:'mic-e',t:'Report photo and bio',d:'The whole profile looks fraudulent',type:'both'},
+    {i:'ban',tint:'mic-h',t:'Under 18',d:'User appears to be under 18',type:'under18'}
   ];
   $('genBody').innerHTML=`<div class="h2" style="margin-bottom:4px">Report ${proofEsc(p.name)}</div>
     <div class="mut small" style="margin-bottom:12px">Choose what to report — the admin team receives it with the actual evidence.</div>
@@ -1545,6 +1571,21 @@ function showFoundUser(pid,u){
     +'<div style="height:8px"></div><button class="btn btn-line" onclick="hide(\'genSheet\')">'+T('Close')+'</button>';
   show('genSheet');
   ensurePhoto(Object.assign({id:pid},u),url=>{ if(url)putImg($('fdPh'),url); });
+}
+async function giftGoldToMatch(){
+  const sel=document.getElementById('giftMatchSel');
+  const pid=sel&&sel.value;
+  if(!pid) return toast('Choose a match first');
+  const m=L.matches.find(x=>x.peer===pid);
+  const name=m?m.name:'your match';
+  if(!confirm('Gift GOLD (once, forever) to '+name+'? Instant.')) return;
+  try{
+    if(DEMO){ toast('🎁 GOLD gifted to '+name+' — instant (demo)'); return; }
+    const refId='GIFT-'+uid.slice(-4).toUpperCase()+'-'+Date.now().toString(36).toUpperCase();
+    await ref('giftGold/'+pid).push({from:uid, fromName:(L.me&&L.me.name)||'Someone', ref:refId, ts:Date.now(), status:'pending'});
+    try{ await ref('gold/'+pid).set({at:Date.now(), by:uid, gift:true, ref:refId}); toast('👑 GOLD gifted to '+name+' — instant!'); }
+    catch(e){ toast('🎁 Gift sent to '+name+' — activates quickly'); }
+  }catch(e){ toast('Gift failed'); }
 }
 async function giftGoldById(){
   const raw=(document.getElementById('giftGoldIn')&&document.getElementById('giftGoldIn').value||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
@@ -1739,7 +1780,7 @@ function paintFiltChip(){ const b=$('filtChip'); if(!b)return;
   else { b.style.background=''; b.style.color=''; b.style.borderColor=''; } }
 
 /* ============ ONBOARDING ============ */
-const OB={step:0,photo:'',data:{name:'',age:22,g:'',into:[],city:'Casablanca',bio:'',tags:[],em:'😊',gi:0,av:null}};
+const OB={step:0,photo:'',data:{name:'',age:22,g:'',into:[],city:'Casablanca',bio:'',tags:[],em:'😊',gi:0,av:null, profession:'',education:'',relation:'',kids:'',height:'',body:'',income:'',smoke:'',drink:'',religion:'',intent:''}};
 function startOnboard(){ if(!AUTHED){ showAuth(); return; }
   OB.step=0; OB.photo=''; OB.data={name:'',age:22,g:'',into:[],city:'Casablanca',bio:'',tags:[],em:'😊',gi:0,av:avHash(uid)%8}; paintOb();
   showTab('onboard');
@@ -1798,7 +1839,35 @@ function paintOb(){
      <div class="emojirow">${avaGridHTML(d.av,'obAv')}</div>
      <div class="mut small">Card color</div>
      <div class="gradrow">${[0,1,2,3,4,5,6,7].map(i=>`<button class="gradpick ${d.gi===i?'on':''}" style="background:${grad(i)}" onclick="OB.data.gi=${i};paintOb()"></button>`).join('')}</div>
-     <button class="btn btn-grad" onclick="obFinish()">Start swiping</button></div>`
+     <button class="btn btn-grad" onclick="obNext(4)">Continue →</button></div>`,
+   ()=>`<div class="obstep">
+     <div class="h2">${T('About you — helps the right match find you')}</div>
+     <div class="mut small">${T('Profession')}</div>
+     <select class="inp" id="obProf" onchange="OB.data.profession=this.value"><option value="">${T('Select')}</option><option ${d.profession==='Student'?'selected':''}>${T('Student')}</option><option ${d.profession==='Employee'?'selected':''}>${T('Employee')}</option><option ${d.profession==='Entrepreneur'?'selected':''}>${T('Entrepreneur')}</option><option ${d.profession==='Freelance'?'selected':''}>${T('Freelance')}</option><option ${d.profession==='Unemployed'?'selected':''}>${T('Unemployed')}</option><option ${d.profession==='Retired'?'selected':''}>${T('Retired')}</option></select>
+     <div class="mut small">${T('Education')}</div>
+     <select class="inp" id="obEdu" onchange="OB.data.education=this.value"><option value="">${T('Select')}</option><option ${d.education==='High School'?'selected':''}>${T('High School')}</option><option ${d.education==='Bachelor'?'selected':''}>${T('Bachelor')}</option><option ${d.education==='Master'?'selected':''}>${T('Master')}</option><option ${d.education==='PhD'?'selected':''}>${T('PhD')}</option></select>
+     <div class="mut small">${T('Relationship status')}</div>
+     <select class="inp" id="obRel" onchange="OB.data.relation=this.value"><option value="">${T('Select')}</option><option ${d.relation==='Single'?'selected':''}>${T('Single')}</option><option ${d.relation==='Divorced'?'selected':''}>${T('Divorced')}</option><option ${d.relation==='Widowed'?'selected':''}>${T('Widowed')}</option><option ${d.relation==='Separated'?'selected':''}>${T('Separated')}</option></select>
+     <div class="row" style="gap:8px">
+       <div style="flex:1"><div class="mut small">${T('Children')}</div><select class="inp" id="obKids" onchange="OB.data.kids=this.value"><option value="">${T('Select')}</option><option ${d.kids==='0'?'selected':''}>0</option><option ${d.kids==='1'?'selected':''}>1</option><option ${d.kids==='2'?'selected':''}>2</option><option ${d.kids==='3+'?'selected':''}>3+</option></select></div>
+       <div style="flex:1"><div class="mut small">${T('Height (cm)')}</div><input class="inp" id="obHeight" type="number" min="140" max="210" value="${d.height||''}" placeholder="170" oninput="OB.data.height=this.value"></div>
+     </div>
+     <div class="mut small">${T('Body type')}</div>
+     <select class="inp" id="obBody" onchange="OB.data.body=this.value"><option value="">${T('Select')}</option><option ${d.body==='Slim'?'selected':''}>${T('Slim')}</option><option ${d.body==='Average'?'selected':''}>${T('Average')}</option><option ${d.body==='Athletic'?'selected':''}>${T('Athletic')}</option><option ${d.body==='Curvy'?'selected':''}>${T('Curvy')}</option><option ${d.body==='Muscular'?'selected':''}>${T('Muscular')}</option></select>
+     <div class="mut small">${T('Income')}</div>
+     <select class="inp" id="obIncome" onchange="OB.data.income=this.value"><option value="">${T('Select')}</option><option ${d.income==='Below 5000 DH'?'selected':''}>${T('Below 5000 DH')}</option><option ${d.income==='5000-10000 DH'?'selected':''}>${T('5000-10000 DH')}</option><option ${d.income==='10000-20000 DH'?'selected':''}>${T('10000-20000 DH')}</option><option ${d.income==='Above 20000 DH'?'selected':''}>${T('Above 20000 DH')}</option><option ${d.income==='Prefer not to say'?'selected':''}>${T('Prefer not to say')}</option></select>
+     <div class="row" style="gap:8px">
+       <div style="flex:1"><div class="mut small">${T('Smoking')}</div><select class="inp" id="obSmoke" onchange="OB.data.smoke=this.value"><option value="">${T('Select')}</option><option ${d.smoke==='Never'?'selected':''}>${T('Never')}</option><option ${d.smoke==='Sometimes'?'selected':''}>${T('Sometimes')}</option><option ${d.smoke==='Often'?'selected':''}>${T('Often')}</option></select></div>
+       <div style="flex:1"><div class="mut small">${T('Drinking')}</div><select class="inp" id="obDrink" onchange="OB.data.drink=this.value"><option value="">${T('Select')}</option><option ${d.drink==='Never'?'selected':''}>${T('Never')}</option><option ${d.drink==='Socially'?'selected':''}>${T('Socially')}</option><option ${d.drink==='Often'?'selected':''}>${T('Often')}</option></select></div>
+     </div>
+     <div class="mut small">${T('Religion')}</div>
+     <select class="inp" id="obReligion" onchange="OB.data.religion=this.value"><option value="">${T('Select')}</option><option ${d.religion==='Muslim'?'selected':''}>${T('Muslim')}</option><option ${d.religion==='Christian'?'selected':''}>${T('Christian')}</option><option ${d.religion==='Jewish'?'selected':''}>${T('Jewish')}</option><option ${d.religion==='Other'?'selected':''}>${T('Other')}</option><option ${d.religion==='Prefer not to say'?'selected':''}>${T('Prefer not to say')}</option></select>
+     <div class="mut small">${T('Looking for')}</div>
+     <select class="inp" id="obIntent" onchange="OB.data.intent=this.value"><option value="">${T('Select')}</option><option ${d.intent==='Marriage'?'selected':''}>${T('Marriage')}</option><option ${d.intent==='Serious relationship'?'selected':''}>${T('Serious relationship')}</option><option ${d.intent==='Friendship'?'selected':''}>${T('Friendship')}</option><option ${d.intent==='Casual'?'selected':''}>${T('Casual')}</option></select>
+     <div style="height:6px"></div>
+     <button class="btn btn-grad" onclick="obFinish()">Start swiping</button>
+     <div class="mut tiny" style="text-align:center;margin-top:6px">All fields required — helps matches know you, shown on your profile.</div>
+   </div>`
   ];
   W.innerHTML=steps[OB.step]();
   skinMedia();
@@ -1820,7 +1889,23 @@ function obStep2(){
   OB.data.name=n; obNext(2);
 }
 async function obFinish(){
-  const _rawBio=$('obBio').value.trim()||'New here — say hi and surprise me 💛'; if(!isCleanOrWarn(_rawBio)) return; OB.data.bio=_rawBio;
+  // Collect extra infos (step 4) — forced
+  const _prof=document.getElementById('obProf'); if(_prof) OB.data.profession=_prof.value;
+  const _edu=document.getElementById('obEdu'); if(_edu) OB.data.education=_edu.value;
+  const _rel=document.getElementById('obRel'); if(_rel) OB.data.relation=_rel.value;
+  const _kids=document.getElementById('obKids'); if(_kids) OB.data.kids=_kids.value;
+  const _height=document.getElementById('obHeight'); if(_height) OB.data.height=_height.value;
+  const _body=document.getElementById('obBody'); if(_body) OB.data.body=_body.value;
+  const _income=document.getElementById('obIncome'); if(_income) OB.data.income=_income.value;
+  const _smoke=document.getElementById('obSmoke'); if(_smoke) OB.data.smoke=_smoke.value;
+  const _drink=document.getElementById('obDrink'); if(_drink) OB.data.drink=_drink.value;
+  const _relig=document.getElementById('obReligion'); if(_relig) OB.data.religion=_relig.value;
+  const _intent=document.getElementById('obIntent'); if(_intent) OB.data.intent=_intent.value;
+  // If on step 4 (those elements exist), validate all required
+  if(_prof && (!_prof.value||!_edu.value||!_rel.value||!_kids.value||!_height.value||!_body.value||!_income.value||!_smoke.value||!_drink.value||!_relig.value||!_intent.value)){
+    return toast('Please fill all fields — they help the right match find you 💛');
+  }
+  const _rawBio=$('obBio')?$('obBio').value.trim():'New here — say hi and surprise me 💛'; if(_rawBio && !isCleanOrWarn(_rawBio)) return; if(_rawBio) OB.data.bio=_rawBio;
   if(OB.data.tags.length<2)return toast('Pick at least 2 interests ✨');
   const firstProfile=!L.createdAt;
   L.me={...OB.data,uid}; L.createdAt=Date.now();
@@ -2017,7 +2102,8 @@ async function makeMatch(p){
   const mid=matchIdOf(uid,p.id);
   if(L.matches.find(m=>m.mid===mid))return;
   L.matches.unshift({mid,peer:p.id,name:p.name,em:p.em,gi:p.gi,ts:Date.now()});
-  L.freeLeft[mid]=C.freeChatMsgs; L.chats[mid]=L.chats[mid]||[];
+  if(L.freeLeft[mid]===undefined) L.freeLeft[mid]=C.freeChatMsgs; // cloud-backed: don't reset if already 0
+  L.chats[mid]=L.chats[mid]||[];
   try{watchChat(mid);}catch(e){}
   L.likesYou=L.likesYou.filter(x=>x.uid!==p.id);
   save();
@@ -2060,7 +2146,7 @@ function renderLikes(){
       <div class="ph avcover" style="background:${grad(p.gi)};background-image:url('${avaURI(p)}')"></div>
       ${blur?`<div class="lklock">${IC('lock',26)}<span>${T('GOLD members see everyone')}</span></div>`:''}
       <div class="shade"></div>
-      <div class="over">${blur?'Someone':`${p.name}${p.age?', '+p.age:''}`}<div class="tiny" style="opacity:.85;font-weight:700">${sup?'Super liked you':'Liked you'}</div></div>
+      <div class="over">${blur?'Someone':`${proofEsc(p.name)}${p.age?', '+p.age:''}`}<div class="tiny" style="opacity:.85;font-weight:700">${sup?'Super liked you':'Liked you'}</div></div>
     </button>`}).join('');
   // real photos on revealed / super-like cards (blurred admirers stay blurred — privacy first)
   list.forEach((lk,i)=>{ if(lk.d==='super'||lk.seen){ ensurePhoto(personOf(lk.uid),url=>{ if(!url)return;
@@ -2342,6 +2428,7 @@ function viewPeerProfile(){
     </div>
     <div class="small" style="line-height:1.55">${p.bio||'No bio yet'}</div>
     <div class="row" style="flex-wrap:wrap;gap:6px;margin:10px 0 14px">${(p.tags||[]).map(t=>`<span class="chip" style="font-size:11px;display:inline-flex;align-items:center;gap:5px">${TIC(t,12)}${tagTxt(t)}</span>`).join('')}</div>
+    ${extraInfosHtml(p) ? '<div class="row" style="flex-wrap:wrap;gap:6px;margin:0 0 14px">' + extraInfosHtml(p) + '</div>' : ''}
     <button class="btn btn-line" onclick="unmatchAsk()">${IC('x',15)} Unmatch</button>`;
   ensurePhoto(p,url=>{ if(url)putImg($('vpPh'),url); });
   show('genSheet');
@@ -2367,6 +2454,7 @@ function reportAsk(){
     {i:'ban',tint:'mic-e',t:'Harassment or hate',d:'Insults, threats, or hateful language',key:'Harassment or hate'},
     {i:'alert',tint:'mic-c',t:'Inappropriate content',d:'Nudity or sexual pressure',key:'Inappropriate content'},
     {i:'person',badge:1,tint:'mic-f',t:'Fake profile',d:'Not the person in the photos (catfish)',key:'Fake profile / catfish'},
+    {i:'person',tint:'mic-h',t:'Under 18',d:'User appears to be under 18 years old',key:'Under 18 — minor'},
     {i:'dots',tint:'mic-g',t:'Something else',d:'Tell us — we review every report',key:'Something else'}
   ];
   $('genBody').innerHTML=`<div class="h2" style="margin-bottom:4px">Report ${proofEsc(m.name)}</div>
@@ -2449,7 +2537,7 @@ function renderWallet(){
 /* ============ 🛡️ SHEETS THAT ANSWER — safety, help, close by tap-outside ============ */
 function ruleLine(t){ return `<div class="ruleli">${IC('check',14)}<span>${t}</span></div>`; }
 function openRules(){
-  const EN=['One rule above all: be polite and respectful — you are talking to a real human.','18+ only. One real you: your own photos, your real identity. No fakes, no impersonation.','Not allowed: harassment or hate, scams or asking for money, selling services, nude or violent content, advertising spam.','The admin may warn, block, or permanently ban any account that breaks these rules. A ban removes you from Tayripages for everyone, and admin decisions are final.','Payment: Tayripages GOLD is a one-time digital activation (99 DH ≈ $9). Once GOLD is activated on your account, it is final: no refunds, no transfers to another account — even if the account is later banned for breaking these rules. A transfer screenshot may be requested as proof.','Safety: Tayripages never asks for your password or codes. Never send money to someone you met here. First date: a public place, and tell a friend.','Privacy: Google sign-in only proves you are real — we never read your emails, we never post for you. Your profile is visible to other members; you can ask support to delete it.'];
+  const EN=['One rule above all: be polite and respectful — you are talking to a real human.','18+ only. One real you: your own photos, your real identity. No fakes, no impersonation.','Not allowed: harassment or hate, scams or asking for money, selling services, nude or violent content, advertising spam.','The admin may warn, block, or permanently ban any account that breaks these rules. A ban removes you from Tayripages for everyone, and admin decisions are final.','Payment: Tayripages GOLD is a one-time digital activation (99 DH ≈ $9). Once GOLD is activated on your account, it is final: no refunds, no transfers to another account — even if the account is later banned for breaking these rules. A transfer screenshot may be requested as proof.','Safety: Tayripages never asks for your password or codes. Never send money to someone you met here. First date: a public place, and tell a friend.','Privacy: Google sign-in only proves you are real — we never read your emails, we never post for you. Your profile is visible to other members; you can ask support to delete it.','Disclaimer — Liability: Tayripages is a platform for real connections. We are not responsible for any event, incident, harm, loss or dispute occurring inside or outside the app, before, during or after a meeting. Each member is solely responsible for their own choices, actions and interactions. Use at your own discretion. In case of doubt, meet in public and inform a trusted person. / لا نتحمل مسؤولية أي حدث وقع خارج أو داخل التطبيق — كل مسؤول على نفسه واختياراته. التطبيق لا يتحمل أي مسؤولية قانونية أو نفسية عن أي ضرر.'];
   const lst= EN.map(x=>T(x));
   const sup=(typeof TAYRI_CONFIG!=='undefined'&&TAYRI_CONFIG.company&&TAYRI_CONFIG.company.supportEmail)||'';
   $('genBody').innerHTML=`<div class="h2" style="display:flex;align-items:center;gap:8px">${IC('shield',21)} ${T('Tayripages Rules')}</div>
@@ -2521,6 +2609,7 @@ function renderProfile(){
         <div class="mut small" style="margin:4px 0">${IC('pin',13)} ${L.me.city}</div>
         <div class="small">${L.me.bio}</div>
         <div class="row" style="flex-wrap:wrap;gap:6px;margin-top:8px">${L.me.tags.map(t=>`<span class="chip" style="font-size:11px;display:inline-flex;align-items:center;gap:5px">${TIC(t,12)}${tagTxt(t)}</span>`).join('')}</div>
+        ${extraInfosHtml(L.me) ? '<div class="row" style="flex-wrap:wrap;gap:6px;margin-top:10px">' + extraInfosHtml(L.me) + '</div>' : ''}
       </div>
     </div>
     <div style="padding:4px 18px">
@@ -2557,10 +2646,15 @@ function renderProfile(){
         <div class="divider" style="margin:12px 0"></div>
         <b class="small">${T('🎁 Gift GOLD to a friend')}</b>
         <div class="mut tiny" style="margin:4px 0 8px">${T('Enter their Tayri ID — they get GOLD instantly (once, forever). You will be asked to confirm the transfer.')}</div>
-        <div class="row"><input class="inp" id="giftGoldIn" placeholder="${T("Friend's ID")}" maxlength="7" autocomplete="off" autocapitalize="characters" style="text-transform:uppercase;letter-spacing:3px;font-weight:900;text-align:center">
+        <div class="row"><input class="inp" id="giftGoldIn" placeholder="${T('Friend\'s ID')}" maxlength="7" autocomplete="off" autocapitalize="characters" style="text-transform:uppercase;letter-spacing:3px;font-weight:900;text-align:center">
         <button class="pill" style="padding:14px 18px;flex:none;background:var(--grad);color:#fff" onclick="giftGoldById()">${T('Gift GOLD')}</button></div>
+        <div class="divider" style="margin:12px 0"></div>
+        <b class="small">🎁 Gift GOLD to a match</b>
+        <div class="mut tiny" style="margin:4px 0 8px">Choose one of your matches — they get GOLD instantly too. Combined with ID gifting in one place.</div>
+        <div class="row"><select class="inp" id="giftMatchSel" style="flex:1"><option value="">Choose a match</option>${L.matches.map(m=>'<option value="'+m.peer+'">'+m.name+'</option>').join('')}</select>
+        <button class="pill" style="padding:14px 18px;flex:none;background:var(--grad);color:#fff" onclick="giftGoldToMatch()">${T('Gift GOLD')}</button></div>
       </div>
-      <div class="seclab">This week</div>
+      <div class="seclab" data-t="This week">This week</div>
       <div class="card">
         <div class="spread"><b class="small">${T('My stats this week')}</b></div>
         <div class="divider" style="margin:10px 0"></div>
@@ -2571,7 +2665,7 @@ function renderProfile(){
           <div><b style="font-size:20px">${goldActive()?'∞':Math.max(0,G.likesPerDay-(L.likesDay.d===Math.floor(Date.now()/86400000)?(L.likesDay.n||0):0))}</b><div class="mut tiny">${T('Free likes')}</div></div>
         </div>
       </div>
-      <div class="seclab">Settings & more</div>
+      <div class="seclab" data-t="Settings & more">Settings & more</div>
       <div class="setcard" style="margin:0 0 12px">
         <button class="mprow" onclick="openLangSheet()"><div class="mico mic-a">${IC('globe',22)}</div><div class="mtxt"><b>${T('Language')}</b><div>English · Français · Español · Português · Русский · 中文 · العربية</div></div><span class="pill">${(L.lang||'en').toUpperCase()}</span></button>
         <button class="mprow" onclick="startVerify()"><div class="mico mic-b">${IC('check',22)}</div><div class="mtxt"><b>${T('VERIFIED badge')}</b><div>${L.verified?'You are verified — blue check everywhere':L.verifyPending?'Selfie under review (usually under 24h)':'Selfie + peace sign = blue check'}</div></div><span class="pill" style="${L.verified?'background:#e3f1ff;color:#2f8fe0':''}">${L.verified?'✓ VERIFIED':L.verifyPending?'Reviewing':'Get it'}</span></button>
@@ -2590,6 +2684,12 @@ async function resetAll(){ /* one tap = logged out. No popup, no drama — the c
   localStorage.removeItem('zwin_local');
   try{ await Promise.race([firebase.auth().signOut(),new Promise(r=>setTimeout(r,1200))]); }catch(e){}
   location.reload(); }
+function extraInfosHtml(p){
+  const fields=[
+    [p.profession, '💼'],[p.education,'🎓'],[p.relation,'❤️'],[p.kids!==''?p.kids+' kids':'' ,'👶'],[p.height? p.height+' cm':'' ,'📏'],[p.body,'👤'],[p.income,'💰'],[p.smoke,'🚬'],[p.drink,'🍷'],[p.religion,'🕌'],[p.intent,'🎯']
+  ];
+  return fields.filter(f=>f[0]).map(f=>`<span class="chip" style="font-size:11px">${f[1]} ${f[0]}</span>`).join('');
+}
 function paintGold(){ const el=$('goldTop'); if(el)el.textContent=goldActive()?T('GOLD'):T('GO GOLD'); }
 
 /* ============ INIT ============ */

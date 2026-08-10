@@ -72,8 +72,11 @@ svg{display:inline-block}
 .friendrow .btn{flex:none;min-width:0;padding:11px 14px;font-size:12px}
 .friendmsg{text-align:center;color:var(--mut);font-size:11px;margin-top:8px;min-height:14px;font-weight:750}
 .modegold{margin-left:7px;padding:2.5px 7px;border-radius:7px;background:linear-gradient(135deg,#f2c14e,#c98a12);color:#241a05;font-size:8.5px;font-weight:950;letter-spacing:.6px;vertical-align:1px}
-.videos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-.panel{position:relative;aspect-ratio:4/3;border-radius:22px;overflow:hidden;background:radial-gradient(120% 120% at 50% 0%,#241426,#0e0710);border:1px solid rgba(255,255,255,.1);display:grid;place-items:center;transition:box-shadow .3s}
+.videos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;max-width:880px;margin:0 auto}
+.panel{position:relative;aspect-ratio:16/9;border-radius:24px;overflow:hidden;background:radial-gradient(120% 120% at 50% 0%,#241426,#0e0710);border:1.5px solid rgba(255,255,255,.12);display:grid;place-items:center;transition:box-shadow .3s,border-color .3s;box-shadow:0 12px 40px rgba(0,0,0,.45)}
+.panel.pro{border:1.5px solid transparent;background:linear-gradient(#241426,#0e0710) padding-box, linear-gradient(135deg,#ff5e8a,#ffb15c) border-box}
+.panel.large{aspect-ratio:16/9;min-height:420px}
+@media(max-width:560px){.panel{aspect-ratio:16/10}}
 .panel.live{box-shadow:0 0 0 1.5px rgba(255,78,126,.55),0 0 44px rgba(255,78,126,.16)}
 .panel video{width:100%;height:100%;object-fit:cover;display:block}
 /* NOTE: remote video visibility is driven by the stream itself — never by a fragile [src] check */
@@ -152,6 +155,13 @@ svg{display:inline-block}
 .lang-dropdown button{width:100%;text-align:start;padding:10px 11px;border-radius:10px;background:transparent;color:#f6eef4;font-size:12.5px;font-weight:700;display:flex;align-items:center;justify-content:space-between;border:0;cursor:pointer}
 .lang-dropdown button:hover{background:rgba(255,94,138,.12)}
 
+
+.pro-controls{max-width:880px;margin:14px auto 0;display:flex;gap:8px;flex-wrap:wrap;justify-content:center;align-items:center;padding:12px;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:16px;backdrop-filter:blur(10px)}
+.pro-controls label{font-size:10px;font-weight:800;color:var(--mut);display:flex;flex-direction:column;gap:4px;min-width:110px}
+.pro-controls select{padding:9px 10px;border-radius:10px;background:#1a0f14;border:1px solid var(--line);color:var(--ink);font-size:12px;font-weight:700;outline:none}
+.pro-controls button{padding:9px 14px;border-radius:10px;background:var(--card2);border:1px solid var(--line);color:var(--ink);font-size:12px;font-weight:800}
+.pro-controls button.active{background:var(--grad);color:#fff;border-color:transparent}
+
 </style>
 </head>
 <body>
@@ -206,17 +216,29 @@ svg{display:inline-block}
       <div class="friendmsg" id="friendMsg"></div>
     </div>
     <div class="videos hidden" id="videos">
-      <div class="panel">
+      <div class="panel pro" id="localPanel">
         <video id="localVideo" autoplay muted playsinline></video>
         <div class="panel-empty" id="localEmpty">Your camera preview</div>
         <div class="panel-label">YOU</div>
       </div>
-      <div class="panel remote">
+      <div class="panel remote pro" id="remotePanel">
         <video id="remoteVideo" autoplay playsinline></video>
         <div class="panel-empty" id="remoteEmpty">Waiting for your match…</div>
         <div class="ringtimer hidden" id="ringTimer"><b>0:30</b><span id="ringHint">left to extend</span></div>
         <div class="panel-label">TAYRIPAGES MEMBER</div>
       </div>
+    </div>
+    <div class="pro-controls hidden" id="proControls">
+      <label>Quality
+        <select id="qualitySel"><option value="480">Standard (480p) — CooMeet default</option><option value="720" selected>HD (720p) — Pro</option><option value="1080">Full HD (1080p)</option></select>
+      </label>
+      <label>Frame
+        <select id="frameSel"><option value="cover" selected>Fill (cover)</option><option value="contain">Fit (contain)</option></select>
+      </label>
+      <label>Size
+        <select id="sizeSel"><option value="normal">Normal</option><option value="large">Large (CooMeet pro)</option><option value="fullscreen">Fullscreen</option></select>
+      </label>
+      <button id="proFullscreen" onclick="toggleVideoFullscreen()">⛶ Fullscreen</button>
     </div>
     <div class="actions">
       <button class="btn primary" id="startBtn" disabled>Start instant video</button>
@@ -486,6 +508,37 @@ svg{display:inline-block}
     }catch(e){ console.error(e); setStatus('Firebase could not start. Check the Tayripages configuration.','bad'); }
   }
   function escapeHtml(s){ return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+  // PRO video controls — CooMeet-like defaults (720p HD, 30fps, large pro frames)
+  function applyProSettings(){
+    const q=document.getElementById('qualitySel')?.value||'720';
+    const f=document.getElementById('frameSel')?.value||'cover';
+    const s=document.getElementById('sizeSel')?.value||'normal';
+    const localV=document.getElementById('localVideo'), remoteV=document.getElementById('remoteVideo');
+    if(localV) localV.style.objectFit=f;
+    if(remoteV) remoteV.style.objectFit=f;
+    const panels=document.querySelectorAll('.panel');
+    panels.forEach(p=>{ p.classList.toggle('large', s==='large'); });
+    // quality change requires renegotiation: update localStream constraints
+    if(localStream){
+      const constraints={480:{width:640,height:480},720:{width:1280,height:720},1080:{width:1920,height:1080}}[q]||{width:1280,height:720};
+      localStream.getVideoTracks().forEach(tr=>{
+        try{ tr.applyConstraints({width:constraints.width,height:constraints.height,frameRate:30}); }catch(e){}
+      });
+    }
+    if(s==='fullscreen'){
+      const el=document.getElementById('videos');
+      if(el && el.requestFullscreen) el.requestFullscreen().catch(()=>{});
+    }
+  }
+  function toggleVideoFullscreen(){
+    const el=document.getElementById('videos');
+    if(!document.fullscreenElement){ if(el.requestFullscreen) el.requestFullscreen(); }
+    else { if(document.exitFullscreen) document.exitFullscreen(); }
+  }
+  document.getElementById('qualitySel')?.addEventListener('change', applyProSettings);
+  document.getElementById('frameSel')?.addEventListener('change', applyProSettings);
+  document.getElementById('sizeSel')?.addEventListener('change', applyProSettings);
+
   function weekKey(){
     const d=new Date(); const day=(d.getUTCDay()+6)%7; d.setUTCDate(d.getUTCDate()-day);
     return d.toISOString().slice(0,10);
@@ -602,7 +655,7 @@ svg{display:inline-block}
     if(searching) return;
     try{
       await ensureMedia();
-      searching=true; searchStartedAt=now(); closing=false; show(videos,true); show(startBtn,false); show(skipBtn,true); show(endBtn,false); show(mediaActions,true); show(modeTabs,false); show(proFilterPanel,false); remoteEmpty.classList.remove('hidden');
+      searching=true; searchStartedAt=now(); closing=false; show(videos,true); show(document.getElementById('proControls'),true); show(startBtn,false); show(skipBtn,true); show(endBtn,false); show(mediaActions,true); show(modeTabs,false); show(proFilterPanel,false); remoteEmpty.classList.remove('hidden'); applyProSettings();
       const f=activeFilters(); setStatus(isPro&&((f.gender!=='any')||f.minSocial||f.maxCharmRank||f.supporterOnly)?'Looking for someone who matches your Pro filters…':'Looking for another member…','good');
       queueRef=root('videoQueue/'+uid);
       await queueRef.onDisconnect().remove();

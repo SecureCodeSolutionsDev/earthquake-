@@ -101,6 +101,7 @@ tr:last-child td{border-bottom:none}
     <button class="tab" onclick="tab('rp',this)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 5-3.5 8-7 9-3.5-1-7-4-7-9V6l7-3z"/><path d="M12 8v4"/><path d="M12 15.5h.01"/></svg> Reports <span id="cntRp"></span></button>
     <button class="tab" onclick="tab('vf',this)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8.5 12.5l2.5 2.5 4.5-6"/></svg> Verify <span id="cntVf"></span></button>
     <button class="tab" onclick="tab('us',this)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 20c0-3 2.5-5.5 5.5-5.5s5.5 2.5 5.5 5.5"/><path d="M16.2 4.9a3.2 3.2 0 0 1 0 6.2"/><path d="M17.8 14.9c2 .8 3.7 2.6 3.7 5.1"/></svg> Users</button>
+    <button class="tab" onclick="tab('ms',this)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a2.5 2.5 0 0 1-2.5 2.5H8l-4 4v-9a2.5 2.5 0 0 1 2.5-2.5h12a2.5 2.5 0 0 1 2.5 2.5z"/><path d="M8 10h8"/><path d="M8 14h5"/></svg> Messages</button>
     <button class="tab" onclick="tab('st',this)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.5 5.5l1.8 1.8M16.7 16.7l1.8 1.8M18.5 5.5l-1.8 1.8M7.3 16.7l-1.8 1.8"/></svg> Settings</button>
   </div>
 
@@ -127,6 +128,19 @@ tr:last-child td{border-bottom:none}
   </div>
   <div id="pg-vf" style="display:none"><div id="vfList"></div></div>
   <div id="pg-us" style="display:none"><div class="card scrollcard"><table id="tblUs"><tbody></tbody></table></div></div>
+  <div id="pg-ms" style="display:none">
+    <div class="card" style="margin-bottom:12px">
+      <b>📢 Broadcast to all users</b><div class="mut tiny">Message appears as in-app toast for every online user + saved in their inbox.</div>
+      <textarea class="inp" id="broadcastIn" placeholder="Your message to everyone (max 300 chars)" maxlength="300" style="margin:10px 0;min-height:80px"></textarea>
+      <button class="btn btn-g" style="width:100%" onclick="sendBroadcast()">Send to ALL users</button>
+    </div>
+    <div class="card">
+      <b>✉️ Message a specific user</b><div class="mut tiny">Enter UID or pick from Reports / Verify / GOLD tabs via the ✉️ buttons. Message goes to that user's inbox.</div>
+      <input class="inp" id="directUid" placeholder="Target UID (e.g. u_abc123...)" style="margin:10px 0">
+      <textarea class="inp" id="directMsg" placeholder="Your message (max 300 chars)" maxlength="300" style="min-height:80px"></textarea>
+      <button class="btn btn-g" style="width:100%;margin-top:10px" onclick="sendDirect()">Send to user</button>
+    </div>
+  </div>
 
   <div id="pg-st" style="display:none">
     <div class="sec">Company bank account (shown when users activate GOLD)</div>
@@ -179,7 +193,7 @@ function adminGoogle(){
       toast('Sign-in failed: '+e.code,'err'); });
 }
 function enter(){ $('gate').style.display='none'; $('dash').style.display=''; boot(); }
-function tab(p,el){ ['ov','or','rp','vf','us','st'].forEach(x=>$('pg-'+x).style.display=x===p?'':'none');
+function tab(p,el){ ['ov','or','rp','vf','us','ms','st'].forEach(x=>$('pg-'+x).style.display=x===p?'':'none');
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on')); el.classList.add('on'); }
 
 function boot(){
@@ -246,7 +260,7 @@ function paintOr(pend,all){
    rows.map(([id,o])=>`<tr><td class="tiny">${o.ref}<div class="mut tiny">${ts(o.ts)}</div></td>
     <td>${o.name}</td><td class="passcol"><span style="color:var(--warn);font-weight:900">GOLD</span></td><td><b>${fmt(o.price)}</b></td>
     <td><span class="badge ${o.status==='pending'?'b-live':o.status==='approved'?'b-done':'b-x'}">${o.status}</span></td>
-    <td style="text-align:end">${o.status==='pending'?`<button class="btn btn-g" onclick="approve('${id}','${o.uid}')">Activate GOLD</button> <button class="btn btn-r" onclick="reject('${id}','${o.uid}')">Reject</button>`:''}</td></tr>`).join('')
+    <td style="text-align:end">${o.status==='pending'?`<button class="btn btn-g" onclick="approve('${id}','${o.uid}')">Activate GOLD</button> <button class="btn" style="background:rgba(74,168,255,.15);color:#4aa8ff;border:1px solid rgba(74,168,255,.3)" onclick="messageUser('${o.uid}')">✉️</button> <button class="btn btn-r" onclick="reject('${id}','${o.uid}')">Reject</button>`:''}</td></tr>`).join('')
    :'<tr><td class="mut">No GOLD orders yet.</td></tr>')+'</tbody>';
 }
 async function approve(id,ouid){
@@ -278,7 +292,7 @@ function paintRp(rows){
       ${r.evidence.bio?`<div class="mut" style="margin-top:6px;line-height:1.45">“${eh(String(r.evidence.bio).slice(0,220))}”</div>`:''}
     </div>`:'';
     const reviewed=r.status==='reviewed';
-    return `<tr><td class="small"><b>${eh(r.reason||'Report')}</b><div class="mut tiny">${eh(r.from||'?')} → ${eh(r.against||'?')}</div>${p}${ev}</td><td class="mut tiny">${ts(r.ts)}<div class="badge ${reviewed?'b-done':'b-live'}" style="margin-top:5px">${reviewed?'reviewed':'open'}</div></td><td style="text-align:end"><button class="btn btn-r" onclick="banUser('${eh(r.against)}')">Ban user</button> ${reviewed?'':`<button class="btn btn-g" onclick="reviewReport('${id}')">Mark reviewed</button>`} <button class="btn btn-line" onclick="dismissRp('${id}')">Dismiss</button></td></tr>`;
+    return `<tr><td class="small"><b>${eh(r.reason||'Report')}</b><div class="mut tiny">${eh(r.from||'?')} → ${eh(r.against||'?')}</div>${p}${ev}</td><td class="mut tiny">${ts(r.ts)}<div class="badge ${reviewed?'b-done':'b-live'}" style="margin-top:5px">${reviewed?'reviewed':'open'}</div></td><td style="text-align:end"><button class="btn btn-r" onclick="banUser('${eh(r.against)}')">Ban user</button> <button class="btn" style="background:rgba(74,168,255,.15);color:#4aa8ff;border:1px solid rgba(74,168,255,.3)" onclick="messageUser('${eh(r.against)}')">✉️</button> ${reviewed?'':`<button class="btn btn-g" onclick="reviewReport('${id}')">Mark reviewed</button>`} <button class="btn btn-line" onclick="dismissRp('${id}')">Dismiss</button></td></tr>`;
   }).join('');
   $('tblRp').innerHTML='<tbody>'+(sorted.length?'<tr><th>Report and evidence</th><th>When/status</th><th></th></tr>'+html:'<tr><td class="mut">No reports — healthy community.</td></tr>')+'</tbody>';
 }
@@ -328,6 +342,7 @@ function paintVf(){
         <div style="flex:1;text-align:center"><div class="mut tiny" style="font-weight:800">PROFILE PHOTO</div>${ph?`<img src="${ph}" style="width:100%;border-radius:12px;max-height:300px;object-fit:cover">`:'<div class="mut" style="padding:30px 0">no photo yet</div>'}</div>
       </div>
       <button class="btn btn-g" onclick="verifyUser('${id}')">Verify (blue badge)</button>
+      <button class="btn" style="margin-left:6px;background:rgba(74,168,255,.15);color:#4aa8ff;border:1px solid rgba(74,168,255,.3)" onclick="messageUser('${id}')">✉️ Message</button>
       <div style="height:6px"></div>
       <button class="btn btn-r" onclick="ref('verifyReq/${id}').remove();toast('Rejected — user can retry with a clearer selfie')">Reject</button>
     </div>`;}).join(''):'<div class="card mut">No pending verifications — all clear.</div>';
@@ -356,6 +371,33 @@ function paintEcon(){
     ['Free messages per match',G.msgsPerMatch],['Free Super Like per day',G.superPerDay],['GOLD Super Likes per day',G.superGold]
   ].map(([k,v])=>`<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line)"><span class="mut">${k}</span><b>${v}</b></div>`).join('')
   + `<div class="mut tiny" style="margin-top:8px">Edit in tayri-config.js — everything updates instantly.</div>`;
+}
+async function sendBroadcast(){
+  const txt=document.getElementById('broadcastIn').value.trim();
+  if(!txt) return toast('Write a message first');
+  if(!confirm('Send this broadcast to ALL users?')) return;
+  try{
+    await DB.ref('wasla_dating/broadcasts').push({text:txt, from:'admin', by:firebase.auth().currentUser.uid, ts:Date.now()});
+    document.getElementById('broadcastIn').value='';
+    toast('📢 Broadcast sent to all users');
+  }catch(e){ toast('Failed: '+(e.code||e.message)); }
+}
+async function sendDirect(){
+  const uid=document.getElementById('directUid').value.trim();
+  const txt=document.getElementById('directMsg').value.trim();
+  if(!uid||!txt) return toast('Need UID and message');
+  try{
+    await DB.ref('wasla_dating/adminMessages/'+uid).push({text:txt, from:'admin', by:firebase.auth().currentUser.uid, ts:Date.now()});
+    document.getElementById('directMsg').value='';
+    toast('✉️ Message sent to '+uid);
+  }catch(e){ toast('Failed: '+(e.code||e.message)); }
+}
+function messageUser(uid){
+  if(!uid) return;
+  const msTab = Array.from(document.querySelectorAll('.tab')).find(el=>el.getAttribute('onclick')?.includes("tab('ms'")); tab('ms', msTab || document.querySelectorAll('.tab')[5]);
+  document.getElementById('directUid').value=uid;
+  document.getElementById('directMsg').focus();
+  toast('✉️ Messaging '+uid);
 }
 function wipe(){
   if(!confirm('Really delete ALL data? This will KEEP banned UIDs & bannedEmails forever (as requested). Continue?'))return;
