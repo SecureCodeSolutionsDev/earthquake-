@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0b0812">
-<title>Tayripages Leaderboard</title>
+<title><span data-t="Tayripages Leaderboard">Tayripages Leaderboard</span></title>
 <meta name="description" content="Weekly Tayripages social presence, charm, and supporter standings.">
 <link rel="icon" type="image/png" href="icon.png">
 <script src="tayri-config.js"></script>
@@ -61,7 +61,7 @@ body{min-height:100vh;color:#f6eef4;background:radial-gradient(900px 520px at 12
 
 
 /* Tayripages language picker — separate files, not Google */
-.lang-picker{max-width:820px;margin:12px auto 0;display:flex;justify-content:flex-end;position:relative;z-index:6}
+.lang-picker{max-width:820px;margin:12px auto 0;display:flex;justify-content:flex-end;position:relative;z-index:20}
 .lang-btn{display:inline-flex;align-items:center;gap:8px;padding:9px 14px;border-radius:999px;background:linear-gradient(135deg,#ff5e8a,#ffb15c);color:#fff;font-size:12.5px;font-weight:900;border:0;box-shadow:0 8px 20px rgba(255,94,138,.35);cursor:pointer}
 .lang-btn:active{transform:scale(.97)}
 .lang-dropdown{position:absolute;top:42px;right:0;width:210px;background:rgba(24,15,29,.96);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:8px;box-shadow:0 18px 40px rgba(0,0,0,.45);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);display:none}
@@ -72,19 +72,19 @@ body{min-height:100vh;color:#f6eef4;background:radial-gradient(900px 520px at 12
 </style>
 </head>
 <body>
-<header class="top"><a class="brand" href="./index.html"><span class="mark"><svg width="20" height="20" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67zM11.71 19c-1.78 0-3.22-1.4-3.22-3.14 0-1.63 1.05-2.76 2.81-3.12 1.77-.36 3.6-1.21 4.62-2.58.39 1.29.59 2.65.59 4.04 0 2.65-2.15 4.8-4.8 4.8z"/></svg></span><span class="brand-copy"><span class="brand-name">Tayripages</span></span></a><a class="back" href="./index.html">Back to app</a></header>
+<header class="top"><a class="brand" href="./index.html"><span class="mark"><svg width="20" height="20" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M13.5.67s.74 2.65.74 4.8c0 2.06-1.35 3.73-3.41 3.73-2.07 0-3.63-1.67-3.63-3.73l.03-.36C5.21 7.51 4 10.62 4 14c0 4.42 3.58 8 8 8s8-3.58 8-8C20 8.61 17.41 3.8 13.5.67zM11.71 19c-1.78 0-3.22-1.4-3.22-3.14 0-1.63 1.05-2.76 2.81-3.12 1.77-.36 3.6-1.21 4.62-2.58.39 1.29.59 2.65.59 4.04 0 2.65-2.15 4.8-4.8 4.8z"/></svg></span><span class="brand-copy"><span class="brand-name">Tayripages</span></span></a><a class="back" href="./index.html"><span data-t="Back to app">Back to app</span></a></header>
 <div class="lang-picker"><button class="lang-btn" onclick="toggleLangPicker()" aria-label="Select your language"><span data-t="Select your language">🌐 Select your language</span></button><div class="lang-dropdown" id="langDropdown"><button onclick="setPageLang('en')">🇬🇧 English</button><button onclick="setPageLang('fr')">🇫🇷 Français</button><button onclick="setPageLang('es')">🇪🇸 Español</button><button onclick="setPageLang('pt')">🇵🇹 Português</button><button onclick="setPageLang('ru')">🇷🇺 Русский</button><button onclick="setPageLang('zh')">🇨🇳 中文</button><button onclick="setPageLang('ar')">🇲🇦 العربية (دارجة) + مصر</button></div></div>
 
 <main class="wrap">
-  <section class="hero"><div class="eyebrow">Weekly standings · positive competition</div><h1><span data-t="Find your place.">Find your place.</span></h1><p>Build social presence through real conversations, respectful calls, and meaningful connections. Raw votes stay private.</p></section>
-  <section class="card" id="gate"><div class="status" id="status">Checking your secure connection…</div><div id="identity" class="identity"></div><button class="btn" id="signBtn">Continue with Google</button></section>
+  <section class="hero"><div class="eyebrow" data-t="Weekly standings · positive competition">Weekly standings · positive competition</div><h1><span data-t="Find your place.">Find your place.</span></h1><p>Build social presence through real conversations, respectful calls, and meaningful connections. Raw votes stay private.</p></section>
+  <section class="card" id="gate"><div class="status" id="status"><span data-t="Checking your secure connection…">Checking your secure connection…</span></div><div id="identity" class="identity"></div><button class="btn" id="signBtn"><span data-t="Continue with Google">Continue with Google</span></button></section>
   <section class="card hidden" id="board">
-    <div class="tabs"><button class="tab active" id="socialTab">Social presence</button><button class="tab" id="charmTab">Tayri Charm</button><button class="tab" id="supporterTab">Supporters</button></div>
+    <div class="tabs"><button class="tab active" id="socialTab" data-t="Social presence">Social presence</button><button class="tab" id="charmTab" data-t="Tayri Charm">Tayri Charm</button><button class="tab" id="supporterTab" data-t="Supporters">Supporters</button></div>
     <div id="socialView"><div class="section-head"><h2>Social presence</h2><span class="week" id="weekLabel"></span></div><div id="myRank"></div><div id="socialRows"></div></div>
-    <div id="charmView" class="hidden"><div class="section-head"><h2>Tayri Charm Crown</h2><span class="week" id="weekLabel2"></span></div><div id="charmBox"></div></div>
-    <div id="supporterView" class="hidden"><div class="section-head"><h2>Supporter circle</h2><span class="week">approved Gold</span></div><div id="supporterRows"></div></div>
+    <div id="charmView" class="hidden"><div class="section-head"><h2><span data-t="Tayri Charm Crown">Tayri Charm Crown</span></h2><span class="week" id="weekLabel2"></span></div><div id="charmBox"></div></div>
+    <div id="supporterView" class="hidden"><div class="section-head"><h2><span data-t="Supporter circle">Supporter circle</span></h2><span class="week">approved Gold</span></div><div id="supporterRows"></div></div>
   </section>
-  <div class="note"><b>How it works:</b> after a real video conversation, each member may leave one private weekly review for the other person. Scores use a minimum-vote smoothing rule to reduce one-vote surprises. Harassment, manipulation, and repeated abuse can remove leaderboard eligibility.</div>
+  <div class="note"><b><span data-t="How it works:">How it works:</span></b> after a real video conversation, each member may leave one private weekly review for the other person. Scores use a minimum-vote smoothing rule to reduce one-vote surprises. Harassment, manipulation, and repeated abuse can remove leaderboard eligibility.</div>
 </main>
 <script>
 (function(){

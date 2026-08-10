@@ -72,7 +72,7 @@ tr:last-child td{border-bottom:none}
   <div class="card" id="gatePin">
     <div class="logo" style="margin:0 auto 12px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg></div>
     <div class="h2">Tayripages HQ</div>
-    <div class="mut small" style="margin:6px 0 14px">Company dashboard — enter admin PIN<br>(set in <b>tayri-config.js</b> before deployment)</div>
+    <!-- gate text removed to keep clear as requested -->
     <input class="inp" id="pinIn" type="password" inputmode="numeric" placeholder="••••" style="text-align:center;font-size:22px;letter-spacing:6px;width:160px" onkeydown="if(event.key==='Enter')tryPin()">
     <div style="height:12px"></div>
     <button class="btn btn-g" style="width:100%;padding:14px;font-size:15px;font-weight:900" onclick="tryPin()">Continue</button>
@@ -129,11 +129,7 @@ tr:last-child td{border-bottom:none}
   <div id="pg-vf" style="display:none"><div id="vfList"></div></div>
   <div id="pg-us" style="display:none"><div class="card scrollcard"><table id="tblUs"><tbody></tbody></table></div></div>
   <div id="pg-ms" style="display:none">
-    <div class="card" style="margin-bottom:12px">
-      <b>📢 Broadcast to all users</b><div class="mut tiny">Message appears as in-app toast for every online user + saved in their inbox.</div>
-      <textarea class="inp" id="broadcastIn" placeholder="Your message to everyone (max 300 chars)" maxlength="300" style="margin:10px 0;min-height:80px"></textarea>
-      <button class="btn btn-g" style="width:100%" onclick="sendBroadcast()">Send to ALL users</button>
-    </div>
+    <!-- Broadcast to all removed to save Spark quota — use direct message to specific users below (from Reports / Verify / GOLD) -->
     <div class="card">
       <b>✉️ Message a specific user</b><div class="mut tiny">Enter UID or pick from Reports / Verify / GOLD tabs via the ✉️ buttons. Message goes to that user's inbox.</div>
       <input class="inp" id="directUid" placeholder="Target UID (e.g. u_abc123...)" style="margin:10px 0">
@@ -143,11 +139,6 @@ tr:last-child td{border-bottom:none}
   </div>
 
   <div id="pg-st" style="display:none">
-    <div class="sec">Company bank account (shown when users activate GOLD)</div>
-    <div class="card bankgrid" id="bankGrid"></div>
-    <div class="banner">Edit these in <b>tayri-config.js</b> — everything updates everywhere instantly.</div>
-    <div class="sec">GOLD pass (live from config)</div>
-    <div class="card small" id="econList"></div>
     <div class="sec">Danger zone</div>
     <div class="card" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
       <span class="mut small">Wipe ALL cloud data (users, chats, orders)</span>
@@ -165,10 +156,15 @@ function fmt(n){return `${(+n).toFixed(0)} DH`}
 function eh(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function ref(p){return DB.ref('wasla_dating/'+p)} // matches firebase-rules.json root
 function ts(t){return t?new Date(t).toLocaleString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}):''}
-let PIN_OK=false;
+let PIN_OK = localStorage.getItem('tayri_admin_pin_ok')==='1';
+if(PIN_OK && tayriCloudReady() && window.firebase && firebase.apps.length && firebase.auth().currentUser){
+  // already passed PIN before redirect, auto-show gatePhone
+  setTimeout(()=>{ try{ $('gatePin').style.display='none'; $('gatePhone').style.display='block'; }catch(e){} }, 200);
+}
 function tryPin(){
   if($('pinIn').value!==TAYRI_CONFIG.adminPin){toast('Wrong PIN','err');$('pinIn').value='';return}
   PIN_OK=true;
+  localStorage.setItem('tayri_admin_pin_ok','1');
   if(!tayriCloudReady()){ enter(); return; }
   // 🔐 second lock: Google sign-in as owner — Firebase must be initialized first
   if(!window.firebase.apps.length){
@@ -178,7 +174,7 @@ function tryPin(){
   }
   $('gatePin').style.display='none'; $('gatePhone').style.display='block';
   /* Auto-enter when a sign-in is already done (e.g. returning from mobile redirect) */
-  try{ firebase.auth().onAuthStateChanged(u=>{ if(u&&PIN_OK) enter(); }); }catch(e){}
+  try{ firebase.auth().onAuthStateChanged(u=>{ if(u && (PIN_OK || localStorage.getItem('tayri_admin_pin_ok')==='1')) enter(); }); }catch(e){}
 }
 function adminGoogle(){
   const btn=$('aBtn'); btn.disabled=true; btn.textContent='Opening Google…';
@@ -371,16 +367,6 @@ function paintEcon(){
     ['Free messages per match',G.msgsPerMatch],['Free Super Like per day',G.superPerDay],['GOLD Super Likes per day',G.superGold]
   ].map(([k,v])=>`<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line)"><span class="mut">${k}</span><b>${v}</b></div>`).join('')
   + `<div class="mut tiny" style="margin-top:8px">Edit in tayri-config.js — everything updates instantly.</div>`;
-}
-async function sendBroadcast(){
-  const txt=document.getElementById('broadcastIn').value.trim();
-  if(!txt) return toast('Write a message first');
-  if(!confirm('Send this broadcast to ALL users?')) return;
-  try{
-    await DB.ref('wasla_dating/broadcasts').push({text:txt, from:'admin', by:firebase.auth().currentUser.uid, ts:Date.now()});
-    document.getElementById('broadcastIn').value='';
-    toast('📢 Broadcast sent to all users');
-  }catch(e){ toast('Failed: '+(e.code||e.message)); }
 }
 async function sendDirect(){
   const uid=document.getElementById('directUid').value.trim();

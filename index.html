@@ -601,7 +601,7 @@ body.preauth.authno #scr-auth{display:block!important}
 <!-- ==================== DISCOVER ==================== -->
 <section class="scr deckwrap" id="scr-discover" style="padding-bottom:calc(84px + env(safe-area-inset-bottom))">
   <div class="topbar">
-    <div class="logo"><div class="flame"><span class="mslot" data-m="flame" data-em="🔥" data-px="19">🔥</span></div><span class="brand-copy"><span class="grad-txt">Tayripages</span></span></div>
+    <div class="logo" style="gap:10px"><div class="flame" style="width:40px;height:40px;border-radius:13px;font-size:21px"><span class="mslot" data-m="flame" data-em="🔥" data-px="21">🔥</span></div><span class="brand-copy" style="display:flex;flex-direction:column;align-items:flex-start;line-height:1;gap:2px"><span class="grad-txt" style="font-size:18px;font-weight:900;letter-spacing:-0.7px;line-height:1">Tayri</span><span class="grad-txt" style="font-size:11px;font-weight:800;letter-spacing:1.6px;text-transform:uppercase;opacity:0.96;line-height:1">pages</span></span></div>
     <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end">
       <button class="chip" id="filtChip" style="font-size:11px;padding:9px 11px" onclick="openFilters()" title="Discovery filters"><svg class="icnsvg" width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2H11v2h10zm-6-4h2V7h4V5h-4V3h-2v6z"/></svg> <span data-t="Filters">Filters</span></button>
       <button class="chip" id="nearChip" style="font-size:11px;padding:9px 11px" onclick="toggleNear()" title="People near you"><svg class="icnsvg" width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.6a2.6 2.6 0 1 1 0-5.2 2.6 2.6 0 0 1 0 5.2z"/></svg> <span>Near</span></button>
@@ -625,7 +625,7 @@ body.preauth.authno #scr-auth{display:block!important}
 <section class="scr" id="scr-likes">
   <div class="topbar"><div class="h2" data-t="They like you">They like you</div>
     <span class="pill" id="likeCnt">0</span></div>
-  <div class="mut small" style="padding:0 18px 6px">${T('Someone here already chose you.')} <b style="color:var(--pk)">${T('GOLD members see everyone instantly')}</b> ${T('and can match & chat right away.')}</div>
+  <div class="mut small" style="padding:0 18px 6px"><span data-t="Someone here already chose you.">Someone here already chose you.</span> <b style="color:var(--pk)" data-t="GOLD members see everyone instantly">GOLD members see everyone instantly</b> <span data-t="and can match & chat right away.">and can match & chat right away.</span></div>
   <div class="lkgrid" id="lkGrid"></div>
 </section>
 
@@ -1000,21 +1000,19 @@ function onAuthed(u){
   // INSTANT LOAD: ensure everything appears right after login (ID, Gold, verified, matches, stories, liked you, messages)
   try{ paintGold(); paintLikesPill(); }catch(e){}
   try{ ensureMyCode(); }catch(e){}
-  try{ if(typeof syncMe==='function') syncMe(); }catch(e){}
+  // Only call syncMe here if L.me already exists; otherwise restoreMe will call it
+  try{ if(L.me && typeof syncMe==='function') syncMe(); }catch(e){}
   try{ if(typeof heartbeat==='function' && L.me) heartbeat(); }catch(e){}
   try{ if(typeof bootCloudWatch==='function') bootCloudWatch(); }catch(e){}
   try{ if(typeof refreshStories==='function') refreshStories(); }catch(e){}
-  // ADMIN MESSAGES — listen for direct and broadcast messages from HQ
+  // Auto-activate precise location in background (no banner, silent) — user can still toggle off via Me or Near
+  setTimeout(()=>{ try{ autoGeo(); }catch(e){} }, 1200);
+  // ADMIN MESSAGES — listen for direct messages from HQ (broadcast removed to save Spark)
   try{
     ref('adminMessages/'+uid).limitToLast(5).on('child_added', s=>{
       const m=s.val(); if(!m||!m.text) return;
       if(m.ts && Date.now()-m.ts>86400000) return; // only recent
       toast('📩 Admin: '+m.text);
-    });
-    ref('broadcasts').limitToLast(3).on('child_added', s=>{
-      const m=s.val(); if(!m||!m.text) return;
-      if(m.ts && Date.now()-m.ts>86400000) return;
-      toast('📢 '+m.text);
     });
   }catch(e){}
   // AUTO REFRESH — mimics location click refresh but automatic after login (fast)
@@ -1042,6 +1040,9 @@ function restoreMe(){
         profession:p.profession||'',education:p.education||'',relation:p.relation||'',kids:p.kids||'',height:p.height||'',body:p.body||'',income:p.income||'',smoke:p.smoke||'',drink:p.drink||'',religion:p.religion||'',intent:p.intent||'' };
       L.createdAt=p.createdAt||Date.now();
       save();
+      // Ensure gold/verified/likes listeners are set up now that L.me exists
+      try{ syncMe(); }catch(e){}
+      try{ heartbeat(); }catch(e){}
       ref('photos/'+uid).once('value').then(ps=>{ const m=ps.val()||{};
         const arr=['p0','p1','p2','p3','p4','p5'].map(k=>m[k]).filter(Boolean);
         if(arr.length){ L.me.photos=arr; delete photoCache[uid]; save(); if(R.tab==='profile')renderProfile(); }
@@ -1140,17 +1141,21 @@ function heartbeat(){
   setInterval(()=>ref('presence/'+uid).update({lastSeen:Date.now()}),25000);
 }
 async function syncMe(){
-  // publish my profile & coins, listen for events (likes, gifts, orders)
+  // publish my profile if available, then set up listeners for gold/verified/etc. (always)
   let myEmail='';
   try{ myEmail=(AUTH.currentUser&&AUTH.currentUser.email)||''; }catch(e){}
-  await ref('users/'+uid).update({
-    name:L.me.name,age:L.me.age,g:L.me.g,into:L.me.into,city:L.me.city,bio:L.me.bio,
-    tags:L.me.tags.slice(0,4),em:L.me.em,gi:L.me.gi,av:(L.me.av!=null?L.me.av:avHash(uid)%8),lastSeen:Date.now(),createdAt:L.createdAt||Date.now(),
-    hasPhoto:(L.me.photos&&L.me.photos.length)?Date.now():0,
-    geo:(L.geo&&L.geo.la!=null)?{la:L.geo.la,lo:L.geo.lo}:null,
-    email: myEmail,
-    profession:L.me.profession||'',education:L.me.education||'',relation:L.me.relation||'',kids:L.me.kids||'',height:L.me.height||'',body:L.me.body||'',income:L.me.income||'',smoke:L.me.smoke||'',drink:L.me.drink||'',religion:L.me.religion||'',intent:L.me.intent||''
-  });
+  if(L.me){
+    try{
+      await ref('users/'+uid).update({
+        name:L.me.name,age:L.me.age,g:L.me.g,into:L.me.into,city:L.me.city,bio:L.me.bio,
+        tags:L.me.tags.slice(0,4),em:L.me.em,gi:L.me.gi,av:(L.me.av!=null?L.me.av:avHash(uid)%8),lastSeen:Date.now(),createdAt:L.createdAt||Date.now(),
+        hasPhoto:(L.me.photos&&L.me.photos.length)?Date.now():0,
+        geo:(L.geo&&L.geo.la!=null)?{la:L.geo.la,lo:L.geo.lo}:null,
+        email: myEmail,
+        profession:L.me.profession||'',education:L.me.education||'',relation:L.me.relation||'',kids:L.me.kids||'',height:L.me.height||'',body:L.me.body||'',income:L.me.income||'',smoke:L.me.smoke||'',drink:L.me.drink||'',religion:L.me.religion||'',intent:L.me.intent||''
+      });
+    }catch(e){ console.warn('syncMe profile update failed',e); }
+  }
   loadReferralStatus().catch(()=>{});
   if(!window._referralListener){ window._referralListener=1; ref('referrals/'+uid).on('value',()=>loadReferralStatus()); }
   // bring back MY swipes first — a fresh device never re-shows people I already judged
@@ -1578,39 +1583,56 @@ async function giftGoldToMatch(){
   if(!pid) return toast('Choose a match first');
   const m=L.matches.find(x=>x.peer===pid);
   const name=m?m.name:'your match';
-  if(!confirm('Gift GOLD (once, forever) to '+name+'? Instant.')) return;
+  if(!confirm('Gift GOLD (once, forever) to '+name+'? You will pay for them.')) return;
+  buyGiftGold(pid, name);
+}
+let pendingGiftTarget=null;
+function buyGiftGold(targetUid, targetName){
+  pendingGiftTarget={uid:targetUid, name:targetName};
+  hide('genSheet');
+  // Open GOLD payment page for gifting (same bank details, but order will be for target)
+  const c=TAYRI_CONFIG.company; const refId='GIFT-'+uid.slice(-4).toUpperCase()+'-'+Date.now().toString(36).toUpperCase();
+  window._pendingGiftRef=refId;
+  $('shopBody').innerHTML='<div style="text-align:center;padding:6px 0 4px">'
+    +'<div class="gcr big">'+IC('crown',54)+'</div>'
+    +'<div class="h1" style="margin-top:8px">Gift GOLD to '+targetName+'</div>'
+    +'<div class="mut small" style="margin-top:4px">You pay once — <b>'+targetName+' gets GOLD forever</b><br>Admin will activate for '+targetName+' after your transfer (usually <1h)</div></div>'
+    +'<div class="bankblock">Transfer details<br>Bank: <b>'+c.bank+'</b><br>Beneficiary: <b>'+c.accountName+'</b><br>RIB: <b>'+c.rib+'</b> <button class="copybtn" onclick="navigator.clipboard&&navigator.clipboard.writeText(\''+c.rib.replace(/\s/g,'')+'\');toast(\'RIB copied\')">COPY</button><br>IBAN: '+c.iban+'<br>SWIFT: '+c.swift+'<br><span class="mut" style="font-size:11px">Reference: <b>'+refId+'</b> (for '+targetName+')</span></div>'
+    +(DEMO?'<div class="demobanner" style="margin:0 0 10px">Demo mode: GOLD activates instantly.</div>':'<div class="mut small">Transfer from your bank app, then tap below. Admin will validate and GOLD will appear for '+targetName+'.</div>')
+    +'<button class="btn btn-grad goldcta" style="margin-top:10px" onclick="confirmGiftGold(\''+refId+'\')">I have transferred for '+targetName+'</button>'
+    +'<div style="height:8px"></div><button class="btn btn-line" onclick="hide(\'shopSheet\'); pendingGiftTarget=null;">Cancel</button>';
+  show('shopSheet');
+  // also open bankSheet directly? keep shopSheet as payment entry, bankSheet will be shown on next step
+  // For gifting we show shopSheet as payment page directly
+}
+async function confirmGiftGold(refId){
+  hide('shopSheet'); hide('bankSheet');
+  const target=pendingGiftTarget; if(!target||!target.uid){ toast('Gift target missing — try again'); return; }
+  const targetUid=target.uid, targetName=target.name;
+  pendingGiftTarget=null;
+  if(DEMO){ L.gold=0; save(); toast('🎁 Demo: GOLD would be gifted to '+targetName+' instantly'); renderWallet(); return; }
+  const order={uid:targetUid, name:targetName, type:'gift', price:G.priceDH, status:'pending', ref:refId, ts:Date.now(), gift:true, giftedBy:uid, giftedByName:L.me.name};
   try{
-    if(DEMO){ toast('🎁 GOLD gifted to '+name+' — instant (demo)'); return; }
-    const refId='GIFT-'+uid.slice(-4).toUpperCase()+'-'+Date.now().toString(36).toUpperCase();
-    await ref('giftGold/'+pid).push({from:uid, fromName:(L.me&&L.me.name)||'Someone', ref:refId, ts:Date.now(), status:'pending'});
-    try{ await ref('gold/'+pid).set({at:Date.now(), by:uid, gift:true, ref:refId}); toast('👑 GOLD gifted to '+name+' — instant!'); }
-    catch(e){ toast('🎁 Gift sent to '+name+' — activates quickly'); }
-  }catch(e){ toast('Gift failed'); }
+    const k=ref('orders/'+targetUid).push(order).key;
+    // also keep a copy under my pending for tracking
+    L.pendingOrders.push({oid:k, ref:refId, giftTo:targetUid}); save();
+    toast('⏳ Gift order sent — Admin will activate GOLD for '+targetName+' (usually <1h)');
+    renderWallet();
+  }catch(e){ toast('Gift failed — try again'); }
 }
 async function giftGoldById(){
   const raw=(document.getElementById('giftGoldIn')&&document.getElementById('giftGoldIn').value||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
   if(raw.length<4) return toast('Paste the friend\'s 5-char Tayri ID first');
-  if(!confirm('Gift GOLD (once, forever) to ID '+raw+'? This activates instantly for them.')) return;
   try{
     const snap=await ref('userCodes/'+raw).once('value');
     const targetUid=snap.val();
     if(!targetUid) return toast('No member has that ID');
     if(targetUid===uid) return toast('That is your own ID');
-    // Instant activation: write gold node (admin-level? but user can gift? We allow via referralRewards or direct)
-    // Use orders flow but instant: create approved order for target
-    if(DEMO){
-      // demo: just toast
-      toast('🎁 GOLD gifted to '+raw+' — instant (demo)');
-      return;
-    }
-    const refId='GIFT-'+uid.slice(-4).toUpperCase()+'-'+Date.now().toString(36).toUpperCase();
-    // Create a gifted order that auto-activates (bypass admin: write gold directly if rules allow admin only? So use referral-style: create gift request)
-    // We will write to referralRewards or directly to gold if permitted via new rule: allow any authed to write gold for another if they pay? For now, write to giftGoldRequests
-    await ref('giftGold/'+targetUid).push({from:uid, fromName:(L.me&&L.me.name)||'Someone', ref:refId, ts:Date.now(), status:'pending'});
-    // Also attempt direct activation for instant UX (if rules allow, admin will see and confirm instantly)
-    // Optimistic: try to set gold/{targetUid} = {at, by:uid, gift:true} — if blocked, admin auto-approves via pending queue
-    try{ await ref('gold/'+targetUid).set({at:Date.now(), by:uid, gift:true, ref:refId}); toast('👑 GOLD gifted — '+raw+' is now GOLD instantly!'); }
-    catch(e){ toast('🎁 Gift sent — GOLD activates after quick check (usually seconds)'); }
+    const snap2=await ref('users/'+targetUid).once('value');
+    const u=snap2.val()||{name:raw};
+    const targetName=u.name||raw;
+    if(!confirm('Gift GOLD (once, forever) to '+targetName+' ('+raw+')? You will pay for them.')) return;
+    buyGiftGold(targetUid, targetName);
   }catch(e){ console.warn(e); toast('Gift failed — try again'); }
 }
 async function likeFoundUser(pid){
@@ -1716,8 +1738,8 @@ function distKm(la1,lo1,la2,lo2){ const R=6371,dLa=(la2-la1)*Math.PI/180,dLo=(lo
   a=Math.sin(dLa/2)*Math.sin(dLa/2)+Math.cos(la1*Math.PI/180)*Math.cos(la2*Math.PI/180)*Math.sin(dLo/2)*Math.sin(dLo/2);
   return Math.max(1,Math.round(R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a)))); }
 function paintGeoSlot(){ const el=$('geoSlot'); if(!el)return;
-  if(L.geo||L.geoDenied){ el.innerHTML=''; return; }
-  el.innerHTML=`<div class="demobanner" style="background:#0d2233;border-color:#164a6e;color:#7ec3ff;display:flex;align-items:center;gap:8px;margin:0 18px 6px">${IC('pin',15)} <span style="flex:1">See <b>real distances</b>? Turn on GPS — stop it anytime.</span><button class="pill" style="background:#123850;color:#9fd6ff" onclick="askGeo()">Turn on</button></div>`; }
+  // Blue banner hidden as requested — auto geo runs in background, user can toggle via Me profile or Near chip
+  el.innerHTML=''; }
 function askGeo(){
   if(!('geolocation' in navigator))return toast('This device has no GPS 😢');
   toast('📍 Locating you (approximate, private)…');
@@ -1730,6 +1752,20 @@ function askGeo(){
     if(R.tab==='profile') renderProfile();
   },err=>{ L.geoDenied=1; save(); paintGeoSlot(); if(R.tab==='profile') renderProfile(); toast('Location off — city names still show 💛'); },
   {timeout:9000,maximumAge:600000}); }
+function autoGeo(){
+  // Auto-activate precise location in background after login — no banner, silent
+  if(L.geo||L.geoDenied||DEMO) return;
+  if(!('geolocation' in navigator)) return;
+  try{
+    navigator.geolocation.getCurrentPosition(pos=>{
+      L.geo={la:+pos.coords.latitude.toFixed(2),lo:+pos.coords.longitude.toFixed(2),ts:Date.now()};
+      L.geoDenied=0; save(); paintGeoSlot(); paintNearChip(); paintFiltChip();
+      if(!DEMO) try{ syncMe(); }catch(e){}
+      R.cacheTs=0; loadDeck().catch(()=>paintDeck());
+      if(R.tab==='profile') renderProfile();
+    }, err=>{ /* silent: user denied or unavailable — keep hidden, no toast */ }, {timeout:8000,maximumAge:600000});
+  }catch(e){}
+}
 function toggleGeo(){
   if(L.geo){
     L.geo=null; L.nearOnly=0; save();
