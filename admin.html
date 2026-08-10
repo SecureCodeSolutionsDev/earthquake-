@@ -287,8 +287,32 @@ async function reviewReport(id){
   catch(e){ toast('Could not mark report reviewed: '+(e.code||'permission denied'),'err'); }
 }
 /* 🗑️ bulk audit removed — review reports one by one: read the proof, then act */
-function banUser(u){ if(!u||!confirm('Ban this user? Their profile will be removed.'))return;
-  ref('users/'+u).remove(); toast('User banned'); }
+function banUser(u){
+  if(!u||!confirm('Ban this user? Their profile will be removed and their email blocked forever.'))return;
+  const userData=(D.users||{})[u]||{};
+  // email is now stored in users/{uid}/email (patched index.html stores it)
+  let email=(userData.email||'').toLowerCase().trim();
+  if(!email){
+    // fallback: ask admin to paste email if not found (old accounts)
+    email=prompt('Email not found in database — paste the user\'s Google email to block it forever (leave empty to only ban UID):','')||'';
+    email=email.toLowerCase().trim();
+  }
+  const updates={};
+  // UID ban — rules already block this UID from reading users
+  updates['banned/'+u]= {at:Date.now(), by: (firebase.auth().currentUser&&firebase.auth().currentUser.uid)||'admin'};
+  if(email){
+    const key=email.replace(/[.\#\$\[\]]/g,'_');
+    updates['bannedEmails/'+key]= {email: email, uid: u, at: Date.now()};
+  }
+  // remove profile & presence to hide immediately
+  updates['users/'+u]= null;
+  updates['presence/'+u]= null;
+  // optional: remove their stories/photos? keep for audit but hide
+  // keep wasla_dating/stories, photos for evidence but client won't show banned users
+  DB.ref('wasla_dating').update(updates).then(()=>{
+    toast(email?'User banned — email blocked forever 🚫':'User banned (UID only — email not found)');
+  }).catch(e=>{ console.error(e); toast('Ban failed: '+(e.code||e.message)); });
+}
 function dismissRp(id){ ref('reports/'+id).remove(); toast('Dismissed'); }
 function paintVf(){
   const rows=Object.entries(D.verifyReq||{}).sort((a,b)=>(b[1].ts||0)-(a[1].ts||0));
@@ -333,7 +357,22 @@ function paintEcon(){
   ].map(([k,v])=>`<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line)"><span class="mut">${k}</span><b>${v}</b></div>`).join('')
   + `<div class="mut tiny" style="margin-top:8px">Edit in tayri-config.js — everything updates instantly.</div>`;
 }
-function wipe(){ if(!confirm('Really delete ALL data?'))return; ref('').remove().then(()=>toast('Database wiped')); }
+function wipe(){
+  if(!confirm('Really delete ALL data? This will KEEP banned UIDs & bannedEmails forever (as requested). Continue?'))return;
+  // wipe everything except banned & bannedEmails
+  DB.ref('wasla_dating').once('value').then(s=>{
+    const val=s.val()||{};
+    const keepBanned=val.banned||null;
+    const keepBannedEmails=val.bannedEmails||null;
+    ref('').remove().then(()=>{
+      const restore={};
+      if(keepBanned) restore['banned']=keepBanned;
+      if(keepBannedEmails) restore['bannedEmails']=keepBannedEmails;
+      if(Object.keys(restore).length) DB.ref('wasla_dating').update(restore);
+      toast('Database wiped — banned list preserved forever');
+    });
+  });
+}
 </script>
 </body>
 </html>

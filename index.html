@@ -5,11 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#fff7f9">
 <title>Tayripages — Where real connections begin</title>
-<meta name="description" content="Tayripages — where real connections begin. Real Google-verified people only: 30 free likes a day, first messages free, GOLD once and forever.">
+<meta name="description" content="Tayripages — where real connections begin. 30 free likes a day, first messages free, GOLD once and forever.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Tayripages">
 <meta property="og:title" content="Tayripages — where real connections begin">
-<meta property="og:description" content="Real Google-verified people only. 30 free likes a day, first messages free, GOLD once and forever.">
+<meta property="og:description" content="30 free likes a day, first messages free, GOLD once and forever.">
 <meta property="og:image" content="https://securecodesolutionsdev.github.io/earthquake-/auth-bg.jpg">
 <meta property="og:image:secure_url" content="https://securecodesolutionsdev.github.io/earthquake-/auth-bg.jpg">
 <meta property="og:image:type" content="image/jpeg">
@@ -19,7 +19,7 @@
 <link rel="canonical" href="https://securecodesolutionsdev.github.io/earthquake-/">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Tayripages — where real connections begin">
-<meta name="twitter:description" content="Real Google-verified people only. Free to start.">
+<meta name="twitter:description" content="Free to start — 30 likes a day, GOLD once forever.">
 <meta name="twitter:image" content="https://securecodesolutionsdev.github.io/earthquake-/auth-bg.jpg">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" type="image/png" href="icon.png">
@@ -163,8 +163,9 @@ textarea.inp{min-height:80px;resize:none}
 .excl{background:linear-gradient(45deg,#ffe9b8,#ffd677);border:1px solid #f0c75e;border-radius:8px;padding:3px 7px;font-size:9px;font-weight:900;color:#7a5a00;letter-spacing:.5px}
 .exclwrap{background:linear-gradient(90deg,#fff6dd,#fff);border-bottom:1px solid #f0e2b0}
 /* ---------- CHAT ---------- */
-.chatscr{position:absolute;inset:0;z-index:70;background:var(--bg);display:none;flex-direction:column}
+.chatscr{position:fixed;inset:0;z-index:90;background:var(--bg);display:none;flex-direction:column;max-width:440px;margin:0 auto;left:0;right:0;box-shadow:0 0 70px rgba(0,0,0,.5)}
 .chatscr.on{display:flex;animation:fi .22s ease}
+.chatscr.on ~ .tabbar{opacity:0;pointer-events:none}
 .chathead{padding:calc(10px + env(safe-area-inset-top)) 12px 10px;display:flex;align-items:center;gap:10px;background:#fff;border-bottom:1px solid var(--line)}
 .chathead.excl{background:linear-gradient(90deg,#fff2cd,#fff)}
 .chatbody{flex:1;overflow-y:auto;padding:14px 14px 6px;display:flex;flex-direction:column;gap:8px;scrollbar-width:none}
@@ -227,7 +228,7 @@ body.bootwait #bootSplash{display:flex}
 .ice::-webkit-scrollbar{display:none}
 .ice .chip{flex:none;color:var(--pk);border-color:#ffd3de}
 /* ---------- match overlay ---------- */
-.mov{position:absolute;inset:0;z-index:90;background:radial-gradient(circle at 50% 30%,#3d1030,#160414 75%);display:none;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:26px;text-align:center;overflow:hidden}
+.mov{position:absolute;inset:0;z-index:95;background:radial-gradient(circle at 50% 30%,#3d1030,#160414 75%);display:none;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:26px;text-align:center;overflow:hidden}
 .mov.on{display:flex;animation:fi .3s ease}
 .mov h1{font-size:40px;font-weight:900;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;animation:pop .5s ease}
 .mov .duo{display:flex;gap:0;margin:18px 0 6px}
@@ -477,7 +478,11 @@ body.preauth.authno #scr-auth{display:block!important}
 .storyv-head span{font-size:11px;opacity:.85;margin-inline-start:auto;text-shadow:0 1px 4px rgba(0,0,0,.7)}
 .storyv-x{position:absolute;top:4px;inset-inline-end:10px;color:#fff;font-size:24px;z-index:3;text-shadow:0 1px 6px rgba(0,0,0,.7);padding:8px}
 .idBig{font-size:24px;font-weight:900;letter-spacing:4px;color:var(--pk)}
-.mysrc{border-radius:16px;border:2px dashed var(--pk);background:var(--soft);padding:12px;display:flex;gap:12px;align-items:center;margin-top:10px}
+.mysrc{border-radius:22px;border:1.5px solid var(--line);background:var(--card);padding:14px;display:flex;gap:14px;align-items:center;margin-top:10px;box-shadow:0 8px 20px rgba(255,94,138,.08)}
+.mysrc img{width:72px;height:72px;border-radius:50%;object-fit:cover;box-shadow:0 0 0 3px #fff,0 0 0 5px var(--pk),0 0 22px 8px rgba(255,94,138,.55)}
+.mystory-ring{width:72px;height:72px;border-radius:50%;background:var(--grad);padding:3px;box-shadow:0 0 22px 8px rgba(255,94,138,.35);flex:none;display:grid;place-items:center;animation:storyglow 2.2s infinite}
+.mystory-ring div{width:100%;height:100%;border-radius:50%;background:var(--card);display:grid;place-items:center;color:var(--pk);font-size:28px}
+.addstory-quote{margin-top:8px;padding:10px 14px;border-radius:14px;background:linear-gradient(135deg,rgba(255,94,138,.10),rgba(255,177,92,.10));border:1px solid rgba(255,94,138,.18);color:var(--mut);font-size:12px;line-height:1.55;font-style:italic;text-align:center}
 .mysrc img{width:64px;height:96px;border-radius:12px;object-fit:cover;box-shadow:0 0 14px 4px rgba(255,94,138,.55)}
 
 /* ---------- v10 — story caption + like, and the PRO “ME” page (zero emoji chrome) ---------- */
@@ -540,10 +545,26 @@ body.preauth.authno #scr-auth{display:block!important}
 .seg.authseg{flex-wrap:wrap;max-width:340px}
 .seg.authseg button{flex:0 0 auto;padding:9px 13px;font-size:12.5px;border-radius:999px}
 
+
+/* --- FIX: story add — circular luminous + encouraging quote --- */
+.story-add-btn{width:72px;height:72px;border-radius:50%;background:var(--card);border:2.5px dashed var(--pk);display:grid;place-items:center;color:var(--pk);font-size:28px;flex:none;box-shadow:0 8px 20px rgba(255,94,138,.12);transition:transform .15s}
+.story-add-btn:active{transform:scale(.96)}
+.story-add-btn.has-story{border-style:solid;background:var(--grad);color:#fff;box-shadow:0 0 0 3px #fff,0 0 0 5.5px var(--pk),0 0 24px 10px rgba(255,94,138,.55);animation:storyglow 1.9s infinite}
+
+
+/* — aesthetic Google Translate pill (used in Rules sheet) — */
+.tr-pill{display:inline-flex;align-items:center;gap:7px;padding:8px 13px;border-radius:999px;background:linear-gradient(135deg,#ff5e8a,#ffb15c);color:#fff;font-size:12px;font-weight:900;box-shadow:0 6px 16px rgba(255,94,138,.35)}
+.tr-pill:active{transform:scale(.97)}
+#google_translate_element{display:none}
+.goog-te-banner-frame{display:none!important}
+body{top:0!important}
+.goog-te-gadget{font-size:0!important}
+
 </style>
 </head>
 <body class="preauth bootwait">
 <div id="bootSplash"><svg width="54" height="54" viewBox="0 0 24 24" fill="url(#bootg)" aria-hidden="true"><defs><linearGradient id="bootg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff5f8f"/><stop offset="1" stop-color="#c81d5e"/></linearGradient></defs><path d="M12 21s-7.5-4.7-10-9.3C.4 8.6 2.2 4.5 6 4.1c2-.2 3.9.8 6 3.1 2.1-2.3 4-3.3 6-3.1 3.8.4 5.6 4.5 4 7.6C19.5 16.3 12 21 12 21z"/></svg><div style="font-weight:900;font-size:19px;letter-spacing:.3px">Tayripages</div><div class="bootspin"></div></div>
+<div id="google_translate_element"></div>
 <div class="app">
 <div id="toasts"></div>
 
@@ -555,9 +576,9 @@ body.preauth.authno #scr-auth{display:block!important}
     <div class="authbody">
       <div class="authlogo"><span class="mslot" data-m="flame" data-em="🔥" data-px="46">🔥</span></div>
       <div class="authname grad-txt">Tayripages</div>
-      <div class="brand-meaning" style="font-size:11px;margin-top:2px;color:rgba(255,255,255,.82)">Tayri — the Tamazight word for love.</div>
-      <div class="authh" data-t="Real people only">Real people only</div>
-      <div class="authsub" data-t="One tap with your Google account — real people only.">One tap with your Google account — real people only.</div>
+      <div class="brand-meaning" style="font-size:11px;margin-top:2px;color:rgba(255,255,255,.82)" data-t="Tayri — the Tamazight word for love.">Tayri — the Tamazight word for love.</div>
+      <div class="authh" id="authHline" data-t="Welcome — one tap to begin">Welcome — one tap to begin</div>
+      <div class="authsub" id="authSubline" data-t="One tap with Google — secure & private.">One tap with Google — secure & private.</div>
       <button class="btn gbtn" id="btnGoogle" onclick="googleIn()" style="font-size:15.5px">
         <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.1H42V20H24v8h11.3c-1.6 4.7-6.1 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3l5.7-5.7C34 6.1 29.3 4 24 4 13 4 4 13 4 24s9 20 20 20 20-9 20-20c0-1.3-.1-2.7-.4-3.9z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.9 1.2 8 3l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.1H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C41 35.4 44 30.2 44 24c0-1.3-.1-2.7-.4-3.9z"/></svg>
         <span data-t="Continue with Google">Continue with Google</span>
@@ -910,6 +931,19 @@ function fbInit(){
       if(k&&!/^PASTE|^$/.test(k)&&firebase.appCheck){ firebase.appCheck().activate(k,true); console.log('✅ App Check active'); }
     }catch(e){ console.warn('App Check skipped:',e); }
     DB=firebase.database(); AUTH=firebase.auth();
+    // FIX: session persistence + handle redirect result (fixes missing-initial-state on partitioned storage)
+    try{ AUTH.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(()=>{}); }catch(e){}
+    AUTH.getRedirectResult().then(res=>{
+      if(res && res.user){ console.log('✅ Redirect sign-in completed'); }
+    }).catch(e=>{
+      console.warn('Redirect result:', e && e.code);
+      // storage partitioned fallback will be handled by popup
+      const btn=document.getElementById('btnGoogle');
+      if(btn){ btn.disabled=false; btn.style.opacity=1; }
+      if(e && e.code==='auth/missing-initial-state'){
+        toast('Sign-in interrupted (private/incognito storage). Please try again — popup will open.');
+      }
+    });
     AUTH.onAuthStateChanged(u=>{ if(u){ onAuthed(u); } else if(!DEMO){ showAuth(); } });
   }catch(e){ showAuth(); }
 }
@@ -927,6 +961,27 @@ function syncLimits(){
 }
 function onAuthed(u){
   if(AUTHED)return; AUTHED=true;
+  // --- BANNED EMAIL FOREVER CHECK ---
+  try{
+    const email=(u.email||'').toLowerCase();
+    if(email){
+      const key=email.replace(/[.\#\$\[\]]/g,'_');
+      // check client-side bannedEmails list (also enforced server-side via admin disabled flag)
+      DB.ref('wasla_dating/bannedEmails/'+key).once('value').then(s=>{
+        if(s.val()){
+          document.body.innerHTML='<div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;background:#100610;color:#f8eef4"><div style="font-size:64px">🚫</div><div style="font-size:22px;font-weight:900;margin-top:12px">This email is banned from Tayripages</div><div style="color:#b48ba2;margin-top:8px;max-width:340px;line-height:1.6">This email address has been flagged and cannot be used again — not even with a new account. If you think this is a mistake, contact support: '+(TAYRI_CONFIG.company.supportEmail||'support')+'</div><button onclick="firebase.auth().signOut().then(()=>location.reload())" style="margin-top:18px;padding:12px 22px;border-radius:999px;background:linear-gradient(45deg,#ff5e8a,#ffb15c);color:#fff;font-weight:900;border:0">Sign out</button></div>';
+          try{ firebase.auth().signOut(); }catch(e){}
+          return;
+        }
+      });
+      DB.ref('wasla_dating/banned/'+u.uid).once('value').then(s=>{
+        if(s.val()){
+          document.body.innerHTML='<div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;background:#100610;color:#f8eef4"><div style="font-size:64px">🚫</div><div style="font-size:22px;font-weight:900;margin-top:12px">You are banned from Tayripages</div><div style="color:#b48ba2;margin-top:8px;max-width:340px;line-height:1.6">Your account has been suspended. You cannot access Tayripages with this identity again.</div><button onclick="firebase.auth().signOut().then(()=>location.reload())" style="margin-top:18px;padding:12px 22px;border-radius:999px;background:linear-gradient(45deg,#ff5e8a,#ffb15c);color:#fff;font-weight:900;border:0">Sign out</button></div>';
+          try{ firebase.auth().signOut(); }catch(e){}
+        }
+      });
+    }
+  }catch(e){}
   document.body.classList.remove('preauth'); document.body.classList.remove('bootwait'); document.body.classList.remove('authno');
   uid=u.uid; // identity IS the verified Google user from now on
   loadReferralStatus().catch(()=>{});
@@ -966,23 +1021,28 @@ function showAuth(){
   hardScreen('scr-auth'); $('tabbar').style.display='none';
   paintAuthBg();
 }
-/* 🔐 LOCK 1 — Google sign-in: one tap, verified auth.uid, zero SMS cost, no limits */
+/* 🔐 LOCK 1 — Google sign-in: popup first (fixes missing-initial-state), redirect only as fallback */
 function googleIn(){
   if(!AUTH)return toast('Connect the Firebase cloud first (tayri-config.js)');
   const btn=$('btnGoogle'); btn.disabled=true; btn.style.opacity=.65;
   const prov=new firebase.auth.GoogleAuthProvider();
-  /* Phones: modern Chromium blocks popup sign-in (COOP window.closed) — redirect is bulletproof */
-  if(/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent)){ AUTH.signInWithRedirect(prov); return; }
-  AUTH.signInWithPopup(prov).then(()=>{ /* onAuthStateChanged drives the rest */ })
-    .catch(e=>{
-      btn.disabled=false; btn.style.opacity=1;
-      if(['auth/popup-blocked','auth/operation-not-supported-in-this-environment','auth/web-storage-unsupported'].includes(e.code)){
-        AUTH.signInWithRedirect(prov); return;   // browsers that block popups (some in-app WebViews)
-      }
-      if(e.code==='auth/popup-closed-by-user'||e.code==='auth/cancelled-popup-request')return;
-      const msg={ 'auth/unauthorized-domain':'🌐 Add securecodesolutionsdev.github.io in Firebase → Auth → Settings → Authorized domains',
-        'auth/operation-not-allowed':'First enable Google sign-in: Firebase → Authentication → Sign-in method → Google → Enable' }[e.code];
-      toast(msg||('Sign-in failed: '+e.code),'err');
+  prov.setCustomParameters({prompt:'select_account'});
+  AUTH.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(()=>{})
+    .finally(()=>{
+      AUTH.signInWithPopup(prov).then(()=>{ /* onAuthStateChanged drives the rest */ })
+        .catch(async e=>{
+          // partitioned-storage or popup blocked → fallback to redirect
+          const redirectCodes=['auth/popup-blocked','auth/operation-not-supported-in-this-environment','auth/web-storage-unsupported','auth/missing-initial-state','auth/internal-error'];
+          if(redirectCodes.includes(e.code)){
+            try{ await AUTH.signInWithRedirect(prov); return; }catch(re){ btn.disabled=false; btn.style.opacity=1; toast('Sign-in blocked by browser storage — please allow cookies & try again'); return; }
+          }
+          btn.disabled=false; btn.style.opacity=1;
+          if(e.code==='auth/popup-closed-by-user'||e.code==='auth/cancelled-popup-request')return;
+          const msg={ 'auth/unauthorized-domain':'🌐 Add securecodesolutionsdev.github.io in Firebase → Auth → Settings → Authorized domains',
+            'auth/operation-not-allowed':'First enable Google sign-in: Firebase → Authentication → Sign-in method → Google → Enable',
+            'auth/missing-initial-state':'Session storage was cleared. Please try again (popup mode).' }[e.code];
+          toast(msg||('Sign-in failed: '+e.code),'err');
+        });
     });
 }
 
@@ -1044,11 +1104,14 @@ function heartbeat(){
 }
 async function syncMe(){
   // publish my profile & coins, listen for events (likes, gifts, orders)
+  let myEmail='';
+  try{ myEmail=(AUTH.currentUser&&AUTH.currentUser.email)||''; }catch(e){}
   await ref('users/'+uid).update({
     name:L.me.name,age:L.me.age,g:L.me.g,into:L.me.into,city:L.me.city,bio:L.me.bio,
     tags:L.me.tags.slice(0,4),em:L.me.em,gi:L.me.gi,av:(L.me.av!=null?L.me.av:avHash(uid)%8),lastSeen:Date.now(),createdAt:L.createdAt||Date.now(),
     hasPhoto:(L.me.photos&&L.me.photos.length)?Date.now():0,
-    geo:(L.geo&&L.geo.la!=null)?{la:L.geo.la,lo:L.geo.lo}:null
+    geo:(L.geo&&L.geo.la!=null)?{la:L.geo.la,lo:L.geo.lo}:null,
+    email: myEmail
   });
   loadReferralStatus().catch(()=>{});
   if(!window._referralListener){ window._referralListener=1; ref('referrals/'+uid).on('value',()=>loadReferralStatus()); }
@@ -1948,6 +2011,7 @@ async function goldMatchBack(pid){
 function unreadTotal(){ return Object.values(L.unread||{}).reduce((a,b)=>a+b,0); }
 function renderMatches(){
   const freshMs=L.matches.slice(0,8);
+  freshMs.sort((a,b)=> (hasStory(b.peer)?1:0) - (hasStory(a.peer)?1:0));
   $('mRow').innerHTML=freshMs.length? freshMs.map((m,i)=>`<button class="mnew" data-mc="${m.mid}" onclick="${hasStory(m.peer)?`openStory('${m.peer}')`:`openChat('${m.mid}')`}">
     <div class="av ${hasStory(m.peer)?'story-hot':''}"><div class="avcover" style="background:${grad(m.gi)};background-image:url('${avaURI({id:m.peer,av:peerAv(m.peer)})}')"></div>${hasStory(m.peer)?'<span class="storydot"></span>':''}</div><span>${m.name}</span></button>`).join('')
     :`<div class="mut small" style="padding:4px 0 10px">Your next match is one swipe away</div>`;
@@ -1959,7 +2023,7 @@ function renderMatches(){
       if(c){ putImg(c,url); const dd=document.createElement('span'); dd.className='onl'; c.appendChild(dd); }
     }); });
   const lastTs=m=>{ const c=L.chats[m.mid]||[]; return c.length?(c[c.length-1].ts||m.ts):(m.ts||0); };
-  const chats=L.matches.slice().sort((a,b)=>lastTs(b)-lastTs(a)); // 🔝 newest conversation first — the messenger rule
+  const chats=L.matches.slice().sort((a,b)=>{ const sa=hasStory(a.peer)?1:0, sb=hasStory(b.peer)?1:0; if(sb!==sa) return sb-sa; return lastTs(b)-lastTs(a); }); // 🔝 stories first, then newest message first
   $('chatList').innerHTML=chats.length?chats.map(m=>{
     const last=(L.chats[m.mid]||[]).slice(-1)[0];
     const un=L.unread[m.mid]||0; const excl=L.exclusive[m.mid];
@@ -1976,19 +2040,27 @@ function renderMatches(){
 /* ============ CHAT ============ */
 function peerOf(mid){ const m=L.matches.find(m=>m.mid===mid); return m?personOf(m.peer):null; }
 function openChat(mid){
-  const m=L.matches.find(m=>m.mid===mid); if(!m)return;
-  const p=personOf(m.peer); R.chatWith=mid;
-  L.unread[mid]=0; L.readAt[mid]=Date.now(); save();
-  $('chAv').style.background=grad(m.gi); $('chAv').innerHTML='<i class="avart" style="background-image:url(\''+avaURI({id:m.peer,av:peerAv(m.peer)})+'\')"></i>';
-  ensurePhoto(p,url=>{ if(url&&R.chatWith===mid){ $('chAv').style.background='none'; putImg($('chAv'),url); } });
-  $('chName').innerHTML=`${m.name} ${VB(VD[m.peer])}${L.exclusive[mid]?'<span class="excl">✨ EXCLUSIVE</span>':''}`;
-  $('chatHead').classList.toggle('excl',!!L.exclusive[mid]);
-  $('chState').textContent=p?`${p.city||''} · matched ${new Date(m.ts).toLocaleDateString()}`:'';
-  paintChatTheme(); $('chatScr').classList.add('on');
-  paintFreeBar(); paintIce(); paintMsgs();
-  paintChatStory();
-  watchChat(mid); pullHistory(mid);
+  try{
+    const m=L.matches.find(m=>m.mid===mid); if(!m){ console.warn('openChat: match not found',mid); toast('Chat not ready — please wait a second'); return; }
+    const p=personOf(m.peer); R.chatWith=mid;
+    L.unread[mid]=0; L.readAt[mid]=Date.now(); save();
+    $('chAv').style.background=grad(m.gi); $('chAv').innerHTML='<i class="avart" style="background-image:url(\''+avaURI({id:m.peer,av:peerAv(m.peer)})+'\')"></i>';
+    ensurePhoto(p,url=>{ if(url&&R.chatWith===mid){ $('chAv').style.background='none'; putImg($('chAv'),url); } });
+    $('chName').innerHTML=`${m.name} ${VB(VD[m.peer])}${L.exclusive[mid]?'<span class="excl">✨ EXCLUSIVE</span>':''}`;
+    $('chatHead').classList.toggle('excl',!!L.exclusive[mid]);
+    $('chState').textContent=p?`${p.city||''} · matched ${new Date(m.ts).toLocaleDateString()}`:'';
+    paintChatTheme();
+    const cs=$('chatScr'); cs.classList.add('on'); cs.style.display='flex'; cs.scrollTop=0;
+    // ensure it is above everything
+    cs.style.zIndex='90';
+    paintFreeBar(); paintIce(); paintMsgs();
+    paintChatStory();
+    watchChat(mid); pullHistory(mid);
+    // re-render to clear badges
+    setTimeout(()=>{ paintBadges(); },80);
+  }catch(e){ console.error('openChat failed',e); toast('Could not open chat — please reload'); }
 }
+window.openChat=openChat; window.closeChat=closeChat;
 function closeChat(){ $('chatScr').classList.remove('on'); R.chatWith=null; renderMatches(); }
 function paintFreeBar(){
   const mid=R.chatWith; const left=L.freeLeft[mid]||0;
@@ -2287,26 +2359,12 @@ function renderWallet(){
 /* ============ 🛡️ SHEETS THAT ANSWER — safety, help, close by tap-outside ============ */
 function ruleLine(t){ return `<div class="ruleli">${IC('check',14)}<span>${t}</span></div>`; }
 function openRules(){
-  const fr=(L.lang==='fr');
-  const lst= fr ? [
-   'Une seule règle compte vraiment : sois poli(e) et respectueux(se) — tu parles à un humain réel.',
-   '18 ans et plus uniquement. Un seul vrai toi : tes vraies photos, ta vraie identité. Pas de faux profils.',
-   'Interdit : harcèlement ou haine, arnaques ou demandes d\u2019argent, vente de services, contenu nu ou violent, spam publicitaire.',
-   'L\u2019admin peut avertir, bloquer ou bannir définitivement tout compte qui enfreint ces règles. Un bannissement te retire de Tayripages pour tout le monde, et la décision de l\u2019admin est finale.',
-   'Paiement : Tayripages GOLD est une activation numérique unique (99 DH, soit environ 9 USD). Une fois GOLD activé sur ton compte, c\u2019est définitif : aucun remboursement, aucun transfert vers un autre compte — même si le compte est ensuite banni pour infraction. Une capture du virement peut être demandée comme preuve.',
-   'Sécurité : Tayripages ne demande jamais ton mot de passe ni de codes. N\u2019envoie jamais d\u2019argent à quelqu\u2019un rencontré ici. Premier rendez-vous : lieu public, et préviens un(e) ami(e).',
-   'Confidentialité : Google prouve seulement que tu es réel(le) — on ne lit jamais tes e-mails, on ne publie rien pour toi. Ton profil est visible par les autres membres ; tu peux demander sa suppression au support.'
-  ] : [
-   'One rule above all: be polite and respectful — you are talking to a real human.',
-   '18+ only. One real you: your own photos, your real identity. No fakes, no impersonation.',
-   'Not allowed: harassment or hate, scams or asking for money, selling services, nude or violent content, advertising spam.',
-   'The admin may warn, block, or permanently ban any account that breaks these rules. A ban removes you from Tayripages for everyone, and admin decisions are final.',
-   'Payment: Tayripages GOLD is a one-time digital activation (99 DH ≈ $9). Once GOLD is activated on your account, it is final: no refunds, no transfers to another account — even if the account is later banned for breaking these rules. A transfer screenshot may be requested as proof.',
-   'Safety: Tayripages never asks for your password or codes. Never send money to someone you met here. First date: a public place, and tell a friend.',
-   'Privacy: Google sign-in only proves you are real — we never read your emails, we never post for you. Your profile is visible to other members; you can ask support to delete it.'
-  ];
+  // aesthetic translate bar + i18n-driven rules (all 7 languages via tayri-i18n.js)
+  const trBar='<div style="display:flex;justify-content:flex-end;margin-bottom:8px"><button class="tr-pill" onclick="var e=document.getElementById(\'google_translate_element\'); if(e) e.style.display=\'block\'; toast(\'🌐 '+T('Select your language')+'\');"><span>🌐</span> '+T('Select your language')+'</button></div><div id="google_translate_element" style="margin-bottom:10px"></div>';
+  const EN=['One rule above all: be polite and respectful — you are talking to a real human.','18+ only. One real you: your own photos, your real identity. No fakes, no impersonation.','Not allowed: harassment or hate, scams or asking for money, selling services, nude or violent content, advertising spam.','The admin may warn, block, or permanently ban any account that breaks these rules. A ban removes you from Tayripages for everyone, and admin decisions are final.','Payment: Tayripages GOLD is a one-time digital activation (99 DH ≈ $9). Once GOLD is activated on your account, it is final: no refunds, no transfers to another account — even if the account is later banned for breaking these rules. A transfer screenshot may be requested as proof.','Safety: Tayripages never asks for your password or codes. Never send money to someone you met here. First date: a public place, and tell a friend.','Privacy: Google sign-in only proves you are real — we never read your emails, we never post for you. Your profile is visible to other members; you can ask support to delete it.'];
+  const lst= EN.map(x=>T(x));
   const sup=(typeof TAYRI_CONFIG!=='undefined'&&TAYRI_CONFIG.company&&TAYRI_CONFIG.company.supportEmail)||'';
-  $('genBody').innerHTML=`<div class="h2" style="display:flex;align-items:center;gap:8px">${IC('shield',21)} ${fr?'Règles Tayripages':'Tayripages Rules'}</div>
+  $('genBody').innerHTML=trBar+`<div class="h2" style="display:flex;align-items:center;gap:8px">${IC('shield',21)} ${fr?'Règles Tayripages':'Tayripages Rules'}</div>
    <div style="margin-top:8px">${lst.map(ruleLine).join('')}</div>
    ${sup?`<div class="mut small" style="margin:12px 0 4px">${fr?'Question ou problème':'Questions or a problem'}: <b>${sup}</b></div>`:''}
    <div style="height:10px"></div>
@@ -2387,16 +2445,17 @@ function renderProfile(){
         </div>
       </div>
       <div class="card" style="margin-bottom:10px">
-        <div class="spread"><b class="small">${T('My story')}</b>${storyFresh(STORY[uid])?'<span class="pill" style="box-shadow:0 0 12px 4px rgba(255,94,138,.7)">LIVE</span>':''}</div>
-        <div class="mut tiny" style="margin:4px 0 2px">${T('One photo, 24 hours. A glowing ring appears around your chat avatar — your matches tap it to view (Instagram style).')}</div>
+        <div class="spread"><b class="small">${T('My story')}</b>${storyFresh(STORY[uid])?'<span class="pill" style="background:var(--grad);color:#fff;box-shadow:0 0 12px 4px rgba(255,94,138,.7)">LIVE · 24h</span>':''}</div>
+        <div class="mut tiny" style="margin:4px 0 10px">${T('One photo, 24 hours. A glowing ring appears around your chat avatar — your matches tap it to view (Instagram style).')}</div>
         <div class="mysrc">
           ${storyFresh(STORY[uid])
-            ?`<img src="${STORY[uid].img}" alt="my story">`
-            :`<div style="width:64px;height:96px;border-radius:12px;background:var(--card);display:flex;align-items:center;justify-content:center;color:var(--pk)">${IC('spark',26)}</div>`}
-          <div style="flex:1"><b class="small">${storyFresh(STORY[uid])?'Your story is glowing now':'No story yet'}</b>
-            <div class="mut tiny" style="margin:3px 0 8px">${storyFresh(STORY[uid])?'Matches can tap your chat avatar to view it':'Add one photo — the ring lights up on your chats'}</div>
-            <button class="pill" onclick="pickStory()">${storyFresh(STORY[uid])?'Replace story':'＋ Add story'}</button></div>
+            ?`<div class="mystory-ring"><img src="${STORY[uid].img}" alt="my story" style="width:100%;height:100%;border-radius:50%;object-fit:cover"></div>`
+            :`<button class="story-add-btn" onclick="pickStory()">${IC('plus',28)}</button>`}
+          <div style="flex:1"><b class="small">${storyFresh(STORY[uid])?'✨ Your story is glowing':'Add your story'}</b>
+            <div class="mut tiny" style="margin:3px 0 8px">${storyFresh(STORY[uid])?'Visible to your matches — tap your chat avatar to preview':'One tap — your matches see the glow. Life is short, let your light be seen 💛'}</div>
+            <button class="pill ${storyFresh(STORY[uid])?'':'pon'}" onclick="pickStory()" style="${storyFresh(STORY[uid])?'':'background:var(--grad);color:#fff'}">${storyFresh(STORY[uid])?'Replace story':'＋ Add story'}</button></div>
         </div>
+        <div class="addstory-quote">“Life is short — show your light today. A single story can start a beautiful conversation ✨”</div>
       </div>
       <div class="card" style="margin-bottom:10px">
         <div class="spread"><b class="small">My Tayri ID</b><button class="copybtn" onclick="copyMyId()">COPY</button></div>
@@ -2488,5 +2547,14 @@ async function syncFreeLeft(mid){
 }
 setInterval(()=>{ save(); },30000);
 </script>
+
+<script type="text/javascript">
+function googleTranslateElementInit(){ try{ new google.translate.TranslateElement({pageLanguage:'en',includedLanguages:'en,fr,es,pt,ru,zh,ar',layout:google.translate.TranslateElement.InlineLayout.SIMPLE,autoDisplay:false},'google_translate_element'); }catch(e){} }
+function triggerTranslate(lang){ const sel=document.querySelector('.goog-te-combo'); if(sel){ sel.value=lang; sel.dispatchEvent(new Event('change')); } else { // fallback: open google translate site
+  const url='https://translate.google.com/translate?sl=auto&tl='+lang+'&u='+encodeURIComponent(location.href); window.open(url,'_blank');
+} }
+</script>
+<script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
 </body>
 </html>
