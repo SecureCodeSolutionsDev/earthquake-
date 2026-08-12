@@ -380,7 +380,7 @@ function paintAll(){
     ...reports.map(([k,r])=>({ts:r.ts,txt:`Report filed: ${eh(r.reason||'Report')}`}))
   ].sort((a,b)=>b.ts-a.ts).slice(0,40);
   $('tblAct').innerHTML='<tbody>'+(acts.length?`<tr><th>Event</th><th>When</th></tr>`+acts.map(a=>`<tr><td>${a.txt}</td><td class="mut tiny">${ts(a.ts)}</td></tr>`).join(''):'<tr><td class="mut">Quiet so far…</td></tr>')+'</tbody>';
-  paintOr(pendOr,orders); paintRp(reports); paintUs(users);
+  paintOr(pendOr,orders); paintRp(reports); paintUs(users); paintMuse();
 }
 
 function paintOr(pend,all){

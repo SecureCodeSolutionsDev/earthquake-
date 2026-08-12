@@ -909,7 +909,7 @@ async function init(){
     try{ if(queueRef) await queueRef.remove(); }catch(e){}
     detach(); cleanupMedia();
     currentRoomId=null; currentPeer=null; currentPair=null; role=null; pc=null; roomRef=null; pairRef=null; candidateRef=null; remoteSet=false; pendingCandidates=[]; offerBusy=false; answerBusy=false; callConnected=false;
-    show(endBtn,false); show(skipBtn,false); show(mediaActions,false); show(videos,false); show(modeTabs,true); show(startBtn,true); renderStartButton();
+    show(endBtn,false); show(skipBtn,false); show(mediaActions,false); show($('callChat'),false); show(videos,false); show(document.getElementById('proControls'),false); show(modeTabs,true); show(startBtn,true); renderStartButton();
     if(restart){ closing=false; setTimeout(()=>{ if(authUser)startMatch(); },700); }
     else if(shouldRate){ showFeedback(endedPeer); closing=false; }
     else { setTimeout(()=>{ if(!searching) setStatus('Ready when you are. Camera access is requested only when you start.','good'); },1200); closing=false; }
