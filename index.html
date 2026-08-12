@@ -29,6 +29,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <script src="tayri-config.js"></script>
 <script src="tayri-i18n.js"></script>
+<script src="filters/tayri-filters.bundle.js"></script>
 <script src="img-pack-1.js"></script>
 <script src="img-pack-2.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -841,7 +842,18 @@ function confirmGold(refid){
   renderWallet();
 }
 
-function isCleanOrWarn(text){ return true; }
+function isCleanOrWarn(text){
+  try{
+    if(window.TAYRI_FILTERS && text){
+      const hit = window.TAYRI_FILTERS.check(text);
+      if(hit){
+        toast('🚫 Inappropriate language blocked — keep Tayripages kind 💛');
+        return false;
+      }
+    }
+  }catch(e){}
+  return true;
+}
 // ANTI-SPAM: smooth, local, no UX harm — 1.2s between messages, burst 3, then throttle
 const _spam = { last:0, count:0, window:0 };
 function canSendWithAntiSpam(){
@@ -1210,6 +1222,7 @@ async function syncMe(){
         tags:L.me.tags.slice(0,4),em:L.me.em,gi:L.me.gi,av:(L.me.av!=null?L.me.av:avHash(uid)%8),lastSeen:Date.now(),createdAt:L.createdAt||Date.now(),
         hasPhoto:(L.me.photos&&L.me.photos.length)?Date.now():0,
         geo:(L.geo&&L.geo.la!=null)?{la:L.geo.la,lo:L.geo.lo}:null,
+        country: (typeof myCountry==='function'?myCountry():(L.me&&L.me.country)||''),
         email: myEmail,
         profession:L.me.profession||'',education:L.me.education||'',relation:L.me.relation||'',kids:L.me.kids||'',height:L.me.height||'',body:L.me.body||'',income:L.me.income||'',smoke:L.me.smoke||'',drink:L.me.drink||'',religion:L.me.religion||'',intent:L.me.intent||''
       });
@@ -1281,10 +1294,10 @@ async function cloudDiscover(){
     .map(([k,p])=>{ const g=((p.geo&&p.geo.la!=null)?p.geo:null);
       return {...p,id:k,sim:false,
         km:(g&&L.geo)?distKm(L.geo.la,L.geo.lo,g.la,g.lo):null,
-        fresh:(p.lastSeen||0)>now-3*86400000, verified:!!vfd[k], malika:!!(lbB[k]&&(lbB[k].malika||lbB[k].beautyQueen))}; });
+        fresh:(p.lastSeen||0)>now-3*86400000, verified:!!vfd[k]}; });
   const scope=matchScope();
   if(scope==='passport'){
-    const cTarget = String(flt.country).trim().toLowerCase();
+    const cTarget = String(flt.country||'').trim().toLowerCase();
     pool = pool.filter(p => {
       const pC = peerCountry(p).toLowerCase();
       const pCity = (p.city || '').trim().toLowerCase();
@@ -1294,9 +1307,7 @@ async function cloudDiscover(){
     const mine=myCountry().toLowerCase();
     const locals=pool.filter(p=>sameLocale(p) || peerCountry(p).toLowerCase()===mine);
     if(locals.length) pool=locals;
-    else L._localEmpty=1;
   } else {
-    /* global mix — random nationalities, never a single country */
     pool=pool.sort(()=>Math.random()-0.5);
   }
   if(flt.ageRange&&flt.ageRange!=='all'){
@@ -1838,11 +1849,6 @@ function skinLang(){ document.querySelectorAll('[data-t]').forEach(el=>{ el.inne
 /* ============ ✅ SELFIE VERIFIED — trust badge (you approve in admin, zero AI cost) */
 const VD={}; // uid -> verified?
 function VB(on){ return on?'<span class="vchk">✓</span>':''; }
-function beautyQueenBadge(p){
-  if(!p) return '';
-  if(p.malika || p.beautyQueen || (p.lb&&p.lb.malika)) return '<span class="phbadge" style="background:linear-gradient(45deg,#f2c14e,#ff8a5c);color:#2a1500;letter-spacing:.2px">'+T('Beauty Queen')+'</span>';
-  return '';
-}
 function startVerify(){
   if(L.verified)return toast('✅ You are already VERIFIED 💙');
   if(L.verifyPending)return toast('⏳ Your selfie is being reviewed — usually under 24h');
@@ -1918,37 +1924,37 @@ function goGlobalMix(){
   if(L.filters) L.filters.country='all';
   save(); paintNearChip();
   R.cacheTs=0; loadDeck().catch(()=>paintDeck());
-  toast('🌍 Worldwide mix — random nationalities, not one country');
+  toast('🌍 Worldwide mix — random nationalities');
 }
 function stayLocal(){
   L.matchScope='local';
   if(L.filters) L.filters.country='all';
   save(); paintNearChip();
   R.cacheTs=0; loadDeck().catch(()=>paintDeck());
-  toast('📍 Local only — people in '+myCountry());
+  toast('📍 Local — '+myCountry());
 }
 function openPassportSheet(){
   const scope=matchScope();
   const isGold=goldActive();
   const f=F();
-  $('genBody').innerHTML=`<div class="h2" style="display:flex;align-items:center;gap:8px">${IC('pin',22)} Discovery area</div>
-    <div class="mut small" style="margin:8px 0 14px;line-height:1.6">Like Tinder, you match <b>where you are</b>. GOLD lets you pick one country. After you finish local cards, you can open a <b>worldwide mix</b> (random nationalities — never one country unless GOLD).</div>
-    <div class="card" style="margin-bottom:10px"><b>${myCountry()}</b><div class="mut tiny" style="margin-top:4px">${L.me&&L.me.city?L.me.city:'Your city'} · GPS ${L.geo?'on':'off'}</div></div>
-    <button class="btn ${scope==='local'?'btn-grad':'btn-line'}" onclick="stayLocal();hide('genSheet')">${IC('pin',16)} Stay local — ${myCountry()}</button>
+  $('genBody').innerHTML=`<div class="h2" style="display:flex;align-items:center;gap:8px">${IC('pin',22)} ${T('Your area')}</div>
+    <div class="mut small" style="margin:8px 0 14px;line-height:1.6">${T('Like Tinder, you match where you are. GOLD can pick one country. After local cards end, open a worldwide mix.')}</div>
+    <div class="card" style="margin-bottom:10px"><b>${myCountry()}</b><div class="mut tiny" style="margin-top:4px">${L.me&&L.me.city?L.me.city:''}</div></div>
+    <button class="btn ${scope==='local'?'btn-grad':'btn-line'}" onclick="stayLocal();hide('genSheet')">${IC('pin',16)} ${T('Stay local')} — ${myCountry()}</button>
     <div style="height:8px"></div>
-    <button class="btn ${scope==='global'?'btn-grad':'btn-line'}" onclick="goGlobalMix();hide('genSheet')">${IC('globe',16)} Worldwide mix (after local sweeps)</button>
-    <div class="mut tiny" style="margin:10px 0 6px;font-weight:900">GOLD passport — pick one country</div>
-    ${isGold?`<input class="inp" id="passSearch" placeholder="Search country…" oninput="filterCountryChips(this.value)">
-    <div id="countryChipsBox" class="tagwrap" style="max-height:160px;overflow:auto;margin-top:8px">${ALL_WORLD_COUNTRIES.map(c=>`<button class="tchip country-chip-item ${f.country===c?'on':''}" data-name="${c}" onclick="F().country='${c}';L.matchScope='local';save();hide('genSheet');R.cacheTs=0;loadDeck().catch(()=>paintDeck());toast('✈️ Passport: ${c}')">${c}</button>`).join('')}</div>`
-    :`<button class="btn btn-soft" onclick="openGold('countryFilter')">${IC('crown',16)} Unlock country passport with GOLD</button>`}
-    <div style="height:10px"></div><button class="btn btn-line" onclick="hide('genSheet')">Close</button>`;
+    <button class="btn ${scope==='global'?'btn-grad':'btn-line'}" onclick="goGlobalMix();hide('genSheet')">${IC('globe',16)} ${T('Worldwide mix')}</button>
+    <div class="mut tiny" style="margin:10px 0 6px;font-weight:900">${T('GOLD passport — one country')}</div>
+    ${isGold?`<input class="inp" id="passSearch" placeholder="${T('Search country…')}" oninput="filterCountryChips(this.value)">
+    <div id="countryChipsBox" class="tagwrap" style="max-height:160px;overflow:auto;margin-top:8px">${ALL_WORLD_COUNTRIES.map(c=>`<button class="tchip country-chip-item ${f.country===c?'on':''}" data-name="${c}" onclick="F().country='${c}';L.matchScope='local';save();hide('genSheet');R.cacheTs=0;loadDeck().catch(()=>paintDeck());toast('${T('Passport')}: ${c}')">${c}</button>`).join('')}</div>`
+    :`<button class="btn btn-soft" onclick="openGold('countryFilter')">${IC('crown',16)} ${T('Unlock country passport with GOLD')}</button>`}
+    <div style="height:10px"></div><button class="btn btn-line" onclick="hide('genSheet')">${T('Close')}</button>`;
   show('genSheet');
 }
 function paintNearChip(){ const b=$('nearChip'); if(!b)return;
   const scope=matchScope();
   const lbl=$('nearChipLbl');
   if(scope==='passport'){ b.style.background='var(--grad)'; b.style.color='#fff'; if(lbl)lbl.textContent=F().country; }
-  else if(scope==='global'){ b.style.background='var(--grad)'; b.style.color='#fff'; if(lbl)lbl.textContent='World'; }
+  else if(scope==='global'){ b.style.background='var(--grad)'; b.style.color='#fff'; if(lbl)lbl.textContent=T('World'); }
   else { b.style.background=''; b.style.color=''; if(lbl)lbl.textContent=myCountry(); } }
 /* ============ 🌍 DISCOVERY FILTERS — everyone browsable, you tune who appears ============ */
 const ALL_WORLD_COUNTRIES = [
@@ -2015,7 +2021,6 @@ function peerCountry(p){
   return countryOf(p.city||'');
 }
 function matchScope(){
-  /* local (default, Tinder-like) | passport (GOLD one country) | global (after local deck is empty) */
   if(goldActive() && F().country && F().country!=='all') return 'passport';
   return L.matchScope==='global' ? 'global' : 'local';
 }
@@ -2297,7 +2302,7 @@ async function loadDeck(){
   if(!L.me){return}
   /* 🚪 live mode = real people only — no starter profiles, no fake auto-matches, ever */
   const demoPool=DEMO?SAMPLES.filter(p=>
-    (p.g==='w'&&L.me.into.includes('w'))||(p.g==='m'&&L.me.into.includes('m'))).map(p=>({...p,sim:true,country:countryOf(p.city)})):[];
+    (p.g==='w'&&L.me.into.includes('w'))||(p.g==='m'&&L.me.into.includes('m'))).map(p=>({...p,sim:true})):[];
   let cloudPool=[];
   if(!DEMO){ try{ cloudPool=await cloudDiscover(); }catch(e){} }
   const all=[...cloudPool,...demoPool.filter(p=>!cloudPool.find(c=>c.name===p.name))];
@@ -2331,11 +2336,11 @@ function paintDeck(){
     dk.innerHTML=`<div class="deckempty">
       <div class="big">${MIMG('flame','🌅',72)}</div>
       <div class="h2">${matchScope()==='local'?T('You swept everyone nearby'):T('No more hearts here — for now')}</div>
-      <div class="mut small" style="max-width:280px;line-height:1.6">${matchScope()==='local'?'You finished '+myCountry()+'. Open a worldwide mix — random nationalities, not one country. GOLD can still pick China, France…':'New hearts join every day. GOLD passport lets you choose one country.'}</div>
-      ${matchScope()==='local'?`<button class="btn btn-grad" style="max-width:260px;margin-top:10px" onclick="goGlobalMix()">${IC('globe',16)} Go worldwide mix</button>`:''}
-      <button class="btn ${matchScope()==='local'?'btn-line':'btn-grad'}" style="max-width:240px;margin-top:6px" onclick="R.cacheTs=0;loadDeck().catch(()=>paintDeck())">${T('Refresh deck')}</button>
-      <button class="btn btn-line" style="max-width:240px;margin-top:6px" onclick="openPassportSheet()">${IC('pin',16)} Change area</button>
-      ${!goldActive()?`<button class="btn btn-line" style="max-width:240px;margin-top:6px" onclick="openGold('countryFilter')">${IC('crown',16)} GOLD country passport</button>`:''}
+      <div class="mut small" style="max-width:280px;line-height:1.6">${matchScope()==='local'?T('You finished locals. Open a worldwide mix — random nationalities. GOLD can pick one country.'):T('Tayripages shows only real Google-verified people. New hearts join every day, and your free likes refresh after midnight.')}</div>
+      ${matchScope()==='local'?`<button class="btn btn-grad" style="max-width:260px;margin-top:10px" onclick="goGlobalMix()">${IC('globe',16)} ${T('Go worldwide mix')}</button>`:''}
+      <button class="btn btn-grad" style="max-width:240px;margin-top:10px" onclick="R.cacheTs=0;loadDeck().catch(()=>paintDeck())">${T('Refresh deck')}</button>
+      ${filtersActive()?`<button class="btn btn-line" style="max-width:240px;margin-top:6px" onclick="openFilters()">${IC('sliders',16)} ${T('Tune discovery filters')}</button>`:''}
+      <button class="btn btn-line" style="max-width:240px;margin-top:6px" onclick="openGold('likes')">${IC('crown',16)} ${T('GO GOLD')}</button>
     </div>`;
     const da=document.querySelector('.dactions'); if(da)da.classList.add('dim');
     return;
@@ -2363,7 +2368,7 @@ function cardHtml(p,i){
     <div class="shade"></div>
     <div class="stamp like">LIKE</div><div class="stamp no">NOPE</div><div class="stamp wow">WOW ✨</div>
     <div class="info">
-      <div class="nm">${p.name} <span class="age">${p.age}</span> ${VB(p.verified)} ${beautyQueenBadge(p)}</div>
+      <div class="nm">${p.name} <span class="age">${p.age}</span> ${VB(p.verified)}</div>
       <div class="ds">${IC('pin',12)} ${p.km!=null?`${p.km} km · `:''}${p.city||'Earth'}${countryOf(p.city)!=='Other'?' · '+countryOf(p.city):''}</div>
       <div class="bio">${p.bio||''}</div>
       <div class="tags">${(p.tags||[]).slice(0,3).map(t=>`<span>${TIC(t,11)}${tagTxt(t)}</span>`).join('')}</div>
@@ -2408,7 +2413,10 @@ async function doSwipe(pid,dir){
     return;
   }
   _swipeSpam.last = now;
-  const p UTC day — same clock the firm rules use
+  const p=R.deck.shift(); L.swiped[pid]={d:dir,ts:Date.now()};
+  if(!R.deck.length||R.deck.length<3)paintDeck(); else paintDeck();
+  R.lastSwipe={p,dir};
+  const _today=Math.floor(Date.now()/86400000); // UTC day — same clock the firm rules use
   if(L.likesDay.d!==_today)L.likesDay={d:_today,n:0};
   if(L.superDay.d!==_today)L.superDay={d:_today,n:0};
   if(dir==='like'&&!goldActive()){ if(L.likesDay.n>=G.likesPerDay){ undoSwipe(); return openGold('likes'); } L.likesDay.n++; }
@@ -3043,7 +3051,7 @@ function renderProfile(){
     <div class="pcard">
       <div class="ph" style="background:${grad(L.me.gi)}">${mp?`<img src="${mp}" alt="my photo">`:`<div class="pletter">${(L.me.name||'T')[0].toUpperCase()}</div>`}</div>
       <div class="pbody">
-        <div class="nm h2" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">${L.me.name}, ${L.me.age} ${VB(L.verified)} ${beautyQueenBadge(L.me||L)} <span class="phbadge ${L.verified?'blue':''}">${L.verified?T('VERIFIED'):(mp?T('PHOTO PROFILE'):T('GOOGLE VERIFIED'))}</span></div>
+        <div class="nm h2" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">${L.me.name}, ${L.me.age} ${VB(L.verified)} <span class="phbadge ${L.verified?'blue':''}">${L.verified?T('VERIFIED'):(mp?T('PHOTO PROFILE'):T('GOOGLE VERIFIED'))}</span></div>
         <div class="mut small" style="margin:4px 0">${IC('pin',13)} ${L.me.city}</div>
         <div class="small">${L.me.bio}</div>
         <div class="row" style="flex-wrap:wrap;gap:6px;margin-top:8px">${L.me.tags.map(t=>`<span class="chip" style="font-size:11px;display:inline-flex;align-items:center;gap:5px">${TIC(t,12)}${tagTxt(t)}</span>`).join('')}</div>
@@ -3132,7 +3140,7 @@ function paintGold(){ const el=$('goldTop'); if(el)el.textContent=goldActive()?T
 
 /* ============ INIT ============ */
 setTimeout(()=>{ const dk=$('deck'); if(AUTHED&&R.tab==='discover'&&dk&&!dk.children.length){ try{paintDeck();}catch(e){} } }, 5200);
-const TAYRI_BUILD='v16'; /* bump this number on every release — every phone self-updates once, no cache games */
+const TAYRI_BUILD='v17'; /* bump this number on every release — every phone self-updates once, no cache games */
 try{ if(location.search.indexOf(TAYRI_BUILD)<0){ localStorage.setItem('tayri_boot_'+TAYRI_BUILD,'1'); const q=location.search; location.replace(location.pathname+(q?(q+'&'):'?')+TAYRI_BUILD); } }catch(e){}
 fbInit();
 paintGold();
@@ -3195,14 +3203,4 @@ setInterval(()=>{ save(); },30000);
 
 
 <script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a291721f4a33e208',t:'MTc4NjM5MDU0OA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
-</html>
-ner('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
-</html>
-{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
-</html>
-cument.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
-</html>
-{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
-</html>
-();</script></body>
 </html>
