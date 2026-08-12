@@ -501,7 +501,7 @@ function banUser(u){
       for(const [rid, r] of Object.entries(reports)){
         if(r && r.against===u && r.from) reporters.add(r.from);
       }
-      const thanks = "Thank you for keeping Tayripages safe 💛 — The user you reported has been reviewed and removed for violating our community rules. Your courage helps everyone. If you see anything else, please report again. — Tayripages Team";
+      const thanks = "The member you reported has been removed from Tayripages. Thank you for helping keep this community safe.";
       reporters.forEach(reporterUid=>{
         DB.ref('wasla_dating/adminMessages/'+reporterUid).push({text: thanks, from:'admin', by:firebase.auth().currentUser.uid, ts:Date.now(), adminOnly:true, reason:'ban-thanks'});
       });

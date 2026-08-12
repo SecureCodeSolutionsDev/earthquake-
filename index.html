@@ -1029,6 +1029,8 @@ function onAuthed(u){
   }catch(e){}
   document.body.classList.remove('preauth'); document.body.classList.remove('bootwait'); document.body.classList.remove('authno');
   uid=u.uid; // identity IS the verified Google user from now on
+  // Account switch first — never sync the previous user's local profile onto this UID
+  if(L.accountUid!==uid){ const keepLang=L.lang; Object.keys(L).forEach(k=>delete L[k]); Object.assign(L,fresh()); L.lang=keepLang||'en'; L.accountUid=uid; save(); }
   // INSTANT LOAD: ensure everything appears right after login (ID, Gold, verified, matches, stories, liked you, messages)
   try{ paintGold(); paintLikesPill(); }catch(e){}
   try{ ensureMyCode(); }catch(e){}
@@ -1050,28 +1052,33 @@ function onAuthed(u){
         const m=s.val(); if(!m||!m.text) return;
         if(m.ts && Date.now()-m.ts>7*86400000) return;
         const key=s.key;
+        L.adminNotified=L.adminNotified||{};
         if(window._adminMsgKeys.has(key)) return;
         window._adminMsgKeys.add(key);
         const adminMid2='admin_'+uid;
         L.chats[adminMid2]=L.chats[adminMid2]||[];
-        if(L.chats[adminMid2].some(x=>x.key===key || (x.ts===m.ts && x.text===m.text))) return;
-        if(!L.matches.find(mm=>mm.mid===adminMid2)){
-          // Remove any duplicate admin matches first
-          L.matches=L.matches.filter(mm=>mm.mid!==adminMid2);
-          L.matches.unshift({mid:adminMid2, peer:'admin', name:'Tayripages Admin', em:'🛡️', gi:7, ts:m.ts});
+        const already=L.chats[adminMid2].some(x=>x.key===key || (x.ts===m.ts && x.text===m.text));
+        if(!already){
+          if(!L.matches.find(mm=>mm.mid===adminMid2)){
+            L.matches=L.matches.filter(mm=>mm.mid!==adminMid2);
+            L.matches.unshift({mid:adminMid2, peer:'admin', name:'Tayripages Admin', em:'🛡️', gi:7, ts:m.ts});
+          }
+          L.chats[adminMid2].push({who:'msg', text:m.text, me:false, from:'admin', adminOnly:true, ts:m.ts||Date.now(), key:key});
+          L.chats[adminMid2].sort((a,b)=>(a.ts||0)-(b.ts||0));
+          L.matches=L.matches.filter((mm,i,arr)=> arr.findIndex(x=>x.mid===mm.mid)===i );
+          save();
         }
-        L.chats[adminMid2].push({who:'msg', text:m.text, me:false, from:'admin', adminOnly:true, ts:m.ts||Date.now(), key:key});
-        L.chats[adminMid2].sort((a,b)=>(a.ts||0)-(b.ts||0));
-        // Ensure only one admin chat exists
-        L.matches=L.matches.filter((m,i,arr)=> arr.findIndex(x=>x.mid===m.mid)===i );
-        save();
-        if(R.chatWith===adminMid2){ paintMsgs(); }
-        else {
-          L.unread[adminMid2]=(L.unread[adminMid2]||0)+1;
-          toast('📩 Admin: '+m.text.slice(0,60));
-          paintBadges();
-        }
-        if(R.tab==='matches')renderMatches();
+        const live=m.ts && (Date.now()-m.ts)<25000 && !L.adminNotified[key];
+        if(live){
+          L.adminNotified[key]=1; save();
+          if(R.chatWith===adminMid2) paintMsgs();
+          else {
+            L.unread[adminMid2]=(L.unread[adminMid2]||0)+1;
+            toast('Tayripages sent you a message');
+            paintBadges();
+          }
+          if(R.tab==='matches')renderMatches();
+        } else if(R.chatWith===adminMid2) paintMsgs();
       });
       // Also check for existing admin messages on load to create the chat if needed (but only once)
       ref('adminMessages/'+uid).limitToLast(1).once('value').then(snap=>{
@@ -1091,9 +1098,6 @@ function onAuthed(u){
   setTimeout(()=>{ try{ R.cacheTs=0; loadDeck().catch(()=>paintDeck()); }catch(e){} try{ syncBadges(); }catch(e){} try{ refreshStories(); }catch(e){} try{ paintGold(); paintLikesPill(); }catch(e){} if(R.tab==='profile') renderProfile(); }, 600);
   setTimeout(()=>{ try{ R.cacheTs=0; loadDeck().catch(()=>paintDeck()); }catch(e){} }, 1800);
   loadReferralStatus().catch(()=>{});
-  // 👥 several accounts on one phone: memory belongs to an account, not to the device.
-  // Different uid = wipe local memory, then the cloud rebuilds it (profile, photos, matches, likes).
-  if(L.accountUid!==uid){ const keepLang=L.lang; Object.keys(L).forEach(k=>delete L[k]); Object.assign(L,fresh()); L.lang=keepLang||'en'; L.accountUid=uid; save(); }
   document.querySelectorAll('.scr').forEach(x=>{ x.classList.remove('on'); x.style.display='none'; }); $('tabbar').style.display='flex';
   initPush();
   DB.ref('.info/connected').on('value',s=>{ if(s.val()&&L.me){heartbeat(); syncMe(); syncBadges();} });
@@ -3154,8 +3158,15 @@ function paintGold(){ const el=$('goldTop'); if(el)el.textContent=goldActive()?T
 
 /* ============ INIT ============ */
 setTimeout(()=>{ const dk=$('deck'); if(AUTHED&&R.tab==='discover'&&dk&&!dk.children.length){ try{paintDeck();}catch(e){} } }, 5200);
-const TAYRI_BUILD='v21'; /* bump this number on every release — every phone self-updates once, no cache games */
-try{ if(location.search.indexOf(TAYRI_BUILD)<0){ localStorage.setItem('tayri_boot_'+TAYRI_BUILD,'1'); const q=location.search; location.replace(location.pathname+(q?(q+'&'):'?')+TAYRI_BUILD); } }catch(e){}
+const TAYRI_BUILD='v22'; /* bump this number on every release — every phone self-updates once, no cache games */
+try{
+  if(!sessionStorage.getItem('tayri_boot_'+TAYRI_BUILD)){
+    sessionStorage.setItem('tayri_boot_'+TAYRI_BUILD,'1');
+    if(location.search.indexOf(TAYRI_BUILD)<0){
+      const q=location.search; location.replace(location.pathname+(q?(q+'&'):'?')+TAYRI_BUILD);
+    }
+  }
+}catch(e){}
 fbInit();
 paintGold();
 paintAuthBg();
