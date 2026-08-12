@@ -114,7 +114,7 @@ tr:last-child td{border-bottom:none}
     <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
       <div id="adminUserTag" class="mut tiny"></div>
       <button class="btn btn-line" style="padding:5px 9px;font-size:11px" onclick="adminSignOut()">Sign out</button>
-      <div class="mut small">Revenue (orders): <b class="grn" id="topRev" style="font-size:16px">0 DH</b></div>
+      <div class="mut small">Revenue (orders): <b class="grn" id="topRev" style="font-size:16px">$0</b></div>
     </div>
   </div>
   <div id="demoSlot"></div>
@@ -176,6 +176,9 @@ tr:last-child td{border-bottom:none}
     <div id="muSales"></div>
   </div>
   <div id="pg-fm" style="display:none">
+    <div class="card small" style="margin-bottom:12px"><b>Fame values are server-sided</b> at <code>wasla_dating/config/fame</code> (admin write only). Clients cannot invent a cheaper price — rules reject Fame orders that do not match usd / dropsPerMonth. GOLD is $20, not Fame.</div>
+    <div id="fameCfgBox" class="card small" style="margin-bottom:12px">Loading Fame config…</div>
+    <div id="fameOrders"></div>
     <div class="card small" style="margin-bottom:12px"><b>Famous ID</b> — pin a user (or your admin UID) to every deck for this calendar week. They reappear automatically next week if you keep them listed.</div>
     <input class="inp" id="famousUid" placeholder="Google UID to feature worldwide">
     <div style="height:8px"></div>
@@ -203,7 +206,7 @@ const $=id=>document.getElementById(id);
 let DB=null, DEMO=false, D={};
 const G=TAYRI_CONFIG.gold;
 function toast(m,k){const d=document.createElement('div');d.className='toast';d.textContent=m;if(k==='err')d.style.borderInlineStartColor='var(--red)';$('toasts').appendChild(d);setTimeout(()=>d.remove(),3200)}
-function fmt(n){return `${(+n).toFixed(0)} DH`}
+function fmt(n){return '$'+(+n).toFixed(0)}
 function eh(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function ref(p){return DB.ref('wasla_dating/'+p)} // matches firebase-rules.json root
 function ts(t){return t?new Date(t).toLocaleString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}):''}
@@ -314,7 +317,7 @@ function enter(){
 }
 
 function tab(p,el){
-  ['ov','or','rp','vf','us','ms','mu','st'].forEach(x=>$('pg-'+x).style.display=x===p?'':'none');
+  ['ov','or','rp','vf','us','ms','mu','fm','st'].forEach(x=>{ const el=$('pg-'+x); if(el) el.style.display=x===p?'':'none'; });
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
   if(el) el.classList.add('on');
 }
@@ -349,7 +352,7 @@ function boot(){
   });
 
   // 🔐 read pieces separately — locked rules don't allow root reads
-  ['users','presence','matches','chats','orders','reports','gold','verifyReq','photos','verified','banned','bannedEmails','userEmails','influencerReq','influencers','referrals','referredBy','museCommissions','famousIds','streams'].forEach(k=>{
+  ['users','presence','matches','chats','orders','reports','gold','verifyReq','photos','verified','banned','bannedEmails','userEmails','influencerReq','influencers','referrals','referredBy','museCommissions','famousIds','streams','config'].forEach(k=>{
     ref(k).on('value',s=>{
       D[k]=s.val()||{};
       paintAll();
@@ -386,7 +389,7 @@ function paintAll(){
   paintVf(); paintBanned();
   // activity = latest 40 things across orders/matches
   const acts=[
-    ...orders.map(([k,o])=>({ts:o.ts,txt:`GOLD pass · ${eh(o.name)} · ${o.price} DH · <span class="badge ${o.status==='pending'?'b-live':o.status==='approved'?'b-done':'b-x'}">${o.status}</span>`})),
+    ...orders.map(([k,o])=>({ts:o.ts,txt:`${o.type==='fame'?'Fame':'GOLD'} · ${eh(o.name)} · $${o.price} · <span class="badge ${o.status==='pending'?'b-live':o.status==='approved'?'b-done':'b-x'}">${o.status}</span>`})),
     ...Object.entries(D.matches||{}).map(([k,m])=>({ts:m.ts,txt:`New match created`})),
     ...reports.map(([k,r])=>({ts:r.ts,txt:`Report filed: ${eh(r.reason||'Report')}`}))
   ].sort((a,b)=>b.ts-a.ts).slice(0,40);
@@ -401,14 +404,14 @@ function paintOr(pend,all){
    `<div class="card"><div style="display:flex;justify-content:space-between;gap:8px;align-items:center">
       <div><b style="font-size:15px">${eh(o.name)}</b><div class="mut tiny">${eh(o.ref)} · ${ts(o.ts)}</div></div>
       <b style="color:var(--warn);font-size:17px">${fmt(o.price)}</b></div>
-    <button class="bigact" onclick="approve('${id}','${o.uid}')">ACTIVATE GOLD</button>
+    <button class="bigact" onclick="approve('${id}','${o.uid}')">${o.type==='fame'?'ACTIVATE FAME':'ACTIVATE GOLD'}</button>
     <div style="height:6px"></div>
     <button class="btn btn-r" style="width:100%" onclick="reject('${id}','${o.uid}')">Reject</button></div>`).join('');
   $('tblOr').innerHTML='<tbody>'+(rows.length?`<tr><th>Ref</th><th>User</th><th class="passcol">Pass</th><th>Amount</th><th>Status</th><th></th></tr>`+
    rows.map(([id,o])=>`<tr><td class="tiny">${eh(o.ref)}<div class="mut tiny">${ts(o.ts)}</div></td>
-    <td>${eh(o.name)}</td><td class="passcol"><span style="color:var(--warn);font-weight:900">GOLD</span></td><td><b>${fmt(o.price)}</b></td>
+    <td>${eh(o.name)}</td><td class="passcol"><span style="color:var(--warn);font-weight:900">${o.type==='fame'?'FAME':'GOLD'}</span></td><td><b>${fmt(o.price)}</b></td>
     <td><span class="badge ${o.status==='pending'?'b-live':o.status==='approved'?'b-done':'b-x'}">${o.status}</span></td>
-    <td style="text-align:end">${o.status==='pending'?`<button class="btn btn-g" onclick="approve('${id}','${o.uid}')">Activate GOLD</button> <button class="btn" style="background:rgba(74,168,255,.15);color:#4aa8ff;border:1px solid rgba(74,168,255,.3)" onclick="messageUser('${o.uid}')">✉️</button> <button class="btn btn-r" onclick="reject('${id}','${o.uid}')">Reject</button>`:''}</td></tr>`).join('')
+    <td style="text-align:end">${o.status==='pending'?`<button class="btn btn-g" onclick="approve('${id}','${o.uid}')">${o.type==='fame'?'Activate Fame':'Activate GOLD'}</button> <button class="btn" style="background:rgba(74,168,255,.15);color:#4aa8ff;border:1px solid rgba(74,168,255,.3)" onclick="messageUser('${o.uid}')">✉️</button> <button class="btn btn-r" onclick="reject('${id}','${o.uid}')">Reject</button>`:''}</td></tr>`).join('')
    :'<tr><td class="mut">No GOLD orders yet.</td></tr>')+'</tbody>';
 }
 
@@ -426,7 +429,22 @@ function findMuseForBuyer(buyer){
 async function approve(id,ouid){
   const o=(D.orders||{})[ouid]?.[id]; if(!o||o.status!=='pending')return;
   const adminUid=(firebase.auth().currentUser&&firebase.auth().currentUser.uid)||'admin';
-  const price=+(o.price)||+(G&&G.priceDH)||99;
+  if(o.type==='fame'){
+    const week=Math.floor(Date.now()/(7*86400000));
+    const cfg=(D.config&&D.config.fame)||{};
+    const drops=+(cfg.dropsPerMonth)||+(o.drops)||4;
+    const usd=+(cfg.usd)||+(o.usd)||1000;
+    try{
+      await DB.ref('wasla_dating').update({
+        ['orders/'+ouid+'/'+id+'/status']:'approved',
+        ['orders/'+ouid+'/'+id+'/handledAt']:Date.now(),
+        ['famousIds/'+ouid]:{week, untilWeek:week+drops, drops, plan:o.plan||'world4', ts:Date.now(), by:adminUid, paid:true, usd}
+      });
+      toast('Fame live for '+o.name+' — '+drops+' weekly worldwide features');
+    }catch(e){ toast('Fame approve failed: '+(e.code||e.message),'err'); }
+    return;
+  }
+  const price=+(o.usd)||+(o.price)||+(G&&G.usd)||20;
   const muse=findMuseForBuyer(ouid);
   const updates={
     ['orders/'+ouid+'/'+id+'/status']:'approved',
@@ -590,7 +608,7 @@ function paintBank(){
 
 function paintEcon(){
   $('econList').innerHTML=[
-    ['GOLD price (one-time)',G.priceDH+' DH'],['Free likes per day',G.likesPerDay],
+    ['GOLD price (one-time)','$'+(G.usd||20)],['Free likes per day',G.likesPerDay],
     ['Free messages per match',G.msgsPerMatch],['Free Super Like per day',G.superPerDay],['GOLD Super Likes per day',G.superGold]
   ].map(([k,v])=>`<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line)"><span class="mut">${k}</span><b>${v}</b></div>`).join('')
   + `<div class="mut tiny" style="margin-top:8px">Edit in tayri-config.js — everything updates instantly.</div>`;
@@ -674,7 +692,7 @@ function paintMuse(){
     return `<div class="card" style="margin:8px 0;display:flex;gap:10px;align-items:center">
     ${r.photo?`<img src="${r.photo}" style="width:56px;height:56px;object-fit:cover;border-radius:12px">`:''}
     <div style="flex:1"><b>${eh(r.name||id)}</b><div class="mut tiny">@${eh(r.handle||'')} · ${eh(id)}</div>
-    <div class="tiny grn">${sales.length} verified GOLD · ${earn} DH (50%)</div></div>
+    <div class="tiny grn">${sales.length} verified GOLD · $${earn} (50%)</div></div>
     <button class="btn btn-r" onclick="removeMuse('${id}')">Remove</button>
   </div>`;
   }).join(''):'<div class="card mut">No approved muses yet.</div>';
@@ -695,7 +713,7 @@ function paintMuse(){
         return `<tr><td class="tiny">${eh(s.buyer)}<div class="mut">${eh(s.buyerName||'')}</div></td>
           <td>${goldOk?'<span class="badge b-done">gold/{uid}</span>':'<span class="badge b-x">NO GOLD</span>'}</td>
           <td class="tiny">${eh(((D.influencers||{})[s.muse]||{}).name||s.muse.slice(0,8))}${museOk?'':' <span class="badge b-x">not muse</span>'}</td>
-          <td><b>${s.cut||0} DH</b></td>
+          <td><b>$${s.cut||0}</b></td>
           <td class="mut tiny">${ts(s.goldAt)}${fake?' · FAKE':''}</td></tr>`;
       }).join('')+'</tbody></table></div>')
       :'<div class="card mut">No auto-verified Muse GOLD yet. Activate a bank-transfer order — if the buyer signed up via a Muse link, commission appears here by itself.</div>';
@@ -719,8 +737,30 @@ async function removeMuse(id){
   catch(e){ toast('Remove failed','err'); }
 }
 
+function seedFameConfig(){
+  const cur=(D.config&&D.config.fame)||null;
+  if(cur && +cur.usd>0) return;
+  ref('config/fame').set({usd:1000,priceDH:9900,dropsPerMonth:4,launchAtUsers:1000000}).catch(()=>{});
+  ref('config/gold').set({usd:20,priceDH:199}).catch(()=>{});
+}
+function paintFameCfg(){
+  const box=$('fameCfgBox'); if(!box) return;
+  const f=(D.config&&D.config.fame)||{};
+  box.innerHTML=`<b>Live Fame (server)</b><div class="mut tiny" style="margin:6px 0">$${f.usd||'—'} · ${f.dropsPerMonth||'—'} drops / month · launch at ${f.launchAtUsers||'—'} users</div>
+    <div class="mut tiny">Pages show USD only. GOLD is $20. Fame is $1,000.</div>`;
+}
 function paintFamous(){
+  seedFameConfig();
+  paintFameCfg();
   const week=Math.floor(Date.now()/(7*86400000));
+  const fo=$('fameOrders');
+  if(fo){
+    const ords=Object.entries(D.orders||{}).flatMap(([uid,os])=>Object.entries(os||{}).map(([oid,o])=>[oid,{...o,uid}])).filter(([,o])=>o.type==='fame');
+    fo.innerHTML=ords.length?ords.sort((a,b)=>(b[1].ts||0)-(a[1].ts||0)).map(([id,o])=>`<div class="card" style="margin:8px 0"><b>${eh(o.name)}</b> · ${eh(o.plan||'world4')} · $${o.price}
+      <div class="mut tiny">${eh(o.uid)} · ${eh(o.ref)} · ${o.status}</div>
+      ${o.status==='pending'?`<button class="btn btn-g" style="margin-top:8px" onclick="approve('${id}','${o.uid}')">Approve Fame — 4 weekly features</button>`:''}
+    </div>`).join(''):'<div class="card mut" style="margin-bottom:12px">No Fame requests yet.</div>';
+  }
   const box=$('famousList'); if(!box)return;
   const rows=Object.entries(D.famousIds||{});
   box.innerHTML=rows.length?rows.map(([id,v])=>{

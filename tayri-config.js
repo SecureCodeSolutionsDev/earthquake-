@@ -106,9 +106,12 @@ const TAYRI_CONFIG = {
      Free users: capped daily so they feel the wall and convert; counters reset
      after midnight so they always come back. GOLD: flip in admin after the
      bank transfer lands. Tune freely — admin Settings shows these live.    */
+  /* Public prices are USD only. Internal MAD stays in RTDB config/* for the bank. */
+  fame: null,
+
   gold: {
-    priceDH:      99,   // one-time. Never a subscription.
-    usd:           9,   // shown next to the DH price (≈ rate hint for the diaspora)
+    priceDH:      199,  // internal bank amount — never shown
+    usd:           20,  // public GOLD price (199 MAD ≈ $20)
     likesPerDay:  50,   // free likes every day, reset after midnight — bulk audit final: 50 (was 30, 100 was too much)
     msgsPerMatch: 10,   // free messages per new match (the spark stays free)
     superPerDay:   1,   // free Super Likes per day

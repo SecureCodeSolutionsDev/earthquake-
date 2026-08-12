@@ -117,7 +117,7 @@ function render(){
 }
 function renderSupporters(gold,users){
   const ar=Object.entries(gold||{}).map(([id,v])=>({id,name:(users[id]&&users[id].name)||'Tayripages member',price:+(v&&v.price||0),at:+(v&&v.at||0)})).filter(x=>x.price>0).sort((a,b)=>b.price-a.price||b.at-a.at);
-  $('supporterRows').innerHTML=ar.length?ar.slice(0,20).map((x,i)=>'<div class="row"><div class="rank">'+(i+1)+'</div><div class="person"><div class="avatar">'+esc((x.name||'T')[0].toUpperCase())+'</div><div><div class="person-name">'+esc(x.name)+'</div><div class="tier">Tayri Patron · verified manually</div></div></div><div class="score">'+x.price+' DH<small>approved Gold</small></div></div>').join(''):'<div class="empty">Supporter standings appear after an admin manually approves a Gold transfer.</div>';
+  $('supporterRows').innerHTML=ar.length?ar.slice(0,20).map((x,i)=>'<div class="row"><div class="rank">'+(i+1)+'</div><div class="person"><div class="avatar">'+esc((x.name||'T')[0].toUpperCase())+'</div><div><div class="person-name">'+esc(x.name)+'</div><div class="tier">Tayri Patron · verified manually</div></div></div><div class="score">'+'$'+x.price+'<small>'approved Gold</small></div></div>').join(''):'<div class="empty">Supporter standings appear after an admin manually approves a Gold transfer.</div>';
 }
 async function load(){
   try{

@@ -645,6 +645,12 @@ body.preauth.authno #scr-auth{display:block!important}
   <div id="chatList"></div>
 </section>
 
+<!-- ==================== FAME (separate from GOLD) ==================== -->
+<section class="scr" id="scr-fame">
+  <div class="topbar"><div class="h2" data-t="Fame">Fame</div></div>
+  <div id="fameWrap" style="padding:6px 18px 0"></div>
+</section>
+
 <!-- ==================== WALLET ==================== -->
 <section class="scr" id="scr-wallet">
   <div class="topbar"><div class="h2" data-t="Tayripages GOLD">Tayripages GOLD</div></div>
@@ -833,7 +839,7 @@ function openGold(why){
     +'<div class="card" style="margin:12px 0">'
     +goldPerks().map(p=>'<div class="perkrow">'+IC(p[1],18)+'<span>'+p[0]+'</span><span class="vchk" style="background:linear-gradient(45deg,#f2c14e,#c98a12)">'+IC('check',11)+'</span></div>').join('')
     +'</div>'
-    +'<button class="btn btn-grad goldcta" onclick="buyGold()">'+IC('crown',18)+' '+T('Unlock GOLD')+' · '+G.priceDH+' DH (≈ $'+(G.usd||9)+') — '+T('once, forever')+'</button>'
+    +'<button class="btn btn-grad goldcta" onclick="buyGold()">'+IC('crown',18)+' '+T('Unlock GOLD')+' · $'+(G.usd||20)+' — '+T('once, forever')+'</button>'
     +'<div style="height:8px"></div>'
     +'<button class="btn btn-line" onclick="hide(\'shopSheet\')">'+T('Maybe tomorrow')+'</button>';
   show('shopSheet');
@@ -842,7 +848,7 @@ function buyGold(){
   hide('shopSheet');
   const c=TAYRI_CONFIG.company; const refid='TAYRI-'+uid.slice(-4).toUpperCase()+'-'+Date.now().toString(36).toUpperCase();
   $('bankBody').innerHTML='<div style="text-align:center;padding:4px 0 8px"><div class="gcr">'+IC('crown',40)+'</div>'
-    +'<div class="h2" style="margin-top:8px">Tayripages GOLD — '+G.priceDH+' DH <span style="font-size:14px;opacity:.75">(≈ $'+(G.usd||9)+')</span></div>'
+    +'<div class="h2" style="margin-top:8px">Tayripages GOLD — $'+(G.usd||20)+'</div>'
     +'<div class="mut small">'+T('One-time bank transfer — unlimited forever')+'</div></div>'
     +'<div class="bankblock">'+T('Transfer details')+'<br>'
     +T('Bank')+': <b>'+c.bank+'</b><br>'
@@ -860,7 +866,7 @@ function buyGold(){
 function confirmGold(refid){
   hide('bankSheet');
   if(DEMO){ L.gold=1; save(); paintGold(); paintLikesPill(); toast('👑 '+T('GOLD active — enjoy unlimited')); renderWallet(); return; }
-  const order={uid,name:L.me.name,type:'gold',price:G.priceDH,status:'pending',ref:refid,ts:Date.now()};
+  const order={uid,name:L.me.name,type:'gold',price:(G.usd||20),usd:(G.usd||20),status:'pending',ref:refid,ts:Date.now()};
   const k=ref('orders/'+uid).push(order).key;
   L.pendingOrders.push({oid:k,ref:refid}); save();
   toast('⏳ '+T('Order sent — GOLD turns on after validation'));
@@ -1302,7 +1308,8 @@ async function syncMe(){
   ref('orders/'+uid).limitToLast(5).on('child_changed',s=>{
     const o=s.val(); if(o&&o.status==='approved'&&!L.seen['od'+s.key]){ L.seen['od'+s.key]=1;
       L.pendingOrders=L.pendingOrders.filter(p=>p.oid!==s.key);
-      toast('👑 '+T('Payment validated — welcome to GOLD')); save(); }
+      if(o.type==='fame'){ toast(T('Fame is live — you appear first in decks worldwide')); if(R.tab==='fame')renderFame(); }
+      else toast('👑 '+T('Payment validated — welcome to GOLD')); save(); }
   });
   // 🆔 my short Tayri ID (for friends to find me) + 📖 story state
   ensureMyCode().catch(()=>{});
@@ -1799,7 +1806,7 @@ async function confirmGiftGold(refId){
   const targetUid=target.uid, targetName=target.name;
   pendingGiftTarget=null;
   if(DEMO){ L.gold=0; save(); toast('🎁 Demo: GOLD would be gifted to '+targetName+' instantly'); renderWallet(); return; }
-  const order={uid:targetUid, name:targetName, type:'gift', price:G.priceDH, status:'pending', ref:refId, ts:Date.now(), gift:true, giftedBy:uid, giftedByName:L.me.name};
+  const order={uid:targetUid, name:targetName, type:'gift', price:(G.usd||20), usd:(G.usd||20), status:'pending', ref:refId, ts:Date.now(), gift:true, giftedBy:uid, giftedByName:L.me.name};
   try{
     const k=ref('orders/'+targetUid).push(order).key;
     // also keep a copy under my pending for tracking
@@ -2265,7 +2272,7 @@ function paintOb(){
      <div class="mut small">${T('Body type')}</div>
      <select class="inp" id="obBody" onchange="OB.data.body=this.value"><option value="">${T('Select')}</option><option ${d.body==='Slim'?'selected':''}>${T('Slim')}</option><option ${d.body==='Average'?'selected':''}>${T('Average')}</option><option ${d.body==='Athletic'?'selected':''}>${T('Athletic')}</option><option ${d.body==='Curvy'?'selected':''}>${T('Curvy')}</option><option ${d.body==='Muscular'?'selected':''}>${T('Muscular')}</option></select>
      <div class="mut small">${T('Income')}</div>
-     <select class="inp" id="obIncome" onchange="OB.data.income=this.value"><option value="">${T('Select')}</option><option ${d.income==='Below 5000 DH'?'selected':''}>${T('Below 5000 DH')}</option><option ${d.income==='5000-10000 DH'?'selected':''}>${T('5000-10000 DH')}</option><option ${d.income==='10000-20000 DH'?'selected':''}>${T('10000-20000 DH')}</option><option ${d.income==='Above 20000 DH'?'selected':''}>${T('Above 20000 DH')}</option><option ${d.income==='Prefer not to say'?'selected':''}>${T('Prefer not to say')}</option></select>
+     <select class="inp" id="obIncome" onchange="OB.data.income=this.value"><option value="">${T('Select')}</option><option ${d.income==='Below $500'?'selected':''}>${T('Below $500')}</option><option ${d.income==='$500–$1,000'?'selected':''}>${T('$500–$1,000')}</option><option ${d.income==='$1,000–$2,000'?'selected':''}>${T('$1,000–$2,000')}</option><option ${d.income==='Above $2,000'?'selected':''}>${T('Above $2,000')}</option><option ${d.income==='Prefer not to say'?'selected':''}>${T('Prefer not to say')}</option></select>
      <div class="row" style="gap:8px">
        <div style="flex:1"><div class="mut small">${T('Smoking')}</div><select class="inp" id="obSmoke" onchange="OB.data.smoke=this.value"><option value="">${T('Select')}</option><option ${d.smoke==='Never'?'selected':''}>${T('Never')}</option><option ${d.smoke==='Sometimes'?'selected':''}>${T('Sometimes')}</option><option ${d.smoke==='Often'?'selected':''}>${T('Often')}</option></select></div>
        <div style="flex:1"><div class="mut small">${T('Drinking')}</div><select class="inp" id="obDrink" onchange="OB.data.drink=this.value"><option value="">${T('Select')}</option><option ${d.drink==='Never'?'selected':''}>${T('Never')}</option><option ${d.drink==='Socially'?'selected':''}>${T('Socially')}</option><option ${d.drink==='Often'?'selected':''}>${T('Often')}</option></select></div>
@@ -2328,13 +2335,13 @@ async function obFinish(){
 function editProfile(){ OB.data={...L.me}; OB.step=1; paintOb(); showTab('onboard'); }
 
 /* ============ TABS ============ */
-const TABS=[['discover','🔥','Discover'],['likes','😍','Liked you'],['matches','💬','Matches'],['wallet','👑','GOLD'],['profile','✨','Me']];
+const TABS=[['discover','🔥','Discover'],['likes','😍','Liked you'],['matches','💬','Matches'],['fame','✨','Fame'],['wallet','👑','GOLD'],['profile','✨','Me']];
 function renderTabbar(){
   const unLikes=L.likesYou.filter(x=>!x.seen).length;
   const unChats=unreadTotal();
   $('tabbar').innerHTML=TABS.map(([id,em,nm])=>{
     const b=id==='likes'&&unLikes?`<span class="tbadge">${unLikes}</span>`:id==='matches'&&unChats?`<span class="tbadge">${unChats}</span>`:'';
-    const mic={discover:'flame',likes:'heart',matches:'chat',wallet:'crown',profile:'person'}[id];
+    const mic={discover:'flame',likes:'heart',matches:'chat',fame:'medal',wallet:'crown',profile:'person'}[id];
     return `<button class="tab ${R.tab===id?'on':''}" onclick="showTab('${id}')">${b}<span class="ic">${IC(mic,19)}</span>${T(nm)}</button>`;
   }).join('');
 }
@@ -2344,6 +2351,7 @@ function showTab(t){
   if(t==='discover'&&!L.me)startOnboard();
   if(t==='likes')renderLikes();
   if(t==='matches')renderMatches();
+  if(t==='fame')renderFame();
   if(t==='wallet')renderWallet();
   if(t==='profile'){ renderProfile(); paintLiveCount(); }
   if(t==='discover'){ $('demoSlot').innerHTML=DEMO?`<div class="demobanner">⚡ DEMO MODE — Firebase not set up yet (see README.md). Everyone here is a starter profile; connect the free cloud to meet real people.</div>`:'';
@@ -2390,7 +2398,12 @@ async function pinFamous(deck){
   const snap=await ref('famousIds').once('value');
   const map=snap.val()||{};
   const week=Math.floor(Date.now()/(7*86400000));
-  const ids=Object.entries(map).filter(([id,v])=>v&&(+v.week===week||v.always)).map(([id])=>id);
+  const ids=Object.entries(map).filter(([id,v])=>{
+    if(!v) return false;
+    if(v.always) return true;
+    const start=+v.week||0, until=+v.untilWeek|| (start+1);
+    return week>=start && week<until;
+  }).map(([id])=>id);
   if(!ids.length) return;
   for(const id of ids.reverse()){
     if(id===uid) continue;
@@ -3070,6 +3083,87 @@ async function doUnmatch(reported,reason,proofIndex){
   toast(reported?'Reported & unmatched — you are safe here':'Unmatched. Onwards to better.');
 }
 
+function fameCfg(){
+  const s=window._fameServer;
+  if(s && +s.usd>0) return {usd:+s.usd,priceDH:+s.priceDH||0,dropsPerMonth:+s.dropsPerMonth||4,launchAtUsers:+s.launchAtUsers||1000000};
+  return {usd:null,priceDH:null,dropsPerMonth:4,launchAtUsers:1000000};
+}
+function loadFameServer(){
+  if(DEMO||!DB||window._fameWatch) return Promise.resolve(fameCfg());
+  window._fameWatch=1;
+  return ref('config/fame').once('value').then(s=>{
+    const v=s.val();
+    if(v){ window._fameServer=v; }
+    ref('config/fame').on('value',snap=>{ const n=snap.val(); if(n){ window._fameServer=n; if(R.tab==='fame')renderFame(); } });
+    return fameCfg();
+  }).catch(()=>fameCfg());
+}
+function renderFame(){
+  loadFameServer();
+  const F=fameCfg();
+  const pend=(L.pendingOrders||[]).filter(p=>p.kind==='fame');
+  const wk=Math.floor(Date.now()/(7*86400000));
+  const live=!!(L.fame&&wk>=(+L.fame.week||0)&&wk<(+L.fame.untilWeek||(+L.fame.week||0)+1));
+  if(!DEMO&&DB){ ref('famousIds/'+uid).once('value').then(s=>{ const v=s.val(); if(v){ L.fame=v; save(); } }).catch(()=>{}); }
+  $('fameWrap').innerHTML=`
+    <div class="streakfire goldhero" style="background:linear-gradient(45deg,#1a1428,#241019);border-color:#6b4a9a">
+      <div class="gcr" style="background:linear-gradient(45deg,#3a2460,#241019);color:#e8d4ff">${IC('medal',42)}</div>
+      <div style="flex:1"><b class="h1" style="font-size:24px">${T('Fame')}</b>
+        <div class="mut small">${T('Be seen first — in every deck, worldwide.')}</div></div>
+    </div>
+    <div class="card small" style="line-height:1.65;margin-bottom:12px">
+      ${T('The public Fame catalogue opens when Tayripages reaches')} <b>1,000,000</b> ${T('members')}.
+      ${T('Until then, Fame is invitation-only. If you want to be featured now, request a founding placement — we review each profile by hand.')}
+    </div>
+    <div class="card" style="margin-bottom:12px">
+      <b class="small">${T('Worldwide feature')}</b>
+      <div class="mut tiny" style="margin:6px 0 10px">${T('Your card is placed at the front of every member’s deck, four times in one month (once each week). Separate from GOLD — GOLD unlocks tools; Fame is visibility.')}</div>
+      <div class="perkrow">${IC('globe',18)}<span>${T('Every country, every deck')}</span></div>
+      <div class="perkrow">${IC('medal',18)}<span>${T('4 weekly features / 30 days')}</span></div>
+      <div class="perkrow">${IC('shield',18)}<span>${T('Manual review — quality over volume')}</span></div>
+      <div class="divider"></div>
+      <div class="spread"><span class="mut small">${T('List price')}</span><b>${F.usd?('$ '+F.usd):T('Loading from server…')}</b></div>
+      <div class="mut tiny" style="margin-top:6px">${T('Price and weekly drops are set on the server. GOLD is a different product.')}</div>
+    </div>
+    ${live?`<div class="card" style="border-color:#c9a227"><b>${T('You are featured this cycle')}</b><div class="mut tiny">${T('Your profile leads decks worldwide until this month’s four features complete.')}</div></div>`:''}
+    ${pend.length?`<div class="card small" style="margin-top:10px;background:#241a08;border-color:#7a5514;color:#e8c96e">${T('Founding request under review.')} ${T('Reference')}: <b>${pend.map(o=>o.ref).join(', ')}</b></div>`:''}
+    <button class="btn btn-grad" style="background:linear-gradient(45deg,#6d28d9,#c084fc);color:#fff" onclick="buyFame()">${IC('medal',18)} ${T('Request founding Fame now')}</button>
+    <div class="mut tiny" style="text-align:center;margin-top:10px">${T('Bank transfer · same account as GOLD · we confirm by hand')}</div>
+    <div style="height:10px"></div>
+    <button class="btn btn-line" onclick="showTab('wallet')">${T('GOLD is a different product')} →</button>`;
+}
+function buyFame(){
+  if(!L.me)return toast(T('Create your profile first'));
+  loadFameServer().then(()=>{
+  const F=fameCfg(); if(!F.usd) return toast(T('Fame price is loading from the server — try again'));
+  const c=TAYRI_CONFIG.company;
+  const refid='FAME-'+uid.slice(-4).toUpperCase()+'-'+Date.now().toString(36).toUpperCase();
+  $('bankBody').innerHTML='<div style="text-align:center;padding:4px 0 8px"><div class="gcr" style="background:linear-gradient(45deg,#3a2460,#241019);color:#e8d4ff">'+IC('medal',40)+'</div>'
+    +'<div class="h2" style="margin-top:8px">'+T('Fame')+' — $'+F.usd+'</div>'
+    +'<div class="mut small">'+T('Founding worldwide feature · 4 drops this month')+'</div></div>'
+    +'<div class="bankblock">'+T('Transfer details')+'<br>'
+    +T('Bank')+': <b>'+c.bank+'</b><br>'
+    +T('Beneficiary')+': <b>'+c.accountName+'</b><br>'
+    +'RIB: <b>'+c.rib+'</b><br>'
+    +'<span class="mut" style="font-size:11px">'+T('Reference')+': <b>'+refid+'</b></span></div>'
+    +'<div class="mut small">'+T('Transfer the Fame amount, then confirm. A human reviews your profile before any deck placement.')+'</div>'
+    +'<button class="btn btn-grad" style="margin-top:10px;background:linear-gradient(45deg,#6d28d9,#c084fc)" onclick="confirmFame(\''+refid+'\')">'+T('I have transferred')+'</button>'
+    +'<div style="height:8px"></div><button class="btn btn-line" onclick="hide(\'bankSheet\')">'+T('Not now')+'</button>';
+  show('bankSheet');
+  });
+}
+function confirmFame(refid){
+  hide('bankSheet');
+  const F=fameCfg();
+  if(!F.usd) return toast(T('Fame price is loading from the server — try again'));
+  if(DEMO){ toast(T('Demo: Fame request recorded')); return; }
+  const order={uid,name:L.me.name,type:'fame',plan:'world4',drops:F.dropsPerMonth,price:F.usd,usd:F.usd,status:'pending',ref:refid,ts:Date.now()};
+  const k=ref('orders/'+uid).push(order).key;
+  L.pendingOrders.push({oid:k,ref:refid,kind:'fame'}); save();
+  toast(T('Request sent — we review founding Fame by hand'));
+  renderFame();
+}
+
 /* ============ 👑 TAYRIPAGES GOLD SCREEN ============ */
 function renderWallet(){
   const pend=L.pendingOrders||[];
@@ -3082,7 +3176,7 @@ function renderWallet(){
     <div class="card"><b class="small">${T('Your superpowers')}</b><div class="divider" style="margin:10px 0"></div>
       ${goldPerks().map(p=>`<div class="perkrow">${IC(p[1],18)}<span>${p[0]}</span><b class="gldtxt">${T('ON')}</b></div>`).join('')}
     </div>
-    <div class="mut tiny" style="text-align:center;padding:14px">${G.priceDH} DH (≈ $${G.usd||9}) ${T('one-time')} · ${T('Support:')} ${TAYRI_CONFIG.company.supportEmail}</div>`
+    <div class="mut tiny" style="text-align:center;padding:14px">$${G.usd||20} ${T('one-time')} · ${T('Support:')} ${TAYRI_CONFIG.company.supportEmail}</div>`
     + referralGoldCard()
   : `<div class="streakfire goldhero">
       <div class="gcr">${IC('crown',42)}</div>
@@ -3094,7 +3188,7 @@ function renderWallet(){
     </div>
     ${pend.length?`<div class="card small" style="margin-top:10px;background:#241a08;border-color:#7a5514;color:#e8c96e">${T('Payment under validation — GOLD activates by itself when approved. Ref:')} <b>${pend.map(o=>o.ref).join(', ')}</b></div>`:''}
     <div style="height:12px"></div>
-    <button class="btn btn-grad goldcta" onclick="buyGold()">${IC('crown',18)} ${T('Get GOLD')} · ${G.priceDH} DH (≈ $${G.usd||9}) — ${T('once, forever')}</button>
+    <button class="btn btn-grad goldcta" onclick="buyGold()">${IC('crown',18)} ${T('Get GOLD')} · $${G.usd||20} — ${T('once, forever')}</button>
     <div class="mut tiny" style="text-align:center;padding:14px">${T('Bank transfer today · Al Barid & CMI cards soon')}</div>`
     + referralGoldCard();
 }
@@ -3104,7 +3198,7 @@ function renderWallet(){
 /* ============ 🛡️ SHEETS THAT ANSWER — safety, help, close by tap-outside ============ */
 function ruleLine(t){ return `<div class="ruleli">${IC('check',14)}<span>${t}</span></div>`; }
 function openRules(){
-  const EN=['One rule above all: be polite and respectful — you are talking to a real human.','18+ only. One real you: your own photos, your real identity. No fakes, no impersonation.','Not allowed: harassment or hate, scams or asking for money, selling services, nude or violent content, advertising spam.','The admin may warn, block, or permanently ban any account that breaks these rules. A ban removes you from Tayripages for everyone, and admin decisions are final.','Payment: Tayripages GOLD is a one-time digital activation (99 DH ≈ $9). Once GOLD is activated on your account, it is final: no refunds, no transfers to another account — even if the account is later banned for breaking these rules. A transfer screenshot may be requested as proof.','Safety: Tayripages never asks for your password or codes. Never send money to someone you met here. First date: a public place, and tell a friend.','Privacy: Google sign-in only proves you are real — we never read your emails, we never post for you. Your profile is visible to other members; you can ask support to delete it.','Disclaimer — Liability: Tayripages is a platform for real connections. We are not responsible for any event, incident, harm, loss or dispute occurring inside or outside the app, before, during or after a meeting. Each member is solely responsible for their own choices, actions and interactions. Use at your own discretion. In case of doubt, meet in public and inform a trusted person. / لا نتحمل مسؤولية أي حدث وقع خارج أو داخل التطبيق — كل مسؤول على نفسه واختياراته. التطبيق لا يتحمل أي مسؤولية قانونية أو نفسية عن أي ضرر.'];
+  const EN=['One rule above all: be polite and respectful — you are talking to a real human.','18+ only. One real you: your own photos, your real identity. No fakes, no impersonation.','Not allowed: harassment or hate, scams or asking for money, selling services, nude or violent content, advertising spam.','The admin may warn, block, or permanently ban any account that breaks these rules. A ban removes you from Tayripages for everyone, and admin decisions are final.','Payment: Tayripages GOLD is a one-time digital activation ($20). Once GOLD is activated on your account, it is final: no refunds, no transfers to another account — even if the account is later banned for breaking these rules. A transfer screenshot may be requested as proof.','Safety: Tayripages never asks for your password or codes. Never send money to someone you met here. First date: a public place, and tell a friend.','Privacy: Google sign-in only proves you are real — we never read your emails, we never post for you. Your profile is visible to other members; you can ask support to delete it.','Disclaimer — Liability: Tayripages is a platform for real connections. We are not responsible for any event, incident, harm, loss or dispute occurring inside or outside the app, before, during or after a meeting. Each member is solely responsible for their own choices, actions and interactions. Use at your own discretion. In case of doubt, meet in public and inform a trusted person. / لا نتحمل مسؤولية أي حدث وقع خارج أو داخل التطبيق — كل مسؤول على نفسه واختياراته. التطبيق لا يتحمل أي مسؤولية قانونية أو نفسية عن أي ضرر.'];
   const lst= EN.map(x=>T(x));
   const sup=(typeof TAYRI_CONFIG!=='undefined'&&TAYRI_CONFIG.company&&TAYRI_CONFIG.company.supportEmail)||'';
   $('genBody').innerHTML=`<div class="h2" style="display:flex;align-items:center;gap:8px">${IC('shield',21)} ${T('Tayripages Rules')}</div>
@@ -3274,7 +3368,7 @@ function paintGold(){ const el=$('goldTop'); if(el)el.textContent=goldActive()?T
 
 /* ============ INIT ============ */
 setTimeout(()=>{ const dk=$('deck'); if(AUTHED&&R.tab==='discover'&&dk&&!dk.children.length){ try{paintDeck();}catch(e){} } }, 5200);
-const TAYRI_BUILD='v25'; /* bump this number on every release — every phone self-updates once, no cache games */
+const TAYRI_BUILD='v28'; /* bump this number on every release — every phone self-updates once, no cache games */
 try{
   if(!sessionStorage.getItem('tayri_boot_'+TAYRI_BUILD)){
     sessionStorage.setItem('tayri_boot_'+TAYRI_BUILD,'1');

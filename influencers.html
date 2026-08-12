@@ -66,7 +66,7 @@ a{color:inherit;text-decoration:none}
   <section class="gate on" id="gate">
     <div class="hero">
       <h1>Private creator room.</h1>
-      <p>One club password. Then Google. You get a referral link. When someone signs up and buys GOLD, you earn 50% of 99 DH — paid every Monday by transfer.</p>
+      <p>One club password. Then Google. You get a referral link. When someone signs up and buys GOLD, you earn 50% of GOLD ($20) — paid every Monday by transfer.</p>
     </div>
     <div class="glass" style="max-width:420px">
       <div class="tiny" style="margin-bottom:8px;font-weight:700">Club password (fixed)</div>
@@ -88,7 +88,7 @@ a{color:inherit;text-decoration:none}
       <div class="stats">
         <div class="stat"><b id="sSign">0</b><span>Signed up</span></div>
         <div class="stat"><b id="sGold">0</b><span>Bought GOLD</span></div>
-        <div class="stat"><b id="sEarn">0</b><span>DH earned (50%)</span></div>
+        <div class="stat"><b id="sEarn">0</b><span>USD earned (50%)</span></div>
         <div class="stat"><b id="sPay">—</b><span>Next Monday payout</span></div>
       </div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
@@ -132,7 +132,7 @@ a{color:inherit;text-decoration:none}
 (function(){
   'use strict';
   const PASS='topinfluencers', ROOT='wasla_dating', CUT=0.5;
-  const PRICE=+(TAYRI_CONFIG.gold&&TAYRI_CONFIG.gold.priceDH)||99;
+  const PRICE=+(TAYRI_CONFIG.gold&&TAYRI_CONFIG.gold.usd)||20;
   const $=id=>document.getElementById(id);
   let db=null,uid='',me=null,influencers={},reqs={},goldMap={},users={},myRefs={},myPhoto='',commAll={};
 
@@ -221,14 +221,14 @@ a{color:inherit;text-decoration:none}
       const st=statsOf(id,refs||{});
       const img=p.photo||'';
       const pend=!!p.pending;
-      return `<article class="cardp"><img src="${esc(img)}" alt="" onerror="this.style.opacity=.2"><div class="bd"><b>${esc(p.name||'Creator')} ${id===uid?'<span class="pill">'+(pend?'Pending review':'You')+'</span>':''}</b><div class="tiny">@${esc(h||'instagram')}</div><div class="tiny">${esc(p.bio||'')}</div>${pend?'<div class="tiny" style="margin:6px 0;color:var(--gold)">Waiting for admin in HQ Muse tab</div>':(st?`<div class="tiny" style="margin:6px 0;color:var(--gold)">${st.golds} GOLD · ${st.earn} DH</div>`:'')}<a class="btn btn-ig" style="margin-top:8px" href="${igHref(h)}" target="_blank" rel="noopener">Follow</a></div></article>`;
+      return `<article class="cardp"><img src="${esc(img)}" alt="" onerror="this.style.opacity=.2"><div class="bd"><b>${esc(p.name||'Creator')} ${id===uid?'<span class="pill">'+(pend?'Pending review':'You')+'</span>':''}</b><div class="tiny">@${esc(h||'instagram')}</div><div class="tiny">${esc(p.bio||'')}</div>${pend?'<div class="tiny" style="margin:6px 0;color:var(--gold)">Waiting for admin in HQ Muse tab</div>':(st?`<div class="tiny" style="margin:6px 0;color:var(--gold)">${st.golds} GOLD · $${st.earn}</div>`:'')}<a class="btn btn-ig" style="margin-top:8px" href="${igHref(h)}" target="_blank" rel="noopener">Follow</a></div></article>`;
     }).join('')+'</div>'):'<div class="glass tiny">No approved creators yet. Send your card — it appears here as Pending until admin approves.</div>';
     const all=window.__allRefs||{[uid]:myRefs};
     const rows=Object.keys(influencers).map(id=>[id,statsOf(all[id]||(id===uid?myRefs:{}))]);
     if(!rows.find(r=>r[0]===uid)) rows.push([uid,statsOf(myRefs)]);
     rows.sort((a,b)=>b[1].earn-a[1].earn||b[1].signups-a[1].signups);
-    $('view-board').innerHTML='<div class="glass">'+rows.map((r,i)=>`<div class="row"><span>#${i+1} ${esc((influencers[r[0]]&&influencers[r[0]].name)||'You')}</span><b>${r[1].earn} DH · ${r[1].golds} GOLD · ${r[1].signups} signups</b></div>`).join('')+'</div>';
-    $('view-book').innerHTML=s.ids.length?('<div class="glass">'+s.ids.map(id=>{const u=users[id]||{};const paid=s.paid.indexOf(id)>=0;const g=goldPaid(id);return `<div class="row"><div><b>${esc(u.name||id.slice(0,8))}</b><div class="tiny">${esc(id)} · ${esc(u.city||'')}</div></div><div>${paid?'<span class="ok">Verified GOLD +'+Math.round(PRICE*CUT)+' DH</span>':(g?'<span class="tiny">GOLD on file — waiting cloud stamp</span>':'<span class="tiny">Signed up</span>')}</div></div>`}).join('')+'</div>'):'<div class="glass tiny">No signups yet. Share your link.</div>';
+    $('view-board').innerHTML='<div class="glass">'+rows.map((r,i)=>`<div class="row"><span>#${i+1} ${esc((influencers[r[0]]&&influencers[r[0]].name)||'You')}</span><b>$${r[1].earn} · ${r[1].golds} GOLD · ${r[1].signups} signups</b></div>`).join('')+'</div>';
+    $('view-book').innerHTML=s.ids.length?('<div class="glass">'+s.ids.map(id=>{const u=users[id]||{};const paid=s.paid.indexOf(id)>=0;const g=goldPaid(id);return `<div class="row"><div><b>${esc(u.name||id.slice(0,8))}</b><div class="tiny">${esc(id)} · ${esc(u.city||'')}</div></div><div>${paid?'<span class="ok">Verified GOLD +'+Math.round(PRICE*CUT)+'</span>':(g?'<span class="tiny">GOLD on file — waiting cloud stamp</span>':'<span class="tiny">Signed up</span>')}</div></div>`}).join('')+'</div>'):'<div class="glass tiny">No signups yet. Share your link.</div>';
   }
 
   document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x===t));['house','board','book'].forEach(k=>$('view-'+k).classList.toggle('hidden',t.dataset.t!==k))});
