@@ -126,6 +126,7 @@ tr:last-child td{border-bottom:none}
     <button class="tab" onclick="tab('vf',this)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8.5 12.5l2.5 2.5 4.5-6"/></svg> Verify <span id="cntVf"></span></button>
     <button class="tab" onclick="tab('us',this)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 20c0-3 2.5-5.5 5.5-5.5s5.5 2.5 5.5 5.5"/><path d="M16.2 4.9a3.2 3.2 0 0 1 0 6.2"/><path d="M17.8 14.9c2 .8 3.7 2.6 3.7 5.1"/></svg> Users</button>
     <button class="tab" onclick="tab('ms',this)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a2.5 2.5 0 0 1-2.5 2.5H8l-4 4v-9a2.5 2.5 0 0 1 2.5-2.5h12a2.5 2.5 0 0 1 2.5 2.5z"/><path d="M8 10h8"/><path d="M8 14h5"/></svg> Messages</button>
+    <button class="tab" onclick="tab('mu',this)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="8" r="3"/><circle cx="16" cy="9" r="2.4"/><path d="M3 20c1-3 3-5 5-5s4 2 5 5M14.5 20c.4-2 1.6-3.4 3.5-3.4 1.6 0 2.8 1 3.5 3.4"/></svg> Muse <span id="cntMu"></span></button>
     <button class="tab" onclick="tab('st',this)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.5 5.5l1.8 1.8M16.7 16.7l1.8 1.8M18.5 5.5l-1.8 1.8M7.3 16.7l-1.8 1.8"/></svg> Settings</button>
   </div>
 
@@ -165,6 +166,12 @@ tr:last-child td{border-bottom:none}
     </div>
   </div>
 
+  <div id="pg-mu" style="display:none">
+    <div class="card small" style="margin-bottom:12px"><b>Muse requests</b> — influencer panel only. Not mixed with dating reports or verify selfies.</div>
+    <div id="muReq"></div>
+    <div class="card small" style="margin:14px 0 8px"><b>Approved muses</b></div>
+    <div id="muLive"></div>
+  </div>
   <div id="pg-st" style="display:none">
     <div class="sec">Company bank account (shown when users activate GOLD)</div>
     <div class="card bankgrid" id="bankGrid"></div>
@@ -295,7 +302,7 @@ function enter(){
 }
 
 function tab(p,el){
-  ['ov','or','rp','vf','us','ms','st'].forEach(x=>$('pg-'+x).style.display=x===p?'':'none');
+  ['ov','or','rp','vf','us','ms','mu','st'].forEach(x=>$('pg-'+x).style.display=x===p?'':'none');
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
   if(el) el.classList.add('on');
 }
@@ -330,13 +337,13 @@ function boot(){
   });
 
   // 🔐 read pieces separately — locked rules don't allow root reads
-  ['users','presence','matches','chats','orders','reports','gold','verifyReq','photos','verified','banned','bannedEmails'].forEach(k=>{
+  ['users','presence','matches','chats','orders','reports','gold','verifyReq','photos','verified','banned','bannedEmails','influencerReq','influencers'].forEach(k=>{
     ref(k).on('value',s=>{
       D[k]=s.val()||{};
       paintAll();
     },e=>{
       console.error('Firebase read failed for '+k,e);
-      if(['orders','gold','reports','verifyReq','bannedEmails'].includes(k)){
+      if(['orders','gold','reports','verifyReq','bannedEmails','influencerReq','influencers'].includes(k)){
         const uidStr = (firebase.auth().currentUser && firebase.auth().currentUser.uid) || 'unauthenticated';
         toast('Admin access denied for '+k+' — confirm UID ('+uidStr+') is in wasla_dating/admins','err');
       }
@@ -568,6 +575,45 @@ function paintBanned(){
     const emailDisplay = emailKey ? emailKey.replace(/_/g,'.') : '—';
     return `<tr><td class="small"><b>${eh(uid)}</b><div class="mut tiny">${eh(emailDisplay)}</div></td><td class="mut tiny">${when}</td><td style="text-align:end"><button class="btn btn-g" onclick="unbanUser('${eh(uid)}','${eh(emailKey)}')">Unban + wise advice</button></td></tr>`;
   }).join('')+'</tbody>';
+}
+
+function paintMuse(){
+  const req=Object.entries(D.influencerReq||{}).sort((a,b)=>(b[1].ts||0)-(a[1].ts||0));
+  const live=Object.entries(D.influencers||{});
+  const cnt=$('cntMu'); if(cnt) cnt.textContent=req.length?`(${req.length})`:'';
+  const rq=$('muReq'); const lv=$('muLive'); if(!rq||!lv)return;
+  rq.innerHTML=req.length?req.map(([id,r])=>`<div class="card" style="margin:10px 0">
+    <div class="small"><b>${eh(r.name||'?')}</b> · ${eh(r.email||'')} · ${eh(r.handle?'@'+r.handle:'')}</div>
+    <div class="mut tiny">${eh(id)} · ${ts(r.ts)}</div>
+    <div style="display:flex;gap:10px;margin:10px 0;flex-wrap:wrap">
+      ${r.photo?`<img src="${r.photo}" style="width:96px;height:128px;object-fit:cover;border-radius:12px">`:''}
+      <div class="small">${eh(r.bio||'')}<div class="mut tiny">${eh(r.ig||'')}</div><div class="mut tiny">RIB ${eh(r.payoutRib||'—')}</div></div>
+    </div>
+    <button class="btn btn-g" onclick="approveMuse('${id}')">Approve muse</button>
+    <button class="btn btn-r" onclick="rejectMuse('${id}')">Reject</button>
+  </div>`).join(''):'<div class="card mut">No Muse requests.</div>';
+  lv.innerHTML=live.length?live.map(([id,r])=>`<div class="card" style="margin:8px 0;display:flex;gap:10px;align-items:center">
+    ${r.photo?`<img src="${r.photo}" style="width:56px;height:56px;object-fit:cover;border-radius:12px">`:''}
+    <div style="flex:1"><b>${eh(r.name||id)}</b><div class="mut tiny">@${eh(r.handle||'')} · ${eh(id)}</div></div>
+    <button class="btn btn-r" onclick="removeMuse('${id}')">Remove</button>
+  </div>`).join(''):'<div class="card mut">No approved muses yet.</div>';
+}
+async function approveMuse(id){
+  const r=(D.influencerReq||{})[id]; if(!r)return;
+  try{
+    await ref('influencers/'+id).set({name:r.name,ig:r.ig,handle:r.handle,bio:r.bio||'',photo:r.photo||'',payoutRib:r.payoutRib||'',joinedAt:Date.now(),email:r.email||''});
+    await ref('influencerReq/'+id).remove();
+    toast('Muse approved — they appear in the creator house');
+  }catch(e){ toast('Approve failed: '+(e.code||e.message),'err'); }
+}
+async function rejectMuse(id){
+  try{ await ref('influencerReq/'+id).remove(); toast('Muse request rejected'); }
+  catch(e){ toast('Reject failed','err'); }
+}
+async function removeMuse(id){
+  if(!confirm('Remove this muse from the public house?'))return;
+  try{ await ref('influencers/'+id).remove(); toast('Muse removed'); }
+  catch(e){ toast('Remove failed','err'); }
 }
 
 function wipe(){
