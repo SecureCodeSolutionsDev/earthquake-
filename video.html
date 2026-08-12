@@ -98,7 +98,7 @@ svg{display:inline-block}
 .ringtimer.hot{color:var(--green);border-color:rgba(63,220,133,.5);animation:pulseR 1.2s infinite}
 #extBtn{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;line-height:1;background:var(--gold);color:#241a05;border:0;box-shadow:0 8px 20px rgba(242,193,78,.35)}
 @keyframes pulseR{50%{transform:scale(1.07)}}
-.callchat{position:absolute;z-index:4;left:8px;right:8px;bottom:8px;top:auto;max-height:72%;display:flex;flex-direction:column;background:rgba(16,9,18,.92);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid var(--line);border-radius:20px;overflow:hidden;box-shadow:0 22px 50px rgba(0,0,0,.55)}
+.callchat{position:relative;z-index:5;margin:12px auto 0;max-width:880px;max-height:260px;display:flex;flex-direction:column;background:rgba(16,9,18,.94);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid var(--line);border-radius:20px;overflow:hidden;box-shadow:0 22px 50px rgba(0,0,0,.55)}
 .callchat-h{display:flex;align-items:center;justify-content:space-between;padding:10px 13px;background:rgba(255,255,255,.04);border-bottom:1px solid var(--line);font-size:12px;font-weight:950}
 .callchat-h button{color:#ff9ab5;display:inline-flex;align-items:center;padding:3px 8px}
 .callchat-b{flex:1;overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:6px;scrollbar-width:none;min-height:90px}
@@ -175,7 +175,7 @@ svg{display:inline-block}
     <a class="back" href="./index.html"><span data-t="Back to app">Back to app</span></a>
   </div>
 </header>
-<div class="lang-picker"><button class="lang-btn" onclick="toggleLangPicker()" aria-label="Select your language"><span data-t="Select your language">🌐 Select your language</span></button><div class="lang-dropdown" id="langDropdown"><button onclick="setPageLang('en')">🇬🇧 English</button><button onclick="setPageLang('fr')">🇫🇷 Français</button><button onclick="setPageLang('es')">🇪🇸 Español</button><button onclick="setPageLang('pt')">🇵🇹 Português</button><button onclick="setPageLang('ru')">🇷🇺 Русский</button><button onclick="setPageLang('zh')">🇨🇳 中文</button><button onclick="setPageLang('ar')">🇲🇦 العربية (دارجة) + مصر</button></div></div>
+<div class="lang-picker"><button class="lang-btn" onclick="toggleLangPicker()" aria-label="Select your language"><span data-t="Select your language">🌐 Select your language</span></button><div class="lang-dropdown" id="langDropdown"><button onclick="setPageLang('en')">🇬🇧 English</button><button onclick="setPageLang('fr')">🇫🇷 Français</button><button onclick="setPageLang('es')">🇪🇸 Español</button><button onclick="setPageLang('pt')">🇵🇹 Português</button><button onclick="setPageLang('ru')">🇷🇺 Русский</button><button onclick="setPageLang('zh')">🇨🇳 中文</button><button onclick="setPageLang('ar')">🇲🇦 العربية</button></div></div>
 
 <main class="wrap">
   <section class="hero">
@@ -229,15 +229,26 @@ svg{display:inline-block}
         <div class="panel-label" data-t="TAYRIPAGES MEMBER">TAYRIPAGES MEMBER</div>
       </div>
     </div>
+    <div class="mini-actions hidden" id="mediaActions">
+      <button class="round on" id="micBtn" title="Mute microphone"></button>
+      <button class="round on" id="camBtn" title="Turn camera off"></button>
+      <button class="round" id="chatBtn" title="Chat during the call"><span id="ccDot" class="ccdot hidden">0</span></button>
+      <button class="round hidden" id="extBtn" title="Ask for 30 more seconds"></button>
+    </div>
+    <div class="callchat hidden" id="callChat">
+      <div class="callchat-h"><span data-t="Chat during the call">Chat during the call</span><button id="ccClose" title="Close chat"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"></path></svg></button></div>
+      <div class="callchat-b" id="ccBody"><div class="ccnote" data-t="Say hello — a kind word goes a long way 💛">Say hello — a kind word goes a long way 💛</div></div>
+      <div class="callchat-f"><input id="ccInput" maxlength="280" data-tph="Message…" placeholder="Message…" onkeydown="if(event.key==='Enter')window.__ccSend()"><button id="ccSend" title="Send"></button></div>
+    </div>
     <div class="pro-controls hidden" id="proControls">
       <label><span data-t="Quality">Quality</span>
-        <select id="qualitySel"><option value="480" data-t="Standard (480p) — CooMeet default">Standard (480p) — CooMeet default</option><option value="720" data-t="HD (720p) — Pro" selected>HD (720p) — Pro</option><option value="1080" data-t="Full HD (1080p)">Full HD (1080p)</option></select>
+        <select id="qualitySel"><option value="480" data-t="Standard (480p)">Standard (480p)</option><option value="720" data-t="HD (720p)" selected>HD (720p)</option><option value="1080" data-t="Full HD (1080p)">Full HD (1080p)</option></select>
       </label>
       <label><span data-t="Frame">Frame</span>
         <select id="frameSel"><option value="cover" data-t="Fill (cover)" selected>Fill (cover)</option><option value="contain" data-t="Fit (contain)">Fit (contain)</option></select>
       </label>
       <label><span data-t="Size">Size</span>
-        <select id="sizeSel"><option value="normal" data-t="Normal">Normal</option><option value="large" data-t="Large (CooMeet pro)">Large (CooMeet pro)</option><option value="fullscreen" data-t="Fullscreen">Fullscreen</option></select>
+        <select id="sizeSel"><option value="normal" data-t="Normal">Normal</option><option value="large" data-t="Large" selected>Large</option><option value="fullscreen" data-t="Fullscreen">Fullscreen</option></select>
       </label>
       <button id="proFullscreen" onclick="toggleVideoFullscreen()" data-t="Fullscreen">⛶ Fullscreen</button>
     </div>
@@ -256,17 +267,6 @@ svg{display:inline-block}
         <button class="btn" id="soloKeep" data-t="Keep waiting">Keep waiting</button>
       </div>
       <div class="solo-note" data-t="This page keeps listening — you'll connect the second someone arrives.">This page keeps listening — you'll connect the second someone arrives.</div>
-    </div>
-    <div class="mini-actions hidden" id="mediaActions">
-      <button class="round on" id="micBtn" title="Mute microphone"></button>
-      <button class="round on" id="camBtn" title="Turn camera off"></button>
-      <button class="round" id="chatBtn" title="Chat during the call"><span id="ccDot" class="ccdot hidden">0</span></button>
-      <button class="round hidden" id="extBtn" title="Ask for 30 more seconds"></button>
-    </div>
-    <div class="callchat hidden" id="callChat">
-      <div class="callchat-h"><span data-t="Chat during the call">Chat during the call</span><button id="ccClose" title="Close chat"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
-      <div class="callchat-b" id="ccBody"><div class="ccnote" data-t="Say hello — a kind word goes a long way 💛">Say hello — a kind word goes a long way 💛</div></div>
-      <div class="callchat-f"><input id="ccInput" maxlength="280" data-tph="Message…" placeholder="Message…" onkeydown="if(event.key==='Enter')window.__ccSend()"><button id="ccSend" title="Send"></button></div>
     </div>
     <div class="feedback hidden" id="feedback">
       <div class="feedback-title" data-t="How did the conversation feel?">How did the conversation feel?</div>
@@ -558,11 +558,11 @@ async function init(){
     }catch(e){ console.error(e); setStatus('Firebase could not start. Check the Tayripages configuration.','bad'); }
   }
   function escapeHtml(s){ return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-  // PRO video controls — CooMeet-like defaults (720p HD, 30fps, large pro frames)
+  // Default video: HD 720p, 30fps, large frames
   function applyProSettings(){
     const q=document.getElementById('qualitySel')?.value||'720';
     const f=document.getElementById('frameSel')?.value||'cover';
-    const s=document.getElementById('sizeSel')?.value||'normal';
+    const s=document.getElementById('sizeSel')?.value||'large';
     const localV=document.getElementById('localVideo'), remoteV=document.getElementById('remoteVideo');
     if(localV) localV.style.objectFit=f;
     if(remoteV) remoteV.style.objectFit=f;
@@ -625,7 +625,7 @@ async function init(){
   async function ensureMedia(){
     if(localStream) return localStream;
     if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia) throw new Error('Camera and microphone are not available in this browser.');
-    localStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'},audio:true});
+    localStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:1280},height:{ideal:720},frameRate:{ideal:30}},audio:true});
     localVideo.srcObject=localStream; localEmpty.classList.add('hidden');
     return localStream;
   }
@@ -745,7 +745,7 @@ async function init(){
     if(searching) return;
     try{
       await ensureMedia();
-      searching=true; closing=false; show(videos,true); show(startBtn,false); show(skipBtn,false); show(endBtn,false); show(mediaActions,true); show(modeTabs,false); show(proFilterPanel,false); remoteEmpty.classList.remove('hidden');
+      searching=true; closing=false; show(videos,true); show(document.getElementById('proControls'),true); show(startBtn,false); show(skipBtn,false); show(endBtn,false); show(mediaActions,true); show($('callChat'),true); show(modeTabs,false); show(proFilterPanel,false); remoteEmpty.classList.remove('hidden'); applyProSettings();
       setStatus('Opening a private room for '+selectedPeerName+'…','good');
       wirePairs();
       const sorted=[uid,selectedPeer].sort();

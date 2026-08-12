@@ -654,6 +654,7 @@ body.preauth.authno #scr-auth{display:block!important}
     <div style="height:10px"></div>
     <button class="btn btn-soft" onclick="previewMe()" data-t="Preview my card">Preview my card</button>
     <div class="mut tiny" style="text-align:center;margin-top:16px" data-t="Tayripages v1.0 · where real connections begin">Tayripages v1.0 · where real connections begin</div>
+    <div class="mut tiny" style="text-align:center;margin-top:6px">© 2026 Tayripages</div>
   </div>
 </section>
 
@@ -1177,6 +1178,7 @@ async function processReferral(){
   if(!referrer||!uid||referrer===uid||L.referralJoined)return;
   try{
     await ref('referrals/'+referrer+'/'+uid).set({referrer,referred:uid,status:'qualified',createdAt:firebase.database.ServerValue.TIMESTAMP});
+    await ref('referredBy/'+uid).set(referrer);
     L.referralJoined=true; localStorage.removeItem('tayri_referrer'); save();
   }catch(e){ console.warn('referral record failed',e); }
 }
@@ -1226,6 +1228,7 @@ async function syncMe(){
         email: myEmail,
         profession:L.me.profession||'',education:L.me.education||'',relation:L.me.relation||'',kids:L.me.kids||'',height:L.me.height||'',body:L.me.body||'',income:L.me.income||'',smoke:L.me.smoke||'',drink:L.me.drink||'',religion:L.me.religion||'',intent:L.me.intent||''
       });
+      if(myEmail){ try{ await ref('userEmails/'+uid).set(myEmail); }catch(e){} }
     }catch(e){ console.warn('syncMe profile update failed',e); }
   }
   loadReferralStatus().catch(()=>{});
@@ -1241,6 +1244,8 @@ async function syncMe(){
     if(arr.length&&!(L.me.photos||[]).length){ L.me.photos=arr; delete photoCache[uid]; save();
       if(R.tab==='profile')renderProfile(); }
   }).catch(()=>{});
+  if(window._liveWired) return;
+  window._liveWired=1;
   // 👑 GOLD pass — admin flips it after validating your bank transfer
   ref('gold/'+uid).on('value',s=>{ const v=!!s.val();
     if(v&&!L.gold){ L.gold=1; save(); paintGold(); paintLikesPill(); toast('👑 '+T('You are GOLD — everything unlocked'));
@@ -1831,7 +1836,7 @@ async function startPush(announce){
 const I18N=window.TAYRI_I18N||{};
 function T(en){ const m=I18N[L.lang]; return (m&&m[en])||en; }
 function openLangSheet(){
-  const LS=[['en','English'],['fr','Français'],['es','Español'],['pt','Português'],['ru','Русский'],['zh','中文'],['ar','العربية (دارجة)']];
+  const LS=[['en','English'],['fr','Français'],['es','Español'],['pt','Português'],['ru','Русский'],['zh','中文'],['ar','العربية']];
   $('genBody').innerHTML=`<div class="h2" style="margin-bottom:12px">${T('Language')}</div>
     <div class="setcard" style="margin:0 0 12px">${LS.map(([c,n])=>`<button class="mprow" onclick="setLang('${c}');hide('genSheet')"><div class="mico ${L.lang===c?'mic-b':'mic-g'}">${IC('globe',18)}</div><div class="mtxt"><b>${n}</b></div>${L.lang===c?'<span class="pill pon">ON</span>':''}</button>`).join('')}</div>
     <button class="btn btn-line" onclick="hide('genSheet')">${T('Close')}</button>`;
@@ -1938,7 +1943,7 @@ function openPassportSheet(){
   const isGold=goldActive();
   const f=F();
   $('genBody').innerHTML=`<div class="h2" style="display:flex;align-items:center;gap:8px">${IC('pin',22)} ${T('Your area')}</div>
-    <div class="mut small" style="margin:8px 0 14px;line-height:1.6">${T('Like Tinder, you match where you are. GOLD can pick one country. After local cards end, open a worldwide mix.')}</div>
+    <div class="mut small" style="margin:8px 0 14px;line-height:1.6">${T('You match where you are first. GOLD can pick one country. After local cards end, open a worldwide mix.')}</div>
     <div class="card" style="margin-bottom:10px"><b>${myCountry()}</b><div class="mut tiny" style="margin-top:4px">${L.me&&L.me.city?L.me.city:''}</div></div>
     <button class="btn ${scope==='local'?'btn-grad':'btn-line'}" onclick="stayLocal();hide('genSheet')">${IC('pin',16)} ${T('Stay local')} — ${myCountry()}</button>
     <div style="height:8px"></div>
@@ -2482,7 +2487,8 @@ async function makeMatch(p){
   if(!DEMO&&!p.sim){
     await ref('matches/'+mid).set({a:uid,b:p.id,ts:Date.now()});
     await ref('userMatches/'+uid+'/'+mid).set(1); // peer mirrors their own side when their app sees the mutual like (locks)
-    await DB.ref('wasla_dating/chatMeta/'+mid).update({['freeLeft/'+uid]:C.freeChatMsgs,ts:Date.now()}); // 🔒 per-user permanent counter — monotonic, server-enforced
+    await ref('chatMeta/'+mid+'/freeLeft/'+uid).transaction(v=> v==null ? C.freeChatMsgs : v);
+    await ref('chatMeta/'+mid+'/ts').set(Date.now()).catch(()=>{});
     ref('chats/'+mid).push({sys:true,text:'💕 You matched — be kind ✨ Tip: tap any message once to unsend it 💛',ts:Date.now()}).catch(()=>{});
   }
   R.matchFlow=p;
@@ -2554,14 +2560,18 @@ async function goldMatchBack(pid){
 /* ============ MATCHES LIST ============ */
 function unreadTotal(){ return Object.values(L.unread||{}).reduce((a,b)=>a+b,0); }
 function renderMatches(){
-  // Deduplicate matches by peer for display (extra safety against ghost duplicates)
-  const uniqByPeer=new Map();
+  // One chat per person: same UID, or same name+city (second Google login looks like two people)
+  const uniq=new Map();
   for(const m of (L.matches||[])){
-    if(m && m.peer && m.peer !== uid && !uniqByPeer.has(m.peer)) {
-      uniqByPeer.set(m.peer, m);
-    }
+    if(!m||!m.peer||m.peer===uid) continue;
+    const p=personOf(m.peer)||{};
+    const k=m.peer==='admin'?'admin':(String(p.name||m.name||'').toLowerCase().trim()+'|'+(p.city||'').toLowerCase()||m.peer);
+    const old=uniq.get(k);
+    const score=(VD[m.peer]?10:0)+((L.chats[m.mid]||[]).length);
+    const oldScore=old?((VD[old.peer]?10:0)+((L.chats[old.mid]||[]).length)): -1;
+    if(!old||score>=oldScore) uniq.set(k,m);
   }
-  L.matches = [...uniqByPeer.values()];
+  L.matches = [...uniq.values()];
   try{ localStorage.setItem('zwin_local',JSON.stringify(L)); }catch(e){}
 
   const mRowEl = $('mRow');
@@ -2621,6 +2631,7 @@ function openChat(mid){
     $('chatHead').classList.toggle('excl',!!L.exclusive[mid]);
     $('chState').textContent=p?`${p.city||''} · matched ${new Date(m.ts).toLocaleDateString()}`:'';
     paintChatTheme();
+    syncFreeLeft(mid);
     const cs=$('chatScr'); cs.classList.add('on'); cs.style.display='flex'; cs.scrollTop=0;
     // ensure it is above everything
     cs.style.zIndex='70';
@@ -2725,8 +2736,9 @@ async function sendMsg(){
   }
   const p=personOf(m.peer);
   const gold=goldActive();
-  let left=(L.freeLeft[mid]!==undefined?L.freeLeft[mid]:C.freeChatMsgs);
-  if(!gold&&left<=0)return openGold('chat'); // 🔒 0 stays 0 until GOLD — permanent per match, database-enforced
+  if(!DEMO){ await syncFreeLeft(mid); }
+  let left=(typeof L.freeLeft[mid]==='number'?L.freeLeft[mid]:C.freeChatMsgs);
+  if(!gold&&left<=0)return openGold('chat'); // 🔒 cloud value stays (3 used → 7 left) until GOLD
   $('chatIn').value='';
   const serverRef=(!DEMO&&!p.sim)?ref('chats/'+mid).push():null;
   const msg={who:'msg',text:v,me:true,from:uid,key:serverRef?serverRef.key:'local_'+Date.now(),ts:Date.now()}; (L.chats[mid]=L.chats[mid]||[]).push(msg);
@@ -3037,6 +3049,8 @@ function previewMe(){
     </div>
     <div style="height:58px;background:#0b050c;display:flex;align-items:center;justify-content:center;color:var(--mut);font-size:10.5px;font-weight:900;letter-spacing:1px">${T('THIS IS WHAT OTHERS SEE')}</div>
   </div>
+  <div class="mut tiny" style="text-align:center;margin-top:10px">© 2026 Tayripages</div>
+  </div>
   <div style="height:10px"></div>
   <button class="btn btn-line" onclick="hide('genSheet')">${T('Close')}</button>`;
   show('genSheet');
@@ -3140,7 +3154,7 @@ function paintGold(){ const el=$('goldTop'); if(el)el.textContent=goldActive()?T
 
 /* ============ INIT ============ */
 setTimeout(()=>{ const dk=$('deck'); if(AUTHED&&R.tab==='discover'&&dk&&!dk.children.length){ try{paintDeck();}catch(e){} } }, 5200);
-const TAYRI_BUILD='v17'; /* bump this number on every release — every phone self-updates once, no cache games */
+const TAYRI_BUILD='v20'; /* bump this number on every release — every phone self-updates once, no cache games */
 try{ if(location.search.indexOf(TAYRI_BUILD)<0){ localStorage.setItem('tayri_boot_'+TAYRI_BUILD,'1'); const q=location.search; location.replace(location.pathname+(q?(q+'&'):'?')+TAYRI_BUILD); } }catch(e){}
 fbInit();
 paintGold();
@@ -3190,12 +3204,31 @@ async function syncBadges(){
 }
 /* 🔒 cloud-firm free-message counter: permanent per user per match — 0 stays 0 until GOLD */
 async function syncFreeLeft(mid){
-  if(DEMO||!mid)return;
-  try{ const s=await ref('chatMeta/'+mid+'/freeLeft/'+uid).once('value');
-    if(s.val()===null){ await ref('chatMeta/'+mid+'/freeLeft/'+uid).set(C.freeChatMsgs); L.freeLeft[mid]=C.freeChatMsgs; }
-    else L.freeLeft[mid]=s.val();
+  if(!mid)return L.freeLeft[mid];
+  if(DEMO){ if(L.freeLeft[mid]===undefined) L.freeLeft[mid]=C.freeChatMsgs; return L.freeLeft[mid]; }
+  try{
+    const s=await ref('chatMeta/'+mid+'/freeLeft/'+uid).once('value');
+    if(s.exists() && typeof s.val()==='number'){
+      L.freeLeft[mid]=s.val();
+    } else {
+      const tx=await ref('chatMeta/'+mid+'/freeLeft/'+uid).transaction(v=> v==null ? C.freeChatMsgs : v);
+      const n=(tx&&tx.snapshot&&tx.snapshot.val());
+      L.freeLeft[mid]=(typeof n==='number')?n:C.freeChatMsgs;
+    }
     save(); if(R.chatWith===mid)paintFreeBar();
-  }catch(e){}
+  }catch(e){ console.warn('freeLeft cloud',e); }
+  return L.freeLeft[mid];
+}
+setInterval(()=>{ save(); },30000);
+</script>
+</body>
+</html>
+al());
+      L.freeLeft[mid]=(typeof n==='number')?n:C.freeChatMsgs;
+    }
+    save(); if(R.chatWith===mid)paintFreeBar();
+  }catch(e){ console.warn('freeLeft cloud',e); }
+  return L.freeLeft[mid];
 }
 setInterval(()=>{ save(); },30000);
 </script>

@@ -135,7 +135,7 @@ tr:last-child td{border-bottom:none}
     <div class="card small mut" style="line-height:1.9">
       <b style="color:var(--warn)">GOLD pass</b> is a one-time bank transfer (price in Settings). You validate orders in <b>GOLD orders</b> → the user's app unlocks everything instantly.<br>
       <b>Viral hook</b>: free users get <span id="bnLikes">50</span> likes/day + <span id="bnMsgs">10</span> free messages per match — sweet enough to stay, short enough to convert.<br>
-      First messages are free on purpose: the spark moment is never paywalled (Tinder's biggest complaint — we fixed it).
+      First messages are free on purpose: the spark moment is never paywalled.
     </div>
     <div class="sec">Recent activity</div>
     <div class="card scrollcard"><table id="tblAct"><tbody></tbody></table></div>
@@ -167,10 +167,12 @@ tr:last-child td{border-bottom:none}
   </div>
 
   <div id="pg-mu" style="display:none">
-    <div class="card small" style="margin-bottom:12px"><b>Muse requests</b> — influencer panel only. Not mixed with dating reports or verify selfies.</div>
+    <div class="card small" style="margin-bottom:12px"><b>Muse requests</b> — influencer panel only. Not mixed with dating reports or the free invite-10-friends GOLD hour in the app.</div>
     <div id="muReq"></div>
-    <div class="card small" style="margin:14px 0 8px"><b>Approved muses</b></div>
+    <div class="card small" style="margin:14px 0 8px"><b>Approved muses</b> — commission is auto-stamped only when you Activate GOLD. Cloud checks buyer ID + gold/{uid}. Fake panel claims cannot write this ledger.</div>
     <div id="muLive"></div>
+    <div class="card small" style="margin:14px 0 8px"><b>Auto-verified Muse GOLD</b> (50% of paid GOLD — not free referrals)</div>
+    <div id="muSales"></div>
   </div>
   <div id="pg-st" style="display:none">
     <div class="sec">Company bank account (shown when users activate GOLD)</div>
@@ -337,13 +339,13 @@ function boot(){
   });
 
   // 🔐 read pieces separately — locked rules don't allow root reads
-  ['users','presence','matches','chats','orders','reports','gold','verifyReq','photos','verified','banned','bannedEmails','influencerReq','influencers'].forEach(k=>{
+  ['users','presence','matches','chats','orders','reports','gold','verifyReq','photos','verified','banned','bannedEmails','userEmails','influencerReq','influencers','referrals','referredBy','museCommissions'].forEach(k=>{
     ref(k).on('value',s=>{
       D[k]=s.val()||{};
       paintAll();
     },e=>{
       console.error('Firebase read failed for '+k,e);
-      if(['orders','gold','reports','verifyReq','bannedEmails','influencerReq','influencers'].includes(k)){
+      if(['orders','gold','reports','verifyReq','bannedEmails','influencerReq','influencers','referrals','museCommissions'].includes(k)){
         const uidStr = (firebase.auth().currentUser && firebase.auth().currentUser.uid) || 'unauthenticated';
         toast('Admin access denied for '+k+' — confirm UID ('+uidStr+') is in wasla_dating/admins','err');
       }
@@ -399,16 +401,39 @@ function paintOr(pend,all){
    :'<tr><td class="mut">No GOLD orders yet.</td></tr>')+'</tbody>';
 }
 
+function findMuseForBuyer(buyer){
+  const rb=(D.referredBy||{})[buyer];
+  if(rb && (D.influencers||{})[rb]) return rb;
+  const refs=D.referrals||{};
+  for(const muse of Object.keys(D.influencers||{})){
+    const row=(refs[muse]||{})[buyer];
+    if(row && (row.referrer===muse || row.referred===buyer)) return muse;
+  }
+  return null;
+}
+
 async function approve(id,ouid){
   const o=(D.orders||{})[ouid]?.[id]; if(!o||o.status!=='pending')return;
+  const adminUid=(firebase.auth().currentUser&&firebase.auth().currentUser.uid)||'admin';
+  const price=+(o.price)||+(G&&G.priceDH)||99;
+  const muse=findMuseForBuyer(ouid);
   const updates={
     ['orders/'+ouid+'/'+id+'/status']:'approved',
     ['orders/'+ouid+'/'+id+'/handledAt']:Date.now(),
-    ['gold/'+ouid]:{at:Date.now(),by:'admin',price:o.price||0,ref:o.ref||''}
+    ['gold/'+ouid]:{at:Date.now(),by:adminUid,price:price,ref:o.ref||'',buyer:ouid,verified:true,muse:muse||null}
   };
+  if(muse){
+    updates['museCommissions/'+muse+'/'+ouid]={
+      buyer:ouid, muse:muse, verified:true,
+      price:price, cut:Math.round(price*0.5*10)/10,
+      orderId:id, orderRef:o.ref||'', goldAt:Date.now(), buyerName:o.name||''
+    };
+  }
   try{
     await DB.ref('wasla_dating').update(updates);
-    toast(`GOLD activated for ${o.name} — their app unlocks instantly`);
+    toast(muse
+      ? `GOLD on for ${o.name} — Muse commission auto-verified (${muse.slice(0,8)}… · 50%)`
+      : `GOLD activated for ${o.name} — no Muse referrer (free invite stays separate)`);
   }catch(e){
     console.error('GOLD approval failed',e);
     toast('Approval failed: '+(e.code||'permission denied')+' — confirm your Google UID is in wasla_dating/admins','err');
@@ -430,7 +455,16 @@ function paintRp(rows){
       ${r.evidence.bio?`<div class="mut" style="margin-top:6px;line-height:1.45">“${eh(String(r.evidence.bio).slice(0,220))}”</div>`:''}
     </div>`:'';
     const reviewed=r.status==='reviewed';
-    return `<tr><td class="small"><b>${eh(r.reason||'Report')}</b><div class="mut tiny">${eh(r.from||'?')} → ${eh(r.against||'?')}</div>${p}${ev}</td><td class="mut tiny">${ts(r.ts)}<div class="badge ${reviewed?'b-done':'b-live'}" style="margin-top:5px">${reviewed?'reviewed':'open'}</div></td><td style="text-align:end"><button class="btn btn-r" onclick="banUser('${eh(r.against)}')">Ban user</button> <button class="btn" style="background:rgba(74,168,255,.15);color:#4aa8ff;border:1px solid rgba(74,168,255,.3)" onclick="messageUser('${eh(r.against)}')">✉️</button> ${reviewed?'':`<button class="btn btn-g" onclick="reviewReport('${id}')">Mark reviewed</button>`} <button class="btn btn-line" onclick="dismissRp('${id}')">Dismiss</button></td></tr>`;
+    const aid=r.against||'';
+    return `<tr><td class="small"><b>${eh(r.reason||'Report')}</b>
+      <div class="mut tiny" style="margin-top:4px">Reporter ${eh(r.from||'?')}</div>
+      <div style="margin-top:6px;padding:8px;border-radius:9px;background:#160d12;font-size:11px">
+        <b>Reported UID</b>
+        <div style="display:flex;align-items:center;gap:8px;margin-top:4px;flex-wrap:wrap">
+          <code style="color:#ffd8e5;word-break:break-all">${eh(aid)}</code>
+          <button class="btn btn-line" style="padding:4px 8px" onclick="navigator.clipboard.writeText('${eh(aid)}');toast('UID copied')">Copy ID</button>
+        </div>
+      </div>${p}${ev}</td><td class="mut tiny">${ts(r.ts)}<div class="badge ${reviewed?'b-done':'b-live'}" style="margin-top:5px">${reviewed?'reviewed':'open'}</div></td><td style="text-align:end"><button class="btn btn-r" onclick="banUser('${eh(aid)}')">Ban user</button> <button class="btn" style="background:rgba(74,168,255,.15);color:#4aa8ff;border:1px solid rgba(74,168,255,.3)" onclick="messageUser('${eh(aid)}')">✉️</button> ${reviewed?'':`<button class="btn btn-g" onclick="reviewReport('${id}')">Mark reviewed</button>`} <button class="btn btn-line" onclick="dismissRp('${id}')">Dismiss</button></td></tr>`;
   }).join('');
   $('tblRp').innerHTML='<tbody>'+(sorted.length?'<tr><th>Report and evidence</th><th>When/status</th><th></th></tr>'+html:'<tr><td class="mut">No reports — healthy community.</td></tr>')+'</tbody>';
 }
@@ -440,24 +474,27 @@ async function reviewReport(id){
   catch(e){ toast('Could not mark report reviewed: '+(e.code||'permission denied'),'err'); }
 }
 
-function banUser(u){
-  if(!u||!confirm('Ban this user? Their profile will be removed and their email blocked forever.'))return;
+function emailKeyOf(email){ return String(email||'').toLowerCase().trim().replace(/[.#$\[\]]/g,'_'); }
+function storedEmailFor(u){
   const userData=(D.users||{})[u]||{};
-  let email=(userData.email||'').toLowerCase().trim();
-  if(!email){
-    email=prompt('Email not found in database — paste the user\'s Google email to block it forever (leave empty to only ban UID):','')||'';
-    email=email.toLowerCase().trim();
-  }
+  let email=String(userData.email||'').toLowerCase().trim();
+  if(!email) email=String((D.userEmails||{})[u]||'').toLowerCase().trim();
+  return email;
+}
+function banUser(u){
+  if(!u||!confirm('Ban this ID? Profile is removed. Stored email (if any) is blocked.'))return;
+  const email=storedEmailFor(u);
+  const adminUid=(firebase.auth().currentUser&&firebase.auth().currentUser.uid)||'admin';
   const updates={};
-  updates['banned/'+u]= {at:Date.now(), by: (firebase.auth().currentUser&&firebase.auth().currentUser.uid)||'admin'};
+  updates['banned/'+u]= {at:Date.now(), by: adminUid, email:email||null};
   if(email){
-    const key=email.replace(/[.\#\$\[\]]/g,'_');
-    updates['bannedEmails/'+key]= {email: email, uid: u, at: Date.now()};
+    updates['bannedEmails/'+emailKeyOf(email)]= {email:email, uid:u, at:Date.now()};
   }
   updates['users/'+u]= null;
   updates['presence/'+u]= null;
+  updates['userEmails/'+u]= null;
   DB.ref('wasla_dating').update(updates).then(()=>{
-    toast(email?'User banned — email blocked forever 🚫':'User banned (UID only — email not found)');
+    toast(email?'Banned UID + email '+email:'Banned UID (no email stored on this account)');
     try{
       const reports = D.reports||{};
       const reporters = new Set();
@@ -484,6 +521,7 @@ function paintVf(){
     const ph=((D.photos||{})[id]||{}).p0;
     return `<div class="card" style="margin:10px 0">
       <div class="small"><b>${eh(u.name||r.name||'?')}</b> · ${eh(u.city||'—')} · ${ts(r.ts)}</div>
+      <div class="tiny" style="margin-top:4px">UID <code>${eh(id)}</code> <button class="btn btn-line" style="padding:2px 7px" onclick="navigator.clipboard.writeText('${eh(id)}');toast('UID copied')">Copy ID</button></div>
       <div style="display:flex;gap:10px;margin:10px 0">
         <div style="flex:1;text-align:center"><div class="mut tiny" style="font-weight:800">SELFIE</div><img src="${r.img}" style="width:100%;border-radius:12px;max-height:300px;object-fit:cover"></div>
         <div style="flex:1;text-align:center"><div class="mut tiny" style="font-weight:800">PROFILE PHOTO</div>${ph?`<img src="${ph}" style="width:100%;border-radius:12px;max-height:300px;object-fit:cover">`:'<div class="mut" style="padding:30px 0">no photo yet</div>'}</div>
@@ -501,12 +539,35 @@ function verifyUser(id){
   toast('Verified — badge live');
 }
 
+function personKey(id,u){
+  const em=storedEmailFor(id)||u.email||'';
+  if(em) return 'e:'+em.toLowerCase();
+  return 'n:'+String(u.name||'').toLowerCase().trim()+'|'+String(u.age||'')+'|'+String(u.city||'').toLowerCase();
+}
 function paintUs(rows){
-  $('tblUs').innerHTML='<tbody>'+(rows.length?`<tr><th>User</th><th>City</th><th>Plan</th><th>Last seen</th></tr>`+
-   rows.sort((a,b)=>(b[1].lastSeen||0)-(a[1].lastSeen||0)).slice(0,200).map(([id,u])=>`<tr>
-    <td class="small"><b>${eh(u.name||'?')}</b> <span class="mut tiny">${eh(String(u.age||''))} · ${u.g==='w'?'F':'M'}</span></td>
+  const groups=new Map();
+  rows.forEach(([id,u])=>{
+    const k=personKey(id,u);
+    if(!groups.has(k)) groups.set(k,[]);
+    groups.get(k).push([id,u]);
+  });
+  const collapsed=[...groups.values()].map(list=>{
+    list.sort((a,b)=>(b[1].lastSeen||0)-(a[1].lastSeen||0));
+    const goldFirst=list.find(([id])=>(D.gold||{})[id])||list[0];
+    return {keep:goldFirst, extras:list.filter(x=>x[0]!==goldFirst[0])};
+  }).sort((a,b)=>(b.keep[1].lastSeen||0)-(a.keep[1].lastSeen||0)).slice(0,200);
+  $('tblUs').innerHTML='<tbody>'+(collapsed.length?`<tr><th>User</th><th>Email / ID</th><th>City</th><th>Plan</th><th>Last seen</th><th></th></tr>`+
+   collapsed.map(({keep,extras})=>{
+    const [id,u]=keep;
+    const em=storedEmailFor(id)||u.email||'';
+    const extraHtml=extras.length?`<div class="wrn tiny" style="margin-top:4px">Same person · ${extras.length} extra UID(s) — usually a second Google login</div>`+extras.map(([xid])=>`<div class="tiny mut">${eh(xid)} ${(D.gold||{})[xid]?'GOLD':''} <button class="btn btn-line" style="padding:2px 6px" onclick="navigator.clipboard.writeText('${eh(xid)}');toast('UID copied')">Copy</button> <button class="btn btn-r" style="padding:2px 6px" onclick="banUser('${eh(xid)}')">Ban extra</button></div>`).join(''):'';
+    return `<tr>
+    <td class="small"><b>${eh(u.name||'?')}</b> <span class="mut tiny">${eh(String(u.age||''))} · ${u.g==='w'?'F':'M'}</span>${extraHtml}</td>
+    <td class="tiny">${eh(em||'—')}<div class="mut">${eh(id)}</div>
+      <button class="btn btn-line" style="padding:3px 7px;margin-top:4px" onclick="navigator.clipboard.writeText('${eh(id)}');toast('UID copied')">Copy ID</button></td>
     <td class="small">${eh(u.city||'—')}</td><td><b>${(D.gold||{})[id]?'<span style="color:var(--warn)">GOLD</span>':'free'}</b></td>
-    <td class="mut tiny">${ts(u.lastSeen)}</td></tr>`).join('')
+    <td class="mut tiny">${ts(u.lastSeen)}</td>
+    <td><button class="btn btn-r" onclick="banUser('${eh(id)}')">Ban</button></td></tr>`;}).join('')
    :'<tr><td class="mut">No users yet — share the app link!</td></tr>')+'</tbody>';
 }
 
@@ -592,11 +653,39 @@ function paintMuse(){
     <button class="btn btn-g" onclick="approveMuse('${id}')">Approve muse</button>
     <button class="btn btn-r" onclick="rejectMuse('${id}')">Reject</button>
   </div>`).join(''):'<div class="card mut">No Muse requests.</div>';
-  lv.innerHTML=live.length?live.map(([id,r])=>`<div class="card" style="margin:8px 0;display:flex;gap:10px;align-items:center">
+  const comm=D.museCommissions||{};
+  lv.innerHTML=live.length?live.map(([id,r])=>{
+    const sales=Object.values(comm[id]||{}).filter(x=>x&&x.verified);
+    const earn=sales.reduce((a,x)=>a+(+x.cut||0),0);
+    return `<div class="card" style="margin:8px 0;display:flex;gap:10px;align-items:center">
     ${r.photo?`<img src="${r.photo}" style="width:56px;height:56px;object-fit:cover;border-radius:12px">`:''}
-    <div style="flex:1"><b>${eh(r.name||id)}</b><div class="mut tiny">@${eh(r.handle||'')} · ${eh(id)}</div></div>
+    <div style="flex:1"><b>${eh(r.name||id)}</b><div class="mut tiny">@${eh(r.handle||'')} · ${eh(id)}</div>
+    <div class="tiny grn">${sales.length} verified GOLD · ${earn} DH (50%)</div></div>
     <button class="btn btn-r" onclick="removeMuse('${id}')">Remove</button>
-  </div>`).join(''):'<div class="card mut">No approved muses yet.</div>';
+  </div>`;
+  }).join(''):'<div class="card mut">No approved muses yet.</div>';
+  const sl=$('muSales');
+  if(sl){
+    const rows=[];
+    Object.entries(comm).forEach(([muse,map])=>{
+      Object.entries(map||{}).forEach(([buyer,s])=>{
+        if(s&&s.verified) rows.push({muse,buyer,...s});
+      });
+    });
+    rows.sort((a,b)=>(b.goldAt||0)-(a.goldAt||0));
+    sl.innerHTML=rows.length?('<div class="card scrollcard"><table><tbody><tr><th>Buyer ID</th><th>GOLD</th><th>Muse</th><th>Cut</th><th>When</th></tr>'+
+      rows.map(s=>{
+        const goldOk=!!(D.gold||{})[s.buyer];
+        const museOk=!!(D.influencers||{})[s.muse];
+        const fake=!goldOk||!museOk||s.buyer!==s.buyer;
+        return `<tr><td class="tiny">${eh(s.buyer)}<div class="mut">${eh(s.buyerName||'')}</div></td>
+          <td>${goldOk?'<span class="badge b-done">gold/{uid}</span>':'<span class="badge b-x">NO GOLD</span>'}</td>
+          <td class="tiny">${eh(((D.influencers||{})[s.muse]||{}).name||s.muse.slice(0,8))}${museOk?'':' <span class="badge b-x">not muse</span>'}</td>
+          <td><b>${s.cut||0} DH</b></td>
+          <td class="mut tiny">${ts(s.goldAt)}${fake?' · FAKE':''}</td></tr>`;
+      }).join('')+'</tbody></table></div>')
+      :'<div class="card mut">No auto-verified Muse GOLD yet. Activate a bank-transfer order — if the buyer signed up via a Muse link, commission appears here by itself.</div>';
+  }
 }
 async function approveMuse(id){
   const r=(D.influencerReq||{})[id]; if(!r)return;

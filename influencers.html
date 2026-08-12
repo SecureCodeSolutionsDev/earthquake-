@@ -61,12 +61,12 @@ a{color:inherit;text-decoration:none}
 </head>
 <body>
 <div class="wrap">
-  <div class="top"><div class="logo">Tayri <i>Muse</i></div><a class="tiny" href="./index.html">Tayripages</a></div>
+  <div class="top"><div class="logo">Tayri <i>Muse</i></div><div><a class="tiny" href="./index.html">Tayripages</a><div class="tiny" style="text-align:end;margin-top:4px">© 2026 Tayripages</div></div></div>
 
   <section class="gate on" id="gate">
     <div class="hero">
       <h1>Private creator room.</h1>
-      <p>One club password. Then Google. You get a referral link. When someone signs up and buys GOLD, you earn 90% of 99 DH — paid every Monday by transfer.</p>
+      <p>One club password. Then Google. You get a referral link. When someone signs up and buys GOLD, you earn 50% of 99 DH — paid every Monday by transfer.</p>
     </div>
     <div class="glass" style="max-width:420px">
       <div class="tiny" style="margin-bottom:8px;font-weight:700">Club password (fixed)</div>
@@ -80,7 +80,7 @@ a{color:inherit;text-decoration:none}
   <section class="studio" id="studio">
     <div class="hero">
       <h1>Your link. Your cut.</h1>
-      <p>Share the link. Finished profiles count. GOLD must be approved by admin before it pays. Photos you upload here — Instagram does not allow us to pull their pictures.</p>
+      <p>Share the link. Signups count. Commission pays only after admin activates that user’s bank-transfer GOLD — the cloud then auto-checks their ID against gold/{uid}. Fake claims cannot write the ledger. Free “invite 10 friends” in the dating app is a different program.</p>
     </div>
 
     <div class="glass">
@@ -88,7 +88,7 @@ a{color:inherit;text-decoration:none}
       <div class="stats">
         <div class="stat"><b id="sSign">0</b><span>Signed up</span></div>
         <div class="stat"><b id="sGold">0</b><span>Bought GOLD</span></div>
-        <div class="stat"><b id="sEarn">0</b><span>DH earned (90%)</span></div>
+        <div class="stat"><b id="sEarn">0</b><span>DH earned (50%)</span></div>
         <div class="stat"><b id="sPay">—</b><span>Next Monday payout</span></div>
       </div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
@@ -131,10 +131,10 @@ a{color:inherit;text-decoration:none}
 <script>
 (function(){
   'use strict';
-  const PASS='topinfluencers', ROOT='wasla_dating', CUT=0.9;
+  const PASS='topinfluencers', ROOT='wasla_dating', CUT=0.5;
   const PRICE=+(TAYRI_CONFIG.gold&&TAYRI_CONFIG.gold.priceDH)||99;
   const $=id=>document.getElementById(id);
-  let db=null,uid='',me=null,influencers={},reqs={},goldMap={},users={},myRefs={},myPhoto='';
+  let db=null,uid='',me=null,influencers={},reqs={},goldMap={},users={},myRefs={},myPhoto='',commAll={};
 
   function root(p){return db.ref(ROOT+'/'+p)}
   function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
@@ -168,18 +168,21 @@ a{color:inherit;text-decoration:none}
     $('who').textContent=(me.displayName||me.email||'')+' · '+uid.slice(0,8);
     $('refLink').value=refLink();
     $('sPay').textContent=nextMonday().toLocaleDateString(undefined,{weekday:'short',day:'numeric',month:'short'});
-    const [isnap,qsnap,gsnap,usnap,rsnap,allr]=await Promise.all([
+    const [isnap,qsnap,gsnap,usnap,rsnap,allr,csnap]=await Promise.all([
       root('influencers').once('value'), root('influencerReq').once('value'),
       root('gold').once('value'), root('users').once('value'),
-      root('referrals/'+uid).once('value'), root('referrals').once('value').catch(()=>null)
+      root('referrals/'+uid).once('value'), root('referrals').once('value').catch(()=>null),
+      root('museCommissions').once('value').catch(()=>null)
     ]);
     influencers=isnap.val()||{}; reqs=qsnap.val()||{}; goldMap=gsnap.val()||{}; users=usnap.val()||{}; myRefs=rsnap.val()||{};
+    commAll=(csnap&&csnap.val())||{};
     window.__allRefs=(allr&&allr.val())||{[uid]:myRefs};
     const mine=influencers[uid]||reqs[uid]||{};
     $('igUrl').value=mine.ig||''; $('igName').value=mine.name||me.displayName||''; $('igBio').value=mine.bio||''; $('payoutRib').value=mine.payoutRib||'';
     if(mine.photo){ myPhoto=mine.photo; $('phBtn').innerHTML='<img src="'+mine.photo+'" alt="">'; }
     root('influencers').on('value',s=>{influencers=s.val()||{};paintAll()});
     root('gold').on('value',s=>{goldMap=s.val()||{};paintAll()});
+    root('museCommissions').on('value',s=>{commAll=s.val()||{};paintAll()});
     root('referrals/'+uid).on('value',s=>{myRefs=s.val()||{};if(window.__allRefs)window.__allRefs[uid]=myRefs;paintAll()});
     paintAll();
   }
@@ -190,14 +193,29 @@ a{color:inherit;text-decoration:none}
     i.click();
   };
 
-  function statsOf(refs){const ids=Object.keys(refs||{}); let g=0; ids.forEach(id=>{if(goldMap[id])g++}); return {signups:ids.length,golds:g,earn:Math.round(g*PRICE*CUT*10)/10,ids}}
+  function goldPaid(id){
+    const g=goldMap[id];
+    return !!(g===true || (g&& (g.verified===true || g.at || g.by)));
+  }
+  function statsOf(museId, refs){
+    const ledger=(commAll[museId]||{});
+    const ids=Object.keys(refs||{});
+    const paid=new Set();
+    Object.keys(ledger).forEach(id=>{ if(ledger[id]&&ledger[id].verified&&goldPaid(id)&&ledger[id].buyer===id&&ledger[id].muse===museId) paid.add(id); });
+    ids.forEach(id=>{ if(goldPaid(id)&&ledger[id]&&ledger[id].verified) paid.add(id); });
+    const golds=paid.size;
+    let earn=0;
+    paid.forEach(id=>{ const row=ledger[id]; earn+=row&&row.cut!=null?(+row.cut):Math.round(PRICE*CUT*10)/10; });
+    earn=Math.round(earn*10)/10;
+    return {signups:ids.length,golds,earn,ids,paid:[...paid]};
+  }
   function paintAll(){
-    const s=statsOf(myRefs); $('sSign').textContent=s.signups; $('sGold').textContent=s.golds; $('sEarn').textContent=s.earn;
+    const s=statsOf(uid,myRefs); $('sSign').textContent=s.signups; $('sGold').textContent=s.golds; $('sEarn').textContent=s.earn;
     const list=Object.entries(influencers).sort((a,b)=>(a[1].name||'').localeCompare(b[1].name||''));
     $('view-house').innerHTML=list.length?('<div class="house">'+list.map(([id,p])=>{
       const h=handleOf(p.ig)||p.handle||'';
       const refs=(window.__allRefs&&window.__allRefs[id])||(id===uid?myRefs:null);
-      const st=refs?statsOf(refs):null;
+      const st=statsOf(id,refs||{});
       const img=p.photo||'';
       return `<article class="cardp"><img src="${esc(img)}" alt="" onerror="this.style.opacity=.2"><div class="bd"><b>${esc(p.name||'Creator')} ${id===uid?'<span class="pill">You</span>':''}</b><div class="tiny">@${esc(h||'instagram')}</div><div class="tiny">${esc(p.bio||'')}</div>${st?`<div class="tiny" style="margin:6px 0;color:var(--gold)">${st.golds} GOLD · ${st.earn} DH</div>`:''}<a class="btn btn-ig" style="margin-top:8px" href="${igHref(h)}" target="_blank" rel="noopener">Follow</a></div></article>`;
     }).join('')+'</div>'):'<div class="glass tiny">No approved creators yet. Send your card — admin reviews it in the Muse tab.</div>';
@@ -206,7 +224,7 @@ a{color:inherit;text-decoration:none}
     if(!rows.find(r=>r[0]===uid)) rows.push([uid,statsOf(myRefs)]);
     rows.sort((a,b)=>b[1].earn-a[1].earn||b[1].signups-a[1].signups);
     $('view-board').innerHTML='<div class="glass">'+rows.map((r,i)=>`<div class="row"><span>#${i+1} ${esc((influencers[r[0]]&&influencers[r[0]].name)||'You')}</span><b>${r[1].earn} DH · ${r[1].golds} GOLD · ${r[1].signups} signups</b></div>`).join('')+'</div>';
-    $('view-book').innerHTML=s.ids.length?('<div class="glass">'+s.ids.map(id=>{const u=users[id]||{};const g=!!goldMap[id];return `<div class="row"><div><b>${esc(u.name||id.slice(0,8))}</b><div class="tiny">${esc(id)} · ${esc(u.city||'')}</div></div><div>${g?'<span class="ok">GOLD +'+Math.round(PRICE*CUT)+' DH</span>':'<span class="tiny">Signed up</span>'}</div></div>`}).join('')+'</div>'):'<div class="glass tiny">No signups yet. Share your link.</div>';
+    $('view-book').innerHTML=s.ids.length?('<div class="glass">'+s.ids.map(id=>{const u=users[id]||{};const paid=s.paid.indexOf(id)>=0;const g=goldPaid(id);return `<div class="row"><div><b>${esc(u.name||id.slice(0,8))}</b><div class="tiny">${esc(id)} · ${esc(u.city||'')}</div></div><div>${paid?'<span class="ok">Verified GOLD +'+Math.round(PRICE*CUT)+' DH</span>':(g?'<span class="tiny">GOLD on file — waiting cloud stamp</span>':'<span class="tiny">Signed up</span>')}</div></div>`}).join('')+'</div>'):'<div class="glass tiny">No signups yet. Share your link.</div>';
   }
 
   document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x===t));['house','board','book'].forEach(k=>$('view-'+k).classList.toggle('hidden',t.dataset.t!==k))});
