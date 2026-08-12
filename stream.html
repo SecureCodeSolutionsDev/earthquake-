@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#07060c">
+<title>Tayripages Live</title>
+<link rel="icon" type="image/png" href="icon.png">
+<script src="tayri-config.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#07060c;--card:#14111c;--ink:#f6eef6;--mut:#9a8aa0;--line:rgba(255,255,255,.1);--pk:#ff4e86;--gd:linear-gradient(135deg,#ff4e86,#ff9a4a);--gold:#f2c14e}
+html,body{min-height:100%;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+a{color:inherit;text-decoration:none}button{font:inherit;border:0;cursor:pointer;color:inherit}
+.wrap{max-width:980px;margin:0 auto;padding:16px 14px 90px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:16px}
+.brand{font-weight:900;letter-spacing:-.4px}.brand i{font-style:normal;background:var(--gd);-webkit-background-clip:text;color:transparent}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 16px;border-radius:999px;font-weight:800}
+.btn-g{background:var(--gd);color:#fff}.btn-l{background:rgba(255,255,255,.08);border:1px solid var(--line)}
+.inp,select{width:100%;padding:12px 14px;border-radius:14px;border:1px solid var(--line);background:#100e16;color:var(--ink);outline:none}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;overflow:hidden}
+.thumb{height:150px;background:#1c1724;display:grid;place-items:center;position:relative}
+.live{position:absolute;top:10px;left:10px;background:#e11;color:#fff;font-size:10px;font-weight:900;padding:4px 8px;border-radius:6px}
+.view{position:absolute;top:10px;right:10px;background:rgba(0,0,0,.5);font-size:11px;padding:4px 8px;border-radius:8px}
+.bd{padding:12px}.tiny{font-size:12px;color:var(--mut);line-height:1.45}
+.stage{position:relative;border-radius:22px;overflow:hidden;background:#000;aspect-ratio:9/16;max-height:72vh;margin:0 auto}
+video{width:100%;height:100%;object-fit:cover;background:#000}
+.hud{position:absolute;inset:0;pointer-events:none;display:flex;flex-direction:column;justify-content:space-between;padding:12px}
+.hud *{pointer-events:auto}
+.chatbox{max-height:34%;overflow:auto;display:flex;flex-direction:column;gap:6px}
+.bubble{align-self:flex-start;background:rgba(0,0,0,.45);padding:6px 10px;border-radius:12px;font-size:13px;max-width:88%}
+.giftfly{position:absolute;right:12px;bottom:90px;font-size:28px;animation:up 1.4s ease forwards}
+@keyframes up{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-80px)}}
+.dock{display:flex;gap:8px;align-items:center}
+.stars{display:flex;gap:6px;flex-wrap:wrap}
+.hidden{display:none!important}
+.err{color:#ff8aa8;font-size:13px;margin-top:8px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="brand">Tayri <i>Live</i></div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <a class="btn btn-l" href="./index.html">App</a>
+      <span class="tiny" id="liveN">0 live</span>
+    </div>
+  </div>
+
+  <section id="lobby">
+    <div class="card" style="padding:14px;margin-bottom:14px">
+      <b>Go live or watch</b>
+      <div class="tiny" style="margin:6px 0 10px">Video stays peer-to-peer — Firebase only stores room cards, chat text, and gift counts. Spark quota is not used for video bytes. Gifts: 30% Tayripages, 70% host (paid with weekly GOLD / bank like Muse).</div>
+      <input class="inp" id="titleIn" maxlength="80" placeholder="Stream title">
+      <div style="height:8px"></div>
+      <div style="display:flex;gap:8px">
+        <select id="catIn" style="flex:1"><option>Talk</option><option>Music</option><option>Beauty</option><option>Gaming</option><option>Food</option><option>Other</option></select>
+        <button class="btn btn-g" id="goLive">Go live</button>
+      </div>
+      <div class="err" id="hostErr"></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+      <select id="fCat" class="inp" style="width:auto"><option value="">All topics</option><option>Talk</option><option>Music</option><option>Beauty</option><option>Gaming</option><option>Food</option><option>Other</option></select>
+      <select id="fSort" class="inp" style="width:auto"><option value="live">Live now</option><option value="view">Most viewers</option></select>
+    </div>
+    <div class="grid" id="rooms"></div>
+  </section>
+
+  <section id="room" class="hidden">
+    <div class="stage">
+      <video id="vRemote" autoplay playsinline></video>
+      <video id="vMe" autoplay playsinline muted style="position:absolute;width:88px;height:120px;right:10px;top:10px;border-radius:12px;object-fit:cover;border:1px solid rgba(255,255,255,.25)"></video>
+      <div class="hud">
+        <div style="display:flex;justify-content:space-between">
+          <span class="live">LIVE</span>
+          <span class="view" id="vc">0</span>
+        </div>
+        <div>
+          <div class="chatbox" id="chatLog"></div>
+          <div class="dock" style="margin-top:8px">
+            <input class="inp" id="chatIn" maxlength="180" placeholder="Say something kind…" style="flex:1">
+            <button class="btn btn-l" id="sendChat">Send</button>
+          </div>
+          <div class="stars" style="margin-top:8px">
+            <button class="btn btn-l" data-g="1">⭐ 1</button>
+            <button class="btn btn-l" data-g="5">🌟 5</button>
+            <button class="btn btn-g" data-g="20">👑 20</button>
+            <button class="btn btn-l" id="leave">Leave</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="tiny" style="text-align:center;margin-top:10px" id="roomMeta"></div>
+  </section>
+</div>
+<script>
+(function(){
+  const ROOT='wasla_dating', CUT=0.3;
+  const $=id=>document.getElementById(id);
+  let db,uid,me,sid='',hosting=false,localStream=null,pcs={};
+
+  function ice(){
+    const v=TAYRI_CONFIG.video||{}, list=[];
+    (v.rtc&&v.rtc.iceServers||[]).forEach(s=>list.push(s));
+    (v.turns||[]).forEach(t=>list.push(t));
+    if(v.turn&&v.turn.urls) list.push(v.turn);
+    return list.length?list:[{urls:'stun:stun.l.google.com:19302'}];
+  }
+  function root(p){return db.ref(ROOT+'/'+p)}
+  function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+
+  if(!firebase.apps.length) firebase.initializeApp(TAYRI_CONFIG.firebase);
+  db=firebase.database();
+  firebase.auth().onAuthStateChanged(u=>{
+    if(!u){ firebase.auth().signInWithPopup(new firebase.auth.GoogleAuthProvider()).catch(()=>firebase.auth().signInWithRedirect(new firebase.auth.GoogleAuthProvider())); return; }
+    uid=u.uid; me=u; listenLobby();
+  });
+
+  function listenLobby(){
+    root('streams').on('value',s=>{
+      const all=s.val()||{};
+      const cat=$('fCat').value, sort=$('fSort').value;
+      let rows=Object.entries(all).filter(([,r])=>r&&r.live);
+      if(cat) rows=rows.filter(([,r])=>r.cat===cat);
+      rows.sort((a,b)=> sort==='view' ? ((b[1].views||0)-(a[1].views||0)) : ((b[1].ts||0)-(a[1].ts||0)));
+      $('liveN').textContent=rows.length+' live';
+      $('rooms').innerHTML=rows.length?rows.map(([id,r])=>`<article class="card"><div class="thumb"><span class="live">LIVE</span><span class="view">${r.views||0} watching</span><div style="font-size:42px">📡</div></div><div class="bd"><b>${esc(r.title||'Live')}</b><div class="tiny">${esc(r.name||'Host')} · ${esc(r.cat||'Talk')}</div><button class="btn btn-g" style="width:100%;margin-top:8px" data-join="${id}">Watch</button></div></article>`).join('')
+        :'<div class="card" style="padding:18px" class="tiny">No one is live. Be the first.</div>';
+      document.querySelectorAll('[data-join]').forEach(b=>b.onclick=()=>join(b.dataset.join));
+    });
+  }
+  $('fCat').onchange=$('fSort').onchange=()=>root('streams').once('value').then(s=>{});
+
+  $('goLive').onclick=async()=>{
+    const title=($('titleIn').value||'Live').trim().slice(0,80);
+    try{
+      localStream=await navigator.mediaDevices.getUserMedia({video:{width:{ideal:1280},height:{ideal:720}},audio:true});
+      $('vMe').srcObject=localStream;
+      const rec={host:uid,name:me.displayName||'Host',title,cat:$('catIn').value,live:true,ts:Date.now(),views:0};
+      const ref=root('streams').push();
+      sid=ref.key; await ref.set(rec); hosting=true;
+      openRoom(rec);
+      root('streams/'+sid+'/offers').on('child_added', async snap=>{
+        const viewer=snap.key, off=snap.val(); if(!off||!off.sdp) return;
+        const pc=new RTCPeerConnection({iceServers:ice()});
+        pcs[viewer]=pc;
+        localStream.getTracks().forEach(tr=>pc.addTrack(tr,localStream));
+        pc.onicecandidate=e=>{ if(e.candidate) root('streams/'+sid+'/candidates/'+uid).push({candidate:JSON.stringify(e.candidate)}); };
+        await pc.setRemoteDescription(off);
+        const ans=await pc.createAnswer(); await pc.setLocalDescription(ans);
+        await root('streams/'+sid+'/answers/'+viewer).set({type:ans.type,sdp:ans.sdp});
+      });
+    }catch(e){ $('hostErr').textContent=e.message||'Camera blocked'; }
+  };
+
+  async function join(id){
+    sid=id; hosting=false;
+    const rec=(await root('streams/'+id).once('value')).val()||{};
+    openRoom(rec);
+    localStream=await navigator.mediaDevices.getUserMedia({video:false,audio:true}).catch(()=>null);
+    const pc=new RTCPeerConnection({iceServers:ice()});
+    pcs.me=pc;
+    if(localStream) localStream.getTracks().forEach(tr=>pc.addTrack(tr,localStream));
+    pc.ontrack=e=>{ $('vRemote').srcObject=e.streams[0]; };
+    pc.onicecandidate=e=>{ if(e.candidate) root('streams/'+sid+'/candidates/'+uid).push({candidate:JSON.stringify(e.candidate)}); };
+    const off=await pc.createOffer(); await pc.setLocalDescription(off);
+    await root('streams/'+sid+'/offers/'+uid).set({type:off.type,sdp:off.sdp});
+    root('streams/'+sid+'/answers/'+uid).on('value', async s=>{
+      const a=s.val(); if(a&&a.sdp&&!pc.currentRemoteDescription) await pc.setRemoteDescription(a);
+    });
+    await root('streams/'+sid+'/viewers/'+uid).set(Date.now());
+    root('streams/'+sid+'/viewers/'+uid).onDisconnect().remove();
+  }
+
+  function openRoom(rec){
+    $('lobby').classList.add('hidden'); $('room').classList.remove('hidden');
+    if(hosting) $('vRemote').srcObject=localStream;
+    $('roomMeta').textContent=(rec.title||'Live')+' · 70% of stars go to the host';
+    root('streams/'+sid+'/viewers').on('value',s=>{ $('vc').textContent=Object.keys(s.val()||{}).length+' watching'; });
+    root('streams/'+sid+'/chat').limitToLast(30).on('child_added',s=>{
+      const m=s.val(); if(!m)return;
+      const d=document.createElement('div'); d.className='bubble'; d.innerHTML='<b>'+esc(m.name||'User')+'</b> '+esc(m.text);
+      $('chatLog').appendChild(d); $('chatLog').scrollTop=1e7;
+    });
+    root('streams/'+sid+'/gifts').limitToLast(8).on('child_added',s=>{
+      const g=s.val(); if(!g)return;
+      const f=document.createElement('div'); f.className='giftfly'; f.textContent=(g.kind||'⭐')+' +'+g.stars;
+      document.querySelector('.stage').appendChild(f); setTimeout(()=>f.remove(),1400);
+    });
+  }
+
+  $('sendChat').onclick=async()=>{
+    const text=$('chatIn').value.trim(); if(!text||!sid)return;
+    $('chatIn').value='';
+    await root('streams/'+sid+'/chat').push({from:uid,name:(me&&me.displayName)||'User',text:text.slice(0,180),ts:Date.now()});
+  };
+  document.querySelectorAll('[data-g]').forEach(b=>b.onclick=async()=>{
+    if(!sid)return;
+    const stars=+b.dataset.g;
+    await root('streams/'+sid+'/gifts').push({from:uid,kind:stars>=20?'👑':'⭐',stars,ts:Date.now(),cut:Math.round(stars*CUT*10)/10});
+  });
+  $('leave').onclick=async()=>{
+    Object.values(pcs).forEach(pc=>pc.close()); pcs={};
+    if(localStream) localStream.getTracks().forEach(t=>t.stop());
+    if(hosting&&sid) await root('streams/'+sid).update({live:false});
+    location.reload();
+  };
+})();
+</script>
+</body>
+</html>

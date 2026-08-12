@@ -70,9 +70,11 @@ input,textarea{font-family:inherit;color:inherit;outline:none}
 .h1{font-size:27px;font-weight:900;letter-spacing:-.4px}
 .h2{font-size:19px;font-weight:900}
 .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;box-shadow:0 4px 18px rgba(255,78,126,.06)}
-.topbar{padding:calc(12px + env(safe-area-inset-top)) 18px 8px;display:flex;align-items:center;justify-content:space-between;z-index:5;gap:8px;flex-wrap:wrap}
-.topbar .logo{flex:1;min-width:0}
+.topbar{padding:calc(10px + env(safe-area-inset-top)) 12px 8px;display:flex;align-items:center;justify-content:space-between;z-index:5;gap:8px;flex-wrap:nowrap}
+.topbar .logo{flex:0 1 auto;min-width:0;max-width:46%}
 .topbar .logo .brand-copy{flex:1;min-width:0}
+.topbar .topacts{display:flex;gap:6px;align-items:center;flex:none;margin-inline-start:auto}
+@media(max-width:420px){#filtChip span,#nearChipLbl{display:none}#filtChip,#nearChip{padding:9px 10px!important}}
 #nearChip,#filtChip{flex:none}
 .logo{font-size:21px;font-weight:900;display:flex;gap:7px;align-items:center;min-width:0}
 .logo .flame{width:34px;height:34px;border-radius:12px;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:17px;box-shadow:var(--shadow);flex:0 0 auto}
@@ -234,6 +236,10 @@ body.bootwait #bootSplash{display:flex}
 /* ---------- match overlay ---------- */
 .mov{position:absolute;inset:0;z-index:95;background:radial-gradient(circle at 50% 30%,#3d1030,#160414 75%);display:none;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:26px;text-align:center;overflow:hidden}
 .mov.on{display:flex;animation:fi .3s ease}
+.mov-x{position:absolute;top:calc(10px + env(safe-area-inset-top));inset-inline-end:14px;z-index:6;width:40px;height:40px;border-radius:50%;background:rgba(0,0,0,.45);color:#fff;font-size:22px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.25)}
+.mov .duo .ma{position:relative;overflow:hidden}
+.mov .duo .ma img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.storyv-rep{position:absolute;top:8px;inset-inline-start:10px;z-index:4;color:#fff;background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.3);border-radius:999px;padding:6px 10px;font-size:11px;font-weight:800}
 .mov h1{font-size:40px;font-weight:900;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;animation:pop .5s ease}
 .mov .duo{display:flex;gap:0;margin:18px 0 6px}
 .mov .duo .ma{width:118px;height:118px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:56px;border:4px solid #fff;box-shadow:0 14px 34px rgba(0,0,0,.4)}
@@ -602,7 +608,7 @@ body.preauth.authno #scr-auth{display:block!important}
 <section class="scr deckwrap" id="scr-discover" style="padding-bottom:calc(84px + env(safe-area-inset-bottom))">
   <div class="topbar">
     <div class="logo" style="gap:10px"><div class="flame" style="width:40px;height:40px;border-radius:13px;font-size:21px"><span class="mslot" data-m="flame" data-em="🔥" data-px="21">🔥</span></div><span class="brand-copy" style="display:flex;flex-direction:column;align-items:flex-start;line-height:1;gap:2px"><span class="grad-txt" style="font-size:18px;font-weight:900;letter-spacing:-0.7px;line-height:1">Tayri</span><span class="grad-txt" style="font-size:11px;font-weight:800;letter-spacing:1.6px;text-transform:uppercase;opacity:0.96;line-height:1">pages</span></span></div>
-    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end">
+    <div class="topacts">
       <button class="chip" id="filtChip" style="font-size:11px;padding:9px 11px" onclick="openFilters()" title="Discovery filters"><svg class="icnsvg" width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2H11v2h10zm-6-4h2V7h4V5h-4V3h-2v6z"/></svg> <span data-t="Filters">Filters</span></button>
       <button class="chip" id="nearChip" style="font-size:11px;padding:9px 11px" onclick="openPassportSheet()" title="Your area"><svg class="icnsvg" width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7zm0 9.6a2.6 2.6 0 1 1 0-5.2 2.6 2.6 0 0 1 0 5.2z"/></svg> <span id="nearChipLbl">Local</span></button>
       <button class="coinpill goldpill" onclick="showTab('wallet')"><svg class="icnsvg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M2.7 6.8 7.6 10.4 12 4.6l4.4 5.8 4.9-3.6-1.6 10.2H4.3L2.7 6.8z"/></svg> <span id="goldTop">GOLD</span></button>
@@ -685,7 +691,8 @@ body.preauth.authno #scr-auth{display:block!important}
 </div>
 
 <!-- match overlay -->
-<div class="mov" id="matchOv">
+<div class="mov" id="matchOv" onclick="if(event.target.id==='matchOv')closeMatch()">
+  <button class="mov-x" type="button" onclick="closeMatch()" aria-label="Close">✕</button>
   <div id="confetti"></div>
   <h1 data-t="It’s a Match!">It’s a Match!</h1>
   <div class="sub" id="matchSub"></div>
@@ -693,13 +700,14 @@ body.preauth.authno #scr-auth{display:block!important}
   <div style="height:16px"></div>
   <button class="btn btn-grad" style="max-width:300px" onclick="matchSayHi()" data-t="Say hi — first messages are FREE">Say hi — first messages are FREE</button>
   <div style="height:8px"></div>
-  <button class="btn" style="max-width:300px;background:rgba(255,255,255,.12);color:#ffd7e3" onclick="$('matchOv').classList.remove('on')" data-t="Keep discovering">Keep discovering</button>
+  <button class="btn" style="max-width:300px;background:rgba(255,255,255,.12);color:#ffd7e3" onclick="closeMatch()" data-t="Keep discovering">Keep discovering</button>
 </div>
 
 <!-- story viewer — tap outside to close -->
 <div class="storyv" id="storyV" onclick="closeStory()">
   <div class="storyv-card" onclick="event.stopPropagation()">
     <div class="storyv-prog"><i id="storyBar"></i></div>
+    <button class="storyv-rep" type="button" onclick="reportStory()">Report</button>
     <div class="storyv-x" onclick="closeStory()">✕</div>
     <div class="storyv-head"><b id="svName"></b><span id="svTime"></span></div>
     <img id="svImg" alt="">
@@ -736,6 +744,22 @@ function myUid(){let u=localStorage.getItem('zwin_uid');if(!u){u='u_'+Math.rando
 function load(){try{return JSON.parse(localStorage.getItem('zwin_local'))||fresh()}catch(e){return fresh()}}
 function fresh(){return {me:null,gold:0,referralCount:0,referralGoldUntil:0,referralJoined:false,deletedForMe:{},swiped:{},matches:[],chats:{},freeLeft:{},exclusive:{},likesYou:[],likesDay:{d:'',n:0},superDay:{d:'',n:0},boostDay:'',boostUntil:0,unread:{},readAt:{},chatTheme:'rose',chatDark:0,pendingOrders:[],seen:{},gifts:{} } }
 function goldActive(){ return !!L.gold || (+L.referralGoldUntil||0)>Date.now(); }
+function likeCap(){
+  const day=Math.floor(Date.now()/86400000);
+  if(!L.likesDay||L.likesDay.d!==day) return G.likesPerDay;
+  const hit=+L.likesHitAt||0;
+  if(hit && Date.now()-hit>=8*3600000) return G.likesPerDay+15; // industry: extra batch after 8h
+  return G.likesPerDay;
+}
+function likeWall(){
+  const hit=+L.likesHitAt||0;
+  const left=hit?Math.max(0,8*3600000-(Date.now()-hit)):0;
+  if(left>0){
+    const h=Math.ceil(left/3600000);
+    toast(T('Free likes used — more in')+' '+h+'h, '+T('or GO GOLD'));
+  }
+  return openGold('likes');
+}
 function captureReferral(){
   try{ const r=new URLSearchParams(location.search).get('ref'); if(r&&r.length>5&&r.length<160&&r!==uid)localStorage.setItem('tayri_referrer',r); }catch(e){}
 }
@@ -1074,7 +1098,6 @@ function onAuthed(u){
           if(R.chatWith===adminMid2) paintMsgs();
           else {
             L.unread[adminMid2]=(L.unread[adminMid2]||0)+1;
-            toast('Tayripages sent you a message');
             paintBadges();
           }
           if(R.tab==='matches')renderMatches();
@@ -1258,10 +1281,10 @@ async function syncMe(){
   // ✅ verified badge live + review outcome
   ref('verified/'+uid).on('value',s=>{ const v=!!s.val();
     if(v&&!L.verified){ L.verified=1; L.verifyPending=0; save();
-      toast('✅ You are VERIFIED — the badge of real people 💙'); if(R.tab==='profile')renderProfile(); }
+      if(R.tab==='profile')renderProfile(); }
     else if(!v&&L.verified){ L.verified=0; save(); } });
   ref('verifyReq/'+uid).on('value',s=>{ if(!s.exists()&&L.verifyPending&&!L.verified){ L.verifyPending=0; save();
-    toast('Verification needs a clearer selfie — face + ✌️ visible 💙'); if(R.tab==='profile')renderProfile(); } });
+    if(R.tab==='profile')renderProfile(); } });
   // likes index
   ref('incoming/'+uid).limitToLast(50).on('child_added',s=>{
     const from=s.key, d=s.val(); if(!d||L.seen['lk'+from])return; L.seen['lk'+from]=1;
@@ -1604,7 +1627,23 @@ async function openStory(peer){
   setTimeout(()=>{ bar.style.transition='width 5s linear'; bar.style.width='100%'; },60);
   clearTimeout(window._svT); window._svT=setTimeout(closeStory,5100);
 }
-function closeStory(){ clearTimeout(window._svT); const v=$('storyV'); if(v)v.classList.remove('on'); }
+function closeStory(){ clearTimeout(window._svT); const v=$('storyV'); if(v){ v.classList.remove('on'); v.style.display='none'; setTimeout(()=>{ if(v&&!v.classList.contains('on')) v.style.display=''; },300);} }
+async function reportStory(){
+  const peer=svPeer; if(!peer)return;
+  const reasons=['Inappropriate story','Fake or stolen photo','Harassment','Under 18','Spam'];
+  $('genBody').innerHTML='<div class="h2">Report story</div><div class="mut small" style="margin:8px 0 12px">A human reviews this with the story evidence.</div>'
+    +reasons.map(r=>'<button class="btn btn-line" style="margin-bottom:8px" onclick="sendStoryReport(\''+r.replace(/'/g,"\\'")+'\')">'+r+'</button>').join('')
+    +'<button class="btn btn-line" onclick="hide(\'genSheet\')">Cancel</button>';
+  show('genSheet');
+}
+async function sendStoryReport(reason){
+  hide('genSheet');
+  try{
+    const s=STORY[svPeer]||{};
+    if(!DEMO) await ref('reports').push({from:uid,against:svPeer,reason:'Story: '+reason,ts:Date.now(),status:'open',evidence:{type:'story',caption:String(s.caption||'').slice(0,140),name:(personOf(svPeer)||{}).name||''}});
+    closeStory(); toast('Story reported — our team reviews within 24h');
+  }catch(e){ toast('Could not send the report'); }
+}
 function pickStory(){
   if(!L.me)return;
   const now = Date.now();
@@ -1790,7 +1829,7 @@ async function giftGoldById(){
 async function likeFoundUser(pid){
   const today=Math.floor(Date.now()/86400000);
   if(!goldActive()){ if(L.likesDay.d!==today)L.likesDay={d:today,n:0};
-    if(L.likesDay.n>=G.likesPerDay){ hide('genSheet'); return openGold('likes'); } L.likesDay.n++; }
+    if(L.likesDay.n>=likeCap()){ hide('genSheet'); return likeWall(); } L.likesDay.n++; if(L.likesDay.n===G.likesPerDay) L.likesHitAt=Date.now(); }
   L.swiped[pid]=L.swiped[pid]||{d:'like',ts:Date.now()}; save(); paintLikesPill();
   hide('genSheet');
   if(DEMO)return toast('💛 Like sent');
@@ -2097,6 +2136,12 @@ function openFilters(){
   $('genBody').innerHTML=`<div class="h2" style="display:flex;align-items:center;gap:8px">${IC('sliders',21)} ${T('Discovery settings')}</div>
     <div class="mut small" style="margin:6px 0 12px;line-height:1.6">${T('Browse everyone, or tune who appears in your deck. Matching unlocks the chat.')}</div>
     
+    <div class="mut small" style="font-weight:900">${T('Area')}</div>
+    <div class="seg" style="margin:6px 0 14px">
+      <button class="${matchScope()!=='global'&&matchScope()!=='passport'?'on':''}" onclick="stayLocal();openFilters()">${T('Local')}</button>
+      <button class="${matchScope()==='global'?'on':''}" onclick="goGlobalMix();openFilters()">${T('Worldwide')}</button>
+    </div>
+    <div class="mut tiny" style="margin:-8px 0 12px">${T('Local first in your deck. Worldwide mixes other countries. GOLD can pin one country below.')}</div>
     <div class="mut small" style="font-weight:900">${T('Show me')}</div>
     <div class="seg" style="margin:6px 0 8px">${segB('auto',T('My preference'))}${segB('e',T('Everyone'))}</div>
     <div class="seg" style="margin:0 0 14px">${segB('w',T('Women'))}${segB('m',T('Men'))}</div>
@@ -2300,7 +2345,7 @@ function showTab(t){
   if(t==='likes')renderLikes();
   if(t==='matches')renderMatches();
   if(t==='wallet')renderWallet();
-  if(t==='profile')renderProfile();
+  if(t==='profile'){ renderProfile(); paintLiveCount(); }
   if(t==='discover'){ $('demoSlot').innerHTML=DEMO?`<div class="demobanner">⚡ DEMO MODE — Firebase not set up yet (see README.md). Everyone here is a starter profile; connect the free cloud to meet real people.</div>`:'';
     paintGeoSlot(); paintNearChip(); paintFiltChip(); paintLikesPill(); }
 }
@@ -2336,8 +2381,28 @@ async function loadDeck(){
     const c=String(F().country||'').toLowerCase();
     R.deck=R.deck.filter(p=>peerCountry(p).toLowerCase()===c);
   }
+  try{ await pinFamous(R.deck); }catch(e){}
   paintDeck();
   maybeIncoming();
+}
+async function pinFamous(deck){
+  if(DEMO||!DB) return;
+  const snap=await ref('famousIds').once('value');
+  const map=snap.val()||{};
+  const week=Math.floor(Date.now()/(7*86400000));
+  const ids=Object.entries(map).filter(([id,v])=>v&&(+v.week===week||v.always)).map(([id])=>id);
+  if(!ids.length) return;
+  for(const id of ids.reverse()){
+    if(id===uid) continue;
+    let p=deck.find(x=>x.id===id);
+    if(!p){
+      const u=(await ref('users/'+id).once('value')).val();
+      if(!u||!u.name) continue;
+      p={...u,id,sim:false,km:null,fresh:true,verified:!!VD[id],famous:1};
+    }
+    deck.unshift(p);
+    for(let i=deck.length-1;i>0;i--){ if(deck[i].id===id) deck.splice(i,1); }
+  }
 }
 function paintDeck(){
   const dk=$('deck');
@@ -2428,14 +2493,19 @@ async function doSwipe(pid,dir){
   const _today=Math.floor(Date.now()/86400000); // UTC day — same clock the firm rules use
   if(L.likesDay.d!==_today)L.likesDay={d:_today,n:0};
   if(L.superDay.d!==_today)L.superDay={d:_today,n:0};
-  if(dir==='like'&&!goldActive()){ if(L.likesDay.n>=G.likesPerDay){ undoSwipe(); return openGold('likes'); } L.likesDay.n++; }
+  if(dir==='like'&&!goldActive()){
+    const cap=likeCap();
+    if(L.likesDay.n>=cap){ undoSwipe(); return likeWall(); }
+    L.likesDay.n++;
+    if(L.likesDay.n===G.likesPerDay) L.likesHitAt=Date.now();
+  }
   if(dir==='super'){ const _cap=goldActive()?G.superGold:G.superPerDay; if((L.superDay.n||0)>=_cap){ undoSwipe(); return openGold('super'); } L.superDay.n++; }
   paintLikesPill(); save();
   if(!DEMO&&!p.sim){
     ref('swipes/'+uid+'/'+pid).set({d:dir,ts:Date.now()});
     if(dir!=='pass'){
       const upd={}; upd['incoming/'+pid+'/'+uid]={d:dir,ts:Date.now()};
-      if(!goldActive()){ if(dir==='super')upd['limits/'+uid+'/super']={d:_today,n:L.superDay.n||1}; else upd['limits/'+uid+'/likes']={d:_today,n:L.likesDay.n}; }
+      if(!goldActive()){ if(dir==='super')upd['limits/'+uid+'/super']={d:_today,n:L.superDay.n||1}; else { const lk={d:_today,n:L.likesDay.n}; if(L.likesHitAt) lk.hitAt=L.likesHitAt; upd['limits/'+uid+'/likes']=lk; } }
       DB.ref('wasla_dating').update(upd).catch(e=>{ console.warn('like write',e); toast('Network hiccup — try again','err'); });
       // 🔐 read my OWN incoming box to know (s)he liked me — peers' swipes are private under the locks
       const back=await ref('incoming/'+uid+'/'+pid).once('value');
@@ -2501,7 +2571,7 @@ async function makeMatch(p){
   const duoMas=document.querySelectorAll('#matchDuo .ma'); const myPh=meFirstPhoto();
   if(myPh&&duoMas[0])putImg(duoMas[0],myPh);
   ensurePhoto(p,url=>{ const mas=document.querySelectorAll('#matchDuo .ma'); if(url&&mas[1])putImg(mas[1],url); });
-  spawnConfetti(); show('matchOv');
+  spawnConfetti(); const ov=$('matchOv'); if(ov){ ov.style.display='flex'; } show('matchOv');
   if(R.tab==='matches')renderMatches();
 }
 function spawnConfetti(){ const c=$('confetti'); c.innerHTML='';
@@ -2510,7 +2580,13 @@ function spawnConfetti(){ const c=$('confetti'); c.innerHTML='';
     s.textContent=ems[i%ems.length];s.style.left=(Math.random()*100)+'%';
     s.style.animationDuration=(2.2+Math.random()*2)+'s';s.style.animationDelay=(Math.random()*1.4)+'s';
     s.style.fontSize=(14+Math.random()*16)+'px';c.appendChild(s);} }
-function matchSayHi(){ hide('matchOv'); const pf=R.matchFlow;
+function closeMatch(){
+  const ov=$('matchOv'); if(!ov)return;
+  ov.classList.remove('on'); ov.style.display='none';
+  const c=$('confetti'); if(c)c.innerHTML='';
+  setTimeout(()=>{ if(ov) ov.style.display=''; },400);
+}
+function matchSayHi(){ closeMatch(); const pf=R.matchFlow;
   const m=(pf&&L.matches.find(m=>m.peer===pf.id))||L.matches[0]; if(m)openChat(m.mid); }
 
 /* ============ LIKED YOU ============ */
@@ -2641,7 +2717,7 @@ function openChat(mid){
     cs.style.zIndex='70';
     paintFreeBar(); paintIce(); paintMsgs();
     paintChatStory();
-    watchChat(mid); pullHistory(mid);
+    watchChat(mid); if(!DEMO){ ref('chatMeta/'+mid+'/wiped').once('value').then(s=>{ const w=+s.val()||0; if(w){ L.wiped=L.wiped||{}; L.wiped[mid]=Math.max(L.wiped[mid]||0,w); save(); } pullHistory(mid); }).catch(()=>pullHistory(mid)); } else pullHistory(mid);
     // re-render to clear badges
     setTimeout(()=>{ paintBadges(); },80);
   }catch(e){ console.error('openChat failed',e); toast('Could not open chat — please reload'); }
@@ -2778,6 +2854,7 @@ function watchChat(mid){
   const q=ref('chats/'+mid).limitToLast(12);
   q.on('child_added',s=>{
     const m=s.val(); if(!m||!m.text||m.sys)return; const key=s.key;
+    if((L.wiped&&L.wiped[mid]) && (m.ts||0)<=L.wiped[mid])return;
     if(L.seen['cm'+key]||isDeletedForMe(mid,key))return; L.seen['cm'+key]=1;
     const mine=m.from===uid;
     if((L.chats[mid]||[]).some(x=>x.key===key))return; // already have it (own send / history pull)
@@ -2804,9 +2881,23 @@ function watchChat(mid){
 function pullHistory(mid){
   if(DEMO)return;
   ref('chats/'+mid).limitToLast(60).once('value').then(s=>{
-    const all=s.val()||{}; let ch=false;
+    const all=s.val()||{};
+    const cloudKeys=new Set(Object.keys(all));
+    if(!cloudKeys.size){
+      if((L.chats[mid]||[]).length){ L.chats[mid]=[]; save(); }
+      if(R.chatWith===mid)paintMsgs();
+      return;
+    }
+    const wipeAt=+(L.wiped&&L.wiped[mid])||0;
+    const before=(L.chats[mid]||[]);
+    L.chats[mid]=before.filter(x=>{
+      if(wipeAt && (x.ts||0)<=wipeAt) return false;
+      return !x.key || String(x.key).startsWith('local_') || cloudKeys.has(x.key);
+    });
+    let ch=L.chats[mid].length!==before.length;
     Object.entries(all).forEach(([key,m])=>{
       if(!m||!m.text||m.sys||isDeletedForMe(mid,key))return;
+      if(wipeAt && (m.ts||0)<=wipeAt)return;
       if((L.chats[mid]||[]).some(x=>x.key===key))return;
       L.seen['cm'+key]=1;
       (L.chats[mid]=L.chats[mid]||[]).push({who:'msg',text:String(m.text).slice(0,900),me:m.from===uid,from:m.from||'',key:key,ts:m.ts||Date.now()}); ch=true;
@@ -2818,14 +2909,28 @@ function pullHistory(mid){
 let lastType=0;
 function typingNow(){ if(DEMO)return; const now=Date.now(); if(now-lastType>2000){ lastType=now;
   ref('typing/'+R.chatWith+'/'+uid).set(now); ref('typing/'+R.chatWith+'/'+uid).onDisconnect().remove(); } }
-function clearChatForMe(){
+async function clearChatForAll(){
   const mid=R.chatWith; if(!mid) return;
-  if(!confirm('Clear this conversation for you only? The other person will still see the messages until they clear it too.')) return;
-  const chat=L.chats[mid]||[];
-  L.deletedForMe=L.deletedForMe||{}; L.deletedForMe[mid]=L.deletedForMe[mid]||{};
-  chat.forEach(m=>{ if(m.key) L.deletedForMe[mid][m.key]=1; });
-  L.chats[mid]=[];
-  save(); paintMsgs(); hide('genSheet'); toast('Chat cleared for you — other person still sees it');
+  if(String(mid).startsWith('admin_')) return toast('Admin messages stay in your inbox');
+  if(!confirm('Clear this chat for both of you? Messages are deleted on the server and will not come back after login.')) return;
+  hide('genSheet');
+  try{
+    if(!DEMO){
+      const snap=await ref('chats/'+mid).once('value');
+      const all=snap.val()||{};
+      const upd={};
+      Object.keys(all).forEach(k=>{ upd['chats/'+mid+'/'+k]=null; });
+      if(Object.keys(upd).length) await DB.ref('wasla_dating').update(upd);
+      await ref('chats/'+mid).remove().catch(()=>{});
+    }
+    L.chats[mid]=[];
+    L.wiped=L.wiped||{}; L.wiped[mid]=Date.now();
+    if(L.deletedForMe&&L.deletedForMe[mid]) delete L.deletedForMe[mid];
+    if(!DEMO){ try{ await ref('chatMeta/'+mid+'/wiped').set(L.wiped[mid]); }catch(e){} }
+    Object.keys(L.seen||{}).forEach(k=>{ if(k.indexOf('cm')===0){ /* keep other chats */ } });
+    save(); paintMsgs();
+    toast('Chat cleared for both of you');
+  }catch(e){ toast('Could not clear chat on the server. Publish the new Firebase rules.'); }
 }
 function chatMenu(){
   const m=L.matches.find(m=>m.mid===R.chatWith);
@@ -2834,8 +2939,8 @@ function chatMenu(){
     <div style="height:8px"></div>
     <button class="btn btn-line" onclick="openThemeSheet()">Chat colors & dark mode</button>
     <div style="height:8px"></div>
-    <button class="btn btn-line" onclick="clearChatForMe()">🧹 Clear chat for me</button>
-    <div class="mut tiny" style="text-align:center;margin:4px 0">Only for you — other person keeps the chat until they clear too</div>
+    <button class="btn btn-line" onclick="clearChatForAll()">🧹 Clear chat for both</button>
+    <div class="mut tiny" style="text-align:center;margin:4px 0">Deletes messages on the server for both of you — they will not come back after login</div>
     <div style="height:8px"></div>
     <button class="btn btn-line" onclick="unmatchAsk()">Unmatch</button>
     <div style="height:8px"></div>
@@ -3136,12 +3241,23 @@ function renderProfile(){
         <button class="mprow" onclick="openAvSheet()"><div class="mico mic-c">${IC('person',22)}</div><div class="mtxt"><b>${T('Avatar art')}</b><div>${T('Pick your vibe — your photo always wins')}</div></div><span class="pill">${T('8 arts')}</span></button>
         <button class="mprow" onclick="toggleGeo()"><div class="mico mic-c">${IC('pin',22)}</div><div class="mtxt"><b>${T('Real distance (GPS)')}</b><div>${L.geo?T('Tap to turn OFF — you control your location'):T('Real kilometres — always free')}</div></div><span class="pill ${L.geo?'pon':''}">${L.geo?T('ON · tap to stop'):T('Turn on')}</span></button>
         <button class="mprow" onclick="location.href='video.html'"><div class="mico mic-e">${IC('video',22)}</div><div class="mtxt"><b>${T('Instant video')}</b><div>${T('Meet someone live — free')}</div></div><span class="chev">›</span></button>
+        <button class="mprow" onclick="location.href='stream.html'"><div class="mico mic-d">${IC('video',22)}</div><div class="mtxt"><b>${T('Live stream')}</b><div id="liveCntLine">${T('Watch or go live — gifts, 30% to Tayripages')}</div></div><span class="pill" id="liveCntPill">LIVE</span></button>
 
         <button class="mprow" onclick="toggleNotif()"><div class="mico mic-f">${IC('bell',22)}</div><div class="mtxt"><b>${T('In-app notifications')}</b><div>${T('Toasts while the app is open')}</div></div><div class="toggle ${L.notif===false?'':'on'}" id="notifT"></div></button>
         <button class="mprow" onclick="openSafety()"><div class="mico mic-g">${IC('shield',22)}</div><div class="mtxt"><b>${T('Safety center')}</b><div>${T('Block, report, dating tips')}</div></div><span class="chev">›</span></button>
         <button class="mprow" onclick="openHelp()"><div class="mico mic-h">${IC('chat',22)}</div><div class="mtxt"><b>${T('Help & support')}</b><div>${T('Answers, payments, contact')}</div></div><span class="chev">›</span></button>
       </div>
     </div>`;
+  try{ paintLiveCount(); }catch(e){}
+}
+function paintLiveCount(){
+  if(DEMO||!DB) return;
+  ref('streams').limitToLast(40).once('value').then(s=>{
+    const m=s.val()||{};
+    const n=Object.values(m).filter(x=>x&&x.live).length;
+    const p=$('liveCntPill'); if(p) p.textContent=n? (n+' live') : 'LIVE';
+    const l=$('liveCntLine'); if(l) l.textContent=n? (n+' '+T('people streaming now')) : T('Watch or go live — gifts, 30% to Tayripages');
+  }).catch(()=>{});
 }
 function toggleNotif(){ L.notif=L.notif===false?true:false; $('notifT').classList.toggle('on',L.notif!==false); save(); }
 async function resetAll(){ /* one tap = logged out. No popup, no drama — the cloud keeps everything anyway */
@@ -3158,7 +3274,7 @@ function paintGold(){ const el=$('goldTop'); if(el)el.textContent=goldActive()?T
 
 /* ============ INIT ============ */
 setTimeout(()=>{ const dk=$('deck'); if(AUTHED&&R.tab==='discover'&&dk&&!dk.children.length){ try{paintDeck();}catch(e){} } }, 5200);
-const TAYRI_BUILD='v22'; /* bump this number on every release — every phone self-updates once, no cache games */
+const TAYRI_BUILD='v25'; /* bump this number on every release — every phone self-updates once, no cache games */
 try{
   if(!sessionStorage.getItem('tayri_boot_'+TAYRI_BUILD)){
     sessionStorage.setItem('tayri_boot_'+TAYRI_BUILD,'1');

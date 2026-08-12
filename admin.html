@@ -127,6 +127,7 @@ tr:last-child td{border-bottom:none}
     <button class="tab" onclick="tab('us',this)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 20c0-3 2.5-5.5 5.5-5.5s5.5 2.5 5.5 5.5"/><path d="M16.2 4.9a3.2 3.2 0 0 1 0 6.2"/><path d="M17.8 14.9c2 .8 3.7 2.6 3.7 5.1"/></svg> Users</button>
     <button class="tab" onclick="tab('ms',this)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a2.5 2.5 0 0 1-2.5 2.5H8l-4 4v-9a2.5 2.5 0 0 1 2.5-2.5h12a2.5 2.5 0 0 1 2.5 2.5z"/><path d="M8 10h8"/><path d="M8 14h5"/></svg> Messages</button>
     <button class="tab" onclick="tab('mu',this)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="8" r="3"/><circle cx="16" cy="9" r="2.4"/><path d="M3 20c1-3 3-5 5-5s4 2 5 5M14.5 20c.4-2 1.6-3.4 3.5-3.4 1.6 0 2.8 1 3.5 3.4"/></svg> Muse <span id="cntMu"></span></button>
+    <button class="tab" onclick="tab('fm',this)"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.2 6.6H21l-5.4 4 2.1 6.4L12 15.8 6.3 19l2.1-6.4L3 8.6h6.8z"/></svg> Famous</button>
     <button class="tab" onclick="tab('st',this)"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.5 5.5l1.8 1.8M16.7 16.7l1.8 1.8M18.5 5.5l-1.8 1.8M7.3 16.7l-1.8 1.8"/></svg> Settings</button>
   </div>
 
@@ -173,6 +174,15 @@ tr:last-child td{border-bottom:none}
     <div id="muLive"></div>
     <div class="card small" style="margin:14px 0 8px"><b>Auto-verified Muse GOLD</b> (50% of paid GOLD — not free referrals)</div>
     <div id="muSales"></div>
+  </div>
+  <div id="pg-fm" style="display:none">
+    <div class="card small" style="margin-bottom:12px"><b>Famous ID</b> — pin a user (or your admin UID) to every deck for this calendar week. They reappear automatically next week if you keep them listed.</div>
+    <input class="inp" id="famousUid" placeholder="Google UID to feature worldwide">
+    <div style="height:8px"></div>
+    <button class="btn btn-g" onclick="addFamous()">Pin for this week</button>
+    <div id="famousList" style="margin-top:14px"></div>
+    <div class="card small" style="margin:16px 0 8px"><b>Live streams</b> (signaling only — video is P2P)</div>
+    <div id="streamList"></div>
   </div>
   <div id="pg-st" style="display:none">
     <div class="sec">Company bank account (shown when users activate GOLD)</div>
@@ -339,7 +349,7 @@ function boot(){
   });
 
   // 🔐 read pieces separately — locked rules don't allow root reads
-  ['users','presence','matches','chats','orders','reports','gold','verifyReq','photos','verified','banned','bannedEmails','userEmails','influencerReq','influencers','referrals','referredBy','museCommissions'].forEach(k=>{
+  ['users','presence','matches','chats','orders','reports','gold','verifyReq','photos','verified','banned','bannedEmails','userEmails','influencerReq','influencers','referrals','referredBy','museCommissions','famousIds','streams'].forEach(k=>{
     ref(k).on('value',s=>{
       D[k]=s.val()||{};
       paintAll();
@@ -347,6 +357,7 @@ function boot(){
       console.error('Firebase read failed for '+k,e);
       if(['orders','gold','reports','verifyReq','bannedEmails','influencerReq','influencers','referrals','museCommissions'].includes(k)){
         const uidStr = (firebase.auth().currentUser && firebase.auth().currentUser.uid) || 'unauthenticated';
+        if(k==='influencerReq') window._museDenied=uidStr;
         toast('Admin access denied for '+k+' — confirm UID ('+uidStr+') is in wasla_dating/admins','err');
       }
     });
@@ -380,7 +391,7 @@ function paintAll(){
     ...reports.map(([k,r])=>({ts:r.ts,txt:`Report filed: ${eh(r.reason||'Report')}`}))
   ].sort((a,b)=>b.ts-a.ts).slice(0,40);
   $('tblAct').innerHTML='<tbody>'+(acts.length?`<tr><th>Event</th><th>When</th></tr>`+acts.map(a=>`<tr><td>${a.txt}</td><td class="mut tiny">${ts(a.ts)}</td></tr>`).join(''):'<tr><td class="mut">Quiet so far…</td></tr>')+'</tbody>';
-  paintOr(pendOr,orders); paintRp(reports); paintUs(users); paintMuse();
+  paintOr(pendOr,orders); paintRp(reports); paintUs(users); paintMuse(); paintFamous();
 }
 
 function paintOr(pend,all){
@@ -643,6 +654,9 @@ function paintMuse(){
   const live=Object.entries(D.influencers||{});
   const cnt=$('cntMu'); if(cnt) cnt.textContent=req.length?`(${req.length})`:'';
   const rq=$('muReq'); const lv=$('muLive'); if(!rq||!lv)return;
+  if(window._museDenied){
+    rq.innerHTML='<div class="card" style="border-color:#ff6b6b">Muse queue needs your Google UID in <b>wasla_dating/admins/'+eh(window._museDenied)+'</b> (true). Dating Users still load because users is readable to any signed-in account. Muse requests are admin-only.</div>';
+  } else
   rq.innerHTML=req.length?req.map(([id,r])=>`<div class="card" style="margin:10px 0">
     <div class="small"><b>${eh(r.name||'?')}</b> · ${eh(r.email||'')} · ${eh(r.handle?'@'+r.handle:'')}</div>
     <div class="mut tiny">${eh(id)} · ${ts(r.ts)}</div>
@@ -705,6 +719,35 @@ async function removeMuse(id){
   catch(e){ toast('Remove failed','err'); }
 }
 
+function paintFamous(){
+  const week=Math.floor(Date.now()/(7*86400000));
+  const box=$('famousList'); if(!box)return;
+  const rows=Object.entries(D.famousIds||{});
+  box.innerHTML=rows.length?rows.map(([id,v])=>{
+    const u=(D.users||{})[id]||{};
+    return `<div class="card" style="margin:8px 0;display:flex;gap:10px;align-items:center"><div style="flex:1"><b>${eh(u.name||id)}</b><div class="mut tiny">${eh(id)} · week ${v.week||'—'}${v.always?' · always':''}</div></div>
+      <button class="btn" onclick="keepFamous('${id}')">Next week</button>
+      <button class="btn btn-r" onclick="dropFamous('${id}')">Remove</button></div>`;
+  }).join(''):'<div class="card mut">No famous IDs this week.</div>';
+  const sl=$('streamList');
+  if(sl){
+    const st=Object.entries(D.streams||{}).filter(([,r])=>r&&r.live);
+    sl.innerHTML=st.length?st.map(([id,r])=>`<div class="card" style="margin:6px 0"><b>${eh(r.title)}</b> · ${eh(r.name||r.host)} · ${r.views||0} views</div>`).join(''):'<div class="card mut">No live streams.</div>';
+  }
+}
+async function addFamous(){
+  const id=($('famousUid').value||'').trim(); if(!id)return toast('Paste a UID','err');
+  const week=Math.floor(Date.now()/(7*86400000));
+  try{ await ref('famousIds/'+id).set({week,ts:Date.now(),by:(firebase.auth().currentUser||{}).uid||''}); toast('Pinned for this week'); }
+  catch(e){ toast('Pin failed: '+(e.code||e.message),'err'); }
+}
+async function keepFamous(id){
+  const week=Math.floor(Date.now()/(7*86400000))+1;
+  try{ await ref('famousIds/'+id).update({week}); toast('Will reappear next week'); }catch(e){ toast('Update failed','err'); }
+}
+async function dropFamous(id){
+  try{ await ref('famousIds/'+id).remove(); }catch(e){ toast('Remove failed','err'); }
+}
 function wipe(){
   if(!confirm('Really delete ALL data? This will KEEP banned UIDs & bannedEmails forever. Continue?'))return;
   DB.ref('wasla_dating').once('value').then(s=>{
