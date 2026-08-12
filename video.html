@@ -9,6 +9,8 @@
 <link rel="icon" type="image/png" href="icon.png">
 <script src="tayri-config.js"></script>
 <script src="tayri-i18n.js"></script>
+<script src="tayri-video-i18n.js"></script>
+<script>function T(en){try{const L=JSON.parse(localStorage.getItem('zwin_local')||'{}');const lang=L.lang||'en';const a=(window.TAYRI_VIDEO_I18N&&window.TAYRI_VIDEO_I18N[lang])||{};const b=(window.TAYRI_I18N&&window.TAYRI_I18N[lang])||{};return a[en]||b[en]||en;}catch(e){return en;}}</script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
@@ -200,9 +202,10 @@ svg{display:inline-block}
         <label><span data-t="Country">Country</span><span class="free-tag">FREE</span><select id="filterCountry"><option value="all" data-t="Everywhere">Everywhere</option></select></label>
         <label><span data-t="Shared interest">Shared interest</span><span class="free-tag">FREE</span><select id="filterInterest"><option value="any" data-t="Any interest">Any interest</option></select></label>
         <label><span data-t="Gender">Gender</span><select id="filterGender"><option value="any" data-t="Everyone">Everyone</option><option value="w" data-t="Women">Women</option><option value="m" data-t="Men">Men</option></select></label>
-        <label><span data-t="Minimum social score">Minimum social score</span><select id="filterSocial"><option value="0" data-t="Any level">Any level</option><option value="3.1" data-t="Silver or higher">Silver or higher</option><option value="3.55" data-t="Gold or higher">Gold or higher</option><option value="3.9" data-t="Platinum or higher">Platinum or higher</option><option value="4.25" data-t="Diamond or higher">Diamond or higher</option></select></label>
-        <label><span data-t="Tayri Charm rank">Tayri Charm rank</span><select id="filterCharm"><option value="0" data-t="Any rank">Any rank</option><option value="100" data-t="Top 100">Top 100</option><option value="50" data-t="Top 50">Top 50</option><option value="10" data-t="Top 10">Top 10</option><option value="3" data-t="Top 3">Top 3</option></select></label>
-        <label><span data-t="Supporter status">Supporter status</span><select id="filterSupporter"><option value="0" data-t="Everyone">Everyone</option><option value="1" data-t="Supporters only">Supporters only</option></select></label>
+        <label><span data-t="Beauty Queen">Beauty Queen</span><select id="filterMalika"><option value="0" data-t="Anyone">Anyone</option><option value="100" data-t="Among top 100">Among top 100</option><option value="20" data-t="Beauty Queen — top 20">Beauty Queen — top 20</option></select></label>
+        <label><span data-t="Character">Character</span><select id="filterMorals"><option value="0" data-t="Any">Any</option><option value="3.4" data-t="Kind & respectful">Kind & respectful</option><option value="4.0" data-t="High morals">High morals</option><option value="4.5" data-t="Exceptional character">Exceptional character</option></select></label>
+        <label><span data-t="Charisma">Charisma</span><select id="filterCharisma"><option value="0" data-t="Any energy">Any energy</option><option value="3.4" data-t="Warm presence">Warm presence</option><option value="4.0" data-t="High charisma">High charisma</option><option value="4.5" data-t="Magnetic">Magnetic</option></select></label>
+        <label><span data-t="Best speaker">Best speaker</span><select id="filterSpeaker"><option value="0" data-t="Any talker">Any talker</option><option value="3.4" data-t="Good listener">Good listener</option><option value="4.0" data-t="Great conversation">Great conversation</option><option value="4.5" data-t="Best speaker">Best speaker</option></select></label>
       </div>
       <div class="filter-note" id="filterNote" data-t="Filters are applied mutually: both members must fit each other’s criteria.">Filters are applied mutually: both members must fit each other’s criteria.</div>
     </div>
@@ -270,9 +273,10 @@ svg{display:inline-block}
     <div class="feedback hidden" id="feedback">
       <div class="feedback-title" data-t="How did the conversation feel?">How did the conversation feel?</div>
       <div class="feedback-grid">
-        <label><span data-t="Social energy">Social energy</span><select id="voteSocial"><option value="5" data-t="Excellent">Excellent</option><option value="4" data-t="Good">Good</option><option value="3" data-t="Okay" selected>Okay</option><option value="2" data-t="Needs work">Needs work</option><option value="1" data-t="Poor">Poor</option></select></label>
-        <label><span data-t="Respect">Respect</span><select id="voteRespect"><option value="5" data-t="Excellent">Excellent</option><option value="4" data-t="Good">Good</option><option value="3" data-t="Okay" selected>Okay</option><option value="2" data-t="Needs work">Needs work</option><option value="1" data-t="Poor">Poor</option></select></label>
-        <label><span data-t="Charm &amp; style">Charm &amp; style</span><select id="voteCharm"><option value="5" data-t="Excellent">Excellent</option><option value="4" data-t="Good">Good</option><option value="3" data-t="Okay" selected>Okay</option><option value="2" data-t="Needs work">Needs work</option><option value="1" data-t="Poor">Poor</option></select></label>
+        <label><span data-t="Beauty Queen">Beauty Queen</span><select id="voteBeauty"><option value="5" data-t="Radiant">Radiant</option><option value="4" data-t="Attractive">Attractive</option><option value="3" selected data-t="Nice">Nice</option><option value="2" data-t="Average">Average</option><option value="1" data-t="Not my type">Not my type</option></select></label>
+        <label><span data-t="Character">Character</span><select id="voteMorals"><option value="5" data-t="Honorable">Honorable</option><option value="4" data-t="Respectful">Respectful</option><option value="3" selected data-t="Okay">Okay</option><option value="2" data-t="Pushy">Pushy</option><option value="1" data-t="Disrespectful">Disrespectful</option></select></label>
+        <label><span data-t="Charisma">Charisma</span><select id="voteCharisma"><option value="5" data-t="Magnetic">Magnetic</option><option value="4" data-t="Warm">Warm</option><option value="3" selected data-t="Okay">Okay</option><option value="2" data-t="Flat">Flat</option><option value="1" data-t="Cold">Cold</option></select></label>
+        <label><span data-t="Best speaker">Best speaker</span><select id="voteSpeaker"><option value="5" data-t="Best speaker">Best speaker</option><option value="4" data-t="Good listener">Good listener</option><option value="3" selected data-t="Okay">Okay</option><option value="2" data-t="Awkward">Awkward</option><option value="1" data-t="Hard to talk to">Hard to talk to</option></select></label>
       </div>
       <div class="feedback-actions"><button class="btn primary" id="sendFeedback" data-t="Submit private feedback">Submit private feedback</button><button class="btn" id="skipFeedback" data-t="Skip">Skip</button></div>
       <div class="feedback-note" data-t="Your individual vote is private. It helps build weekly Tayripages scores.">Your individual vote is private. It helps build weekly Tayripages scores.</div>
@@ -297,7 +301,7 @@ svg{display:inline-block}
   const localEmpty=$('localEmpty'), remoteEmpty=$('remoteEmpty'), identity=$('identity');
   const modeTabs=$('modeTabs'), randomMode=$('randomMode'), matchMode=$('matchMode'), matchPanel=$('matchPanel'), matchList=$('matchList');
   const proFilterBar=$('proFilterBar'), filterToggle=$('filterToggle'), proBadge=$('proBadge'), proFilterPanel=$('proFilterPanel');
-  const filterGender=$('filterGender'), filterSocial=$('filterSocial'), filterCharm=$('filterCharm'), filterSupporter=$('filterSupporter'), filterNote=$('filterNote');
+  const filterGender=$('filterGender'), filterMalika=$('filterMalika'), filterMorals=$('filterMorals'), filterCharisma=$('filterCharisma'), filterSpeaker=$('filterSpeaker'), filterNote=$('filterNote');
   const filterCountry=$('filterCountry'), filterInterest=$('filterInterest');
   const feedback=$('feedback'), sendFeedback=$('sendFeedback'), skipFeedback=$('skipFeedback');
   let authUser=null, db=null, uid='';
@@ -364,20 +368,25 @@ svg{display:inline-block}
     const by={};
     Object.entries(raw||{}).forEach(([from,targets])=>Object.entries(targets||{}).forEach(([to,v])=>{
       if(!v||to===from)return;
-      const x=by[to]||(by[to]={s:[],r:[],c:[]});
-      x.s.push(+v.sociability||3); x.r.push(+v.respect||3); x.c.push(+v.charm||3);
+      const x=by[to]||(by[to]={s:[],r:[],c:[],b:[],m:[],h:[],k:[]});
+      x.s.push(+v.sociability||3); x.r.push(+v.respect||+(v.morals)||3); x.c.push(+v.charm||+(v.charisma)||3);
+      x.b.push(+v.beauty||+v.charm||3); x.m.push(+v.morals||+v.respect||3); x.h.push(+v.charisma||+v.charm||3); x.k.push(+v.speaker||+v.sociability||3);
     }));
-    const out={}; Object.entries(by).forEach(([id,v])=>{ out[id]={social:(smoothScore(v.s)+smoothScore(v.r))/2,charm:smoothScore(v.c),count:v.s.length,charmRank:999999}; });
-    const charm=Object.entries(out).sort((a,b)=>b[1].charm-a[1].charm); charm.forEach(([id],i)=>{out[id].charmRank=i+1;});
+    const out={}; Object.entries(by).forEach(([id,v])=>{
+      const beauty=smoothScore(v.b), morals=smoothScore(v.m), charisma=smoothScore(v.h), speaker=smoothScore(v.k);
+      out[id]={social:(smoothScore(v.s)+morals)/2,charm:charisma,beauty,morals,charisma,speaker,count:v.s.length,beautyRank:999999,charmRank:999999};
+    });
+    Object.entries(out).sort((a,b)=>b[1].beauty-a[1].beauty).slice(0,100).forEach(([id],i)=>{out[id].beautyRank=i+1;});
+    Object.entries(out).sort((a,b)=>b[1].charisma-a[1].charisma).forEach(([id],i)=>{out[id].charmRank=i+1;});
     return out;
   }
   function genderOf(profile){ return profile&&((profile.g==='w'||profile.g==='m')?profile.g:(profile.gender||'u')); }
-  function defaultFilters(){ return {gender:'any',minSocial:0,maxCharmRank:0,supporterOnly:false,country:'all',interest:'any'}; }
+  function defaultFilters(){ return {gender:'any',malika:0,minMorals:0,minCharisma:0,minSpeaker:0,country:'all',interest:'any'}; }
   function activeFilters(){
     // Country + Shared interest are FREE for everyone; the rest are GOLD perks
     const f=defaultFilters();
     f.country=filterCountry.value||'all'; f.interest=filterInterest.value||'any';
-    if(isPro){ f.gender=filterGender.value; f.minSocial=+filterSocial.value||0; f.maxCharmRank=+filterCharm.value||0; f.supporterOnly=filterSupporter.value==='1'; }
+    if(isPro){ f.gender=filterGender.value; f.malika=+filterMalika.value||0; f.minMorals=+filterMorals.value||0; f.minCharisma=+filterCharisma.value||0; f.minSpeaker=+filterSpeaker.value||0; }
     return f;
   }
   function paintModeGold(){
@@ -391,7 +400,7 @@ svg{display:inline-block}
     filterToggle.innerHTML=IC('sliders',14)+(isPro?' Pro filters':' Filters');
     [filterGender,filterSocial,filterCharm,filterSupporter].forEach(x=>x.disabled=!isPro);
     [filterCountry,filterInterest].forEach(x=>x.disabled=false);
-    filterNote.textContent=isPro?'Filters apply mutually: both members must fit each other’s criteria.':'Country and shared interest are FREE for everyone. GOLD adds gender, social level, Charm rank, and Supporter filters.';
+    filterNote.textContent=isPro?(window.T?T('Psychology filters apply both ways: Beauty Queen, Character, Charisma, Best speaker. Top 20 of the weekly 100 get the Beauty Queen badge.'):'Psychology filters apply both ways: Beauty Queen, Character, Charisma, Best speaker. Top 20 of the weekly 100 get the Beauty Queen badge.'):(window.T?T('Country + interest are free. GOLD unlocks Beauty Queen, character, charisma, and speaker filters.'):'Country + interest are free. GOLD unlocks Beauty Queen, character, charisma, and speaker filters.');
   }
   function fillFilterOptions(){
     const seen={};
@@ -566,9 +575,13 @@ async function init(){
     try{
       await root('socialVotes/'+weekKey()+'/'+uid+'/'+feedbackPeer).set({
         to:feedbackPeer,
-        sociability:Number($('voteSocial').value),
-        respect:Number($('voteRespect').value),
-        charm:Number($('voteCharm').value),
+        sociability:Number($('voteSpeaker')?$('voteSpeaker').value:3),
+        respect:Number($('voteMorals')?$('voteMorals').value:3),
+        charm:Number($('voteCharisma')?$('voteCharisma').value:3),
+        beauty:Number($('voteBeauty')?$('voteBeauty').value:3),
+        morals:Number($('voteMorals')?$('voteMorals').value:3),
+        charisma:Number($('voteCharisma')?$('voteCharisma').value:3),
+        speaker:Number($('voteSpeaker')?$('voteSpeaker').value:3),
         ts:firebase.database.ServerValue.TIMESTAMP
       });
       hideFeedback(); setStatus('Private feedback saved. Thank you.','good');
