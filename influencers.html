@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0a0708">
+<title>Tayri Muse — Influencer atelier</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" type="image/png" href="icon.png">
+<script src="tayri-config.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0a0708;--card:#161012;--ink:#f6ebe6;--mut:#b39a96;--line:rgba(255,220,200,.1);--gold:#e8c27a;--rose:#ff6b8a;--ok:#3fdc85}
+html,body{min-height:100%;background:radial-gradient(900px 480px at 10% -10%,rgba(232,194,122,.16),transparent 55%),radial-gradient(800px 500px at 100% 0,rgba(255,107,138,.12),transparent 50%),#0a0708;color:var(--ink);font-family:Georgia,"Times New Roman",serif}
+body{padding:22px 16px 70px}
+button,input,textarea{font:inherit}
+button{border:0;cursor:pointer}
+a{color:inherit}
+.wrap{max-width:1080px;margin:0 auto}
+.brand{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:22px}
+.logo{font-size:13px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:700}
+.gate,.studio{display:none}
+.gate.on,.studio.on{display:block}
+.hero{text-align:center;padding:28px 10px 18px}
+.hero h1{font-size:clamp(34px,6vw,64px);font-weight:500;letter-spacing:-1.5px;line-height:1.05}
+.hero p{color:var(--mut);max-width:520px;margin:12px auto 0;line-height:1.65;font-size:15px}
+.card{background:rgba(22,16,18,.88);border:1px solid var(--line);border-radius:22px;padding:20px;box-shadow:0 24px 60px rgba(0,0,0,.45)}
+.inp{width:100%;padding:14px 16px;border-radius:14px;border:1px solid var(--line);background:#110c0d;color:var(--ink);outline:none}
+.inp:focus{border-color:var(--gold)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:14px 16px;border-radius:999px;background:linear-gradient(135deg,#f0d19a,#c9a056);color:#2a1c08;font-weight:800;letter-spacing:.3px}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn.ig{background:linear-gradient(45deg,#f9ce34,#ee2a7b,#6228d7);color:#fff}
+.tiny{font-size:12px;color:var(--mut);line-height:1.5}
+.err{color:#ff8aa0;font-size:13px;min-height:18px;margin-top:8px;text-align:center}
+.grid{display:grid;gap:12px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:18px 0}
+.stat{background:#120d0e;border:1px solid var(--line);border-radius:18px;padding:14px}
+.stat b{display:block;font-size:22px;color:var(--gold);font-family:-apple-system,BlinkMacSystemFont,sans-serif}
+.stat span{font-size:11px;color:var(--mut);letter-spacing:.4px;text-transform:uppercase}
+.tabs{display:flex;gap:8px;margin:8px 0 16px;flex-wrap:wrap}
+.tab{padding:9px 14px;border-radius:999px;background:#120d0e;border:1px solid var(--line);color:var(--mut);font-size:13px}
+.tab.on{color:#2a1c08;background:var(--gold);border-color:transparent}
+.muse{display:grid;grid-template-columns:88px 1fr auto;gap:12px;align-items:center;padding:12px;border-bottom:1px solid var(--line)}
+.av{width:88px;height:88px;border-radius:22px;object-fit:cover;background:#2a1a1c;border:1px solid var(--line)}
+.muse h3{font-size:18px;font-weight:500}
+.badge{display:inline-block;padding:3px 8px;border-radius:999px;background:rgba(232,194,122,.14);color:var(--gold);font-size:10px;letter-spacing:.6px;text-transform:uppercase}
+.row{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);font-family:-apple-system,BlinkMacSystemFont,sans-serif;font-size:13px}
+.golddot{color:var(--gold)}
+.ok{color:var(--ok)}
+.hidden{display:none!important}
+@media(max-width:760px){.stats{grid-template-columns:1fr 1fr}.muse{grid-template-columns:72px 1fr}.av{width:72px;height:72px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="brand"><div class="logo">Tayri Muse</div><a class="tiny" href="./index.html">Back to Tayripages</a></header>
+
+  <section class="gate on" id="gate">
+    <div class="hero">
+      <h1>The atelier is private.</h1>
+      <p>One shared key. Your face, your Instagram, your 90% on every GOLD you bring. Stats live in Firebase — nobody edits a number by hand.</p>
+    </div>
+    <div class="card" style="max-width:440px;margin:0 auto">
+      <div class="tiny" style="margin-bottom:8px">Club password — it never changes</div>
+      <input class="inp" id="clubPass" type="password" placeholder="••••••••••••" autocomplete="off">
+      <div style="height:10px"></div>
+      <button class="btn" id="unlockBtn">Enter the atelier</button>
+      <div class="err" id="gateErr"></div>
+    </div>
+  </section>
+
+  <section class="studio" id="studio">
+    <div class="hero" style="padding-top:4px">
+      <h1>Earn like a muse.</h1>
+      <p>Share your link. When someone creates a real Tayripages profile and GOLD is approved, you receive <b style="color:var(--gold)">90%</b> of 99 DH — paid weekly by bank transfer.</p>
+    </div>
+
+    <div class="card" id="meCard">
+      <div class="tiny" id="who"></div>
+      <div class="stats">
+        <div class="stat"><b id="sSign">0</b><span>Registered</span></div>
+        <div class="stat"><b id="sGold">0</b><span>GOLD bought</span></div>
+        <div class="stat"><b id="sEarn">0</b><span>DH earned (90%)</span></div>
+        <div class="stat"><b id="sPay">—</b><span>Next payout</span></div>
+      </div>
+      <div class="tiny">Payouts every Monday (Africa/Casablanca). Admin marks a week paid after the transfer. You cannot change earnings — they are counted from live GOLD + referrals.</div>
+      <div style="height:12px"></div>
+      <div class="grid" style="grid-template-columns:1fr auto;gap:8px">
+        <input class="inp" id="refLink" readonly>
+        <button class="btn" id="copyRef" style="width:auto;padding-inline:18px">Copy link</button>
+      </div>
+    </div>
+
+    <div style="height:14px"></div>
+    <div class="card">
+      <div class="tiny">Your public Instagram — other muses see this card</div>
+      <div style="height:8px"></div>
+      <input class="inp" id="igUrl" placeholder="https://instagram.com/yourname">
+      <div style="height:8px"></div>
+      <input class="inp" id="igName" placeholder="Display name" maxlength="40">
+      <div style="height:8px"></div>
+      <textarea class="inp" id="igBio" rows="2" maxlength="180" placeholder="One line that sells the fantasy…"></textarea>
+      <div style="height:8px"></div>
+      <input class="inp" id="payoutRib" placeholder="RIB for weekly transfer (private to you + admin)">
+      <div style="height:10px"></div>
+      <button class="btn" id="saveIg">Save my muse card</button>
+      <div class="err" id="saveErr"></div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab on" data-t="house">The house</button>
+      <button class="tab" data-t="board">Leaderboard</button>
+      <button class="tab" data-t="book">My book</button>
+    </div>
+
+    <div id="view-house"></div>
+    <div id="view-board" class="hidden"></div>
+    <div id="view-book" class="hidden"></div>
+  </section>
+</div>
+
+<script>
+(function(){
+  'use strict';
+  const PASS='topinfluencers';
+  const ROOT='wasla_dating';
+  const CUT=0.90;
+  const PRICE=+(TAYRI_CONFIG.gold&&TAYRI_CONFIG.gold.priceDH)||99;
+  const $=id=>document.getElementById(id);
+  let db=null, uid='', me=null, influencers={}, goldMap={}, users={}, myRefs={};
+
+  function root(p){ return db.ref(ROOT+'/'+p); }
+  function esc(s){ return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+  function handleOf(url){
+    const m=String(url||'').trim().match(/instagram\.com\/([A-Za-z0-9._]+)/i);
+    return m?m[1].replace(/\.$/,''):'';
+  }
+  function igAvatar(h){ return h?('https://unavatar.io/instagram/'+encodeURIComponent(h)+'?fallback=false'):''; }
+  function igHref(h){ return 'https://instagram.com/'+encodeURIComponent(h); }
+  function nextMonday(){
+    const d=new Date();
+    const day=(d.getDay()+6)%7;
+    d.setDate(d.getDate()+(day===0?7:7-day));
+    d.setHours(10,0,0,0);
+    return d;
+  }
+  function refLink(){
+    const base=(TAYRI_CONFIG.site&&TAYRI_CONFIG.site.url)||(location.origin+location.pathname.replace(/[^/]+$/,'') );
+    return base.replace(/\/?$/,'/')+'index.html?ref='+encodeURIComponent(uid);
+  }
+  function toast(el,m){ if(el) el.textContent=m; }
+
+  $('unlockBtn').onclick=()=>{
+    const v=($('clubPass').value||'').trim();
+    if(v!==PASS){ $('gateErr').textContent='That is not the atelier key.'; return; }
+    sessionStorage.setItem('tayri_muse','1');
+    bootFirebase();
+  };
+  if(sessionStorage.getItem('tayri_muse')==='1') bootFirebase();
+
+  function bootFirebase(){
+    try{
+      if(!firebase.apps.length) firebase.initializeApp(TAYRI_CONFIG.firebase);
+      db=firebase.database();
+      firebase.auth().onAuthStateChanged(u=>{
+        if(!u){ showGoogle(); return; }
+        uid=u.uid; me=u; enterStudio();
+      });
+    }catch(e){ $('gateErr').textContent='Firebase could not start.'; }
+  }
+  function showGoogle(){
+    $('gate').classList.add('on'); $('studio').classList.remove('on');
+    $('gateErr').innerHTML='Key accepted. Now sign in with the Google you use as a muse.';
+    const b=document.createElement('button');
+    b.className='btn'; b.style.marginTop='10px'; b.textContent='Continue with Google';
+    b.onclick=()=>{
+      const p=new firebase.auth.GoogleAuthProvider();
+      firebase.auth().signInWithPopup(p).catch(()=>firebase.auth().signInWithRedirect(p));
+    };
+    if(!$('gbtn')){ b.id='gbtn'; $('unlockBtn').after(b); }
+  }
+
+  async function enterStudio(){
+    $('gate').classList.remove('on'); $('studio').classList.add('on');
+    $('who').textContent=(me.displayName||me.email||'Muse')+' · '+uid.slice(0,8)+'…';
+    $('refLink').value=refLink();
+    $('sPay').textContent=nextMonday().toLocaleDateString(undefined,{weekday:'short',day:'numeric',month:'short'});
+    await loadCloud();
+    const mine=influencers[uid]||{};
+    $('igUrl').value=mine.ig||'';
+    $('igName').value=mine.name||(me.displayName||'');
+    $('igBio').value=mine.bio||'';
+    $('payoutRib').value=mine.payoutRib||'';
+    paintAll();
+  }
+
+  async function loadCloud(){
+    const [isnap,gsnap,usnap,rsnap,allr]=await Promise.all([
+      root('influencers').once('value'),
+      root('gold').once('value'),
+      root('users').once('value'),
+      root('referrals/'+uid).once('value'),
+      root('referrals').once('value').catch(()=>null)
+    ]);
+    influencers=isnap.val()||{}; goldMap=gsnap.val()||{}; users=usnap.val()||{}; myRefs=rsnap.val()||{};
+    window.__allRefs=(allr&&allr.val())||{[uid]:myRefs};
+    root('influencers').on('value',s=>{ influencers=s.val()||{}; paintAll(); });
+    root('gold').on('value',s=>{ goldMap=s.val()||{}; paintAll(); });
+    root('referrals/'+uid).on('value',s=>{ myRefs=s.val()||{}; if(window.__allRefs)window.__allRefs[uid]=myRefs; paintMine(); paintAll(); });
+  }
+
+  function statsOf(infUid, refs){
+    const ids=Object.keys(refs||{});
+    let golds=0;
+    ids.forEach(id=>{ if(goldMap[id]) golds++; });
+    return {signups:ids.length,golds,earn:Math.round(golds*PRICE*CUT*10)/10,ids};
+  }
+
+  function paintMine(){
+    const s=statsOf(uid,myRefs);
+    $('sSign').textContent=s.signups;
+    $('sGold').textContent=s.golds;
+    $('sEarn').textContent=s.earn;
+  }
+
+  function paintAll(){
+    paintMine();
+    paintHouse();
+    paintBoard();
+    paintBook();
+  }
+
+  function paintHouse(){
+    const list=Object.entries(influencers).sort((a,b)=>(a[1].name||'').localeCompare(b[1].name||''));
+    if(!list.length){ $('view-house').innerHTML='<div class="card tiny">You are the first muse. Save your Instagram to appear here.</div>'; return; }
+    $('view-house').innerHTML='<div class="card">'+list.map(([id,p])=>{
+      const h=handleOf(p.ig)||p.handle||'';
+      const av=igAvatar(h);
+      const refs=(window.__allRefs&&window.__allRefs[id])||(id===uid?myRefs:null);
+      const s=refs?statsOf(id,refs):null;
+      return `<article class="muse">
+        <img class="av" src="${esc(av)}" alt="" onerror="this.style.opacity=.25">
+        <div>
+          <h3>${esc(p.name||'Muse')} ${id===uid?'<span class="badge">You</span>':''}</h3>
+          <div class="tiny">@${esc(h||'instagram')}</div>
+          <div class="tiny">${esc(p.bio||'')}</div>
+          ${s?`<div class="tiny golddot">${s.golds} GOLD · ${s.signups} registered · ${s.earn} DH</div>`:''}
+        </div>
+        <a class="btn ig" style="width:auto;padding:10px 14px" href="${igHref(h)}" target="_blank" rel="noopener">Follow</a>
+      </article>`;
+    }).join('')+'</div>';
+  }
+
+  function paintBoard(){
+    const all=window.__allRefs||{[uid]:myRefs};
+    const rows=Object.keys(influencers).map(id=>[id,statsOf(id,all[id]||(id===uid?myRefs:{}))]);
+    if(!rows.find(r=>r[0]===uid)) rows.push([uid,statsOf(uid,myRefs)]);
+    rows.sort((a,b)=>b[1].earn-a[1].earn||b[1].signups-a[1].signups);
+    $('view-board').innerHTML='<div class="card"><div class="tiny">Ranked by GOLD commission (90% × 99 DH) then by signups. Numbers come from Firebase referrals + gold — not from a field anyone can type.</div>'+
+      rows.map((r,i)=>{
+        const conv=r[1].signups?Math.round(r[1].golds*100/r[1].signups):0;
+        return `<div class="row"><span>#${i+1} ${esc((influencers[r[0]]&&influencers[r[0]].name)||r[0].slice(0,6))}</span><b class="golddot">${r[1].earn} DH · ${r[1].golds} GOLD · ${r[1].signups} in · ${conv}% conv.</b></div>`;
+      }).join('')+'</div>';
+  }
+
+  function paintBook(){
+    const s=statsOf(uid,myRefs);
+    const ids=s.ids;
+    if(!ids.length){ $('view-book').innerHTML='<div class="card tiny">No referred accounts yet. Share your link. Only profiles that finish signup count. GOLD must be approved in admin before it pays.</div>'; return; }
+    $('view-book').innerHTML='<div class="card">'+ids.map(id=>{
+      const u=users[id]||{};
+      const g=!!goldMap[id];
+      const name=u.name||id.slice(0,8);
+      const city=u.city||'';
+      return `<div class="row">
+        <div><b>${esc(name)}</b><div class="tiny">${esc(id)} · ${esc(city)}</div></div>
+        <div>${g?'<span class="ok">GOLD · +'+Math.round(PRICE*CUT)+' DH</span>':'<span class="tiny">Signed up</span>'}</div>
+      </div>`;
+    }).join('')+'</div>';
+  }
+
+  document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{
+    document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x===t));
+    ['house','board','book'].forEach(k=>$('view-'+k).classList.toggle('hidden',t.dataset.t!==k));
+  });
+
+  $('copyRef').onclick=async()=>{
+    try{ await navigator.clipboard.writeText($('refLink').value); $('copyRef').textContent='Copied'; setTimeout(()=>$('copyRef').textContent='Copy link',1600);}
+    catch(e){ $('refLink').select(); }
+  };
+
+  $('saveIg').onclick=async()=>{
+    const ig=$('igUrl').value.trim();
+    const h=handleOf(ig);
+    if(!h){ toast($('saveErr'),'Paste a full Instagram profile URL.'); return; }
+    try{
+      await root('influencers/'+uid).update({
+        name:($('igName').value||'Muse').trim().slice(0,40),
+        ig:'https://instagram.com/'+h,
+        handle:h,
+        bio:($('igBio').value||'').trim().slice(0,180),
+        payoutRib:($('payoutRib').value||'').trim().slice(0,34),
+        joinedAt: firebase.database.ServerValue.TIMESTAMP
+      });
+      toast($('saveErr'),'Card live. The house can see you.');
+      $('saveErr').style.color='var(--ok)';
+    }catch(e){ toast($('saveErr'),'Save blocked — publish the influencer rules in Firebase.'); $('saveErr').style.color='#ff8aa0'; }
+  };
+})();
+</script>
+</body>
+</html>
