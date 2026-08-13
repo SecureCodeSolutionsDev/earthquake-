@@ -39,7 +39,7 @@
 
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging-compat.js"></script>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
 :root{
   --bg:#100610; --card:#1b0d18; --soft:#2a1322; --line:#3a1f31;
   --txt:#f8eef4; --mut:#b48ba2; --grad:linear-gradient(45deg,#ff5e8a,#ffb15c);
@@ -242,7 +242,7 @@ body.bootwait #bootSplash{display:flex}
 .mov .duo .ma img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .storyv-rep{position:absolute;top:8px;inset-inline-start:10px;z-index:5;color:#fff;background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.3);border-radius:999px;padding:6px 10px;font-size:11px;font-weight:800}
 .storyv-x{position:absolute;top:4px;inset-inline-end:10px;color:#fff;font-size:24px;z-index:5;text-shadow:0 1px 6px rgba(0,0,0,.7);padding:8px}
-.storyv-pause{position:absolute;bottom:128px;left:50%;transform:translateX(-50%);z-index:8;background:rgba(0,0,0,.55);border:1.5px solid rgba(255,255,255,.55);color:#fff;border-radius:999px;padding:10px 22px;font-size:13px;font-weight:800;min-width:88px}
+.storyv-pause{display:none!important}
 .mov h1{font-size:40px;font-weight:900;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;animation:pop .5s ease}
 .mov .duo{display:flex;gap:0;margin:18px 0 6px}
 .mov .duo .ma{width:118px;height:118px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:56px;border:4px solid #fff;box-shadow:0 14px 34px rgba(0,0,0,.4)}
@@ -505,6 +505,8 @@ body.preauth.authno #scr-auth{display:block!important}
 .sv-act{display:flex;gap:8px;align-items:center}
 .sv-act input{flex:1;background:rgba(255,255,255,.14);border:1.5px solid rgba(255,255,255,.55);color:#fff;border-radius:999px;padding:11px 15px;font-size:13px;outline:none;min-width:0}
 .sv-act input::placeholder{color:rgba(255,255,255,.78)}
+.sv-pause{width:46px;height:46px;flex:none;border-radius:50%;background:rgba(255,255,255,.16);border:1.5px solid rgba(255,255,255,.55);color:#fff;display:grid;place-items:center;backdrop-filter:blur(8px)}
+.sv-pause svg{display:block}
 .sv-heart{width:46px;height:46px;flex:none;border-radius:50%;background:var(--grad);color:#fff;display:grid;place-items:center;box-shadow:0 6px 18px rgba(255,94,138,.6)}
 .sv-heart:active{transform:scale(.9)}
 .pcard{box-shadow:0 24px 60px rgba(255,94,138,.30);border:1px solid var(--line)}
@@ -565,6 +567,9 @@ body.preauth.authno #scr-auth{display:block!important}
 .story-add-btn.has-story{border-style:solid;background:var(--grad);color:#fff;box-shadow:0 0 0 3px #fff,0 0 0 5.5px var(--pk),0 0 24px 10px rgba(255,94,138,.55);animation:storyglow 1.9s infinite}
 
 
+/* soft-privacy */
+img,video,canvas{-webkit-user-drag:none;user-select:none;-webkit-touch-callout:none}
+.dcard .ph img,.storyv-card img,.pcard .ph img,.lkcard .ph img,.snapiv img{pointer-events:none}
 </style>
 </head>
 <body class="preauth bootwait">
@@ -587,6 +592,7 @@ body.preauth.authno #scr-auth{display:block!important}
         <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.1H42V20H24v8h11.3c-1.6 4.7-6.1 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3l5.7-5.7C34 6.1 29.3 4 24 4 13 4 4 13 4 24s9 20 20 20 20-9 20-20c0-1.3-.1-2.7-.4-3.9z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.9 1.2 8 3l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.1H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C41 35.4 44 30.2 44 24c0-1.3-.1-2.7-.4-3.9z"/></svg>
         <span data-t="Continue with Google">Continue with Google</span>
       </button>
+      <div class="authh" style="font-size:16px;margin-top:10px;letter-spacing:.4px" data-t="Date with privacy">Date with privacy</div>
       <div class="authtiny" data-t="Sign-in secured by Google · your identity stays private · 18+">Sign-in secured by Google · your identity stays private · 18+</div>
       <div class="authtiny" style="margin-top:12px"><span data-t="By continuing, you agree to the">By continuing, you agree to the</span> <button class="linklike" onclick="openRules()"><span data-t="Tayripages Rules">Tayripages Rules</span></button></div>
       <div class="seg authseg">
@@ -717,7 +723,6 @@ body.preauth.authno #scr-auth{display:block!important}
   <div class="storyv-card" onclick="event.stopPropagation()">
     <div class="storyv-prog" id="storyBars"></div>
     <button class="storyv-rep" type="button" data-t="Report" onclick="event.stopPropagation();reportStory()">Report</button>
-    <button type="button" class="storyv-pause" id="svPause" onclick="event.stopPropagation();toggleStoryPause()">Pause</button>
     <div class="storyv-x" onclick="closeStory()">✕</div>
     <div class="storyv-head"><b id="svName"></b><span id="svTime"></span></div>
     <img id="svImg" alt="">
@@ -725,6 +730,7 @@ body.preauth.authno #scr-auth{display:block!important}
       <div class="sv-cap" id="svCap"></div>
       <div class="sv-act">
         <input id="svNote" maxlength="120" placeholder="Reply to this story…">
+        <button type="button" class="sv-pause" id="svPause" aria-label="Pause" onclick="event.stopPropagation();toggleStoryPause()"><svg id="svPauseIco" width="18" height="18" viewBox="0 0 24 24" fill="#fff"><path d="M7 5h3v14H7zM14 5h3v14h-3z"/></svg></button>
         <button class="sv-heart" id="svLike" aria-label="Send like"><svg width="21" height="21" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M12 21S3.6 15.5 3.6 9.8C3.6 6.7 5.9 4.5 8.6 4.5c1.5 0 2.8.75 3.4 1.9.6-1.15 1.9-1.9 3.4-1.9 2.7 0 5 2.2 5 5.3C20.4 15.5 12 21 12 21z"/></svg></button>
       </div>
     </div>
@@ -1661,9 +1667,14 @@ function runStoryTimer(){
     requestAnimationFrame(()=>{ bar.style.transition='width '+svLeft+'ms linear'; bar.style.width='100%'; }); }
   window._svT=setTimeout(()=>storyNext(), svLeft);
 }
+function setPauseIcon(paused){
+  const ico=$('svPauseIco'); if(!ico) return;
+  ico.innerHTML=paused?'<path d="M8 5v14l11-7z"/>':'<path d="M7 5h3v14H7zM14 5h3v14h-3z"/>';
+  const btn=$('svPause'); if(btn) btn.setAttribute('aria-label', paused?T('Play'):T('Pause'));
+}
 function toggleStoryPause(){
-  if(svPaused){ svPaused=0; const btn=$('svPause'); if(btn)btn.textContent=T('Pause'); runStoryTimer(); }
-  else { svPaused=1; svLeft=Math.max(400, svLeft-(Date.now()-svStart)); clearTimeout(window._svT); const bar=document.querySelector('#storyBars i[data-si="'+svIx+'"] b'); if(bar) bar.style.transition='none'; const btn=$('svPause'); if(btn)btn.textContent=T('Play'); }
+  if(svPaused){ svPaused=0; setPauseIcon(0); runStoryTimer(); }
+  else { svPaused=1; svLeft=Math.max(400, svLeft-(Date.now()-svStart)); clearTimeout(window._svT); const bar=document.querySelector('#storyBars i[data-si="'+svIx+'"] b'); if(bar) bar.style.transition='none'; setPauseIcon(1); }
 }
 function storyNext(){ if(svIx<svItems.length-1){ svIx++; svLeft=8000; svPaused=0; paintStoryFrame(); runStoryTimer(); } else closeStory(); }
 function storyPrev(){ if(svIx>0){ svIx--; svLeft=8000; svPaused=0; paintStoryFrame(); runStoryTimer(); } }
@@ -1679,18 +1690,28 @@ async function openStory(peer){
   if(!storyFresh(s)&&!DEMO){ try{ s=(await ref('stories/'+peer).once('value')).val(); STORY[peer]=s; }catch(e){} }
   svItems=storyList(s);
   if(!svItems.length)return toast(T('That story has expired'));
-  svPeer=peer; svIx=0; svPaused=0; svLeft=8000;
+  svPeer=peer; svIx=0; svPaused=0; svLeft=8000; try{setPauseIcon(0)}catch(e){}
   $('svNote').value='';
   window._svReact=false;
   $('svLike').onclick=storyLike;
   $('svNote').onkeydown=e=>{ if(e.key==='Enter')storyLike(); };
-  $('svNote').onfocus=()=>toggleStoryPause();
+  $('svNote').onfocus=()=>{ if(!svPaused) toggleStoryPause(); };
   const card=document.querySelector('.storyv-card');
   if(card){ card.onclick=e=>{ const r=card.getBoundingClientRect(); if(e.clientX-r.left<r.width*0.28) storyPrev(); else if(e.clientX-r.left>r.width*0.72) storyNext(); }; }
   show('storyV');
   paintStoryFrame(); runStoryTimer();
   try{ await refreshSvReact(); }catch(e){}
   paintSvAct();
+}
+function svItemId(){ const it=svItems[svIx]; return (it&&it.id)||'main'; }
+async function refreshSvReact(){
+  window._svReact=false;
+  if(DEMO||!svPeer) return;
+  try{ const s=await ref('storyReacts/'+svPeer+'/'+svItemId()+'/'+uid).once('value'); window._svReact=!!s.val(); }catch(e){}
+}
+function paintSvAct(){
+  const h=$('svLike'); if(!h) return;
+  h.style.opacity=window._svReact?'.45':'1';
 }
 function closeStory(){ clearTimeout(window._svT); svPaused=1; const v=$('storyV'); if(v){ v.classList.remove('on'); v.style.display='none'; setTimeout(()=>{ if(v&&!v.classList.contains('on')) v.style.display=''; },300);} }
 async function reportStory(){
@@ -1716,7 +1737,7 @@ function pickStory(){
   if (now - _uploadSpam.last < 5000) { toast(T('Please wait 5 seconds between uploads')); return; }
   _uploadSpam.last = now;
   const live=storyList(STORY[uid]);
-  if(live.length>=5){ toast(T('You can keep 5 live stories — like Instagram')); return; }
+  if(live.length>=3){ toast(T('You can keep 3 live stories')); return; }
   const inp=document.createElement('input'); inp.type='file'; inp.accept='image/*';
   inp.onchange=async()=>{ const f=inp.files&&inp.files[0]; if(!f)return;
     toast(T('Polishing your photo…'));
@@ -1752,7 +1773,7 @@ async function publishStory(){
     const id='s'+Date.now().toString(36);
     items[id]={img:data,ts:Date.now(),caption:cap||''};
     const fresh=Object.entries(items).filter(([,x])=>x&&x.img&&Date.now()-(+x.ts||0)<86400000).sort((a,b)=>(a[1].ts||0)-(b[1].ts||0));
-    while(fresh.length>5) fresh.shift();
+    while(fresh.length>3) fresh.shift();
     const map={}; fresh.forEach(([k,v])=>{ map[k]=v; });
     const last=fresh[fresh.length-1][1];
     const out={img:last.img,ts:last.ts,name:String(L.me.name||'').slice(0,36),items:map};
@@ -2875,8 +2896,20 @@ function messageMenu(encodedKey){
     <div class="mut tiny" style="margin-bottom:10px">${T('Choose carefully. Deletions cannot be undone.')}</div>
     <button class="btn btn-line" onclick="confirmDeleteMessage('me','${encodeURIComponent(key)}')">${T('Delete for me')}</button>
     ${canEveryone?`<div style="height:8px"></div><button class="btn btn-line" style="color:#c3345a" onclick="confirmDeleteMessage('everyone','${encodeURIComponent(key)}')">${T('Unsend for everyone')}</button>`:''}
+    ${own?`<div style="height:8px"></div><button class="btn btn-line" style="color:#c3345a" onclick="unsendAllMine()">${T('Unsend all my messages for everyone')}</button>`:''}
     <div style="height:8px"></div><button class="btn btn-line" onclick="hide(\'genSheet\')">Cancel</button>`;
   show('genSheet');
+}
+async function unsendAllMine(){
+  const mid=R.chatWith; if(!mid) return;
+  if(!confirm(T('Unsend all of your messages for everyone? They will be removed permanently.'))) return;
+  const list=(L.chats[mid]||[]).filter(x=>x&&x.who==='msg'&&(x.me||x.from===uid)&&x.key&&!String(x.key).startsWith('local_')&&!String(x.key).startsWith('sim_'));
+  let n=0;
+  for(const m of list){
+    try{ await ref('chats/'+mid+'/'+m.key).remove(); n++; }catch(e){}
+  }
+  L.chats[mid]=(L.chats[mid]||[]).filter(x=>!(x.me||x.from===uid)||String(x.key||'').startsWith('local_'));
+  save(); paintMsgs(); hide('genSheet'); toast(T('Messages unsent for everyone')+(n?(' · '+n):''));
 }
 async function confirmDeleteMessage(scope,encodedKey){
   const key=decodeURIComponent(encodedKey||''), mid=R.chatWith; const m=(L.chats[mid]||[]).find(x=>x.key===key); if(!m)return;
@@ -3033,7 +3066,9 @@ function chatMenu(){
     <div style="height:8px"></div>
     <button class="btn btn-line" onclick="unmatchAsk()">${T('Unmatch')}</button>
     <div style="height:8px"></div>
-    <button class="btn btn-line" style="color:#ff7a7a" onclick="reportAsk()">${IC('flag',15)} ${T('Report & block')}</button>`;
+    <button class="btn btn-line" style="color:#ff7a7a" onclick="reportAsk()">${IC('flag',15)} ${T('Report')}</button>
+    <div style="height:8px"></div>
+    <button class="btn btn-line" onclick="blockAsk()">${IC('ban',15)} ${T('Block')}</button>`;
   show('genSheet');
 }
 /* 🎨 chat comfort — colorblind-friendly palettes + dark chat */
@@ -3102,6 +3137,15 @@ function unmatchAsk(){
 }
 /* 🚩 REPORT — reason first, then optionally attach one text message as evidence */
 function proofEsc(s){ return String(s||'').slice(0,1200).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function blockAsk(){
+  const m=L.matches.find(m=>m.mid===R.chatWith); if(!m)return;
+  $('genBody').innerHTML=`<div class="h2" style="margin-bottom:8px">${T('Block')} ${proofEsc(m.name)}?</div>
+    <div class="mut small" style="margin-bottom:12px">${T('They will be unmatched. This is not a report — no evidence is sent to the team.')}</div>
+    <button class="btn btn-grad" onclick="doUnmatch(false)">${T('Block')}</button>
+    <div style="height:8px"></div>
+    <button class="btn btn-line" onclick="hide('genSheet')">${T('Cancel')}</button>`;
+  show('genSheet');
+}
 function reportAsk(){
   const m=L.matches.find(m=>m.mid===R.chatWith); if(!m)return;
   const reasons=[
@@ -3415,15 +3459,16 @@ function renderProfile(){
       </div>
       <div class="card" style="margin-bottom:10px">
         <div class="spread"><b class="small">${T('My story')}</b>${storyFresh(STORY[uid])?'<span class="pill" style="background:var(--grad);color:#fff;box-shadow:0 0 12px 4px rgba(255,94,138,.7)">LIVE · 24h</span>':''}</div>
-        <div class="mut tiny" style="margin:4px 0 10px">${T('One photo, 24 hours. A glowing ring appears around your chat avatar — your matches tap it to view.')}</div>
-        <div class="mysrc">
-          ${storyFresh(STORY[uid])
-            ?`<div class="mystory-ring"><img src="${STORY[uid].img}" alt="my story" style="width:100%;height:100%;border-radius:50%;object-fit:cover"></div>`
-            :`<button class="story-add-btn" onclick="pickStory()">${IC('plus',28)}</button>`}
-          <div style="flex:1"><b class="small">${storyFresh(STORY[uid])?T('Your story is glowing'):T('Add your story')}</b>
-            <div class="mut tiny" style="margin:3px 0 8px">${storyFresh(STORY[uid])?T('Visible to your matches — tap your chat avatar to preview'):T('One tap — your matches see the glow. Let your light be seen')}</div>
-            <button class="pill ${storyFresh(STORY[uid])?'':'pon'}" onclick="pickStory()" style="${storyFresh(STORY[uid])?'':'background:var(--grad);color:#fff'}">${storyFresh(STORY[uid])?T('Replace story'):T('Add story')}</button></div>
-        </div>
+        <div class="mut tiny" style="margin:4px 0 10px">${T('Up to 3 photos, 24 hours each. Your matches see the glow and tap to watch.')}</div>
+        <div style="display:flex;gap:10px;align-items:flex-start;overflow-x:auto;padding:2px 0 8px">${(function(){
+          const live=storyList(STORY[uid]);
+          const slots=live.map((it,i)=>`<button type="button" onclick="openStory('${uid}')" style="flex:none;width:72px;text-align:center"><div class="mystory-ring" style="width:64px;height:64px;margin:0 auto"><img src="${it.img}" alt="" style="width:100%;height:100%;border-radius:50%;object-fit:cover"></div><div class="tiny mut" style="margin-top:4px">${i+1}/3</div></button>`).join('');
+          const add=live.length<3?`<button class="story-add-btn" onclick="pickStory()">${IC('plus',28)}</button>`:'';
+          return slots+add;
+        })()}</div>
+        <div style="flex:1"><b class="small">${storyList(STORY[uid]).length?T('Your stories are glowing'):T('Add your story')}</b>
+            <div class="mut tiny" style="margin:3px 0 8px">${storyList(STORY[uid]).length?T('You can add more — max 3 live stories'):T('One tap — your matches see the glow. Let your light be seen')}</div>
+            <button class="pill ${storyList(STORY[uid]).length>=3?'':'pon'}" onclick="pickStory()" ${storyList(STORY[uid]).length>=3?'disabled':''} style="${storyList(STORY[uid]).length>=3?'':'background:var(--grad);color:#fff'}">${storyList(STORY[uid]).length?T('Add another story'):T('Add story')}</button></div>
         <div class="addstory-quote">“${T('Show your light today. A single story can start a beautiful conversation')}”</div>
         ${storyInsightsHtml()}
       </div>
@@ -3467,6 +3512,7 @@ function renderProfile(){
         <button class="mprow" onclick="location.href='video.html'"><div class="mico mic-e">${IC('video',22)}</div><div class="mtxt"><b>${T('Instant video')}</b><div>${T('Meet someone live — free')}</div></div><span class="chev">›</span></button>
         <button class="mprow" onclick="location.href='stream.html'"><div class="mico mic-d">${IC('video',22)}</div><div class="mtxt"><b>${T('Live stream')} <span class="pill" style="margin-inline-start:6px">${T('beta')}</span></b><div id="liveCntLine">${T('Watch or go live — gifts, 30% to Tayripages')}</div></div><span class="pill" id="liveCntPill">${T('LIVE')}</span></button>
         <button class="mprow" onclick="openCrushSheet()"><div class="mico mic-e">${IC('heart',22)}</div><div class="mtxt"><b>${T('Crush zone')}</b><div>${T('Know if they viewed your story · hide from anyone')}</div></div><span class="chev">›</span></button>
+        <button class="mprow" onclick="location.href='influencers.html'"><div class="mico mic-d">${IC('spark',22)}</div><div class="mtxt"><b>${T('Muse House')}</b><div>${T('Creators glow here — bring your people, earn 50% of GOLD')}</div></div><span class="chev">›</span></button>
 
         <button class="mprow" onclick="toggleNotif()"><div class="mico mic-f">${IC('bell',22)}</div><div class="mtxt"><b>${T('In-app notifications')}</b><div>${T('Toasts while the app is open')}</div></div><div class="toggle ${L.notif===false?'':'on'}" id="notifT"></div></button>
         <button class="mprow" onclick="openSafety()"><div class="mico mic-g">${IC('shield',22)}</div><div class="mtxt"><b>${T('Safety center')}</b><div>${T('Block, report, dating tips')}</div></div><span class="chev">›</span></button>
@@ -3525,7 +3571,7 @@ function paintGold(){ const el=$('goldTop'); if(el)el.textContent=goldActive()?T
 
 /* ============ INIT ============ */
 setTimeout(()=>{ const dk=$('deck'); if(AUTHED&&R.tab==='discover'&&dk&&!dk.children.length){ try{paintDeck();}catch(e){} } }, 5200);
-const TAYRI_BUILD='v33'; /* bump this number on every release — every phone self-updates once, no cache games */
+const TAYRI_BUILD='v38'; /* bump this number on every release — every phone self-updates once, no cache games */
 try{
   if(!sessionStorage.getItem('tayri_boot_'+TAYRI_BUILD)){
     sessionStorage.setItem('tayri_boot_'+TAYRI_BUILD,'1');
@@ -3534,6 +3580,7 @@ try{
     }
   }
 }catch(e){}
+document.addEventListener('contextmenu',function(e){ if(e.target&&(e.target.tagName==='IMG'||e.target.closest('.storyv-card,.dcard .ph,.pcard .ph'))) e.preventDefault(); });
 fbInit();
 paintGold();
 paintAuthBg();
