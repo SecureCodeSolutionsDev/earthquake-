@@ -7,6 +7,8 @@
 <title>Tayripages Live</title>
 <link rel="icon" type="image/png" href="icon.png">
 <script src="tayri-config.js"></script>
+<script src="tayri-lock.js"></script>
+<script src="tayri-i18n.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
@@ -46,26 +48,26 @@ video{width:100%;height:100%;object-fit:cover;background:#000}
   <div class="top">
     <div class="brand">Tayri <i>Live</i></div>
     <div style="display:flex;gap:8px;align-items:center">
-      <a class="btn btn-l" href="./index.html">App</a>
+      <a class="btn btn-l" href="./index.html" data-t="App">App</a>
       <span class="tiny" id="liveN">0 live</span>
     </div>
   </div>
 
   <section id="lobby">
     <div class="card" style="padding:14px;margin-bottom:14px">
-      <b>Go live or watch</b>
-      <div class="tiny" style="margin:6px 0 10px">Video stays peer-to-peer — Firebase only stores room cards, chat text, and gift counts. Spark quota is not used for video bytes. Gifts: 30% Tayripages, 70% host (paid with weekly GOLD / bank like Muse).</div>
-      <input class="inp" id="titleIn" maxlength="80" placeholder="Stream title">
+      <b data-t="Go live or watch">Go live or watch</b>
+      <div class="tiny" style="margin:6px 0 10px" data-t="Anyone can watch. Video is peer-to-peer — Firebase never stores video (no Spark bytes). Stars: 68% host · 32% Tayripages (in line with major live apps).">Anyone can watch. Video is peer-to-peer — Firebase never stores video (no Spark bytes). Stars: 68% host · 32% Tayripages (in line with major live apps).</div>
+      <input class="inp" id="titleIn" maxlength="80" data-tph="Stream title" placeholder="Stream title">
       <div style="height:8px"></div>
       <div style="display:flex;gap:8px">
         <select id="catIn" style="flex:1"><option>Talk</option><option>Music</option><option>Beauty</option><option>Gaming</option><option>Food</option><option>Other</option></select>
-        <button class="btn btn-g" id="goLive">Go live</button>
+        <button class="btn btn-g" id="goLive" data-t="Go live">Go live</button>
       </div>
       <div class="err" id="hostErr"></div>
     </div>
     <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
-      <select id="fCat" class="inp" style="width:auto"><option value="">All topics</option><option>Talk</option><option>Music</option><option>Beauty</option><option>Gaming</option><option>Food</option><option>Other</option></select>
-      <select id="fSort" class="inp" style="width:auto"><option value="live">Live now</option><option value="view">Most viewers</option></select>
+      <select id="fCat" class="inp" style="width:auto"><option value="" data-t="All topics">All topics</option><option>Talk</option><option>Music</option><option>Beauty</option><option>Gaming</option><option>Food</option><option>Other</option></select>
+      <select id="fSort" class="inp" style="width:auto"><option value="live" data-t="Live now">Live now</option><option value="view" data-t="Most viewers">Most viewers</option></select>
     </div>
     <div class="grid" id="rooms"></div>
   </section>
@@ -82,8 +84,8 @@ video{width:100%;height:100%;object-fit:cover;background:#000}
         <div>
           <div class="chatbox" id="chatLog"></div>
           <div class="dock" style="margin-top:8px">
-            <input class="inp" id="chatIn" maxlength="180" placeholder="Say something kind…" style="flex:1">
-            <button class="btn btn-l" id="sendChat">Send</button>
+            <input class="inp" id="chatIn" maxlength="180" data-tph="Say something kind…" placeholder="Say something kind…" style="flex:1">
+            <button class="btn btn-l" id="sendChat" data-t="Send">Send</button>
           </div>
           <div class="stars" style="margin-top:8px">
             <button class="btn btn-l" data-g="1">⭐ 1</button>
@@ -99,7 +101,7 @@ video{width:100%;height:100%;object-fit:cover;background:#000}
 </div>
 <script>
 (function(){
-  const ROOT='wasla_dating', CUT=0.3;
+  const ROOT='wasla_dating', CUT=0.32;
   const $=id=>document.getElementById(id);
   let db,uid,me,sid='',hosting=false,localStream=null,pcs={};
 
@@ -128,8 +130,10 @@ video{width:100%;height:100%;object-fit:cover;background:#000}
       if(cat) rows=rows.filter(([,r])=>r.cat===cat);
       rows.sort((a,b)=> sort==='view' ? ((b[1].views||0)-(a[1].views||0)) : ((b[1].ts||0)-(a[1].ts||0)));
       $('liveN').textContent=rows.length+' live';
-      $('rooms').innerHTML=rows.length?rows.map(([id,r])=>`<article class="card"><div class="thumb"><span class="live">LIVE</span><span class="view">${r.views||0} watching</span><div style="font-size:42px">📡</div></div><div class="bd"><b>${esc(r.title||'Live')}</b><div class="tiny">${esc(r.name||'Host')} · ${esc(r.cat||'Talk')}</div><button class="btn btn-g" style="width:100%;margin-top:8px" data-join="${id}">Watch</button></div></article>`).join('')
-        :'<div class="card" style="padding:18px" class="tiny">No one is live. Be the first.</div>';
+      const pack=(function(){try{const L=JSON.parse(localStorage.getItem('zwin_local')||'{}');return (window.TAYRI_I18N&&window.TAYRI_I18N[L.lang||'en'])||{};}catch(e){return {};}})();
+      const tw=k=>pack[k]||k;
+      $('rooms').innerHTML=rows.length?rows.map(([id,r])=>`<article class="card"><div class="thumb"><span class="live">LIVE</span><span class="view">${r.views||0} ${tw('watching')}</span><div style="font-size:42px">📡</div></div><div class="bd"><b>${esc(r.title||'Live')}</b><div class="tiny">${esc(r.name||'Host')} · ${esc(r.cat||'Talk')}</div><button class="btn btn-g" style="width:100%;margin-top:8px" data-join="${id}">${tw('Watch')}</button></div></article>`).join('')
+        :'<div class="card" style="padding:18px" class="tiny">'+(window.T?window.T('No one is live. Be the first.'):'No one is live. Be the first.')+'</div>';
       document.querySelectorAll('[data-join]').forEach(b=>b.onclick=()=>join(b.dataset.join));
     });
   }
@@ -143,6 +147,7 @@ video{width:100%;height:100%;object-fit:cover;background:#000}
       const rec={host:uid,name:me.displayName||'Host',title,cat:$('catIn').value,live:true,ts:Date.now(),views:0};
       const ref=root('streams').push();
       sid=ref.key; await ref.set(rec); hosting=true;
+      try{ await root('liveIndex/'+sid).set(true); root('liveIndex/'+sid).onDisconnect().remove(); }catch(e){}
       openRoom(rec);
       root('streams/'+sid+'/offers').on('child_added', async snap=>{
         const viewer=snap.key, off=snap.val(); if(!off||!off.sdp) return;
@@ -174,12 +179,13 @@ video{width:100%;height:100%;object-fit:cover;background:#000}
     });
     await root('streams/'+sid+'/viewers/'+uid).set(Date.now());
     root('streams/'+sid+'/viewers/'+uid).onDisconnect().remove();
+    root('streams/'+sid+'/viewers').on('value',s=>{ const n=Object.keys(s.val()||{}).length; root('streams/'+sid+'/views').set(n).catch(()=>{}); });
   }
 
   function openRoom(rec){
     $('lobby').classList.add('hidden'); $('room').classList.remove('hidden');
     if(hosting) $('vRemote').srcObject=localStream;
-    $('roomMeta').textContent=(rec.title||'Live')+' · 70% of stars go to the host';
+    $('roomMeta').textContent=(rec.title||'Live')+' · 68% of stars go to the host';
     root('streams/'+sid+'/viewers').on('value',s=>{ $('vc').textContent=Object.keys(s.val()||{}).length+' watching'; });
     root('streams/'+sid+'/chat').limitToLast(30).on('child_added',s=>{
       const m=s.val(); if(!m)return;
@@ -206,7 +212,7 @@ video{width:100%;height:100%;object-fit:cover;background:#000}
   $('leave').onclick=async()=>{
     Object.values(pcs).forEach(pc=>pc.close()); pcs={};
     if(localStream) localStream.getTracks().forEach(t=>t.stop());
-    if(hosting&&sid) await root('streams/'+sid).update({live:false});
+    if(hosting&&sid){ await root('streams/'+sid).update({live:false}); try{ await root('liveIndex/'+sid).remove(); }catch(e){} }
     location.reload();
   };
 })();

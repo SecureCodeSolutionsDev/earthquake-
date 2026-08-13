@@ -8,7 +8,9 @@
 <meta name="description" content="A free, peer-to-peer instant video room for Tayripages members.">
 <link rel="icon" type="image/png" href="icon.png">
 <script src="tayri-config.js"></script>
+<script src="tayri-lock.js"></script>
 <script src="tayri-i18n.js"></script>
+<script src="tayri-video-i18n.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
@@ -171,7 +173,7 @@ svg{display:inline-block}
     <span class="brand-copy"><span class="brand-name" data-t="Tayripages Video">Tayripages Video</span></span>
   </a>
   <div class="top-r">
-    <span class="onlinepill hidden" id="onlinePill"><span class="opdot"></span><span id="onlineNum">0</span>&nbsp;online now</span>
+    <span class="onlinepill hidden" id="onlinePill"><span class="opdot"></span><span id="onlineNum">0</span>&nbsp;<span data-t="online now">online now</span></span>
     <a class="back" href="./index.html"><span data-t="Back to app">Back to app</span></a>
   </div>
 </header>
@@ -197,8 +199,8 @@ svg{display:inline-block}
     <div class="pro-filter-panel hidden" id="proFilterPanel">
       <div class="filter-title"><span data-t="Choose who you meet">Choose who you meet</span></div>
       <div class="filter-grid">
-        <label><span data-t="Country">Country</span><span class="free-tag">FREE</span><select id="filterCountry"><option value="all" data-t="Everywhere">Everywhere</option></select></label>
-        <label><span data-t="Shared interest">Shared interest</span><span class="free-tag">FREE</span><select id="filterInterest"><option value="any" data-t="Any interest">Any interest</option></select></label>
+        <label><span data-t="Country">Country</span><span class="free-tag" data-t="FREE">FREE</span><select id="filterCountry"><option value="all" data-t="Everywhere">Everywhere</option></select></label>
+        <label><span data-t="Shared interest">Shared interest</span><span class="free-tag" data-t="FREE">FREE</span><select id="filterInterest"><option value="any" data-t="Any interest">Any interest</option></select></label>
         <label><span data-t="Gender">Gender</span><select id="filterGender"><option value="any" data-t="Everyone">Everyone</option><option value="w" data-t="Women">Women</option><option value="m" data-t="Men">Men</option></select></label>
         <label><span data-t="Beauty Queen">Beauty Queen</span><select id="filterMalika"><option value="0" data-t="Anyone">Anyone</option><option value="100" data-t="Among top 100">Among top 100</option><option value="20" data-t="Beauty Queen — top 20">Beauty Queen — top 20</option></select></label>
         <label><span data-t="Character">Character</span><select id="filterMorals"><option value="0" data-t="Any">Any</option><option value="1400" data-t="Kind & respectful">Kind & respectful</option><option value="1550" data-t="High morals">High morals</option><option value="1700" data-t="Exceptional character">Exceptional character</option></select></label>
@@ -280,7 +282,7 @@ svg{display:inline-block}
     </div>
   </section>
 
-  <div class="notice"><b><span data-t="Connection tips:">Connection tips:</span></b> direct peer-to-peer video works on most networks. If a call says the network could not connect, ask both members to try Wi-Fi or mobile data (some restrictive routers block direct video). Calling a match works best when both of you have this page open and press Start.</div>
+  <div class="notice"><b><span data-t="Connection tips:">Connection tips:</span></b> <span data-t="direct peer-to-peer video works on most networks. If a call says the network could not connect, ask both members to try Wi-Fi or mobile data (some restrictive routers block direct video). Calling a match works best when both of you have this page open and press Start.">direct peer-to-peer video works on most networks. If a call says the network could not connect, ask both members to try Wi-Fi or mobile data (some restrictive routers block direct video). Calling a match works best when both of you have this page open and press Start.</span></div>
   <div class="rules">
     <div class="rule"><span class="r-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3a5 5 0 0 0-5 5v3H6a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2h-1V8a5 5 0 0 0-5-5zm-3 8V8a3 3 0 1 1 6 0v3H9z"/></svg></span><b data-t="Private by design">Private by design</b><span data-t="No recording or media upload.">No recording or media upload.</span></div>
     <div class="rule violet"><span class="r-ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/></svg></span><b data-t="One-to-one">One-to-one</b><span data-t="Only two signed-in members per room.">Only two signed-in members per room.</span></div>
@@ -344,7 +346,20 @@ svg{display:inline-block}
   function countryOf(city){ return CITY_COUNTRY[city]||'Other'; }
   function tagTxt(t){ return (t||'').replace(/^[^A-Za-zÀ-ÿ]+/,'').trim(); }
 
-  function setStatus(text,kind){ statusEl.textContent=text; statusEl.className='status'+(kind?' '+kind:''); }
+  function videoPack(){
+    try{
+      const L=JSON.parse(localStorage.getItem('zwin_local')||'{}');
+      const lang=L.lang||localStorage.getItem('tayri_lang')||'en';
+      return Object.assign({}, (window.TAYRI_I18N&&window.TAYRI_I18N[lang])||{}, (window.TAYRI_VIDEO_I18N&&window.TAYRI_VIDEO_I18N[lang])||{});
+    }catch(e){ return {}; }
+  }
+  function T(en){ const pack=videoPack(); return (pack&&pack[en])||en; }
+  function applyVideoI18n(){
+    const pack=videoPack();
+    document.querySelectorAll('[data-t]').forEach(el=>{ const k=el.getAttribute('data-t'); if(pack[k]) el.innerHTML=pack[k]; });
+    document.querySelectorAll('[data-tph]').forEach(el=>{ const k=el.getAttribute('data-tph'); if(pack[k]) el.placeholder=pack[k]; });
+  }
+  function setStatus(text,kind){ statusEl.textContent=T(text); statusEl.className='status'+(kind?' '+kind:''); }
   function show(el,on){ el.classList.toggle('hidden',!on); }
   function safeName(u){ return (u&&((u.displayName||'').split(' ')[0]||u.email||'Member'))||'Member'; }
   function root(path){ return db.ref(ROOT+'/'+path); }
@@ -418,12 +433,13 @@ svg{display:inline-block}
   function renderProFilters(){
     paintModeGold();
     show(proFilterBar,videoMode==='random');
-    proBadge.textContent=isPro?'GOLD':'FREE';
+    proBadge.textContent=isPro?T('GOLD'):T('FREE');
     proBadge.classList.toggle('free',!isPro);
-    filterToggle.innerHTML=IC('sliders',14)+(isPro?' Pro filters':' Filters');
+    filterToggle.innerHTML=IC('sliders',14)+' '+(isPro?T('Pro filters'):T('Filters'));
     [filterGender,filterMalika,filterMorals,filterCharisma,filterSpeaker].forEach(x=>{ if(x)x.disabled=!isPro; });
     [filterCountry,filterInterest].forEach(x=>{ if(x){ x.disabled=false; x.removeAttribute('disabled'); } });
     if(isPro) applyGoldStackIfNeeded();
+    try{ applyVideoI18n(); }catch(e){}
     filterNote.textContent=isPro?'GOLD default: respectful character + warm charisma (Elo). Beauty Queen top 20 / top 100 is optional. Mutual filters.':'Country and shared interest are FREE. GOLD unlocks Beauty Queen, character, charisma, and speaker Elo filters.';
   }
   function fillFilterOptions(){
@@ -436,11 +452,12 @@ svg{display:inline-block}
     const list=Object.keys(seen).sort();
     if(!list.length)list.push('Morocco');
     const cur=filterCountry.value||'all';
-    filterCountry.innerHTML='<option value="all">Everywhere</option>'+list.map(c=>'<option value="'+c+'">'+c+'</option>').join('');
+    filterCountry.innerHTML='<option value="all">'+T('Everywhere')+'</option>'+list.map(c=>'<option value="'+c+'">'+c+'</option>').join('');
     filterCountry.value=cur==='all'||list.includes(cur)?cur:'all';
     const icur=filterInterest.value||'any';
-    filterInterest.innerHTML='<option value="any">Any interest</option>'+TAGS.map(t=>'<option value="'+t+'">'+t+'</option>').join('');
+    filterInterest.innerHTML='<option value="any">'+T('Any interest')+'</option>'+TAGS.map(t=>'<option value="'+t+'">'+(T(t)||t)+'</option>').join('');
     filterInterest.value=TAGS.includes(icur)?icur:'any';
+    try{ applyVideoI18n(); }catch(e){}
   }
   async function loadDiscoveryContext(){
     try{
@@ -468,13 +485,13 @@ svg{display:inline-block}
   }
   function compatible(a,b){ return acceptsFilter(a.filters,b)&&acceptsFilter(b.filters,a); }
   function renderStartButton(){
-    if(!authUser){ startBtn.disabled=false; startBtn.textContent='Continue with Google'; startBtn.onclick=signIn; return; }
+    if(!authUser){ startBtn.disabled=false; startBtn.textContent=T('Continue with Google'); startBtn.onclick=signIn; return; }
     if(videoMode==='match'){
       startBtn.disabled=!selectedPeer;
-      startBtn.textContent=selectedPeer?('Call '+selectedPeerName):'Choose a match first';
+      startBtn.textContent=selectedPeer?(T('Call')+' '+selectedPeerName):T('Choose a match first');
       startBtn.onclick=startDirectMatch;
     }else{
-      startBtn.disabled=false; startBtn.textContent='Start instant video'; startBtn.onclick=startMatch;
+      startBtn.disabled=false; startBtn.textContent=T('Start instant video'); startBtn.onclick=startMatch;
     }
   }
   function setMode(mode){
@@ -547,7 +564,7 @@ async function init(){
           renderStartButton(); setStatus('Sign in with Google to enter instant video.','warn');
           return;
         }
-        identity.innerHTML='<span class="avatar">'+(safeName(u)[0]||'T')+'</span><b>'+escapeHtml(safeName(u))+'</b><span>signed in</span>';
+        identity.innerHTML='<span class="avatar">'+(safeName(u)[0]||'T')+'</span><b>'+escapeHtml(safeName(u))+'</b><span>'+T('signed in')+'</span>';
         await loadDiscoveryContext();
         await loadMatches(); renderStartButton();
         wirePairs(); /* passive: if a match opens a room with you, the page shows it instantly */
@@ -745,7 +762,7 @@ async function init(){
     if(searching) return;
     try{
       await ensureMedia();
-      searching=true; closing=false; show(videos,true); show(document.getElementById('proControls'),true); show(startBtn,false); show(skipBtn,false); show(endBtn,false); show(mediaActions,true); show($('callChat'),true); show(modeTabs,false); show(proFilterPanel,false); remoteEmpty.classList.remove('hidden'); applyProSettings();
+      searching=true; closing=false; show(videos,true); show(document.getElementById('proControls'),true); show(startBtn,falsn,false); show(endBtn,false); show(mediaActions,true); show($('callChat'),true); show(modeTabs,false); show(proFilterPanel,false); remoteEmpty.classList.remove('hidden'); applyProSettings();
       setStatus('Opening a private room for '+selectedPeerName+'…','good');
       wirePairs();
       const sorted=[uid,selectedPeer].sort();
@@ -956,13 +973,17 @@ async function init(){
 // Apply Tayripages i18n to this page if available
 try{
   const lang = (localStorage.getItem('zwin_local') && JSON.parse(localStorage.getItem('zwin_local')).lang) || 'en';
-  if(window.TAYRI_I18N && window.TAYRI_I18N[lang]){
-    document.querySelectorAll('[data-t]').forEach(el=>{
-      const k=el.getAttribute('data-t');
-      const tr=window.TAYRI_I18N[lang][k];
-      if(tr) el.innerHTML=tr;
-    });
-  }
+  const pack=Object.assign({}, (window.TAYRI_VIDEO_I18N&&window.TAYRI_VIDEO_I18N[lang])||{}, (window.TAYRI_I18N&&window.TAYRI_I18N[lang])||{});
+  document.querySelectorAll('[data-t]').forEach(el=>{
+    const k=el.getAttribute('data-t');
+    const tr=pack[k];
+    if(tr) el.innerHTML=tr;
+  });
+  document.querySelectorAll('[data-tph]').forEach(el=>{
+    const k=el.getAttribute('data-tph');
+    const tr=pack[k];
+    if(tr) el.placeholder=tr;
+  });
 }catch(e){}
 </script>
 
@@ -987,19 +1008,17 @@ document.addEventListener('click', e=>{
 try{
   let L=null; try{ L=JSON.parse(localStorage.getItem('zwin_local')||'null'); }catch(e){}
   const lang = (L&&L.lang) || localStorage.getItem('tayri_lang') || 'en';
-  if(window.TAYRI_I18N && window.TAYRI_I18N[lang]){
-    document.querySelectorAll('[data-t]').forEach(el=>{
-      const k=el.getAttribute('data-t');
-      const tr=window.TAYRI_I18N[lang][k];
-      if(tr) el.innerHTML=tr;
-    });
-    // also translate title
-    document.querySelectorAll('[data-tph]').forEach(el=>{
-      const k=el.getAttribute('data-tph');
-      const tr=window.TAYRI_I18N[lang][k];
-      if(tr) el.placeholder=tr;
-    });
-  }
+  const pack=Object.assign({}, (window.TAYRI_I18N&&window.TAYRI_I18N[lang])||{}, (window.TAYRI_VIDEO_I18N&&window.TAYRI_VIDEO_I18N[lang])||{});
+  document.querySelectorAll('[data-t]').forEach(el=>{
+    const k=el.getAttribute('data-t');
+    const tr=pack[k];
+    if(tr) el.innerHTML=tr;
+  });
+  document.querySelectorAll('[data-tph]').forEach(el=>{
+    const k=el.getAttribute('data-tph');
+    const tr=pack[k];
+    if(tr) el.placeholder=tr;
+  });
 }catch(e){}
 </script>
 

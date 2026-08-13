@@ -8,6 +8,8 @@
 <meta name="robots" content="noindex,nofollow">
 <link rel="icon" type="image/png" href="icon.png">
 <script src="tayri-config.js"></script>
+<script src="tayri-lock.js"></script>
+<script src="tayri-i18n.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
@@ -65,35 +67,36 @@ a{color:inherit;text-decoration:none}
 
   <section class="gate on" id="gate">
     <div class="hero">
-      <h1>Private creator room.</h1>
-      <p>One club password. Then Google. You get a referral link. When someone signs up and buys GOLD, you earn 50% of GOLD ($20) — paid every Monday by transfer.</p>
+      <h1 data-t="Private creator room.">Private creator room.</h1>
+      <p data-t="One club password. Then Google. You get a referral link. When someone signs up and buys GOLD, you earn 50% of GOLD ($20) — paid every Monday by transfer.">One club password. Then Google. You get a referral link. When someone signs up and buys GOLD, you earn 50% of GOLD ($20) — paid every Monday by transfer.</p>
     </div>
     <div class="glass" style="max-width:420px">
-      <div class="tiny" style="margin-bottom:8px;font-weight:700">Club password (fixed)</div>
+      <div class="tiny" style="margin-bottom:8px;font-weight:700" data-t="Club password (fixed)">Club password (fixed)</div>
       <input class="inp" id="clubPass" type="password" placeholder="Password" autocomplete="off">
       <div style="height:12px"></div>
-      <button class="btn btn-w full" id="unlockBtn">Continue</button>
+      <button class="btn btn-w full" id="unlockBtn" data-t="Continue">Continue</button>
       <div class="err" id="gateErr"></div>
+      <div id="gateOk" style="display:none;margin-top:10px;color:#2fbf71;font-weight:800;text-align:center"></div>
     </div>
   </section>
 
   <section class="studio" id="studio">
     <div class="hero">
-      <h1>Your link. Your cut.</h1>
+      <h1 data-t="Your link. Your cut.">Your link. Your cut.</h1>
       <p>Share the link. Signups count. Commission pays only after admin activates that user’s bank-transfer GOLD — the cloud then auto-checks their ID against gold/{uid}. Fake claims cannot write the ledger. Free “invite 10 friends” in the dating app is a different program.</p>
     </div>
 
     <div class="glass">
       <div class="tiny" id="who"></div>
       <div class="stats">
-        <div class="stat"><b id="sSign">0</b><span>Signed up</span></div>
-        <div class="stat"><b id="sGold">0</b><span>Bought GOLD</span></div>
-        <div class="stat"><b id="sEarn">0</b><span>USD earned (50%)</span></div>
-        <div class="stat"><b id="sPay">—</b><span>Next Monday payout</span></div>
+        <div class="stat"><b id="sSign">0</b><span data-t="Signed up">Signed up</span></div>
+        <div class="stat"><b id="sGold">0</b><span data-t="Bought GOLD">Bought GOLD</span></div>
+        <div class="stat"><b id="sEarn">0</b><span data-t="USD earned (50%)">USD earned (50%)</span></div>
+        <div class="stat"><b id="sPay">—</b><span data-t="Next Monday payout">Next Monday payout</span></div>
       </div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
         <input class="inp" id="refLink" readonly style="flex:1;min-width:180px">
-        <button class="btn btn-w" id="copyRef">Copy link</button>
+        <button class="btn btn-w" id="copyRef" data-t="Copy link">Copy link</button>
       </div>
     </div>
 
@@ -133,6 +136,8 @@ a{color:inherit;text-decoration:none}
   'use strict';
   const PASS='topinfluencers', ROOT='wasla_dating', CUT=0.5;
   const PRICE=+(TAYRI_CONFIG.gold&&TAYRI_CONFIG.gold.usd)||20;
+  const LANG=(function(){ try{ return (JSON.parse(localStorage.getItem('zwin_local')||'{}').lang)||'en'; }catch(e){ return 'en'; } })();
+  function T(en){ try{ const d=window.TAYRI_I18N&&window.TAYRI_I18N[LANG]; return (d&&d[en])||en; }catch(e){ return en; } }
   const $=id=>document.getElementById(id);
   let db=null,uid='',me=null,influencers={},reqs={},goldMap={},users={},myRefs={},myPhoto='',commAll={};
 
@@ -144,7 +149,11 @@ a{color:inherit;text-decoration:none}
   function refLink(){const base=(TAYRI_CONFIG.site&&TAYRI_CONFIG.site.url)||(location.origin+'/');return base.replace(/\/?$/,'/')+'index.html?ref='+encodeURIComponent(uid)}
   function compress(file){return new Promise((res,rej)=>{const img=new Image();img.onload=()=>{let w=img.naturalWidth,h=img.naturalHeight,s=Math.min(1,420/Math.max(w,h));w=Math.round(w*s);h=Math.round(h*s);const c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);URL.revokeObjectURL(img.src);let q=0.62,out=c.toDataURL('image/jpeg',q);while(out.length>380000&&q>0.35){q-=0.08;out=c.toDataURL('image/jpeg',q)}res(out)};img.onerror=rej;img.src=URL.createObjectURL(file)})}
 
-  $('unlockBtn').onclick=()=>{if(($('clubPass').value||'').trim()!==PASS){$('gateErr').textContent='Wrong password.';return}sessionStorage.setItem('tayri_muse','1');boot()}
+  $('unlockBtn').onclick=()=>{if(($('clubPass').value||'').trim()!==PASS){$('gateErr').textContent='Wrong password.';const ok=$('gateOk'); if(ok) ok.style.display='none'; return}
+    $('gateErr').textContent='';
+    const ok=$('gateOk');
+    if(ok){ ok.style.display='block'; ok.textContent=(window.TAYRI_I18N&&window.T&&T('Password OK — now sign in with Google'))||'Password OK — now sign in with Google'; }
+    sessionStorage.setItem('tayri_muse','1'); boot();}
   if(sessionStorage.getItem('tayri_muse')==='1') boot();
 
   function boot(){

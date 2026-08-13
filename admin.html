@@ -6,6 +6,7 @@
 <meta name="theme-color" content="#160d12">
 <title>Tayripages HQ — Company Dashboard</title>
 <script src="tayri-config.js"></script>
+<script src="tayri-lock.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
@@ -352,7 +353,7 @@ function boot(){
   });
 
   // 🔐 read pieces separately — locked rules don't allow root reads
-  ['users','presence','matches','chats','orders','reports','gold','verifyReq','photos','verified','banned','bannedEmails','userEmails','influencerReq','influencers','referrals','referredBy','museCommissions','famousIds','streams','config'].forEach(k=>{
+  ['users','presence','matches','chats','orders','reports','reportProof','gold','verifyReq','photos','verified','banned','bannedEmails','userEmails','influencerReq','influencers','referrals','referredBy','museCommissions','famousIds','streams','liveIndex','config'].forEach(k=>{
     ref(k).on('value',s=>{
       D[k]=s.val()||{};
       paintAll();
@@ -477,7 +478,9 @@ async function reject(id,ouid){
 function paintRp(rows){
   const sorted=rows.sort((a,b)=>(b[1].ts||0)-(a[1].ts||0)).slice(0,60);
   const html=sorted.map(([id,r])=>{
-    const p=r.proof&&r.proof.text?`<div style="margin-top:6px;padding:8px;border-radius:9px;background:#160d12;color:#ffd8e5;font-size:12px;line-height:1.45"><b>PROOF · ${eh(r.proof.fromName||'Message')}</b><br>${eh(r.proof.text)}<div style="color:#b193a3;font-size:10px;margin-top:4px">${ts(r.proof.ts)}</div></div>`:'<span class="mut tiny">No message attached</span>';
+    const locked=(D.reportProof||{})[id];
+    const ptxt=(locked&&locked.text)||(r.proof&&r.proof.text)||'';
+    const p=ptxt?`<div style="margin-top:6px;padding:8px;border-radius:9px;background:#160d12;color:#ffd8e5;font-size:12px;line-height:1.45"><b>PROOF (server-locked)</b><br>${eh(ptxt)}<div class="mut tiny">${eh(r.proofKey||(locked&&locked.key)||'')}</div></div>`:'<span class="mut tiny">No server proof</span>';
     const ev=r.evidence?`<div style="margin-top:6px;padding:9px;border-radius:10px;background:#1a0e18;border:1px solid #37202e;font-size:11.5px">
       <b style="color:var(--warn)">EVIDENCE (${eh(r.evidence.type||'profile')})</b> <span class="mut tiny">${eh(r.evidence.name||'')} · ${eh(r.evidence.city||'')} · age ${eh(String(r.evidence.age||''))}</span>
       ${Array.isArray(r.evidence.photos)&&r.evidence.photos.length?'<div style="display:flex;gap:6px;margin-top:7px;flex-wrap:wrap">'+r.evidence.photos.slice(0,3).map(u=>`<img src="${u}" style="width:72px;height:96px;object-fit:cover;border-radius:9px;border:1px solid #4a273a">`).join('')+'</div>':''}
@@ -636,14 +639,12 @@ function messageUser(uid){
 
 function unbanUser(uid, emailKey){
   if(!uid) return;
-  const wiseAdvice = "Dear friend,\n\nYou have been given a second chance on Tayripages. We believe in growth and respect.\nPlease cherish this community: be kind, be truthful, be respectful to every heart you meet.\nA single unkind act can hurt deeply — choose to be the reason someone smiles today.\n\nWith hope and trust,\nThe Tayripages Team 💛";
-  if(!confirm('Unban '+uid+'?\nHe will receive this wise advice via inbox.\n\n"'+wiseAdvice+'"')) return;
+  if(!confirm('Unban '+uid+'? No inbox message will be sent.')) return;
   const updates={};
   updates['banned/'+uid]=null;
   if(emailKey) updates['bannedEmails/'+emailKey]=null;
   DB.ref('wasla_dating').update(updates).then(()=>{
-    DB.ref('wasla_dating/adminMessages/'+uid).push({text: wiseAdvice, from:'admin', by:firebase.auth().currentUser.uid, ts:Date.now()});
-    toast('User unbanned — wise advice sent 💛');
+    toast('User unbanned');
     paintBanned();
   }).catch(e=>toast('Unban failed: '+(e.code||e.message)));
 }
@@ -663,7 +664,7 @@ function paintBanned(){
       }
     }catch(e){}
     const emailDisplay = emailKey ? emailKey.replace(/_/g,'.') : '—';
-    return `<tr><td class="small"><b>${eh(uid)}</b><div class="mut tiny">${eh(emailDisplay)}</div></td><td class="mut tiny">${when}</td><td style="text-align:end"><button class="btn btn-g" onclick="unbanUser('${eh(uid)}','${eh(emailKey)}')">Unban + wise advice</button></td></tr>`;
+    return `<tr><td class="small"><b>${eh(uid)}</b><div class="mut tiny">${eh(emailDisplay)}</div></td><td class="mut tiny">${when}</td><td style="text-align:end"><button class="btn btn-g" onclick="unbanUser('${eh(uid)}','${eh(emailKey)}')">Unban</button></td></tr>`;
   }).join('')+'</tbody>';
 }
 
@@ -693,6 +694,7 @@ function paintMuse(){
     ${r.photo?`<img src="${r.photo}" style="width:56px;height:56px;object-fit:cover;border-radius:12px">`:''}
     <div style="flex:1"><b>${eh(r.name||id)}</b><div class="mut tiny">@${eh(r.handle||'')} · ${eh(id)}</div>
     <div class="tiny grn">${sales.length} verified GOLD · $${earn} (50%)</div></div>
+    <button class="btn" onclick="markMusePaid('${id}',${earn})">Mark week paid</button>
     <button class="btn btn-r" onclick="removeMuse('${id}')">Remove</button>
   </div>`;
   }).join(''):'<div class="card mut">No approved muses yet.</div>';
@@ -731,7 +733,14 @@ async function rejectMuse(id){
   try{ await ref('influencerReq/'+id).remove(); toast('Muse request rejected'); }
   catch(e){ toast('Reject failed','err'); }
 }
-async function removeMuse(id){
+async async function markMusePaid(id,earn){
+  const week=Math.floor(Date.now()/(7*86400000));
+  try{
+    await ref('influencerPayouts/'+id+'/'+week).set({paid:true,ts:Date.now(),by:adminUid||'admin',usd:+earn||0,week:'casablanca'});
+    toast('Muse week marked paid');
+  }catch(e){ toast('Mark-paid failed — publish full rules','err'); }
+}
+function removeMuse(id){
   if(!confirm('Remove this muse from the public house?'))return;
   try{ await ref('influencers/'+id).remove(); toast('Muse removed'); }
   catch(e){ toast('Remove failed','err'); }
