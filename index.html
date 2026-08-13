@@ -240,7 +240,9 @@ body.bootwait #bootSplash{display:flex}
 .mov-x{position:absolute;top:calc(10px + env(safe-area-inset-top));inset-inline-end:14px;z-index:6;width:40px;height:40px;border-radius:50%;background:rgba(0,0,0,.45);color:#fff;font-size:22px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.25)}
 .mov .duo .ma{position:relative;overflow:hidden}
 .mov .duo .ma img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.storyv-rep{position:absolute;top:8px;inset-inline-start:10px;z-index:4;color:#fff;background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.3);border-radius:999px;padding:6px 10px;font-size:11px;font-weight:800}
+.storyv-rep{position:absolute;top:8px;inset-inline-start:10px;z-index:5;color:#fff;background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.3);border-radius:999px;padding:6px 10px;font-size:11px;font-weight:800}
+.storyv-x{position:absolute;top:4px;inset-inline-end:10px;color:#fff;font-size:24px;z-index:5;text-shadow:0 1px 6px rgba(0,0,0,.7);padding:8px}
+.storyv-pause{position:absolute;top:36px;left:50%;transform:translateX(-50%);z-index:6;background:rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.4);color:#fff;border-radius:999px;padding:6px 14px;font-size:11px;font-weight:800}
 .mov h1{font-size:40px;font-weight:900;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;animation:pop .5s ease}
 .mov .duo{display:flex;gap:0;margin:18px 0 6px}
 .mov .duo .ma{width:118px;height:118px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:56px;border:4px solid #fff;box-shadow:0 14px 34px rgba(0,0,0,.4)}
@@ -639,7 +641,7 @@ body.preauth.authno #scr-auth{display:block!important}
 <!-- ==================== MATCHES ==================== -->
 <section class="scr" id="scr-matches">
   <div class="topbar"><div class="h2" data-t="Matches">Matches</div>
-    <button class="pill" onclick="toast(T('Tayripages is a kind place. Harassment = ban'))">${T('Safe')}</button></div>
+    <button class="pill" data-t="Safe" onclick="toast(T('Tayripages is a kind place. Harassment = ban'))">Safe</button></div>
   <div class="sec mut tiny" style="padding:2px 18px;font-weight:900;letter-spacing:1px" data-t="NEW MATCHES">NEW MATCHES</div>
   <div class="mrow" id="mRow"></div>
   <div class="sec mut tiny" style="padding:8px 18px 2px;font-weight:900;letter-spacing:1px" data-t="CHATS">CHATS</div>
@@ -750,7 +752,7 @@ let uid=myUid();
 const L=load();
 function myUid(){let u=localStorage.getItem('zwin_uid');if(!u){u='u_'+Math.random().toString(36).slice(2,9)+Date.now().toString(36);localStorage.setItem('zwin_uid',u)}return u}
 function load(){try{return JSON.parse(localStorage.getItem('zwin_local'))||fresh()}catch(e){return fresh()}}
-function fresh(){return {me:null,gold:0,referralCount:0,referralGoldUntil:0,referralJoined:false,deletedForMe:{},swiped:{},matches:[],chats:{},freeLeft:{},exclusive:{},likesYou:[],likesDay:{d:'',n:0},superDay:{d:'',n:0},boostDay:'',boostUntil:0,unread:{},readAt:{},chatTheme:'rose',chatDark:0,pendingOrders:[],seen:{},gifts:{},crushes:{} } }
+function fresh(){return {me:null,gold:0,referralCount:0,referralGoldUntil:0,referralJoined:false,deletedForMe:{},swiped:{},matches:[],chats:{},freeLeft:{},exclusive:{},likesYou:[],likesDay:{d:'',n:0},superDay:{d:'',n:0},boostDay:'',boostUntil:0,unread:{},readAt:{},chatTheme:'rose',chatDark:0,pendingOrders:[],seen:{},gifts:{},crushes:{},storyHide:{} } }
 function goldActive(){ return !!L.gold || (+L.referralGoldUntil||0)>Date.now(); }
 function likeCap(){
   const day=Math.floor(Date.now()/86400000);
@@ -1305,6 +1307,7 @@ async function syncMe(){
       if(R.tab==='wallet')renderWallet(); }
     else if(!v&&L.gold){ L.gold=0; save(); paintGold(); paintLikesPill(); } });
   ref('crushes/'+uid).on('value',s=>{ L.crushes=s.val()||{}; save(); if(R.tab==='profile')renderProfile(); });
+  ref('storyHide/'+uid).on('value',s=>{ L.storyHide=s.val()||{}; save(); });
   ref('storyViews/'+uid).on('value',s=>{ L.storyViews=s.val()||{}; if(R.tab==='profile')renderProfile(); });
   // ✅ verified badge live + review outcome
   ref('verified/'+uid).on('value',s=>{ const v=!!s.val();
@@ -1665,13 +1668,20 @@ function toggleStoryPause(){
 function storyNext(){ if(svIx<svItems.length-1){ svIx++; svLeft=8000; svPaused=0; paintStoryFrame(); runStoryTimer(); } else closeStory(); }
 function storyPrev(){ if(svIx>0){ svIx--; svLeft=8000; svPaused=0; paintStoryFrame(); runStoryTimer(); } }
 async function openStory(peer){
-  if(peer&&peer!==uid&&!DEMO){ try{ ref('storyViews/'+peer+'/'+uid).set(Date.now()); }catch(e){} }
+  if(peer&&peer!==uid&&!DEMO){
+    try{
+      const hid=await ref('storyHide/'+peer+'/'+uid).once('value');
+      if(hid.val()) return toast(T('This story is not available'));
+    }catch(e){}
+    try{ ref('storyViews/'+peer+'/'+uid).set(Date.now()); }catch(e){}
+  }
   let s=STORY[peer];
   if(!storyFresh(s)&&!DEMO){ try{ s=(await ref('stories/'+peer).once('value')).val(); STORY[peer]=s; }catch(e){} }
   svItems=storyList(s);
   if(!svItems.length)return toast(T('That story has expired'));
   svPeer=peer; svIx=0; svPaused=0; svLeft=8000;
   $('svNote').value='';
+  window._svReact=false;
   $('svLike').onclick=storyLike;
   $('svNote').onkeydown=e=>{ if(e.key==='Enter')storyLike(); };
   $('svNote').onfocus=()=>toggleStoryPause();
@@ -1679,6 +1689,8 @@ async function openStory(peer){
   if(card){ card.onclick=e=>{ const r=card.getBoundingClientRect(); if(e.clientX-r.left<r.width*0.28) storyPrev(); else if(e.clientX-r.left>r.width*0.72) storyNext(); }; }
   show('storyV');
   paintStoryFrame(); runStoryTimer();
+  try{ await refreshSvReact(); }catch(e){}
+  paintSvAct();
 }
 function closeStory(){ clearTimeout(window._svT); svPaused=1; const v=$('storyV'); if(v){ v.classList.remove('on'); v.style.display='none'; setTimeout(()=>{ if(v&&!v.classList.contains('on')) v.style.display=''; },300);} }
 async function reportStory(){
@@ -1753,6 +1765,7 @@ async function publishStory(){
 }
 async function storyLike(){
   const peer=svPeer; if(!peer)return;
+  if(window._svReact){ paintSvAct(); return; }
   const note=(($('svNote')&&$('svNote').value)||'').trim().slice(0,120);
   const m=L.matches.find(m=>m.peer===peer);
   if(!m)return toast(T('Story likes work with matches'));
@@ -1763,6 +1776,11 @@ async function storyLike(){
   const mine=(L.me&&L.me.name)||'Someone';
   const text=mine+' '+T('loved your story')+(note?': “'+note+'”':'');
   if(note && !isCleanOrWarn(note)) return;
+  if(!DEMO){
+    try{ await ref('storyReacts/'+peer+'/'+svItemId()+'/'+uid).set({ts:Date.now(),kind:note?'note':'like'}); }
+    catch(e){ window._svReact=true; paintSvAct(); return toast(T('You already reacted to this story')); }
+  }
+  window._svReact=true; paintSvAct();
   closeStory();
   if(!DEMO){
     try{
@@ -2427,21 +2445,10 @@ async function loadDeck(){
   let cloudPool=[];
   if(!DEMO){ try{ cloudPool=await cloudDiscover(); }catch(e){} }
   const all=[...cloudPool,...demoPool.filter(p=>!cloudPool.find(c=>c.name===p.name))];
-  // unseen first, and never who swiped me rejected? show fresh + unscored
-  // TINDER-LIKE: passes resurface after 7 days, likes never resurface (or after 30 days if deck empty)
-  const nowTs=Date.now();
-  const RESHOW_PASS_MS=7*86400000, RESHOW_LIKE_MS=30*86400000;
-  R.deck=all.filter(p=>{
-    if(L.matches.find(m=>m.peer===p.id)) return false;
-    const sw=L.swiped[p.id];
-    if(!sw) return true;
-    const age=nowTs-(sw.ts||0);
-    if(sw.d==='pass') return age>RESHOW_PASS_MS;
-    return age>RESHOW_LIKE_MS;
-  });
+  R.deck=all.filter(p=>p&&p.id&&p.id!==uid&&!(L.swiped&&L.swiped[p.id]));
   const sc=matchScope();
-  if(sc==='local'){
-    const mine=myCountry().toLowerCase();
+  const mine=String((typeof myCountry==='function'&&myCountry())||'').toLowerCase();
+  if(sc!=='global'&&sc!=='passport'){
     const loc=R.deck.filter(p=>sameLocale(p)||peerCountry(p).toLowerCase()===mine);
     if(loc.length) R.deck=loc;
   } else if(sc==='passport'){
@@ -2517,7 +2524,7 @@ function cardHtml(p,i){
       <div class="nm">${p.name} <span class="age">${p.age}</span> ${VB(p.verified)}</div>
       <div class="ds">${IC('pin',12)} ${p.km!=null?`${p.km} km · `:''}${p.city||'Earth'}${countryOf(p.city)!=='Other'?' · '+countryOf(p.city):''}</div>
       <div class="bio">${p.bio||''}</div>
-      <div class="tags">${(p.tags||[]).slice(0,3).map(t=>`<span>${TIC(t,11)}${tagTxt(t)}</span>`).join('')}</div>
+      <div class="tags">${(p.tags||[]).slice(0,3).map(t=>`<span>${TIC(t,11)}${T(tagTxt(t))}</span>`).join('')}</div>
     </div></div>`;
 }
 function bindTopCard(){
@@ -3103,7 +3110,7 @@ function reportAsk(){
       <span class="mico ${r.tint}" style="position:relative">${IC(r.i,18)}${r.badge?`<span style="position:absolute;bottom:-3px;right:-3px;width:15px;height:15px;border-radius:50%;background:#fff;color:#c3345a;display:grid;place-items:center;box-shadow:0 2px 6px rgba(0,0,0,.25)">${IC('x',9)}</span>`:''}</span>
       <span class="mtxt"><b>${r.t}</b><div>${r.d}</div></span>
       <span class="chev">›</span></button>`).join('')}</div>
-    <button class="btn btn-line" onclick="hide(\'genSheet\')">Cancel</button>`;
+    <button class="btn btn-line" onclick="hide(\'genSheet\')">${T('Cancel')}</button>`;
   show('genSheet');
 }
 function reportProofAsk(reason){
@@ -3342,24 +3349,34 @@ function storyInsightsHtml(){
   return countLine+crushLine+`<button class="btn btn-line" style="margin-top:8px" onclick="openCrushSheet()">${IC('heart',14)} ${T('Crush zone')}</button>`;
 }
 function openCrushSheet(){
-  if(!goldActive()) return openGold('likesYou');
   const cr=L.crushes||{};
+  const hid=L.storyHide||{};
   const list=(L.matches||[]).filter(m=>m&&m.peer&&m.peer!==uid);
   $('genBody').innerHTML=`<div class="h2" style="margin-bottom:6px">${IC('heart',20)} ${T('Crush zone')}</div>
-    <div class="mut small" style="margin-bottom:12px">${T('Mark matches you care about. If they open your story, you will see their name — GOLD only. Other viewers stay a number.')}</div>
+    <div class="mut small" style="margin-bottom:12px">${T('Mark matches you care about. If they open your story, you will see their name — GOLD only. Hide your story from anyone here.')}</div>
+    ${goldActive()?'':`<button class="btn btn-line" style="margin-bottom:10px" onclick="openGold('likesYou')">${IC('crown',14)} ${T('Crush names are GOLD — hide story is free')}</button>`}
     <div class="setcard">${list.length?list.map(m=>{
-      const on=!!cr[m.peer];
+      const on=!!cr[m.peer]; const ho=!!hid[m.peer];
       const p=personOf(m.peer)||{};
-      return `<button class="mprow" onclick="toggleCrush('${m.peer}')"><span class="mico ${on?'mic-e':'mic-g'}">${IC(on?'heart':'person',18)}</span><span class="mtxt"><b>${(p.name||m.name||T('Someone')).replace(/[<>]/g,'')}</b><div>${on?T('Watching for their view'):T('Tap to add as a crush')}</div></span>${on?IC('check',16):''}</button>`;
+      const name=(p.name||m.name||T('Someone')).replace(/[<>]/g,'');
+      return `<div class="mprow" style="align-items:flex-start"><span class="mico ${on?'mic-e':'mic-g'}">${IC(on?'heart':'person',18)}</span><span class="mtxt" style="flex:1"><b>${name}</b><div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px"><button class="pill ${on?'pon':''}" onclick="toggleCrush('${m.peer}')">${IC('heart',12)} ${on?T('Crush'):T('Add crush')}</button><button class="pill ${ho?'pon':''}" onclick="toggleStoryHide('${m.peer}')">${IC('ban',12)} ${ho?T('Story hidden'):T('Hide story from them')}</button></div></span></div>`;
     }).join(''):`<div class="mut small">${T('Match someone first — then add them here')}</div>`}</div>
     <button class="btn btn-line" onclick="hide('genSheet')">${T('Close')}</button>`;
   show('genSheet');
 }
 async function toggleCrush(peer){
-  if(!goldActive()||!peer) return;
+  if(!peer) return;
+  if(!goldActive()) return openGold('likesYou');
   L.crushes=L.crushes||{};
   if(L.crushes[peer]){ delete L.crushes[peer]; try{ await ref('crushes/'+uid+'/'+peer).remove(); }catch(e){} }
   else { L.crushes[peer]=true; try{ await ref('crushes/'+uid+'/'+peer).set(true); }catch(e){} }
+  save(); openCrushSheet();
+}
+async function toggleStoryHide(peer){
+  if(!peer) return;
+  L.storyHide=L.storyHide||{};
+  if(L.storyHide[peer]){ delete L.storyHide[peer]; try{ await ref('storyHide/'+uid+'/'+peer).remove(); }catch(e){} }
+  else { L.storyHide[peer]=true; try{ await ref('storyHide/'+uid+'/'+peer).set(true); }catch(e){} }
   save(); openCrushSheet();
 }
 function renderProfile(){
@@ -3375,7 +3392,7 @@ function renderProfile(){
         <div class="nm h2" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">${L.me.name}, ${L.me.age} ${VB(L.verified)} <span class="phbadge ${L.verified?'blue':''}">${L.verified?T('VERIFIED'):(mp?T('PHOTO PROFILE'):T('GOOGLE VERIFIED'))}</span></div>
         <div class="mut small" style="margin:4px 0">${IC('pin',13)} ${L.me.city}</div>
         <div class="small">${L.me.bio}</div>
-        <div class="row" style="flex-wrap:wrap;gap:6px;margin-top:8px">${L.me.tags.map(t=>`<span class="chip" style="font-size:11px;display:inline-flex;align-items:center;gap:5px">${TIC(t,12)}${tagTxt(t)}</span>`).join('')}</div>
+        <div class="row" style="flex-wrap:wrap;gap:6px;margin-top:8px">${L.me.tags.map(t=>`<span class="chip" style="font-size:11px;display:inline-flex;align-items:center;gap:5px">${TIC(t,12)}${T(tagTxt(t))}</span>`).join('')}</div>
         ${extraInfosHtml(L.me) ? '<div class="row" style="flex-wrap:wrap;gap:6px;margin-top:10px">' + extraInfosHtml(L.me) + '</div>' : ''}
       </div>
     </div>
@@ -3400,6 +3417,7 @@ function renderProfile(){
             <button class="pill ${storyFresh(STORY[uid])?'':'pon'}" onclick="pickStory()" style="${storyFresh(STORY[uid])?'':'background:var(--grad);color:#fff'}">${storyFresh(STORY[uid])?T('Replace story'):T('Add story')}</button></div>
         </div>
         <div class="addstory-quote">“${T('Show your light today. A single story can start a beautiful conversation')}”</div>
+        ${storyInsightsHtml()}
       </div>
       <div class="card" style="margin-bottom:10px">
         <div class="spread"><b class="small">${T('My Tayri ID')}</b><button class="copybtn" onclick="copyMyId()">${T('COPY')}</button></div>
@@ -3439,7 +3457,8 @@ function renderProfile(){
         <button class="mprow" onclick="openAvSheet()"><div class="mico mic-c">${IC('person',22)}</div><div class="mtxt"><b>${T('Avatar art')}</b><div>${T('Pick your vibe — your photo always wins')}</div></div><span class="pill">${T('8 arts')}</span></button>
         <button class="mprow" onclick="toggleGeo()"><div class="mico mic-c">${IC('pin',22)}</div><div class="mtxt"><b>${T('Real distance (GPS)')}</b><div>${L.geo?T('Tap to turn OFF — you control your location'):T('Real kilometres — always free')}</div></div><span class="pill ${L.geo?'pon':''}">${L.geo?T('ON · tap to stop'):T('Turn on')}</span></button>
         <button class="mprow" onclick="location.href='video.html'"><div class="mico mic-e">${IC('video',22)}</div><div class="mtxt"><b>${T('Instant video')}</b><div>${T('Meet someone live — free')}</div></div><span class="chev">›</span></button>
-        <button class="mprow" onclick="location.href='stream.html'"><div class="mico mic-d">${IC('video',22)}</div><div class="mtxt"><b>${T('Live stream')}</b><div id="liveCntLine">${T('Watch or go live — gifts, 30% to Tayripages')}</div></div><span class="pill" id="liveCntPill">${T('LIVE')}</span></button>
+        <button class="mprow" onclick="location.href='stream.html'"><div class="mico mic-d">${IC('video',22)}</div><div class="mtxt"><b>${T('Live stream')} <span class="pill" style="margin-inline-start:6px">${T('beta')}</span></b><div id="liveCntLine">${T('Watch or go live — gifts, 30% to Tayripages')}</div></div><span class="pill" id="liveCntPill">${T('LIVE')}</span></button>
+        <button class="mprow" onclick="openCrushSheet()"><div class="mico mic-e">${IC('heart',22)}</div><div class="mtxt"><b>${T('Crush zone')}</b><div>${T('Know if they viewed your story · hide from anyone')}</div></div><span class="chev">›</span></button>
 
         <button class="mprow" onclick="toggleNotif()"><div class="mico mic-f">${IC('bell',22)}</div><div class="mtxt"><b>${T('In-app notifications')}</b><div>${T('Toasts while the app is open')}</div></div><div class="toggle ${L.notif===false?'':'on'}" id="notifT"></div></button>
         <button class="mprow" onclick="openSafety()"><div class="mico mic-g">${IC('shield',22)}</div><div class="mtxt"><b>${T('Safety center')}</b><div>${T('Block, report, dating tips')}</div></div><span class="chev">›</span></button>
@@ -3498,7 +3517,7 @@ function paintGold(){ const el=$('goldTop'); if(el)el.textContent=goldActive()?T
 
 /* ============ INIT ============ */
 setTimeout(()=>{ const dk=$('deck'); if(AUTHED&&R.tab==='discover'&&dk&&!dk.children.length){ try{paintDeck();}catch(e){} } }, 5200);
-const TAYRI_BUILD='v32'; /* bump this number on every release — every phone self-updates once, no cache games */
+const TAYRI_BUILD='v33'; /* bump this number on every release — every phone self-updates once, no cache games */
 try{
   if(!sessionStorage.getItem('tayri_boot_'+TAYRI_BUILD)){
     sessionStorage.setItem('tayri_boot_'+TAYRI_BUILD,'1');

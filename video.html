@@ -428,7 +428,7 @@ svg{display:inline-block}
     return f;
   }
   function paintModeGold(){
-    matchMode.innerHTML='Video with a match'+(isPro?'':' <span class="modegold">GOLD</span>');
+    matchMode.innerHTML=T('Video with a match')+(isPro?'':' <span class="modegold">'+T('GOLD')+'</span>');
   }
   function renderProFilters(){
     paintModeGold();

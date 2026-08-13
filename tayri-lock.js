@@ -1,30 +1,15 @@
-/* Tayripages — console / inspect deterrent (static hosts cannot hide source). */
+/* Deterrent only — never freeze the UI (debugger on phones looks like “no response”). */
 (function(){
   try{
+    if(/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent||'')) return;
     var block=function(e){ try{ e.preventDefault(); e.stopPropagation(); }catch(x){} return false; };
     document.addEventListener('contextmenu', block, true);
     document.addEventListener('keydown', function(e){
       var k=e.key||'';
-      var combo=(e.ctrlKey||e.metaKey);
-      if(k==='F12' || (e.ctrlKey&&e.shiftKey&&/^[IJKC]$/i.test(k)) || (combo&&/^u$/i.test(k)) || (e.metaKey&&e.altKey&&/^[ij]$/i.test(k))){
+      if(k==='F12' || (e.ctrlKey&&e.shiftKey&&/^[IJKC]$/i.test(k)) || ((e.ctrlKey||e.metaKey)&&/^u$/i.test(k))){
         return block(e);
       }
     }, true);
-    var silent=function(){};
-    try{
-      ['log','debug','info','warn','table','dir','dirxml','trace','group','groupCollapsed','groupEnd'].forEach(function(m){
-        try{ console[m]=silent; }catch(x){}
-      });
-    }catch(x){}
-    var n=0;
-    setInterval(function(){
-      n++;
-      try{ if(n%4===0) console.clear(); }catch(x){}
-      try{
-        var w=(window.outerWidth||0)-(window.innerWidth||0);
-        var h=(window.outerHeight||0)-(window.innerHeight||0);
-        if(w>180||h>180){ debugger; }
-      }catch(x){}
-    }, 2500);
+    ['log','debug','info','table','dir'].forEach(function(m){ try{ console[m]=function(){}; }catch(x){} });
   }catch(e){}
 })();
