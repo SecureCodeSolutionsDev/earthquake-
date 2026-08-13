@@ -8,8 +8,6 @@
 <meta name="description" content="A free, peer-to-peer instant video room for Tayripages members.">
 <link rel="icon" type="image/png" href="icon.png">
 <script src="tayri-config.js"></script>
-<script src="tayri-lock.js"></script>
-<script src="tayri-privacy.js"></script>
 <script src="tayri-i18n.js"></script>
 <script src="tayri-video-i18n.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -347,19 +345,9 @@ svg{display:inline-block}
   function countryOf(city){ return CITY_COUNTRY[city]||'Other'; }
   function tagTxt(t){ return (t||'').replace(/^[^A-Za-zÀ-ÿ]+/,'').trim(); }
 
-  function videoPack(){
-    try{
-      const L=JSON.parse(localStorage.getItem('zwin_local')||'{}');
-      const lang=L.lang||localStorage.getItem('tayri_lang')||'en';
-      return Object.assign({}, (window.TAYRI_I18N&&window.TAYRI_I18N[lang])||{}, (window.TAYRI_VIDEO_I18N&&window.TAYRI_VIDEO_I18N[lang])||{});
-    }catch(e){ return {}; }
-  }
-  function T(en){ const pack=videoPack(); return (pack&&pack[en])||en; }
-  function applyVideoI18n(){
-    const pack=videoPack();
-    document.querySelectorAll('[data-t]').forEach(el=>{ const k=el.getAttribute('data-t'); if(pack[k]) el.innerHTML=pack[k]; });
-    document.querySelectorAll('[data-tph]').forEach(el=>{ const k=el.getAttribute('data-tph'); if(pack[k]) el.placeholder=pack[k]; });
-  }
+  function T(en){ try{ const L=JSON.parse(localStorage.getItem('zwin_local')||'{}'); const lang=L.lang||'en';
+    const pack=Object.assign({}, (window.TAYRI_VIDEO_I18N&&window.TAYRI_VIDEO_I18N[lang])||{}, (window.TAYRI_I18N&&window.TAYRI_I18N[lang])||{});
+    return pack[en]||en; }catch(e){ return en; } }
   function setStatus(text,kind){ statusEl.textContent=T(text); statusEl.className='status'+(kind?' '+kind:''); }
   function show(el,on){ el.classList.toggle('hidden',!on); }
   function safeName(u){ return (u&&((u.displayName||'').split(' ')[0]||u.email||'Member'))||'Member'; }
@@ -429,18 +417,17 @@ svg{display:inline-block}
     return f;
   }
   function paintModeGold(){
-    matchMode.innerHTML=T('Video with a match')+(isPro?'':' <span class="modegold">'+T('GOLD')+'</span>');
+    matchMode.innerHTML='Video with a match'+(isPro?'':' <span class="modegold">GOLD</span>');
   }
   function renderProFilters(){
     paintModeGold();
     show(proFilterBar,videoMode==='random');
-    proBadge.textContent=isPro?T('GOLD'):T('FREE');
+    proBadge.textContent=isPro?'GOLD':'FREE';
     proBadge.classList.toggle('free',!isPro);
-    filterToggle.innerHTML=IC('sliders',14)+' '+(isPro?T('Pro filters'):T('Filters'));
+    filterToggle.innerHTML=IC('sliders',14)+(isPro?' Pro filters':' Filters');
     [filterGender,filterMalika,filterMorals,filterCharisma,filterSpeaker].forEach(x=>{ if(x)x.disabled=!isPro; });
     [filterCountry,filterInterest].forEach(x=>{ if(x){ x.disabled=false; x.removeAttribute('disabled'); } });
     if(isPro) applyGoldStackIfNeeded();
-    try{ applyVideoI18n(); }catch(e){}
     filterNote.textContent=isPro?'GOLD default: respectful character + warm charisma (Elo). Beauty Queen top 20 / top 100 is optional. Mutual filters.':'Country and shared interest are FREE. GOLD unlocks Beauty Queen, character, charisma, and speaker Elo filters.';
   }
   function fillFilterOptions(){
@@ -453,12 +440,11 @@ svg{display:inline-block}
     const list=Object.keys(seen).sort();
     if(!list.length)list.push('Morocco');
     const cur=filterCountry.value||'all';
-    filterCountry.innerHTML='<option value="all">'+T('Everywhere')+'</option>'+list.map(c=>'<option value="'+c+'">'+c+'</option>').join('');
+    filterCountry.innerHTML='<option value="all">Everywhere</option>'+list.map(c=>'<option value="'+c+'">'+c+'</option>').join('');
     filterCountry.value=cur==='all'||list.includes(cur)?cur:'all';
     const icur=filterInterest.value||'any';
-    filterInterest.innerHTML='<option value="any">'+T('Any interest')+'</option>'+TAGS.map(t=>'<option value="'+t+'">'+(T(t)||t)+'</option>').join('');
+    filterInterest.innerHTML='<option value="any">Any interest</option>'+TAGS.map(t=>'<option value="'+t+'">'+t+'</option>').join('');
     filterInterest.value=TAGS.includes(icur)?icur:'any';
-    try{ applyVideoI18n(); }catch(e){}
   }
   async function loadDiscoveryContext(){
     try{
@@ -486,13 +472,13 @@ svg{display:inline-block}
   }
   function compatible(a,b){ return acceptsFilter(a.filters,b)&&acceptsFilter(b.filters,a); }
   function renderStartButton(){
-    if(!authUser){ startBtn.disabled=false; startBtn.textContent=T('Continue with Google'); startBtn.onclick=signIn; return; }
+    if(!authUser){ startBtn.disabled=false; startBtn.textContent='Continue with Google'; startBtn.onclick=signIn; return; }
     if(videoMode==='match'){
       startBtn.disabled=!selectedPeer;
-      startBtn.textContent=selectedPeer?(T('Call')+' '+selectedPeerName):T('Choose a match first');
+      startBtn.textContent=selectedPeer?('Call '+selectedPeerName):'Choose a match first';
       startBtn.onclick=startDirectMatch;
     }else{
-      startBtn.disabled=false; startBtn.textContent=T('Start instant video'); startBtn.onclick=startMatch;
+      startBtn.disabled=false; startBtn.textContent='Start instant video'; startBtn.onclick=startMatch;
     }
   }
   function setMode(mode){
@@ -518,9 +504,7 @@ svg{display:inline-block}
         const peer=ms.a===uid?ms.b:ms.a;
         if(!peer) return null;
         const profile=(await root('users/'+peer).once('value')).val()||{};
-        const nm=profile.name||'';
-        if(peer==='admin'||String(peer).indexOf('admin_')===0||/^admin$/i.test(nm)) return null;
-        return {mid,peer,name:nm||T('Someone')};
+        return {mid,peer,name:profile.name||'Tayripages member'};
       }));
       matchData=rows.filter(Boolean);
       renderMatches();
@@ -536,8 +520,8 @@ svg{display:inline-block}
     selectedPeer=m.peer; selectedPeerName=m.name; renderMatches(); renderStartButton(); setStatus('Ready to call '+m.name+'.','good');
   }
   async function reportVideoUser(){
-  if(!currentPeer) return toast(T('No user to report'));
-  const reason = prompt(T('Report')+':\n1: '+T('Under 18')+'\n2: '+T('Fake profile')+'\n3: '+T('Inappropriate content')+'\n4: '+T('Money or scam'));
+  if(!currentPeer) return toast('No user to report');
+  const reason = prompt('Report reason:\n1: Under 18\n2: Fake profile\n3: Nudity/Harassment\n4: Scam\nEnter number or text:');
   if(!reason) return;
   const labels={ '1':'Under 18 — minor (video)', '2':'Fake profile (video)', '3':'Inappropriate content (video)', '4':'Scam (video)'};
   const finalReason = labels[reason.trim()] || reason.trim().slice(0,200);
@@ -1011,17 +995,19 @@ document.addEventListener('click', e=>{
 try{
   let L=null; try{ L=JSON.parse(localStorage.getItem('zwin_local')||'null'); }catch(e){}
   const lang = (L&&L.lang) || localStorage.getItem('tayri_lang') || 'en';
-  const pack=Object.assign({}, (window.TAYRI_I18N&&window.TAYRI_I18N[lang])||{}, (window.TAYRI_VIDEO_I18N&&window.TAYRI_VIDEO_I18N[lang])||{});
-  document.querySelectorAll('[data-t]').forEach(el=>{
-    const k=el.getAttribute('data-t');
-    const tr=pack[k];
-    if(tr) el.innerHTML=tr;
-  });
-  document.querySelectorAll('[data-tph]').forEach(el=>{
-    const k=el.getAttribute('data-tph');
-    const tr=pack[k];
-    if(tr) el.placeholder=tr;
-  });
+  if(window.TAYRI_I18N && window.TAYRI_I18N[lang]){
+    document.querySelectorAll('[data-t]').forEach(el=>{
+      const k=el.getAttribute('data-t');
+      const tr=window.TAYRI_I18N[lang][k];
+      if(tr) el.innerHTML=tr;
+    });
+    // also translate title
+    document.querySelectorAll('[data-tph]').forEach(el=>{
+      const k=el.getAttribute('data-tph');
+      const tr=window.TAYRI_I18N[lang][k];
+      if(tr) el.placeholder=tr;
+    });
+  }
 }catch(e){}
 </script>
 

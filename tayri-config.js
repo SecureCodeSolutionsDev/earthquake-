@@ -110,8 +110,8 @@ const TAYRI_CONFIG = {
   fame: null,
 
   gold: {
-    priceDH:     199,   // internal bank amount — never shown
-    usd:          20,   // public GOLD price
+    priceDH:      99,   // internal bank amount — never shown
+    usd:           9,   // public GOLD price
     likesPerDay:  50,   // free likes every day, reset after midnight — bulk audit final: 50 (was 30, 100 was too much)
     msgsPerMatch: 10,   // free messages per new match (the spark stays free)
     superPerDay:   1,   // free Super Likes per day
