@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#07070a">
 <title>Tayri Muse</title>
+<script src="tayri-lock.js"></script>
 <meta name="robots" content="noindex,nofollow">
 <link rel="icon" type="image/png" href="icon.png">
 <script src="tayri-config.js"></script>
@@ -58,6 +59,7 @@ a{color:inherit;text-decoration:none}
 .hidden{display:none!important}
 .pill{display:inline-block;padding:3px 8px;border-radius:99px;background:rgba(255,61,127,.18);color:#ffb3c8;font-size:10px;font-weight:800}
 @media(max-width:760px){.stats{grid-template-columns:1fr 1fr}}
+img,video{-webkit-user-drag:none;user-select:none;-webkit-touch-callout:none}/*soft-privacy*/
 </style>
 </head>
 <body>
@@ -70,10 +72,10 @@ a{color:inherit;text-decoration:none}
       <p data-t="One club password. Then Google. You get a referral link. When someone signs up and buys GOLD, you earn 50% of GOLD ($9) — paid every Monday by transfer.">One club password. Then Google. You get a referral link. When someone signs up and buys GOLD, you earn 50% of GOLD ($9) — paid every Monday by transfer.</p>
     </div>
     <div class="glass" style="max-width:420px">
-      <div class="tiny" style="margin-bottom:8px;font-weight:700" data-t="Club password (fixed)">Club password (fixed)</div>
-      <input class="inp" id="clubPass" type="password" placeholder="Password" autocomplete="off">
+      <div class="tiny" style="margin-bottom:8px;font-weight:700;display:none" data-t="Club password (fixed)">Club password (fixed)</div>
+      <input class="inp" id="clubPass" type="password" placeholder="Password" autocomplete="off" style="display:none">
       <div style="height:12px"></div>
-      <button class="btn btn-w full" id="unlockBtn" data-t="Continue">Continue</button>
+      <button class="btn btn-w full" id="unlockBtn" data-t="Continue" style="display:none">Continue</button>
       <div class="err" id="gateErr"></div>
     </div>
   </section>
@@ -145,7 +147,9 @@ a{color:inherit;text-decoration:none}
   function refLink(){const base=(TAYRI_CONFIG.site&&TAYRI_CONFIG.site.url)||(location.origin+'/');return base.replace(/\/?$/,'/')+'index.html?ref='+encodeURIComponent(uid)}
   function compress(file){return new Promise((res,rej)=>{const img=new Image();img.onload=()=>{let w=img.naturalWidth,h=img.naturalHeight,s=Math.min(1,420/Math.max(w,h));w=Math.round(w*s);h=Math.round(h*s);const c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);URL.revokeObjectURL(img.src);let q=0.62,out=c.toDataURL('image/jpeg',q);while(out.length>380000&&q>0.35){q-=0.08;out=c.toDataURL('image/jpeg',q)}res(out)};img.onerror=rej;img.src=URL.createObjectURL(file)})}
 
-  $('unlockBtn').onclick=()=>{if(($('clubPass').value||'').trim()!==PASS){$('gateErr').textContent='Wrong password.';return}sessionStorage.setItem('tayri_muse','1');boot()}
+  function museUnlock(){ sessionStorage.setItem('tayri_muse','1'); boot(); }
+  $('unlockBtn').onclick=museUnlock;
+  if(true){ /* no club PIN */ sessionStorage.setItem('tayri_muse','1'); }
   if(sessionStorage.getItem('tayri_muse')==='1') boot();
 
   function boot(){
@@ -160,7 +164,7 @@ a{color:inherit;text-decoration:none}
     $('gateErr').textContent='Password ok. Sign in with Google.';
     if($('gbtn'))return;
     const b=document.createElement('button'); b.id='gbtn'; b.className='btn btn-line full'; b.style.marginTop='10px'; b.textContent='Continue with Google';
-    b.onclick=()=>{const p=new firebase.auth.GoogleAuthProvider(); firebase.auth().signInWithPopup(p).catch(()=>firebase.auth().signInWithRedirect(p))};
+    b.onclick=()=>{const p=new firebase.auth.GoogleAuthProvider(); const mob=/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent||''); if(mob) firebase.auth().signInWithRedirect(p); else firebase.auth().signInWithPopup(p).catch(()=>firebase.auth().signInWithRedirect(p));};
     $('unlockBtn').after(b);
   }
 

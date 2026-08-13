@@ -71,7 +71,7 @@ tr:last-child td{border-bottom:none}
 
 <div id="gate">
   <!-- Step 1: Admin PIN Verification -->
-  <div class="card" id="gatePin">
+  <div class="card" id="gatePin" style="display:none">
     <div class="logo" style="margin:0 auto 12px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg></div>
     <div class="h2">Tayripages HQ</div>
     <div class="mut small" style="margin:6px 0 14px">Company dashboard — enter admin PIN</div>
@@ -81,7 +81,7 @@ tr:last-child td{border-bottom:none}
   </div>
 
   <!-- Step 2: Owner Auth (Google 1-Click + Email/Password Option) -->
-  <div class="card" id="gatePhone" style="display:none">
+  <div class="card" id="gatePhone">
     <div class="logo" style="margin:0 auto 12px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg></div>
     <div class="h2">Verify Owner Account</div>
     <div class="mut small" style="margin:6px 0 14px">Authenticate with your admin Google or Email account:</div>
@@ -211,8 +211,26 @@ function eh(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt
 function ref(p){return DB.ref('wasla_dating/'+p)} // matches firebase-rules.json root
 function ts(t){return t?new Date(t).toLocaleString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}):''}
 
-let PIN_OK = false;
+let PIN_OK = true;
+function hqNeedRedirect(){
+  const ua=navigator.userAgent||'';
+  return /Android|iPhone|iPad|iPod|Mobile/i.test(ua) || window.matchMedia('(pointer:coarse)').matches;
+}
+function hqInitFirebase(){
+  if(!window.firebase) return null;
+  if(!firebase.apps.length){
+    try{ firebase.initializeApp(TAYRI_CONFIG.firebase); }catch(e){}
+    try{ const k=(TAYRI_CONFIG.appCheck&&TAYRI_CONFIG.appCheck.recaptchaSiteKey)||'';
+      if(k&&!/^PASTE|^$/.test(k)&&firebase.appCheck){ firebase.appCheck().activate(k,true); } }catch(e){}
+  }
+  return firebase.apps.length?firebase.auth():null;
+}
+function showOwnerGate(){
+  $('gatePin').style.display='none';
+  $('gatePhone').style.display='block';
+}
 
+(function(){ try{ sessionStorage.setItem('tayri_hq_pin','1'); }catch(e){} })();
 function tryPin(){
   const val = ($('pinIn').value||'').trim();
   if(val !== TAYRI_CONFIG.adminPin){
@@ -221,53 +239,44 @@ function tryPin(){
     return;
   }
   PIN_OK = true;
+  try{ sessionStorage.setItem('tayri_hq_pin','1'); }catch(e){}
   if(!tayriCloudReady()){ enter(); return; }
-  
-  if(!window.firebase.apps.length){
-    firebase.initializeApp(TAYRI_CONFIG.firebase);
-    try{ const k=(TAYRI_CONFIG.appCheck&&TAYRI_CONFIG.appCheck.recaptchaSiteKey)||'';
-      if(k&&!/^PASTE|^$/.test(k)&&firebase.appCheck){ firebase.appCheck().activate(k,true); } }catch(e){}
-  }
-  
-  // If already authenticated as non-anonymous user, enter directly
+  hqInitFirebase();
   const cur = firebase.auth().currentUser;
   if(cur && !cur.isAnonymous){
     enter();
     return;
   }
-  
-  $('gatePin').style.display='none';
-  $('gatePhone').style.display='block';
+  showOwnerGate();
 }
 
 function adminGoogle(){
   const btn = $('aBtn');
   if(btn){ btn.disabled=true; btn.textContent='Opening Google…'; }
-  
-  if(!window.firebase || !firebase.apps.length){
-    try{ firebase.initializeApp(TAYRI_CONFIG.firebase); }catch(e){}
-  }
-  
-  const auth = firebase.auth();
+  const auth = hqInitFirebase();
+  if(!auth){ if(btn){ btn.disabled=false; btn.textContent='Continue with Google'; } return toast('Firebase not ready','err'); }
   const prov = new firebase.auth.GoogleAuthProvider();
   prov.setCustomParameters({ prompt: 'select_account' });
-  
-  // Use LOCAL persistence and Popup to eliminate 'auth/missing-initial-state'
+  const goRedirect=()=>{
+    try{ sessionStorage.setItem('tayri_hq_pin','1'); }catch(e){}
+    if(btn) btn.textContent='Redirecting to Google…';
+    return auth.signInWithRedirect(prov);
+  };
   auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
     .then(()=>{
-      return auth.signInWithPopup(prov);
-    })
-    .then(()=>{
-      enter();
+      if(hqNeedRedirect()) return goRedirect();
+      return auth.signInWithPopup(prov).then(()=>enter());
     })
     .catch(e=>{
-      if(btn){ btn.disabled=false; btn.textContent='Continue with Google'; }
-      if(e.code==='auth/popup-closed-by-user'||e.code==='auth/cancelled-popup-request') return;
-      if(e.code==='auth/missing-initial-state' || e.code==='auth/popup-blocked'){
-        toast('Google popup was blocked or storage partitioned — use Email sign-in below for 100% reliability', 'err');
-      } else {
-        toast('Sign-in failed: '+(e.message||e.code),'err');
+      if(e.code==='auth/popup-closed-by-user'||e.code==='auth/cancelled-popup-request'){
+        if(btn){ btn.disabled=false; btn.textContent='Continue with Google'; }
+        return;
       }
+      if(e.code==='auth/popup-blocked'||e.code==='auth/missing-initial-state'||e.code==='auth/operation-not-supported-in-this-environment'){
+        return goRedirect();
+      }
+      if(btn){ btn.disabled=false; btn.textContent='Continue with Google'; }
+      toast('Sign-in failed: '+(e.message||e.code),'err');
     });
 }
 
@@ -303,6 +312,7 @@ function adminEmailLogin(){
 
 function adminSignOut(){
   PIN_OK = false;
+  try{ sessionStorage.removeItem('tayri_hq_pin'); }catch(e){}
   if(window.firebase && firebase.apps.length){
     firebase.auth().signOut().then(()=>location.reload()).catch(()=>location.reload());
   } else {
@@ -732,14 +742,15 @@ async function rejectMuse(id){
   try{ await ref('influencerReq/'+id).remove(); toast('Muse request rejected'); }
   catch(e){ toast('Reject failed','err'); }
 }
-async async function markMusePaid(id,earn){
+async function markMusePaid(id,earn){
   const week=Math.floor(Date.now()/(7*86400000));
+  const adminUid=(firebase.auth().currentUser&&firebase.auth().currentUser.uid)||'admin';
   try{
-    await ref('influencerPayouts/'+id+'/'+week).set({paid:true,ts:Date.now(),by:adminUid||'admin',usd:+earn||0,week:'casablanca'});
+    await ref('influencerPayouts/'+id+'/'+week).set({paid:true,ts:Date.now(),by:adminUid,usd:+earn||0,week:'casablanca'});
     toast('Muse week marked paid');
   }catch(e){ toast('Mark-paid failed — publish full rules','err'); }
 }
-function removeMuse(id){
+async function removeMuse(id){
   if(!confirm('Remove this muse from the public house?'))return;
   try{ await ref('influencers/'+id).remove(); toast('Muse removed'); }
   catch(e){ toast('Remove failed','err'); }
@@ -796,6 +807,22 @@ async function keepFamous(id){
 async function dropFamous(id){
   try{ await ref('famousIds/'+id).remove(); }catch(e){ toast('Remove failed','err'); }
 }
+
+(function hqResumeAuth(){
+  try{ if(sessionStorage.getItem('tayri_hq_pin')==='1') PIN_OK=true; }catch(e){}
+  if(typeof tayriCloudReady!=='function' || !tayriCloudReady()) return;
+  const auth=hqInitFirebase();
+  if(!auth) return;
+  auth.getRedirectResult().then(res=>{
+    if(res && res.user){ PIN_OK=true; try{ sessionStorage.setItem('tayri_hq_pin','1'); }catch(e){} enter(); }
+  }).catch(e=>{
+    if(e && e.code && e.code!=='auth/popup-closed-by-user') toast('Google return failed: '+(e.message||e.code),'err');
+  });
+  auth.onAuthStateChanged(u=>{
+    if(u && !u.isAnonymous && PIN_OK && $('dash').style.display==='none') enter();
+  });
+})();
+
 function wipe(){
   if(!confirm('Really delete ALL data? This will KEEP banned UIDs & bannedEmails forever. Continue?'))return;
   DB.ref('wasla_dating').once('value').then(s=>{

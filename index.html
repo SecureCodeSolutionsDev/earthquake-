@@ -719,7 +719,7 @@ img,video,canvas{-webkit-user-drag:none;user-select:none;-webkit-touch-callout:n
 </div>
 
 <!-- story viewer — tap outside to close -->
-<div class="storyv" id="storyV" onclick="closeStory()">
+<div class="storyv" id="storyV" onclick="storyNext()">
   <div class="storyv-card" onclick="event.stopPropagation()">
     <div class="storyv-prog" id="storyBars"></div>
     <button class="storyv-rep" type="button" data-t="Report" onclick="event.stopPropagation();reportStory()">Report</button>
@@ -1658,10 +1658,17 @@ function paintStoryFrame(){
     bars.style.display='flex'; bars.style.gap='4px';
   }
 }
+function storyPeers(){
+  const ids=[];
+  if(hasStory(uid)) ids.push(uid);
+  (typeof realMatches==='function'?realMatches():(L.matches||[])).forEach(m=>{ if(m&&m.peer&&hasStory(m.peer)&&ids.indexOf(m.peer)<0) ids.push(m.peer); });
+  return ids;
+}
 function runStoryTimer(){
   clearTimeout(window._svT); clearInterval(window._svTick);
   if(svPaused) return;
   svStart=Date.now();
+  if(!(svLeft>0)) svLeft=8000;
   const bar=document.querySelector('#storyBars i[data-si="'+svIx+'"] b');
   if(bar){ bar.style.transition='none'; bar.style.width=((8000-svLeft)/8000*100)+'%';
     requestAnimationFrame(()=>{ bar.style.transition='width '+svLeft+'ms linear'; bar.style.width='100%'; }); }
@@ -1676,8 +1683,17 @@ function toggleStoryPause(){
   if(svPaused){ svPaused=0; setPauseIcon(0); runStoryTimer(); }
   else { svPaused=1; svLeft=Math.max(400, svLeft-(Date.now()-svStart)); clearTimeout(window._svT); const bar=document.querySelector('#storyBars i[data-si="'+svIx+'"] b'); if(bar) bar.style.transition='none'; setPauseIcon(1); }
 }
-function storyNext(){ if(svIx<svItems.length-1){ svIx++; svLeft=8000; svPaused=0; paintStoryFrame(); runStoryTimer(); } else closeStory(); }
-function storyPrev(){ if(svIx>0){ svIx--; svLeft=8000; svPaused=0; paintStoryFrame(); runStoryTimer(); } }
+function storyNext(){
+  if(svIx<svItems.length-1){ svIx++; svLeft=8000; svPaused=0; try{setPauseIcon(0)}catch(e){} paintStoryFrame(); runStoryTimer(); return; }
+  const peers=storyPeers(); const i=peers.indexOf(svPeer);
+  if(i>=0 && i<peers.length-1){ openStory(peers[i+1]); return; }
+  closeStory();
+}
+function storyPrev(){
+  if(svIx>0){ svIx--; svLeft=8000; svPaused=0; try{setPauseIcon(0)}catch(e){} paintStoryFrame(); runStoryTimer(); return; }
+  const peers=storyPeers(); const i=peers.indexOf(svPeer);
+  if(i>0) openStory(peers[i-1]);
+}
 async function openStory(peer){
   if(peer&&peer!==uid&&!DEMO){
     try{
@@ -1695,11 +1711,15 @@ async function openStory(peer){
   window._svReact=false;
   $('svLike').onclick=storyLike;
   $('svNote').onkeydown=e=>{ if(e.key==='Enter')storyLike(); };
-  $('svNote').onfocus=()=>{ if(!svPaused) toggleStoryPause(); };
+  $('svNote').onfocus=null;
   const card=document.querySelector('.storyv-card');
-  if(card){ card.onclick=e=>{ const r=card.getBoundingClientRect(); if(e.clientX-r.left<r.width*0.28) storyPrev(); else if(e.clientX-r.left>r.width*0.72) storyNext(); }; }
-  show('storyV');
-  paintStoryFrame(); runStoryTimer();
+  if(card){ card.onclick=e=>{
+    if(e.target&&e.target.closest && e.target.closest('.sv-act,.storyv-rep,.storyv-x,.sv-pause,.sv-heart')) return;
+    const r=card.getBoundingClientRect();
+    if(e.clientX-r.left<r.width*0.32) storyPrev(); else storyNext();
+  }; }
+  const v=$('storyV'); if(v){ v.classList.add('on'); v.style.display='flex'; }
+  paintStoryFrame(); svPaused=0; svLeft=8000; try{setPauseIcon(0)}catch(e){} runStoryTimer();
   try{ await refreshSvReact(); }catch(e){}
   paintSvAct();
 }
@@ -2094,7 +2114,7 @@ function openPassportSheet(){
     <button class="btn ${scope==='global'?'btn-grad':'btn-line'}" onclick="goGlobalMix();hide('genSheet')">${IC('globe',16)} ${T('Worldwide mix')}</button>
     <div class="mut tiny" style="margin:10px 0 6px;font-weight:900">${T('GOLD passport — one country')}</div>
     ${isGold?`<input class="inp" id="passSearch" placeholder="${T('Search country…')}" oninput="filterCountryChips(this.value)">
-    <div id="countryChipsBox" class="tagwrap" style="max-height:160px;overflow:auto;margin-top:8px">${ALL_WORLD_COUNTRIES.map(c=>`<button class="tchip country-chip-item ${f.country===c?'on':''}" data-name="${c}" onclick="F().country='${c}';L.matchScope='local';save();hide('genSheet');R.cacheTs=0;loadDeck().catch(()=>paintDeck());toast('${T('Passport')}: ${c}')">${c}</button>`).join('')}</div>`
+    <div id="countryChipsBox" class="tagwrap" style="max-height:160px;overflow:auto;margin-top:8px">${ALL_WORLD_COUNTRIES.map(c=>`<button class="tchip country-chip-item ${f.country===c?'on':''}" data-name="${c}" onclick="F().country='${c}';L.matchScope='local';save();hide('genSheet');R.cacheTs=0;loadDeck().catch(()=>paintDeck());toast('${T('Passport')}: ${c}')">${T(c)}</button>`).join('')}</div>`
     :`<button class="btn btn-soft" onclick="openGold('countryFilter')">${IC('crown',16)} ${T('Unlock country passport with GOLD')}</button>`}
     <div style="height:10px"></div><button class="btn btn-line" onclick="hide(\'genSheet\')">${T('Close')}</button>`;
   show('genSheet');
@@ -2261,7 +2281,7 @@ function openFilters(){
       </div>
       <input class="inp" id="countrySearchIn" placeholder="${T('Search specific country (e.g. France, USA, Japan)…')}" style="font-size:13px;padding:9px 12px;margin-bottom:8px" oninput="filterCountryChips(this.value)">
       <div id="countryChipsBox" class="tagwrap" style="max-height:130px;overflow-y:auto;gap:6px">
-        ${allCountriesCombined.map(c=>`<button class="tchip country-chip-item ${f.country===c?'on':''}" data-name="${c}" onclick="selectCountryFilter('${c}')">${isGold?'':IC('crown',11)+' '}${c}</button>`).join('')}
+        ${allCountriesCombined.map(c=>`<button class="tchip country-chip-item ${f.country===c?'on':''}" data-name="${c}" onclick="selectCountryFilter('${c}')">${isGold?'':IC('crown',11)+' '}${T(c)}</button>`).join('')}
       </div>
       ${!isGold ? `<div class="mut tiny" style="margin-top:6px;color:var(--warn)">${T('Selecting a specific country is a GOLD feature. Worldwide is free for all members.')}</div>` : ''}
     </div>
@@ -2791,7 +2811,7 @@ function renderMatches(){
   });
 
   const lastTs=m=>{ const c=L.chats[m.mid]||[]; return c.length?(c[c.length-1].ts||m.ts):(m.ts||0); };
-  const chats=L.matches.slice().sort((a,b)=>{ const sa=hasStory(a.peer)?1:0, sb=hasStory(b.peer)?1:0; if(sb!==sa) return sb-sa; return lastTs(b)-lastTs(a); }); // 🔝 stories first, then newest message first
+  const chats=dedupedMatches.slice().sort((a,b)=>{ const sa=hasStory(a.peer)?1:0, sb=hasStory(b.peer)?1:0; if(sb!==sa) return sb-sa; return lastTs(b)-lastTs(a); });
 
   chatListEl.innerHTML=chats.length?chats.map(m=>{
     const last=(L.chats[m.mid]||[]).slice(-1)[0];
@@ -3458,7 +3478,7 @@ function renderProfile(){
         </div>
       </div>
       <div class="card" style="margin-bottom:10px">
-        <div class="spread"><b class="small">${T('My story')}</b>${storyFresh(STORY[uid])?'<span class="pill" style="background:var(--grad);color:#fff;box-shadow:0 0 12px 4px rgba(255,94,138,.7)">LIVE · 24h</span>':''}</div>
+        <div class="spread"><b class="small">${T('My story')}</b>${storyFresh(STORY[uid])?'<span class="pill" style="background:var(--grad);color:#fff;box-shadow:0 0 12px 4px rgba(255,94,138,.7)">${T("LIVE · 24h")}</span>':''}</div>
         <div class="mut tiny" style="margin:4px 0 10px">${T('Up to 3 photos, 24 hours each. Your matches see the glow and tap to watch.')}</div>
         <div style="display:flex;gap:10px;align-items:flex-start;overflow-x:auto;padding:2px 0 8px">${(function(){
           const live=storyList(STORY[uid]);
@@ -3571,7 +3591,7 @@ function paintGold(){ const el=$('goldTop'); if(el)el.textContent=goldActive()?T
 
 /* ============ INIT ============ */
 setTimeout(()=>{ const dk=$('deck'); if(AUTHED&&R.tab==='discover'&&dk&&!dk.children.length){ try{paintDeck();}catch(e){} } }, 5200);
-const TAYRI_BUILD='v38'; /* bump this number on every release — every phone self-updates once, no cache games */
+const TAYRI_BUILD='v39'; /* bump this number on every release — every phone self-updates once, no cache games */
 try{
   if(!sessionStorage.getItem('tayri_boot_'+TAYRI_BUILD)){
     sessionStorage.setItem('tayri_boot_'+TAYRI_BUILD,'1');
