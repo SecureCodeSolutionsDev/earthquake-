@@ -3478,7 +3478,7 @@ function renderProfile(){
         </div>
       </div>
       <div class="card" style="margin-bottom:10px">
-        <div class="spread"><b class="small">${T('My story')}</b>${storyFresh(STORY[uid])?'<span class="pill" style="background:var(--grad);color:#fff;box-shadow:0 0 12px 4px rgba(255,94,138,.7)">${T("LIVE · 24h")}</span>':''}</div>
+        <div class="spread"><b class="small">${T('My story')}</b>${storyFresh(STORY[uid])?'<span class="pill" style="background:var(--grad);color:#fff;box-shadow:0 0 12px 4px rgba(255,94,138,.7)">'+T('LIVE · 24h')+'</span>':''}</div>
         <div class="mut tiny" style="margin:4px 0 10px">${T('Up to 3 photos, 24 hours each. Your matches see the glow and tap to watch.')}</div>
         <div style="display:flex;gap:10px;align-items:flex-start;overflow-x:auto;padding:2px 0 8px">${(function(){
           const live=storyList(STORY[uid]);
