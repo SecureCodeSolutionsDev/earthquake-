@@ -71,7 +71,7 @@ tr:last-child td{border-bottom:none}
 
 <div id="gate">
   <!-- Step 1: Admin PIN Verification -->
-  <div class="card" id="gatePin" style="display:none">
+  <div class="card" id="gatePin">
     <div class="logo" style="margin:0 auto 12px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg></div>
     <div class="h2">Tayripages HQ</div>
     <div class="mut small" style="margin:6px 0 14px">Company dashboard — enter admin PIN</div>
@@ -81,7 +81,7 @@ tr:last-child td{border-bottom:none}
   </div>
 
   <!-- Step 2: Owner Auth (Google 1-Click + Email/Password Option) -->
-  <div class="card" id="gatePhone">
+  <div class="card" id="gatePhone" style="display:none">
     <div class="logo" style="margin:0 auto 12px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg></div>
     <div class="h2">Verify Owner Account</div>
     <div class="mut small" style="margin:6px 0 14px">Authenticate with your admin Google or Email account:</div>
@@ -176,7 +176,7 @@ tr:last-child td{border-bottom:none}
     <div id="muSales"></div>
   </div>
   <div id="pg-fm" style="display:none">
-    <div class="card small" style="margin-bottom:12px"><b>Fame values are server-sided</b> at <code>wasla_dating/config/fame</code> (admin write only). Clients cannot invent a cheaper price — rules reject Fame orders that do not match usd / dropsPerMonth. GOLD is $9, not Fame.</div>
+    <div class="card small" style="margin-bottom:12px"><b>Fame values are server-sided</b> at <code>wasla_dating/config/fame</code> (admin write only). Clients cannot invent a cheaper price — rules reject Fame orders that do not match usd / dropsPerMonth. GOLD is $20, not Fame.</div>
     <div id="fameCfgBox" class="card small" style="margin-bottom:12px">Loading Fame config…</div>
     <div id="fameOrders"></div>
     <div class="card small" style="margin-bottom:12px"><b>Famous ID</b> — pin a user (or your admin UID) to every deck for this calendar week. They reappear automatically next week if you keep them listed.</div>
@@ -211,7 +211,7 @@ function eh(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt
 function ref(p){return DB.ref('wasla_dating/'+p)} // matches firebase-rules.json root
 function ts(t){return t?new Date(t).toLocaleString('en-GB',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'}):''}
 
-let PIN_OK = true;
+let PIN_OK = false;
 
 function tryPin(){
   const val = ($('pinIn').value||'').trim();
@@ -255,7 +255,6 @@ function adminGoogle(){
   // Use LOCAL persistence and Popup to eliminate 'auth/missing-initial-state'
   auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
     .then(()=>{
-      if(/Android|iPhone|iPad|Mobile/i.test(navigator.userAgent||'')) return auth.signInWithRedirect(prov);
       return auth.signInWithPopup(prov);
     })
     .then(()=>{
@@ -694,6 +693,7 @@ function paintMuse(){
     ${r.photo?`<img src="${r.photo}" style="width:56px;height:56px;object-fit:cover;border-radius:12px">`:''}
     <div style="flex:1"><b>${eh(r.name||id)}</b><div class="mut tiny">@${eh(r.handle||'')} · ${eh(id)}</div>
     <div class="tiny grn">${sales.length} verified GOLD · $${earn} (50%)</div></div>
+    <button class="btn" onclick="markMusePaid('${id}',${earn})">Mark week paid</button>
     <button class="btn btn-r" onclick="removeMuse('${id}')">Remove</button>
   </div>`;
   }).join(''):'<div class="card mut">No approved muses yet.</div>';
@@ -732,7 +732,14 @@ async function rejectMuse(id){
   try{ await ref('influencerReq/'+id).remove(); toast('Muse request rejected'); }
   catch(e){ toast('Reject failed','err'); }
 }
-async function removeMuse(id){
+async async function markMusePaid(id,earn){
+  const week=Math.floor(Date.now()/(7*86400000));
+  try{
+    await ref('influencerPayouts/'+id+'/'+week).set({paid:true,ts:Date.now(),by:adminUid||'admin',usd:+earn||0,week:'casablanca'});
+    toast('Muse week marked paid');
+  }catch(e){ toast('Mark-paid failed — publish full rules','err'); }
+}
+function removeMuse(id){
   if(!confirm('Remove this muse from the public house?'))return;
   try{ await ref('influencers/'+id).remove(); toast('Muse removed'); }
   catch(e){ toast('Remove failed','err'); }
@@ -742,13 +749,13 @@ function seedFameConfig(){
   const cur=(D.config&&D.config.fame)||null;
   if(cur && +cur.usd>0) return;
   ref('config/fame').set({usd:1000,priceDH:9900,dropsPerMonth:4,launchAtUsers:1000000}).catch(()=>{});
-  ref('config/gold').set({usd:9,priceDH:99}).catch(()=>{});
+  ref('config/gold').set({usd:20,priceDH:199}).catch(()=>{});
 }
 function paintFameCfg(){
   const box=$('fameCfgBox'); if(!box) return;
   const f=(D.config&&D.config.fame)||{};
   box.innerHTML=`<b>Live Fame (server)</b><div class="mut tiny" style="margin:6px 0">$${f.usd||'—'} · ${f.dropsPerMonth||'—'} drops / month · launch at ${f.launchAtUsers||'—'} users</div>
-    <div class="mut tiny">Pages show USD only. GOLD is $9. Fame is $1,000.</div>`;
+    <div class="mut tiny">Pages show USD only. GOLD is $20. Fame is $1,000.</div>`;
 }
 function paintFamous(){
   seedFameConfig();
@@ -804,14 +811,6 @@ function wipe(){
     });
   });
 }
-
-try{
-  if(typeof tayriCloudReady==='function'&&tayriCloudReady()&&window.firebase){
-    if(!firebase.apps.length) firebase.initializeApp(TAYRI_CONFIG.firebase);
-    firebase.auth().getRedirectResult().then(function(r){ if(r&&r.user) enter(); }).catch(function(){});
-    firebase.auth().onAuthStateChanged(function(u){ if(u&&!u.isAnonymous) enter(); });
-  }
-}catch(e){}
 </script>
 </body>
 </html>

@@ -28,6 +28,7 @@
 <meta name="apple-mobile-web-app-title" content="Tayripages">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <script src="tayri-config.js"></script>
+<script src="tayri-lock.js"></script>
 <script src="tayri-i18n.js"></script>
 <script src="filters/tayri-filters.bundle.js"></script>
 <script src="img-pack-1.js"></script>
@@ -239,7 +240,9 @@ body.bootwait #bootSplash{display:flex}
 .mov-x{position:absolute;top:calc(10px + env(safe-area-inset-top));inset-inline-end:14px;z-index:6;width:40px;height:40px;border-radius:50%;background:rgba(0,0,0,.45);color:#fff;font-size:22px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.25)}
 .mov .duo .ma{position:relative;overflow:hidden}
 .mov .duo .ma img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.storyv-rep{position:absolute;top:8px;inset-inline-start:10px;z-index:4;color:#fff;background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.3);border-radius:999px;padding:6px 10px;font-size:11px;font-weight:800}
+.storyv-rep{position:absolute;top:8px;inset-inline-start:10px;z-index:5;color:#fff;background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.3);border-radius:999px;padding:6px 10px;font-size:11px;font-weight:800}
+.storyv-x{position:absolute;top:4px;inset-inline-end:10px;color:#fff;font-size:24px;z-index:5;text-shadow:0 1px 6px rgba(0,0,0,.7);padding:8px}
+.storyv-pause{position:absolute;bottom:128px;left:50%;transform:translateX(-50%);z-index:8;background:rgba(0,0,0,.55);border:1.5px solid rgba(255,255,255,.55);color:#fff;border-radius:999px;padding:10px 22px;font-size:13px;font-weight:800;min-width:88px}
 .mov h1{font-size:40px;font-weight:900;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;animation:pop .5s ease}
 .mov .duo{display:flex;gap:0;margin:18px 0 6px}
 .mov .duo .ma{width:118px;height:118px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:56px;border:4px solid #fff;box-shadow:0 14px 34px rgba(0,0,0,.4)}
@@ -248,7 +251,7 @@ body.bootwait #bootSplash{display:flex}
 .confetti{position:absolute;top:-20px;font-size:22px;animation:fall linear infinite;pointer-events:none}
 @keyframes fall{to{transform:translateY(110vh) rotate(340deg)}}
 /* ---------- sheets ---------- */
-.mback{position:absolute;inset:0;z-index:100;background:rgba(43,20,35,.5);backdrop-filter:blur(3px);display:none;align-items:flex-end;justify-content:center}
+.mback{position:absolute;inset:0;z-index:220;background:rgba(43,20,35,.5);backdrop-filter:blur(3px);display:none;align-items:flex-end;justify-content:center}
 .mback.on{display:flex;animation:fi .2s ease}
 .msheet{width:100%;max-height:88%;overflow-y:auto;scrollbar-width:none;background:#fff;border-radius:28px 28px 0 0;padding:12px 20px calc(20px + env(safe-area-inset-bottom));animation:up .3s ease}
 .msheet::-webkit-scrollbar{display:none}
@@ -477,7 +480,7 @@ body.preauth.authno #scr-auth{display:block!important}
 .mnew .av.story-hot{box-shadow:0 0 16px 6px rgba(255,94,138,.85),0 0 30px 12px rgba(255,157,92,.35)}
 @keyframes storyglow{0%,100%{box-shadow:0 0 0 2.6px var(--pk),0 0 13px 4px rgba(255,94,138,.65)}50%{box-shadow:0 0 0 2.6px var(--or),0 0 24px 9px rgba(255,157,92,.85)}}
 .storydot{position:absolute;top:-3px;inset-inline-end:-3px;width:15px;height:15px;border-radius:50%;background:var(--grad);border:2.5px solid #fff;z-index:3}
-img,video{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-user-drag:none}.storyv{position:absolute;inset:0;z-index:160;background:rgba(8,3,10,.97);display:none;flex-direction:column;align-items:center;justify-content:center;padding:16px;cursor:pointer}
+.storyv{position:absolute;inset:0;z-index:160;background:rgba(8,3,10,.97);display:none;flex-direction:column;align-items:center;justify-content:center;padding:16px;cursor:pointer}
 .storyv.on{display:flex;animation:fi .22s ease}
 .storyv-card{position:relative;width:100%;max-width:410px;aspect-ratio:9/16;max-height:78%;border-radius:24px;overflow:hidden;background:#000;box-shadow:0 0 0 2.5px var(--pk),0 22px 60px rgba(255,94,138,.45);cursor:pointer}
 .storyv-card img{width:100%;height:100%;object-fit:cover;pointer-events:none}
@@ -499,7 +502,7 @@ img,video{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-
 .storyv-foot{position:absolute;inset-inline:0;bottom:0;padding:12px 12px calc(12px + env(safe-area-inset-bottom));background:linear-gradient(transparent,rgba(8,3,10,.88) 55%)}
 .sv-cap{color:#fff;font-size:13px;line-height:1.45;margin-bottom:8px;text-shadow:0 1px 4px rgba(0,0,0,.65)}
 .sv-cap:empty{display:none}
-.sv-act{display:flex;gap:8px;align-items:center}.sv-pause{flex:none;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.4);color:#fff;font-size:12px}
+.sv-act{display:flex;gap:8px;align-items:center}
 .sv-act input{flex:1;background:rgba(255,255,255,.14);border:1.5px solid rgba(255,255,255,.55);color:#fff;border-radius:999px;padding:11px 15px;font-size:13px;outline:none;min-width:0}
 .sv-act input::placeholder{color:rgba(255,255,255,.78)}
 .sv-heart{width:46px;height:46px;flex:none;border-radius:50%;background:var(--grad);color:#fff;display:grid;place-items:center;box-shadow:0 6px 18px rgba(255,94,138,.6)}
@@ -578,7 +581,6 @@ img,video{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-
       <div class="authlogo"><span class="mslot" data-m="flame" data-em="🔥" data-px="46">🔥</span></div>
       <div class="authname grad-txt">Tayripages</div>
       <div class="brand-meaning" style="font-size:11px;margin-top:2px;color:rgba(255,255,255,.82)" data-t="Tayri — the Tamazight word for love.">Tayri — the Tamazight word for love.</div>
-      <div style="margin:12px auto 0;padding:10px 12px;border-radius:14px;border:1px solid rgba(255,255,255,.2);max-width:320px;text-align:center"><div style="font-weight:900;font-size:12px;color:#ffd7e3" data-t="Date with privacy">Date with privacy</div><div style="font-size:11px;color:rgba(255,255,255,.8);margin-top:4px" data-t="Photos stay in the app — view-once chat photos, no save menu.">Photos stay in the app — view-once chat photos, no save menu.</div></div>
       <!-- auth heading removed for clean look -->
       <!-- auth sub removed for clean look -->
       <button class="btn gbtn" id="btnGoogle" onclick="googleIn()" style="font-size:15.5px">
@@ -639,7 +641,7 @@ img,video{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-
 <!-- ==================== MATCHES ==================== -->
 <section class="scr" id="scr-matches">
   <div class="topbar"><div class="h2" data-t="Matches">Matches</div>
-    <button class="pill" onclick="toast('Tayripages is a kind place. Harassment = ban')">Safe</button></div>
+    <button class="pill" data-t="Safe" onclick="toast(T('Tayripages is a kind place. Harassment = ban'))">Safe</button></div>
   <div class="sec mut tiny" style="padding:2px 18px;font-weight:900;letter-spacing:1px" data-t="NEW MATCHES">NEW MATCHES</div>
   <div class="mrow" id="mRow"></div>
   <div class="sec mut tiny" style="padding:8px 18px 2px;font-weight:900;letter-spacing:1px" data-t="CHATS">CHATS</div>
@@ -690,7 +692,7 @@ img,video{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-
     <div class="chatfoot" style="border-top:1px solid var(--line)">
       <div class="freebar" id="freeBar"></div>
       <div class="chatrow">
-        <button type="button" class="chip" style="padding:10px;flex:none" onclick="pickChatImage()">+</button><button type="button" class="chip" style="padding:10px;flex:none" onclick="toggleChatAudio()">♪</button><input id="chatIn" data-tph="Say something nice…" placeholder="Say something nice…" onkeydown="if(event.key==='Enter')sendMsg()" oninput="typingNow()">
+        <input id="chatIn" data-tph="Say something nice…" placeholder="Say something nice…" onkeydown="if(event.key==='Enter')sendMsg()" oninput="typingNow()">
         <button class="sendbtn" onclick="sendMsg()"><span class="mslot" data-m="send" data-em="➤" data-px="19">➤</span></button>
       </div>
     </div>
@@ -714,14 +716,14 @@ img,video{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-
 <div class="storyv" id="storyV" onclick="closeStory()">
   <div class="storyv-card" onclick="event.stopPropagation()">
     <div class="storyv-prog" id="storyBars"></div>
-    <button class="storyv-rep" type="button" onclick="reportStory()">Report</button>
+    <button class="storyv-rep" type="button" data-t="Report" onclick="event.stopPropagation();reportStory()">Report</button>
+    <button type="button" class="storyv-pause" id="svPause" onclick="event.stopPropagation();toggleStoryPause()">Pause</button>
     <div class="storyv-x" onclick="closeStory()">✕</div>
     <div class="storyv-head"><b id="svName"></b><span id="svTime"></span></div>
     <img id="svImg" alt="">
     <div class="storyv-foot">
       <div class="sv-cap" id="svCap"></div>
       <div class="sv-act">
-        <button type="button" id="svPause" class="sv-pause" onclick="event.stopPropagation();toggleStoryPause()">❚❚</button>
         <input id="svNote" maxlength="120" placeholder="Reply to this story…">
         <button class="sv-heart" id="svLike" aria-label="Send like"><svg width="21" height="21" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M12 21S3.6 15.5 3.6 9.8C3.6 6.7 5.9 4.5 8.6 4.5c1.5 0 2.8.75 3.4 1.9.6-1.15 1.9-1.9 3.4-1.9 2.7 0 5 2.2 5 5.3C20.4 15.5 12 21 12 21z"/></svg></button>
       </div>
@@ -750,7 +752,7 @@ let uid=myUid();
 const L=load();
 function myUid(){let u=localStorage.getItem('zwin_uid');if(!u){u='u_'+Math.random().toString(36).slice(2,9)+Date.now().toString(36);localStorage.setItem('zwin_uid',u)}return u}
 function load(){try{return JSON.parse(localStorage.getItem('zwin_local'))||fresh()}catch(e){return fresh()}}
-function fresh(){return {me:null,gold:0,referralCount:0,referralGoldUntil:0,referralJoined:false,deletedForMe:{},swiped:{},matches:[],chats:{},freeLeft:{},exclusive:{},likesYou:[],likesDay:{d:'',n:0},superDay:{d:'',n:0},boostDay:'',boostUntil:0,unread:{},readAt:{},chatTheme:'rose',chatDark:0,pendingOrders:[],seen:{},gifts:{} } }
+function fresh(){return {me:null,gold:0,referralCount:0,referralGoldUntil:0,referralJoined:false,deletedForMe:{},swiped:{},matches:[],chats:{},freeLeft:{},exclusive:{},likesYou:[],likesDay:{d:'',n:0},superDay:{d:'',n:0},boostDay:'',boostUntil:0,unread:{},readAt:{},chatTheme:'rose',chatDark:0,pendingOrders:[],seen:{},gifts:{},crushes:{},storyHide:{} } }
 function goldActive(){ return !!L.gold || (+L.referralGoldUntil||0)>Date.now(); }
 function likeCap(){
   const day=Math.floor(Date.now()/86400000);
@@ -798,6 +800,10 @@ function IC(n,px){ const P={
   medal:'M12 2a7.5 7.5 0 0 0-4 13.85V22l4-2.2L16 22v-6.15A7.5 7.5 0 0 0 12 2zm0 2a5.5 5.5 0 1 1 0 11 5.5 5.5 0 0 1 0-11zm0 2 1.23 2.5 2.77.4-2 1.95.47 2.76L12 12.5l-2.47 1.31.47-2.76-2-1.95 2.77-.4L12 6z',
   person:'M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z',
   cash:'M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z',
+  briefcase:'M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2h4a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4zm2-2h4v2h-4V4z',
+  book:'M4 3h6a3 3 0 0 1 3 3v14a2 2 0 0 0-2-2H4zM20 3h-6a3 3 0 0 0-3 3v14a2 2 0 0 1 2-2h7z',
+  plus:'M12 5v14M5 12h14',
+  wine:'M7 3h10l-1 8a5 5 0 0 1-8 0L7 3zm5 13v5m-3 0h6',
   ban:'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zM4 12c0 4.42 3.58 8 8 8 1.85 0 3.55-.63 4.9-1.69L5.69 7.1C4.63 8.45 4 10.15 4 12zm8-8c-1.85 0-3.55.63-4.9 1.69L18.31 16.9A7.97 7.97 0 0 0 20 12c0-4.42-3.58-8-8-8z',
   alert:'M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z',
   dots:'M6 10a2 2 0 1 0 .01 4.01A2 2 0 0 0 6 10zm6 0a2 2 0 1 0 .01 4.01A2 2 0 0 0 12 10zm6 0a2 2 0 1 0 .01 4.01A2 2 0 0 0 18 10z',
@@ -807,11 +813,24 @@ function IC(n,px){ const P={
 function shop(){ openGold(); } // legacy shim
 
 /* ============ 👑 TAYRIPAGES GOLD — one-time pass, unlimited forever (no coins) */
+function FICON(v){
+  const M={Student:'book',Employee:'briefcase',Entrepreneur:'spark',Freelance:'sliders',Unemployed:'person',Retired:'medal',
+    'High School':'book',Bachelor:'book',Master:'book',PhD:'medal',
+    Single:'heart',Divorced:'heart',Widowed:'heart',Separated:'heart',
+    Slim:'person',Average:'person',Athletic:'flame',Curvy:'person',Muscular:'flame',
+    'Below $500':'cash','$500–$1,000':'cash','$1,000–$2,000':'cash','Above $2,000':'cash','Prefer not to say':'dots',
+    Never:'ban',Sometimes:'spark',Often:'alert',Socially:'wine',
+    Marriage:'heart','Serious relationship':'heart',Friendship:'chat',Other:'dots',
+    Muslim:'shield',Christian:'shield',Jewish:'shield'};
+  return M[v]||'check';
+}
 function extraInfosHtml(p){
-  const fields=[
-    [p.profession,'person'],[p.education,'check'],[p.relation,'heart'],[p.height? p.height+' cm':'','sliders'],[p.body,'person'],[p.income,'cash'],[p.smoke,'ban'],[p.drink,'spark'],[p.religion,'shield'],[p.intent,'flag']
-  ];
-  return fields.filter(f=>f[0]).map(f=>`<span class="chip" style="font-size:11px;display:inline-flex;align-items:center;gap:5px">${IC(f[1],12)} ${f[0]}</span>`).join('');
+  const rows=[];
+  const push=(val,ic)=>{ if(!val)return; rows.push('<span class="chip" style="font-size:11px;display:inline-flex;align-items:center;gap:5px">'+IC(ic||FICON(val),12)+' '+T(val)+'</span>'); };
+  push(p.profession); push(p.education); push(p.relation);
+  if(p.height) rows.push('<span class="chip" style="font-size:11px;display:inline-flex;align-items:center;gap:5px">'+IC('sliders',12)+' '+p.height+' '+T('cm')+'</span>');
+  push(p.body); push(p.income); push(p.smoke); push(p.drink); push(p.religion); push(p.intent);
+  return rows.join('');
 }
 function paintGold(){ const el=$('goldTop'); if(el)el.textContent=goldActive()?T('GOLD'):T('GO GOLD'); }
 function goldPerks(){ return [
@@ -822,7 +841,8 @@ function goldPerks(){ return [
   [T('Match & message admirers instantly'),'chat'],
   [G.superGold+' '+T('Super Likes every day'),'spark'],
   [T('Rewind your last swipe'),'rew'],
-  [T('1 free Boost every day'),'spark']]; }
+  [T('1 free Boost every day'),'spark'],
+  [T('Crush zone — know when they view your story'),'heart']]; }
 function paintLikesPill(){ const el=$('quotaSlot'); if(!el)return;
   // the daily "likes left" counter stays hidden on purpose — only GOLD members see their unlimited pill
   el.innerHTML='';
@@ -841,7 +861,7 @@ function openGold(why){
     +'<div class="card" style="margin:12px 0">'
     +goldPerks().map(p=>'<div class="perkrow">'+IC(p[1],18)+'<span>'+p[0]+'</span><span class="vchk" style="background:linear-gradient(45deg,#f2c14e,#c98a12)">'+IC('check',11)+'</span></div>').join('')
     +'</div>'
-    +'<button class="btn btn-grad goldcta" onclick="buyGold()">'+IC('crown',18)+' '+T('Unlock GOLD')+' · $'+(G.usd||9)+' — '+T('once, forever')+'</button>'
+    +'<button class="btn btn-grad goldcta" onclick="buyGold()">'+IC('crown',18)+' '+T('Unlock GOLD')+' · $'+(G.usd||20)+' — '+T('once, forever')+'</button>'
     +'<div style="height:8px"></div>'
     +'<button class="btn btn-line" onclick="hide(\'shopSheet\')">'+T('Maybe tomorrow')+'</button>';
   show('shopSheet');
@@ -850,7 +870,7 @@ function buyGold(){
   hide('shopSheet');
   const c=TAYRI_CONFIG.company; const refid='TAYRI-'+uid.slice(-4).toUpperCase()+'-'+Date.now().toString(36).toUpperCase();
   $('bankBody').innerHTML='<div style="text-align:center;padding:4px 0 8px"><div class="gcr">'+IC('crown',40)+'</div>'
-    +'<div class="h2" style="margin-top:8px">Tayripages GOLD — $'+(G.usd||9)+'</div>'
+    +'<div class="h2" style="margin-top:8px">Tayripages GOLD — $'+(G.usd||20)+'</div>'
     +'<div class="mut small">'+T('One-time bank transfer — unlimited forever')+'</div></div>'
     +'<div class="bankblock">'+T('Transfer details')+'<br>'
     +T('Bank')+': <b>'+c.bank+'</b><br>'
@@ -868,7 +888,7 @@ function buyGold(){
 function confirmGold(refid){
   hide('bankSheet');
   if(DEMO){ L.gold=1; save(); paintGold(); paintLikesPill(); toast('👑 '+T('GOLD active — enjoy unlimited')); renderWallet(); return; }
-  const order={uid,name:L.me.name,type:'gold',price:(G.usd||9),usd:(G.usd||9),status:'pending',ref:refid,ts:Date.now()};
+  const order={uid,name:L.me.name,type:'gold',price:(G.usd||20),usd:(G.usd||20),status:'pending',ref:refid,ts:Date.now()};
   const k=ref('orders/'+uid).push(order).key;
   L.pendingOrders.push({oid:k,ref:refid}); save();
   toast('⏳ '+T('Order sent — GOLD turns on after validation'));
@@ -939,10 +959,10 @@ function avaGridHTML(cur,cb){ return [0,1,2,3,4,5,6,7].map(n=>`<button class="em
 function obAv(n){ OB.data.av=n; paintOb(); }
 /* 👤 Me-page avatar picker */
 function openAvSheet(){ const cur=(L.me.av!=null?L.me.av:avHash(uid)%8);
-  $('genBody').innerHTML=`<div class="h2" style="margin-bottom:4px">Your avatar art</div>
-  <div class="mut tiny" style="margin-bottom:8px">Shown everywhere until you add a photo — your real photo always wins.</div>
+  $('genBody').innerHTML=`<div class="h2" style="margin-bottom:4px">${T('Your avatar art')}</div>
+  <div class="mut tiny" style="margin-bottom:8px">${T('Shown everywhere until you add a photo — your real photo always wins.')}</div>
   <div class="emojirow">${avaGridHTML(cur,'setMyAv')}</div>
-  <div style="height:8px"></div><button class="btn btn-line" onclick="hide(\'genSheet\')">Close</button>`; show('genSheet'); }
+  <div style="height:8px"></div><button class="btn btn-line" onclick="hide(\'genSheet\')">${T('Close')}</button>`; show('genSheet'); }
 function setMyAv(n){ L.me.av=n; save(); if(!DEMO)syncMe(); hide('genSheet'); toast('Avatar updated 💛'); if(R.tab==='profile')renderProfile(); }
 
 /* ---------- sample people (demo + when cloud is empty) ---------- */
@@ -1286,6 +1306,9 @@ async function syncMe(){
     if(v&&!L.gold){ L.gold=1; save(); paintGold(); paintLikesPill(); toast('👑 '+T('You are GOLD — everything unlocked'));
       if(R.tab==='wallet')renderWallet(); }
     else if(!v&&L.gold){ L.gold=0; save(); paintGold(); paintLikesPill(); } });
+  ref('crushes/'+uid).on('value',s=>{ L.crushes=s.val()||{}; save(); if(R.tab==='profile')renderProfile(); });
+  ref('storyHide/'+uid).on('value',s=>{ L.storyHide=s.val()||{}; save(); });
+  ref('storyViews/'+uid).on('value',s=>{ L.storyViews=s.val()||{}; if(R.tab==='profile')renderProfile(); });
   // ✅ verified badge live + review outcome
   ref('verified/'+uid).on('value',s=>{ const v=!!s.val();
     if(v&&!L.verified){ L.verified=1; L.verifyPending=0; save();
@@ -1556,15 +1579,15 @@ function openDeckProfile(pid){
 function reportDeckAsk(pid){
   const p=R.deck.find(x=>x.id===pid)||personOf(pid); if(!p)return;
   const opts=[
-    {i:'camera',tint:'mic-d',t:'Report photos',d:'Fake, stolen, or inappropriate photos',type:'photo'},
-    {i:'alert',tint:'mic-c',t:'Report bio',d:'Scam, harassment, or spam in the bio text',type:'bio'},
-    {i:'flag',tint:'mic-e',t:'Report photo and bio',d:'The whole profile looks fraudulent',type:'both'},
-    {i:'ban',tint:'mic-h',t:'Under 18',d:'User appears to be under 18',type:'under18'}
+    {i:'camera',tint:'mic-d',t:T('Report photos'),d:T('Fake, stolen, or inappropriate photos'),type:'photo'},
+    {i:'alert',tint:'mic-c',t:T('Report bio'),d:T('Scam, harassment, or spam in the bio text'),type:'bio'},
+    {i:'flag',tint:'mic-e',t:T('Report photo and bio'),d:T('The whole profile looks fraudulent'),type:'both'},
+    {i:'ban',tint:'mic-h',t:T('Under 18'),d:T('User appears to be under 18'),type:'under18'}
   ];
-  $('genBody').innerHTML=`<div class="h2" style="margin-bottom:4px">Report ${proofEsc(p.name)}</div>
-    <div class="mut small" style="margin-bottom:12px">Choose what to report — the admin team receives it with the actual evidence.</div>
+  $('genBody').innerHTML=`<div class="h2" style="margin-bottom:4px">${T('Report')} ${proofEsc(p.name)}</div>
+    <div class="mut small" style="margin-bottom:12px">${T('Choose what to report — the admin team receives it with the actual evidence.')}</div>
     <div class="setcard" style="margin:0 0 14px">${opts.map(o=>`<button class="mprow" onclick="doReportDeck('${pid}','${o.type}')"><span class="mico ${o.tint}">${IC(o.i,18)}</span><span class="mtxt"><b>${o.t}</b><div>${o.d}</div></span><span class="chev">›</span></button>`).join('')}</div>
-    <button class="btn btn-line" onclick="hide(\'genSheet\')">Cancel</button>`;
+    <button class="btn btn-line" onclick="hide(\'genSheet\')">${T('Cancel')}</button>`;
   show('genSheet');
 }
 async function doReportDeck(pid,type){
@@ -1639,18 +1662,26 @@ function runStoryTimer(){
   window._svT=setTimeout(()=>storyNext(), svLeft);
 }
 function toggleStoryPause(){
-  if(svPaused){ svPaused=0; const btn=$('svPause'); if(btn)btn.textContent='❚❚'; runStoryTimer(); }
-  else { svPaused=1; svLeft=Math.max(400, svLeft-(Date.now()-svStart)); clearTimeout(window._svT); const bar=document.querySelector('#storyBars i[data-si="'+svIx+'"] b'); if(bar) bar.style.transition='none'; const btn=$('svPause'); if(btn)btn.textContent='▶'; }
+  if(svPaused){ svPaused=0; const btn=$('svPause'); if(btn)btn.textContent=T('Pause'); runStoryTimer(); }
+  else { svPaused=1; svLeft=Math.max(400, svLeft-(Date.now()-svStart)); clearTimeout(window._svT); const bar=document.querySelector('#storyBars i[data-si="'+svIx+'"] b'); if(bar) bar.style.transition='none'; const btn=$('svPause'); if(btn)btn.textContent=T('Play'); }
 }
 function storyNext(){ if(svIx<svItems.length-1){ svIx++; svLeft=8000; svPaused=0; paintStoryFrame(); runStoryTimer(); } else closeStory(); }
 function storyPrev(){ if(svIx>0){ svIx--; svLeft=8000; svPaused=0; paintStoryFrame(); runStoryTimer(); } }
 async function openStory(peer){
+  if(peer&&peer!==uid&&!DEMO){
+    try{
+      const hid=await ref('storyHide/'+peer+'/'+uid).once('value');
+      if(hid.val()) return toast(T('This story is not available'));
+    }catch(e){}
+    try{ ref('storyViews/'+peer+'/'+uid).set(Date.now()); }catch(e){}
+  }
   let s=STORY[peer];
   if(!storyFresh(s)&&!DEMO){ try{ s=(await ref('stories/'+peer).once('value')).val(); STORY[peer]=s; }catch(e){} }
   svItems=storyList(s);
   if(!svItems.length)return toast(T('That story has expired'));
   svPeer=peer; svIx=0; svPaused=0; svLeft=8000;
   $('svNote').value='';
+  window._svReact=false;
   $('svLike').onclick=storyLike;
   $('svNote').onkeydown=e=>{ if(e.key==='Enter')storyLike(); };
   $('svNote').onfocus=()=>toggleStoryPause();
@@ -1658,9 +1689,12 @@ async function openStory(peer){
   if(card){ card.onclick=e=>{ const r=card.getBoundingClientRect(); if(e.clientX-r.left<r.width*0.28) storyPrev(); else if(e.clientX-r.left>r.width*0.72) storyNext(); }; }
   show('storyV');
   paintStoryFrame(); runStoryTimer();
+  try{ await refreshSvReact(); }catch(e){}
+  paintSvAct();
 }
 function closeStory(){ clearTimeout(window._svT); svPaused=1; const v=$('storyV'); if(v){ v.classList.remove('on'); v.style.display='none'; setTimeout(()=>{ if(v&&!v.classList.contains('on')) v.style.display=''; },300);} }
 async function reportStory(){
+  try{ svPaused=1; clearTimeout(window._svT); clearInterval(window._svTick); }catch(e){}
   const peer=svPeer; if(!peer)return;
   const reasons=['Inappropriate story','Fake or stolen photo','Harassment','Under 18','Spam'];
   $('genBody').innerHTML='<div class="h2">'+T('Report story')+'</div><div class="mut small" style="margin:8px 0 12px">'+T('A human reviews this with the story evidence.')+'</div>'
@@ -1682,7 +1716,7 @@ function pickStory(){
   if (now - _uploadSpam.last < 5000) { toast(T('Please wait 5 seconds between uploads')); return; }
   _uploadSpam.last = now;
   const live=storyList(STORY[uid]);
-  if(live.length>=3){ toast(T('You can keep 3 live stories at once')); return; }
+  if(live.length>=5){ toast(T('You can keep 5 live stories — like Instagram')); return; }
   const inp=document.createElement('input'); inp.type='file'; inp.accept='image/*';
   inp.onchange=async()=>{ const f=inp.files&&inp.files[0]; if(!f)return;
     toast(T('Polishing your photo…'));
@@ -1702,7 +1736,7 @@ function openStoryCaption(dataUrl){
     +'<button class="btn btn-grad" onclick="publishStory()">'+T('Publish story')+'</button>'
     +'<div style="height:8px"></div><button class="btn btn-line" onclick="hide(\'genSheet\');window.__pendStory=null">'+T('Close')+'</button>';
   show('genSheet');
-  setTimeout(()=>{ const c=$('storyCap'); if(c)c.focus(); },350);
+  setTimeout(()=>{ const el=$('storyCap'); if(el) el.focus(); },350);
 }
 async function publishStory(){
   const data=window.__pendStory; if(!data||!L.me)return;
@@ -1718,7 +1752,7 @@ async function publishStory(){
     const id='s'+Date.now().toString(36);
     items[id]={img:data,ts:Date.now(),caption:cap||''};
     const fresh=Object.entries(items).filter(([,x])=>x&&x.img&&Date.now()-(+x.ts||0)<86400000).sort((a,b)=>(a[1].ts||0)-(b[1].ts||0));
-    while(fresh.length>3) fresh.shift();
+    while(fresh.length>5) fresh.shift();
     const map={}; fresh.forEach(([k,v])=>{ map[k]=v; });
     const last=fresh[fresh.length-1][1];
     const out={img:last.img,ts:last.ts,name:String(L.me.name||'').slice(0,36),items:map};
@@ -1731,19 +1765,32 @@ async function publishStory(){
 }
 async function storyLike(){
   const peer=svPeer; if(!peer)return;
+  if(window._svReact){ paintSvAct(); return; }
   const note=(($('svNote')&&$('svNote').value)||'').trim().slice(0,120);
   const m=L.matches.find(m=>m.peer===peer);
   if(!m)return toast(T('Story likes work with matches'));
+  const gold=goldActive();
+  if(!DEMO){ try{ await syncFreeLeft(m.mid); }catch(e){} }
+  let left=(typeof L.freeLeft[m.mid]==='number'?L.freeLeft[m.mid]:C.freeChatMsgs);
+  if(!gold&&left<=0){ closeStory(); return openGold('chat'); }
   const mine=(L.me&&L.me.name)||'Someone';
   const text=mine+' '+T('loved your story')+(note?': “'+note+'”':'');
+  if(note && !isCleanOrWarn(note)) return;
+  if(!DEMO){
+    try{ await ref('storyReacts/'+peer+'/'+svItemId()+'/'+uid).set({ts:Date.now(),kind:note?'note':'like'}); }
+    catch(e){ window._svReact=true; paintSvAct(); return toast(T('You already reacted to this story')); }
+  }
+  window._svReact=true; paintSvAct();
   closeStory();
   if(!DEMO){
     try{
       const sr=ref('chats/'+m.mid).push();
-      await sr.set({from:uid,fromName:mine,text:text,ts:Date.now()});
+      const upd={}; upd['chats/'+m.mid+'/'+sr.key]={from:uid,fromName:mine,text:text,ts:Date.now()};
+      if(!gold){ L.freeLeft[m.mid]=left-1; upd['chatMeta/'+m.mid+'/freeLeft/'+uid]=L.freeLeft[m.mid]; }
+      await DB.ref('wasla_dating').update(upd);
       (L.chats[m.mid]=L.chats[m.mid]||[]).push({who:'msg',text:text,me:true,from:uid,key:sr.key,ts:Date.now()});
     }catch(e){ return toast(T('Could not send — try again')); }
-  } else { (L.chats[m.mid]=L.chats[m.mid]||[]).push({who:'msg',text:text,me:true,ts:Date.now()}); }
+  } else { (L.chats[m.mid]=L.chats[m.mid]||[]).push({who:'msg',text:text,me:true,ts:Date.now()}); if(!gold) L.freeLeft[m.mid]=Math.max(0,left-1); }
   save();
   if(R.chatWith===m.mid)paintMsgs(); else paintBadges();
   toast(note?T('Story reply sent'):T('Like sent — they see it in your chat'));
@@ -1832,7 +1879,7 @@ async function confirmGiftGold(refId){
   const targetUid=target.uid, targetName=target.name;
   pendingGiftTarget=null;
   if(DEMO){ L.gold=0; save(); toast('🎁 Demo: GOLD would be gifted to '+targetName+' instantly'); renderWallet(); return; }
-  const order={uid:targetUid, name:targetName, type:'gift', price:(G.usd||9), usd:(G.usd||9), status:'pending', ref:refId, ts:Date.now(), gift:true, giftedBy:uid, giftedByName:L.me.name};
+  const order={uid:targetUid, name:targetName, type:'gift', price:(G.usd||20), usd:(G.usd||20), status:'pending', ref:refId, ts:Date.now(), gift:true, giftedBy:uid, giftedByName:L.me.name};
   try{
     const k=ref('orders/'+targetUid).push(order).key;
     // also keep a copy under my pending for tracking
@@ -2164,7 +2211,7 @@ function openFilters(){
   const isGold = goldActive();
   
   const segB=(val,label)=>`<button class="${f.show===val?'on':''}" onclick="F().show='${val}';openFilters()">${label}</button>`;
-  const chipFor=(key,val,label)=>`<button class="tchip ${F()[key]===val?'on':''}" onclick="F().${key}='${val}';openFilters()">${label}</button>`;
+  const chipFor=(key,val,label)=>`<button class="tchip ${F()[key]===val?'on':''}" onclick="F().${key}='${val}';openFilters()">${IC(val==='all'?'globe':FICON(val),13)} ${label}</button>`;
 
   $('genBody').innerHTML=`<div class="h2" style="display:flex;align-items:center;gap:8px">${IC('sliders',21)} ${T('Discovery settings')}</div>
     <div class="mut small" style="margin:6px 0 12px;line-height:1.6">${T('Browse everyone, or tune who appears in your deck. Matching unlocks the chat.')}</div>
@@ -2183,28 +2230,28 @@ function openFilters(){
     <div class="tagwrap" style="margin:6px 0 14px">${['all','18-25','26-35','36-45','46+'].map(v=>chipFor('ageRange',v, v==='all'?T('All'):v)).join('')}</div>
 
     <div style="display:flex;align-items:center;justify-content:space-between;margin:6px 0 6px">
-      <div class="mut small" style="font-weight:900">🌍 ${T('Country')} (Worldwide)</div>
-      <span class="badge ${isGold?'b-done':'b-live'}" style="font-size:10px">${isGold?'👑 GOLD UNLOCKED':'👑 GOLD FILTER'}</span>
+      <div class="mut small" style="font-weight:900">${IC('globe',14)} ${T('Country')} (${T('Worldwide')})</div>
+      <span class="badge ${isGold?'b-done':'b-live'}" style="font-size:10px">${isGold?T('GOLD UNLOCKED'):T('GOLD FILTER')}</span>
     </div>
     
     <div class="card small" style="padding:10px;margin-bottom:12px;background:rgba(255,255,255,.04);border:1px solid var(--line)">
       <div style="display:flex;gap:6px;align-items:center;margin-bottom:8px">
-        <button class="tchip ${f.country==='all'?'on':''}" style="flex:1;text-align:center" onclick="selectCountryFilter('all')">🌍 Worldwide (${T('All countries')})</button>
+        <button class="tchip ${f.country==='all'?'on':''}" style="flex:1;text-align:center;display:inline-flex;gap:6px;justify-content:center;align-items:center" onclick="selectCountryFilter('all')">${IC('globe',14)} ${T('Worldwide')} (${T('All countries')})</button>
       </div>
-      <input class="inp" id="countrySearchIn" placeholder="🔍 Search specific country (e.g. France, USA, Japan)…" style="font-size:13px;padding:9px 12px;margin-bottom:8px" oninput="filterCountryChips(this.value)">
+      <input class="inp" id="countrySearchIn" placeholder="${T('Search specific country (e.g. France, USA, Japan)…')}" style="font-size:13px;padding:9px 12px;margin-bottom:8px" oninput="filterCountryChips(this.value)">
       <div id="countryChipsBox" class="tagwrap" style="max-height:130px;overflow-y:auto;gap:6px">
-        ${allCountriesCombined.map(c=>`<button class="tchip country-chip-item ${f.country===c?'on':''}" data-name="${c}" onclick="selectCountryFilter('${c}')">${isGold?'':'👑 '}${c}</button>`).join('')}
+        ${allCountriesCombined.map(c=>`<button class="tchip country-chip-item ${f.country===c?'on':''}" data-name="${c}" onclick="selectCountryFilter('${c}')">${isGold?'':IC('crown',11)+' '}${c}</button>`).join('')}
       </div>
-      ${!isGold ? `<div class="mut tiny" style="margin-top:6px;color:var(--warn)">💡 Selecting a specific country is a GOLD feature. Worldwide is free for all members.</div>` : ''}
+      ${!isGold ? `<div class="mut tiny" style="margin-top:6px;color:var(--warn)">${T('Selecting a specific country is a GOLD feature. Worldwide is free for all members.')}</div>` : ''}
     </div>
 
-    <div class="mut small" style="font-weight:900">Profession</div>
-    <div class="tagwrap" style="margin:6px 0 10px">${['all','Student','Employee','Entrepreneur','Freelance'].map(v=>chipFor('profession',v, v==='all'?T('All'):v)).join('')}</div>
+    <div class="mut small" style="font-weight:900">${T('Profession')}</div>
+    <div class="tagwrap" style="margin:6px 0 10px">${['all','Student','Employee','Entrepreneur','Freelance'].map(v=>chipFor('profession',v, v==='all'?T('All'):T(v))).join('')}</div>
 
-    <div class="mut small" style="font-weight:900">Looking for</div>
+    <div class="mut small" style="font-weight:900">${T('Looking for')}</div>
     <div class="tagwrap" style="margin:6px 0 10px">${['all','Marriage','Serious relationship','Friendship','Other'].map(v=>chipFor('intent',v, v==='all'?T('All'):T(v))).join('')}</div>
 
-    <div class="mut small" style="font-weight:900">Education</div>
+    <div class="mut small" style="font-weight:900">${T('Education')}</div>
     <div class="tagwrap" style="margin:6px 0 10px">${['all','High School','Bachelor','Master','PhD'].map(v=>chipFor('education',v, v==='all'?T('All'):T(v))).join('')}</div>
 
     <button class="btn btn-grad" onclick="applyFilters()">${T('Apply — refresh my deck')}</button>
@@ -2233,6 +2280,10 @@ function startOnboard(){ if(!AUTHED){ showAuth(); return; }
 }
 const WORLD_CITIES=['Casablanca', 'Rabat', 'Marrakech', 'Tangier', 'Agadir', 'Fès', 'Meknès', 'Oujda', 'Laâyoune', 'Al Hoceima', 'Essaouira', 'Chefchaouen', 'Algiers', 'Oran', 'Tunis', 'Paris', 'Marseille', 'Lyon', 'Toulouse', 'Brussels', 'Geneva', 'Madrid', 'Barcelona', 'Valencia', 'London', 'Amsterdam', 'Berlin', 'Munich', 'Rome', 'Milan', 'Lisbon', 'Cairo', 'Istanbul', 'Dubai', 'Abu Dhabi', 'Doha', 'Riyadh', 'Jeddah', 'Dakar', 'Abidjan', 'Lagos', 'Nairobi', 'New York', 'Los Angeles', 'Miami', 'Toronto', 'Montreal', 'Mexico City', 'São Paulo', 'Buenos Aires', 'Tokyo', 'Singapore', 'Bangkok', 'Seoul', 'Sydney', 'Mumbai', 'Jakarta'];
 function obCityGo(){ const i=$('obCityIn'); if(i){ OB.data.city=(i.value||'').trim().slice(0,30)||OB.data.city||'Casablanca'; } obStep2(); }
+function obPick(key,val){
+  const on = OB.data[key]===val ? 'on' : '';
+  return `<button type="button" class="tchip ${on}" onclick="OB.data.${key}='${val}';paintOb()">${IC(FICON(val),13)} ${T(val)}</button>`;
+}
 function paintOb(){
   // grab what the human already typed BEFORE repainting — repaint must never eat keystrokes
   const _n=$('obName'); if(_n)OB.data.name=_n.value;
@@ -2242,34 +2293,34 @@ function paintOb(){
   const steps=[
    ()=>`<div class="obstep">
      <div class="ob-logo"><div class="flame"><span class="mslot" data-m="flame" data-em="🔥" data-px="42">🔥</span></div></div>
-     <h1 class="h1" style="text-align:center">Welcome to <span class="grad-txt">Tayripages</span></h1>
-     <div class="mut" style="text-align:center">Where real connections begin. Real chats, zero judgment.</div>
+     <h1 class="h1" style="text-align:center">${T('Welcome to')} <span class="grad-txt">Tayripages</span></h1>
+     <div class="mut" style="text-align:center">${T('Where real connections begin. Real chats, zero judgment.')}</div>
      <div class="card small" style="line-height:1.8">• <b>${G.likesPerDay} free likes</b> every day, fresh after midnight<br>
      • <b>First ${C.freeChatMsgs} messages</b> with every match are free<br>
      • <b>Super Likes</b> make sure they see you first<br>
      • <b>Tayripages GOLD</b> unlocks everything — once, forever</div>
-     <button class="btn btn-line">I’m 18 or older — tap Next confirms</button>
-     <button class="btn btn-grad" onclick="obNext(1)">Create my profile</button></div>`,
+     <button class="btn btn-line">${T('I’m 18 or older — tap Next confirms')}</button>
+     <button class="btn btn-grad" onclick="obNext(1)">${T('Create my profile')}</button></div>`,
    ()=>`<div class="obstep">
-     <div class="h2">First, the basics</div>
-     <input class="inp" id="obName" placeholder="Your first name" value="${d.name}" maxlength="16">
-     <div class="row"><span class="mut small">Age</span>
+     <div class="h2">${T('First, the basics')}</div>
+     <input class="inp" id="obName" placeholder="${T('Your first name')}" value="${d.name}" maxlength="16">
+     <div class="row"><span class="mut small">${T('Age')}</span>
        <div class="numstep"><button onclick="OB.data.age=Math.max(18,OB.data.age-1);paintOb()">−</button><b>${d.age}</b><button onclick="OB.data.age=Math.min(99,OB.data.age+1);paintOb()">+</button></div></div>
-     <div class="mut small" style="margin-top:6px">I am…</div>
+     <div class="mut small" style="margin-top:6px">${T('I am…')}</div>
      <div class="seg">
-       <button class="${d.g==='w'?'on':''}" onclick="OB.data.g='w';paintOb()">Woman</button>
-       <button class="${d.g==='m'?'on':''}" onclick="OB.data.g='m';paintOb()">Man</button>
+       <button class="${d.g==='w'?'on':''}" onclick="OB.data.g='w';paintOb()">${T('Woman')}</button>
+       <button class="${d.g==='m'?'on':''}" onclick="OB.data.g='m';paintOb()">${T('Man')}</button>
      </div>
-     <div class="mut small">Show me…</div>
+     <div class="mut small">${T('Show me…')}</div>
      <div class="seg">
-       <button class="${d.into.length===2?'on':''}" onclick="OB.data.into=['w','m'];paintOb()">Everyone</button>
-       <button class="${d.into.length===1&&d.into[0]==='w'?'on':''}" onclick="OB.data.into=['w'];paintOb()">Women</button>
-       <button class="${d.into.length===1&&d.into[0]==='m'?'on':''}" onclick="OB.data.into=['m'];paintOb()">Men</button>
+       <button class="${d.into.length===2?'on':''}" onclick="OB.data.into=['w','m'];paintOb()">${T('Everyone')}</button>
+       <button class="${d.into.length===1&&d.into[0]==='w'?'on':''}" onclick="OB.data.into=['w'];paintOb()">${T('Women')}</button>
+       <button class="${d.into.length===1&&d.into[0]==='m'?'on':''}" onclick="OB.data.into=['m'];paintOb()">${T('Men')}</button>
      </div>
-     <div class="mut small">City — type yours, anywhere on Earth</div>
-     <input class="inp" id="obCityIn" list="obCities" value="${d.city}" maxlength="30" placeholder="e.g. Casablanca, Paris, Dubai…">
+     <div class="mut small">${T('City — type yours, anywhere on Earth')}</div>
+     <input class="inp" id="obCityIn" list="obCities" value="${d.city}" maxlength="30" placeholder="${T('e.g. Casablanca, Paris, Dubai…')}">
      <datalist id="obCities">${WORLD_CITIES.map(c=>`<option value="${c}">`).join('')}</datalist>
-     <button class="btn btn-grad" onclick="obCityGo()">Continue →</button></div>`,
+     <button class="btn btn-grad" onclick="obCityGo()">${T('Continue →')}</button></div>`,
    ()=>`<div class="obstep">
      <div class="h2">${T('Add your photo')}</div>
      <div class="mut small">${T('A real photo matches about 3× more. An avatar works too — your call.')}</div>
@@ -2277,39 +2328,39 @@ function paintOb(){
      ${OB.photo?`<button class="chip" onclick="obPickPhoto()">${T('Change photo')}</button>`:''}
      <button class="btn btn-grad" onclick="obNext(3)">${OB.photo?T('Continue'):T('Continue with an avatar instead')}</button></div>`,
    ()=>`<div class="obstep">
-     <div class="h2">Your vibe</div>
-     <textarea class="inp" id="obBio" maxlength="140" placeholder="A line that sounds like you… (funny > perfect)">${d.bio}</textarea>
-     <div class="mut small">Pick 3–4 interests (better matches):</div>
-     <div class="tagwrap">${TAGS.map(t=>`<button class="tchip ${d.tags.includes(t)?'on':''}" onclick="obTag('${t}')">${TIC(t)}${t}</button>`).join('')}</div>
-     <div class="mut small">Your avatar art</div>
+     <div class="h2">${T('Your vibe')}</div>
+     <textarea class="inp" id="obBio" maxlength="140" placeholder="${T('A line that sounds like you… (funny > perfect)')}">${(!d.bio||/^New here/.test(d.bio))?T('New here — say hi and surprise me'):d.bio}</textarea>
+     <div class="mut small">${T('Pick 3–4 interests (better matches):')}</div>
+     <div class="tagwrap">${TAGS.map(t=>`<button class="tchip ${d.tags.includes(t)?'on':''}" onclick="obTag('${t}')">${TIC(t)}${T(tagTxt(t))}</button>`).join('')}</div>
+     <div class="mut small">${T('Your avatar art')}</div>
      <div class="emojirow">${avaGridHTML(d.av,'obAv')}</div>
-     <div class="mut small">Card color</div>
+     <div class="mut small">${T('Card color')}</div>
      <div class="gradrow">${[0,1,2,3,4,5,6,7].map(i=>`<button class="gradpick ${d.gi===i?'on':''}" style="background:${grad(i)}" onclick="OB.data.gi=${i};paintOb()"></button>`).join('')}</div>
-     <button class="btn btn-grad" onclick="obNext(4)">Continue →</button></div>`,
+     <button class="btn btn-grad" onclick="obNext(4)">${T('Continue →')}</button></div>`,
    ()=>`<div class="obstep">
      <div class="h2">${T('About you — helps the right match find you')}</div>
      <div class="mut small">${T('Profession')}</div>
-     <select class="inp" id="obProf" onchange="OB.data.profession=this.value"><option value="">${T('Select')}</option><option ${d.profession==='Student'?'selected':''}>${T('Student')}</option><option ${d.profession==='Employee'?'selected':''}>${T('Employee')}</option><option ${d.profession==='Entrepreneur'?'selected':''}>${T('Entrepreneur')}</option><option ${d.profession==='Freelance'?'selected':''}>${T('Freelance')}</option><option ${d.profession==='Unemployed'?'selected':''}>${T('Unemployed')}</option><option ${d.profession==='Retired'?'selected':''}>${T('Retired')}</option></select>
+     <div class="tagwrap" style="margin:6px 0 10px">${obPick('profession','Student')}${obPick('profession','Employee')}${obPick('profession','Entrepreneur')}${obPick('profession','Freelance')}${obPick('profession','Unemployed')}${obPick('profession','Retired')}</div>
      <div class="mut small">${T('Education')}</div>
-     <select class="inp" id="obEdu" onchange="OB.data.education=this.value"><option value="">${T('Select')}</option><option ${d.education==='High School'?'selected':''}>${T('High School')}</option><option ${d.education==='Bachelor'?'selected':''}>${T('Bachelor')}</option><option ${d.education==='Master'?'selected':''}>${T('Master')}</option><option ${d.education==='PhD'?'selected':''}>${T('PhD')}</option></select>
+     <div class="tagwrap" style="margin:6px 0 10px">${obPick('education','High School')}${obPick('education','Bachelor')}${obPick('education','Master')}${obPick('education','PhD')}</div>
      <div class="mut small">${T('Relationship status')}</div>
-     <select class="inp" id="obRel" onchange="OB.data.relation=this.value"><option value="">${T('Select')}</option><option ${d.relation==='Single'?'selected':''}>${T('Single')}</option><option ${d.relation==='Divorced'?'selected':''}>${T('Divorced')}</option><option ${d.relation==='Widowed'?'selected':''}>${T('Widowed')}</option><option ${d.relation==='Separated'?'selected':''}>${T('Separated')}</option></select>
+     <div class="tagwrap" style="margin:6px 0 10px">${obPick('relation','Single')}${obPick('relation','Divorced')}${obPick('relation','Widowed')}${obPick('relation','Separated')}</div>
      <div class="mut small">${T('Height (cm)')}</div><input class="inp" id="obHeight" type="number" min="140" max="210" value="${d.height||''}" placeholder="170" oninput="OB.data.height=this.value">
      <div class="mut small">${T('Body type')}</div>
-     <select class="inp" id="obBody" onchange="OB.data.body=this.value"><option value="">${T('Select')}</option><option ${d.body==='Slim'?'selected':''}>${T('Slim')}</option><option ${d.body==='Average'?'selected':''}>${T('Average')}</option><option ${d.body==='Athletic'?'selected':''}>${T('Athletic')}</option><option ${d.body==='Curvy'?'selected':''}>${T('Curvy')}</option><option ${d.body==='Muscular'?'selected':''}>${T('Muscular')}</option></select>
+     <div class="tagwrap" style="margin:6px 0 10px">${obPick('body','Slim')}${obPick('body','Average')}${obPick('body','Athletic')}${obPick('body','Curvy')}${obPick('body','Muscular')}</div>
      <div class="mut small">${T('Income')}</div>
-     <select class="inp" id="obIncome" onchange="OB.data.income=this.value"><option value="">${T('Select')}</option><option ${d.income==='Below $500'?'selected':''}>${T('Below $500')}</option><option ${d.income==='$500–$1,000'?'selected':''}>${T('$500–$1,000')}</option><option ${d.income==='$1,000–$2,000'?'selected':''}>${T('$1,000–$2,000')}</option><option ${d.income==='Above $2,000'?'selected':''}>${T('Above $2,000')}</option><option ${d.income==='Prefer not to say'?'selected':''}>${T('Prefer not to say')}</option></select>
+     <div class="tagwrap" style="margin:6px 0 10px">${obPick('income','Below $500')}${obPick('income','$500–$1,000')}${obPick('income','$1,000–$2,000')}${obPick('income','Above $2,000')}${obPick('income','Prefer not to say')}</div>
      <div class="row" style="gap:8px">
-       <div style="flex:1"><div class="mut small">${T('Smoking')}</div><select class="inp" id="obSmoke" onchange="OB.data.smoke=this.value"><option value="">${T('Select')}</option><option ${d.smoke==='Never'?'selected':''}>${T('Never')}</option><option ${d.smoke==='Sometimes'?'selected':''}>${T('Sometimes')}</option><option ${d.smoke==='Often'?'selected':''}>${T('Often')}</option></select></div>
-       <div style="flex:1"><div class="mut small">${T('Drinking')}</div><select class="inp" id="obDrink" onchange="OB.data.drink=this.value"><option value="">${T('Select')}</option><option ${d.drink==='Never'?'selected':''}>${T('Never')}</option><option ${d.drink==='Socially'?'selected':''}>${T('Socially')}</option><option ${d.drink==='Often'?'selected':''}>${T('Often')}</option></select></div>
+       <div style="flex:1"><div class="mut small">${T('Smoking')}</div><div class="tagwrap" style="margin:6px 0 10px">${obPick('smoke','Never')}${obPick('smoke','Sometimes')}${obPick('smoke','Often')}</div></div>
+       <div style="flex:1"><div class="mut small">${T('Drinking')}</div><div class="tagwrap" style="margin:6px 0 10px">${obPick('drink','Never')}${obPick('drink','Socially')}${obPick('drink','Often')}</div></div>
      </div>
      <div class="mut small">${T('Religion')}</div>
-     <select class="inp" id="obReligion" onchange="OB.data.religion=this.value"><option value="">${T('Select')}</option><option ${d.religion==='Muslim'?'selected':''}>${T('Muslim')}</option><option ${d.religion==='Christian'?'selected':''}>${T('Christian')}</option><option ${d.religion==='Jewish'?'selected':''}>${T('Jewish')}</option><option ${d.religion==='Other'?'selected':''}>${T('Other')}</option><option ${d.religion==='Prefer not to say'?'selected':''}>${T('Prefer not to say')}</option></select>
+     <div class="tagwrap" style="margin:6px 0 10px">${obPick('religion','Muslim')}${obPick('religion','Christian')}${obPick('religion','Jewish')}${obPick('religion','Other')}${obPick('religion','Prefer not to say')}</div>
      <div class="mut small">${T('Looking for')}</div>
-     <select class="inp" id="obIntent" onchange="OB.data.intent=this.value"><option value="">${T('Select')}</option><option ${d.intent==='Marriage'?'selected':''}>${T('Marriage')}</option><option ${d.intent==='Serious relationship'?'selected':''}>${T('Serious relationship')}</option><option ${d.intent==='Friendship'?'selected':''}>${T('Friendship')}</option><option ${d.intent==='Other'?'selected':''}>${T('Other')}</option></select>
+     <div class="tagwrap" style="margin:6px 0 10px">${obPick('intent','Marriage')}${obPick('intent','Serious relationship')}${obPick('intent','Friendship')}${obPick('intent','Other')}</div>
      <div style="height:6px"></div>
-     <button class="btn btn-grad" onclick="obFinish()">Start swiping</button>
-     <div class="mut tiny" style="text-align:center;margin-top:6px">All fields required — helps matches know you, shown on your profile.</div>
+     <button class="btn btn-grad" onclick="obFinish()">${T('Start swiping')}</button>
+     <div class="mut tiny" style="text-align:center;margin-top:6px">${T('All fields required — helps matches know you, shown on your profile.')}</div>
    </div>`
   ];
   W.innerHTML=steps[OB.step]();
@@ -2347,7 +2398,10 @@ async function obFinish(){
   if(_prof && (!_prof.value||!_edu.value||!_rel.value||!_height.value||!_body.value||!_income.value||!_smoke.value||!_drink.value||!_relig.value||!_intent.value)){
     return toast('Please fill all fields — they help the right match find you 💛');
   }
-  const _rawBio=$('obBio')?$('obBio').value.trim():'New here — say hi and surprise me 💛'; if(_rawBio && !isCleanOrWarn(_rawBio)) return; if(_rawBio) OB.data.bio=_rawBio;
+  const _defBio=T('New here — say hi and surprise me');
+  const _rawBio=$('obBio')?$('obBio').value.trim():'';
+  if(_rawBio && !isCleanOrWarn(_rawBio)) return;
+  if(_rawBio) OB.data.bio=_rawBio; else if(!OB.data.bio) OB.data.bio=_defBio;
   if(OB.data.tags.length<2)return toast('Pick at least 2 interests ✨');
   const firstProfile=!L.createdAt;
   L.me={...OB.data,uid,country:countryOf(OB.data.city||'Casablanca')}; L.createdAt=Date.now();
@@ -2394,21 +2448,10 @@ async function loadDeck(){
   let cloudPool=[];
   if(!DEMO){ try{ cloudPool=await cloudDiscover(); }catch(e){} }
   const all=[...cloudPool,...demoPool.filter(p=>!cloudPool.find(c=>c.name===p.name))];
-  // unseen first, and never who swiped me rejected? show fresh + unscored
-  // TINDER-LIKE: passes resurface after 7 days, likes never resurface (or after 30 days if deck empty)
-  const nowTs=Date.now();
-  const RESHOW_PASS_MS=7*86400000, RESHOW_LIKE_MS=30*86400000;
-  R.deck=all.filter(p=>{
-    if(L.matches.find(m=>m.peer===p.id)) return false;
-    const sw=L.swiped[p.id];
-    if(!sw) return true;
-    const age=nowTs-(sw.ts||0);
-    if(sw.d==='pass') return age>RESHOW_PASS_MS;
-    return age>RESHOW_LIKE_MS;
-  });
+  R.deck=all.filter(p=>p&&p.id&&p.id!==uid&&!(L.swiped&&L.swiped[p.id]));
   const sc=matchScope();
-  if(sc==='local'){
-    const mine=myCountry().toLowerCase();
+  const mine=String((typeof myCountry==='function'&&myCountry())||'').toLowerCase();
+  if(sc!=='global'&&sc!=='passport'){
     const loc=R.deck.filter(p=>sameLocale(p)||peerCountry(p).toLowerCase()===mine);
     if(loc.length) R.deck=loc;
   } else if(sc==='passport'){
@@ -2472,11 +2515,11 @@ function boostChip(){
 }
 function cardHtml(p,i){
   const isSuper=(L.likesYou.find(x=>x.uid===p.id&&x.d==='super'));
-  const badge=i===0?(isSuper?'<div class="vbadge super">✨ SUPER LIKED YOU</div>':p.fresh?'<div class="vbadge new">NEW HERE</div>':''):'';
+  const badge=i===0?(isSuper?`<div class="vbadge super">${T('SUPER LIKED YOU')}</div>`:p.fresh?`<div class="vbadge new">${T('NEW HERE')}</div>`:''):'';
   return `<div class="dcard" data-id="${p.id}" style="z-index:${10-i};transform:scale(${1-i*0.045}) translateY(${i*10}px)">
     <div class="ph avcover" style="background:${grad(p.gi)};background-image:url('${avaURI(p)}')"></div>
     <div class="pdots hidden" data-pdots></div>
-    ${i===0?`<button class="rptbtn" onpointerdown="event.stopPropagation()" onpointerup="event.stopPropagation()" onclick="reportDeckAsk('${p.id}')">${IC('flag',12)}<span>Report</span></button>`:''}
+    ${i===0?`<button class="rptbtn" onpointerdown="event.stopPropagation()" onpointerup="event.stopPropagation()" onclick="reportDeckAsk('${p.id}')">${IC('flag',12)}<span>${T('Report')}</span></button>`:''}
     ${badge}
     <div class="shade"></div>
     <div class="stamp like">LIKE</div><div class="stamp no">NOPE</div><div class="stamp wow">WOW ✨</div>
@@ -2484,7 +2527,7 @@ function cardHtml(p,i){
       <div class="nm">${p.name} <span class="age">${p.age}</span> ${VB(p.verified)}</div>
       <div class="ds">${IC('pin',12)} ${p.km!=null?`${p.km} km · `:''}${p.city||'Earth'}${countryOf(p.city)!=='Other'?' · '+countryOf(p.city):''}</div>
       <div class="bio">${p.bio||''}</div>
-      <div class="tags">${(p.tags||[]).slice(0,3).map(t=>`<span>${TIC(t,11)}${tagTxt(t)}</span>`).join('')}</div>
+      <div class="tags">${(p.tags||[]).slice(0,3).map(t=>`<span>${TIC(t,11)}${T(tagTxt(t))}</span>`).join('')}</div>
     </div></div>`;
 }
 function bindTopCard(){
@@ -2587,8 +2630,25 @@ function maybeIncoming(){
 
 /* ============ MATCH ============ */
 function matchIdOf(a,b){return [a,b].sort().join('_')}
-function isStaffPeer(id,name){var s=String(id||'').toLowerCase(),n=String(name||'').toLowerCase();return s==='admin'||s.indexOf('admin_')===0||n==='admin'||n==='tayripages';}
-function realMatches(){var u=new Map();(L.matches||[]).forEach(function(m){if(!m||!m.peer||m.peer===uid)return;var p=personOf(m.peer)||{};if(isStaffPeer(m.peer,p.name||m.name))return;var k=(String(p.name||m.name||'').toLowerCase().trim()+'|'+(p.city||'').toLowerCase())||m.peer;var old=u.get(k);var sc=(VD[m.peer]?10:0)+((L.chats[m.mid]||[]).length);var os=old?((VD[old.peer]?10:0)+((L.chats[old.mid]||[]).length)):-1;if(!old||sc>=os)u.set(k,m);});return Array.from(u.values());}
+function isStaffPeer(id,name){
+  const s=String(id||'').toLowerCase();
+  const n=String(name||'').toLowerCase().trim();
+  return s==='admin'||s.startsWith('admin_')||n==='admin'||n==='tayripages hq'||n==='tayripages';
+}
+function realMatches(){
+  const uniq=new Map();
+  for(const m of (L.matches||[])){
+    if(!m||!m.peer||m.peer===uid) continue;
+    const p=personOf(m.peer)||{};
+    if(isStaffPeer(m.peer, p.name||m.name)) continue;
+    const k=String(p.name||m.name||'').toLowerCase().trim()+'|'+(p.city||'').toLowerCase()||m.peer;
+    const old=uniq.get(k);
+    const score=(VD[m.peer]?10:0)+((L.chats[m.mid]||[]).length);
+    const oldScore=old?((VD[old.peer]?10:0)+((L.chats[old.mid]||[]).length)):-1;
+    if(!old||score>=oldScore) uniq.set(k,m);
+  }
+  return [...uniq.values()];
+}
 async function makeMatch(p){
   const mid=matchIdOf(uid,p.id);
   if(L.matches.find(m=>m.mid===mid))return;
@@ -2682,24 +2742,10 @@ async function goldMatchBack(pid){
 function unreadTotal(){ return Object.values(L.unread||{}).reduce((a,b)=>a+b,0); }
 function renderMatches(){
   // One chat per person: same UID, or same name+city (second Google login looks like two people)
-  const uniq=new Map();
-  for(const m of (L.matches||[])){
-    if(!m||!m.peer||m.peer===uid) continue;
-    const p=personOf(m.peer)||{};
-    const k=m.peer==='admin'?'admin':(String(p.name||m.name||'').toLowerCase().trim()+'|'+(p.city||'').toLowerCase()||m.peer);
-    const old=uniq.get(k);
-    const score=(VD[m.peer]?10:0)+((L.chats[m.mid]||[]).length);
-    const oldScore=old?((VD[old.peer]?10:0)+((L.chats[old.mid]||[]).length)): -1;
-    if(!old||score>=oldScore) uniq.set(k,m);
-  }
-  L.matches = [...uniq.values()];
-  try{ localStorage.setItem('zwin_local',JSON.stringify(L)); }catch(e){}
-
+  const dedupedMatches=realMatches();
   const mRowEl = $('mRow');
   const chatListEl = $('chatList');
   if(!mRowEl || !chatListEl) return;
-
-  const dedupedMatches=L.matches;
   const freshMs=dedupedMatches.filter(m => m.peer !== 'admin' && hasStory(m.peer)).slice(0,8);
   mRowEl.innerHTML=freshMs.length? freshMs.map((m,i)=>`<button class="mnew" data-mc="${m.mid}" onclick="${hasStory(m.peer)?`openStory('${m.peer}')`:`openChat('${m.mid}')`}">
     <div class="av ${hasStory(m.peer)?'story-hot':''}"><div class="avcover" style="background:${grad(m.gi)};background-image:url('${avaURI({id:m.peer,av:peerAv(m.peer)})}')"></div>${hasStory(m.peer)?'<span class="storydot"></span>':''}</div><span>${m.name}</span></button>`).join('')
@@ -2824,11 +2870,11 @@ function addMsg(mid,who,obj,meFlag){
 function messageMenu(encodedKey){
   const key=decodeURIComponent(encodedKey||''); const mid=R.chatWith; const m=(L.chats[mid]||[]).find(x=>x.key===key); if(!m||m.who!=='msg')return;
   const own=!!m.me||m.from===uid; const canEveryone=own&&!String(key).startsWith('local_')&&!String(key).startsWith('sim_');
-  $('genBody').innerHTML=`<div class="h2" style="margin-bottom:8px">Message options</div>
+  $('genBody').innerHTML=`<div class="h2" style="margin-bottom:8px">${T('Message options')}</div>
     <div class="card small" style="line-height:1.45;margin-bottom:10px">${proofEsc(m.text)}</div>
-    <div class="mut tiny" style="margin-bottom:10px">Choose carefully. Deletions cannot be undone.</div>
-    <button class="btn btn-line" onclick="confirmDeleteMessage('me','${encodeURIComponent(key)}')">Delete for me</button>
-    ${canEveryone?`<div style="height:8px"></div><button class="btn btn-line" style="color:#c3345a" onclick="confirmDeleteMessage('everyone','${encodeURIComponent(key)}')">Unsend for everyone</button>`:''}
+    <div class="mut tiny" style="margin-bottom:10px">${T('Choose carefully. Deletions cannot be undone.')}</div>
+    <button class="btn btn-line" onclick="confirmDeleteMessage('me','${encodeURIComponent(key)}')">${T('Delete for me')}</button>
+    ${canEveryone?`<div style="height:8px"></div><button class="btn btn-line" style="color:#c3345a" onclick="confirmDeleteMessage('everyone','${encodeURIComponent(key)}')">${T('Unsend for everyone')}</button>`:''}
     <div style="height:8px"></div><button class="btn btn-line" onclick="hide(\'genSheet\')">Cancel</button>`;
   show('genSheet');
 }
@@ -2874,12 +2920,6 @@ async function sendMsg(){
   }catch(e){ toast('Message could not be sent.','err'); } }
   if(p&&p.sim)botReply(mid,p);
 }
-
-function pickChatImage(){var mid=R.chatWith;if(!mid)return;var n=(L.chats[mid]||[]).filter(function(x){return x&&x.img&&(x.me||x.from===uid);}).length;if(n>=3)return toast(T('Max 3 photos in this chat'));var inp=document.createElement('input');inp.type='file';inp.accept='image/*';inp.onchange=async function(){var f=inp.files&&inp.files[0];if(!f)return;try{var data=await compressImage(f);if(String(data).length>280000)return toast(T('Photo too large — try another'));await pushChatMedia(mid,{text:'img',img:data,once:true});}catch(e){toast(T('That photo didn’t work — try another one'));}};inp.click();}
-var _rec=null,_recChunks=[],_recT=null;
-function toggleChatAudio(){if(_rec){try{_rec.stop();}catch(e){}return;}if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia)return toast(T('Voice not available here'));navigator.mediaDevices.getUserMedia({audio:true}).then(function(stream){_recChunks=[];_rec=new MediaRecorder(stream);_rec.ondataavailable=function(e){if(e.data&&e.data.size)_recChunks.push(e.data);};_rec.onstop=function(){stream.getTracks().forEach(function(tr){tr.stop();});clearTimeout(_recT);_rec=null;var blob=new Blob(_recChunks,{type:'audio/webm'});if(blob.size>55000)return toast(T('Voice note too heavy for this chat'));var fr=new FileReader();fr.onload=function(){pushChatMedia(R.chatWith,{text:'aud',audio:fr.result});};fr.readAsDataURL(blob);};_rec.start();toast(T('Recording… tap again to send (max 10s)'));_recT=setTimeout(function(){try{_rec&&_rec.stop();}catch(e){}},10000);}).catch(function(){toast(T('Microphone permission is needed'));});}
-async function pushChatMedia(mid,extra){if(!mid||!L.me)return;var gold=goldActive();if(!DEMO){try{await syncFreeLeft(mid);}catch(e){}}var left=(typeof L.freeLeft[mid]==='number'?L.freeLeft[mid]:C.freeChatMsgs);if(!gold&&left<=0)return openGold('chat');var sr=(!DEMO)?ref('chats/'+mid).push():null;var msg={who:'msg',me:true,from:uid,key:sr?sr.key:('local_'+Date.now()),ts:Date.now(),text:extra.text||'img'};if(extra.img)msg.img=extra.img;if(extra.audio)msg.audio=extra.audio;if(extra.once)msg.once=true;(L.chats[mid]=L.chats[mid]||[]).push(msg);if(!gold)L.freeLeft[mid]=left-1;save();if(R.chatWith===mid){try{pushBubble(msg);}catch(e){}}if(sr){var payload={from:uid,fromName:L.me.name,text:extra.text||'img',ts:msg.ts};if(extra.img)payload.img=extra.img;if(extra.audio)payload.audio=extra.audio;if(extra.once)payload.once=true;var upd={};upd['chats/'+mid+'/'+sr.key]=payload;if(!gold)upd['chatMeta/'+mid+'/freeLeft/'+uid]=L.freeLeft[mid];try{await DB.ref('wasla_dating').update(upd);}catch(e){toast(T('Message could not be sent.'));}}}
-async function openOnceImage(key){var mid=R.chatWith;var m=(L.chats[mid]||[]).find(function(x){return x.key===key;});if(!m||!m.img)return;alert(T('Photo · view once'));m.opened=true;m.img=null;save();if(!DEMO&&key&&String(key).indexOf('local_')!==0){try{await ref('chats/'+mid+'/'+key+'/img').remove();await ref('chats/'+mid+'/'+key+'/opened').set(true);}catch(e){}}try{paintMsgs();}catch(e){}}
 function botReply(mid,p){
   const gifted=(L.gifts[p.id]||0);
   setTimeout(()=>{
@@ -2983,19 +3023,17 @@ async function clearChatForAll(){
 }
 function chatMenu(){
   const m=L.matches.find(m=>m.mid===R.chatWith);
-  $('genBody').innerHTML=`<div class="h2" style="margin-bottom:10px">${m?m.name:'Options'}</div>
-    <button class="btn btn-line" onclick="viewPeerProfile()">View profile</button>
+  $('genBody').innerHTML=`<div class="h2" style="margin-bottom:10px">${m?m.name:T('Options')}</div>
+    <button class="btn btn-line" onclick="viewPeerProfile()">${T('View profile')}</button>
     <div style="height:8px"></div>
-    <button class="btn btn-line" onclick="openThemeSheet()">Chat colors & dark mode</button>
+    <button class="btn btn-line" onclick="openThemeSheet()">${T('Chat colors & dark mode')}</button>
     <div style="height:8px"></div>
-    <button class="btn btn-line" onclick="clearChatForAll()">🧹 Clear chat for both</button>
-    <div class="mut tiny" style="text-align:center;margin:4px 0">Deletes messages on the server for both of you — they will not come back after login</div>
+    <button class="btn btn-line" onclick="clearChatForAll()">${IC('chat',15)} ${T('Clear chat for both')}</button>
+    <div class="mut tiny" style="text-align:center;margin:4px 0">${T('Deletes messages on the server for both of you — they will not come back after login')}</div>
     <div style="height:8px"></div>
     <button class="btn btn-line" onclick="unmatchAsk()">${T('Unmatch')}</button>
     <div style="height:8px"></div>
-    <button class="btn btn-line" onclick="blockAsk()">${T('Block')}</button>
-    <div style="height:8px"></div>
-    <button class="btn btn-line" style="color:#ff7a7a" onclick="reportAsk()">${IC('flag',15)} ${T('Report')}</button>`;
+    <button class="btn btn-line" style="color:#ff7a7a" onclick="reportAsk()">${IC('flag',15)} ${T('Report & block')}</button>`;
   show('genSheet');
 }
 /* 🎨 chat comfort — colorblind-friendly palettes + dark chat */
@@ -3018,15 +3056,15 @@ function paintChatTheme(){
 function openThemeSheet(){
   const th=L.chatTheme||'rose';
   const row=(id,name,desc,c1,c2)=>`<button class="palrow ${th===id?'on':''}" onclick="setChatTheme('${id}')"><span class="palsamp"><i style="background:${c1}"></i><i style="background:${c2}"></i></span><span style="flex:1"><b>${name}</b><div class="mut tiny">${desc}</div></span>${th===id?IC('check',16):''}</button>`;
-  $('genBody').innerHTML=`<div class="h2" style="margin-bottom:4px">Chat colors</div>
-    <div class="mut tiny" style="margin-bottom:8px">Comfort-first palettes — Ocean is designed for red-green color vision (the most common), Violet for blue-yellow, Mono for maximum contrast.</div>`
-    +row('rose','Rose — classic','Warm Tayri pink, our signature','#ff5f8f','#ffffff')
-    +row('ocean','Ocean — red-green friendly','Blue vs soft amber, easiest for deuteranopia','#1565d8','#ffe3ae')
-    +row('violet','Violet — blue-yellow friendly','Purple vs warm peach, easiest for tritanopia','#7c3aed','#ffd9b3')
-    +row('mono','Mono — max contrast','Black on white, vision-friendly','#151515','#ffffff')
+  $('genBody').innerHTML=`<div class="h2" style="margin-bottom:4px">${T('Chat colors')}</div>
+    <div class="mut tiny" style="margin-bottom:8px">${T('Comfort-first palettes — Ocean is designed for red-green color vision (the most common), Violet for blue-yellow, Mono for maximum contrast.')}</div>`
+    +row('rose',T('Rose — classic'),T('Warm Tayri pink, our signature'),'#ff5f8f','#ffffff')
+    +row('ocean',T('Ocean — red-green friendly'),T('Blue vs soft amber, easiest for deuteranopia'),'#1565d8','#ffe3ae')
+    +row('violet',T('Violet — blue-yellow friendly'),T('Purple vs warm peach, easiest for tritanopia'),'#7c3aed','#ffd9b3')
+    +row('mono',T('Mono — max contrast'),T('Black on white, vision-friendly'),'#151515','#ffffff')
     +`<div style="height:8px"></div>
-    <button class="palrow ${L.chatDark?'on':''}" onclick="toggleChatDark()"><span class="palsamp"><i style="background:#0d1117"></i><i style="background:#21262d"></i></span><span style="flex:1"><b>Dark chat</b><div class="mut tiny">Easy on the eyes at night — only the chat screen changes</div></span><span class="pill ${L.chatDark?'pon':''}">${L.chatDark?'ON':'OFF'}</span></button>
-    <div style="height:8px"></div><button class="btn btn-line" onclick="hide(\'genSheet\')">Close</button>`;
+    <button class="palrow ${L.chatDark?'on':''}" onclick="toggleChatDark()"><span class="palsamp"><i style="background:#0d1117"></i><i style="background:#21262d"></i></span><span style="flex:1"><b>${T('Dark chat')}</b><div class="mut tiny">${T('Easy on the eyes at night — only the chat screen changes')}</div></span><span class="pill ${L.chatDark?'pon':''}">${L.chatDark?T('ON'):T('OFF')}</span></button>
+    <div style="height:8px"></div><button class="btn btn-line" onclick="hide(\'genSheet\')">${T('Close')}</button>`;
   show('genSheet');
 }
 function setChatTheme(id){ L.chatTheme=id; save(); paintChatTheme(); openThemeSheet(); }
@@ -3055,7 +3093,7 @@ function unmatchAsk(){
   const m=L.matches.find(m=>m.mid===R.chatWith); if(!m)return;
   $('genBody').innerHTML=`<div style="text-align:center;padding:6px 0 12px">
     <div style="color:var(--mut)">${IC('heart',44)}</div>
-    <div class="h2">Unmatch with ${m.name}?</div>
+    <div class="h2">${T('Unmatch with')} ${m.name}?</div>
     <div class="mut small" style="margin-top:6px;line-height:1.6">The match and the whole conversation<br>disappear for <b>both</b> of you.<br>They are never notified.</div></div>
     <button class="btn btn-grad" onclick="doUnmatch(false)">Yes, unmatch</button>
     <div style="height:8px"></div>
@@ -3064,33 +3102,32 @@ function unmatchAsk(){
 }
 /* 🚩 REPORT — reason first, then optionally attach one text message as evidence */
 function proofEsc(s){ return String(s||'').slice(0,1200).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-function blockAsk(){var m=L.matches.find(function(x){return x.mid===R.chatWith;});if(!m)return;$('genBody').innerHTML='<div class="h2">'+T('Block')+' '+String(m.name||'')+'?</div><div class="mut small" style="margin:8px 0">'+T('They leave your matches and cannot message you. This is not a report.')+'</div><button class="btn btn-grad" onclick="doUnmatch(false)">'+T('Block')+'</button><div style="height:8px"></div><button class="btn btn-line" onclick="hide(\'genSheet\')">'+T('Cancel')+'</button>';show('genSheet');}
 function reportAsk(){
   const m=L.matches.find(m=>m.mid===R.chatWith); if(!m)return;
   const reasons=[
-    {i:'cash',tint:'mic-d',t:'Money or scam',d:'Asked for money, gifts, or bank details',key:'Asked for money / scam'},
-    {i:'ban',tint:'mic-e',t:'Harassment or hate',d:'Insults, threats, or hateful language',key:'Harassment or hate'},
-    {i:'alert',tint:'mic-c',t:'Inappropriate content',d:'Nudity or sexual pressure',key:'Inappropriate content'},
-    {i:'person',badge:1,tint:'mic-f',t:'Fake profile',d:'Not the person in the photos (catfish)',key:'Fake profile / catfish'},
-    {i:'person',tint:'mic-h',t:'Under 18',d:'User appears to be under 18 years old',key:'Under 18 — minor'},
-    {i:'dots',tint:'mic-g',t:'Something else',d:'Tell us — we review every report',key:'Something else'}
+    {i:'cash',tint:'mic-d',t:T('Money or scam'),d:T('Asked for money, gifts, or bank details'),key:'Asked for money / scam'},
+    {i:'ban',tint:'mic-e',t:T('Harassment or hate'),d:T('Insults, threats, or hateful language'),key:'Harassment or hate'},
+    {i:'alert',tint:'mic-c',t:T('Inappropriate content'),d:T('Nudity or sexual pressure'),key:'Inappropriate content'},
+    {i:'person',badge:1,tint:'mic-f',t:T('Fake profile'),d:T('Not the person in the photos (catfish)'),key:'Fake profile / catfish'},
+    {i:'person',tint:'mic-h',t:T('Under 18'),d:T('User appears to be under 18 years old'),key:'Under 18 — minor'},
+    {i:'dots',tint:'mic-g',t:T('Something else'),d:T('Tell us — we review every report'),key:'Something else'}
   ];
-  $('genBody').innerHTML=`<div class="h2" style="margin-bottom:4px">Report ${proofEsc(m.name)}</div>
-    <div class="mut small" style="margin-bottom:12px">Our team reviews every report within 24h.<br>They will be unmatched and blocked instantly.</div>
+  $('genBody').innerHTML=`<div class="h2" style="margin-bottom:4px">${T('Report')} ${proofEsc(m.name)}</div>
+    <div class="mut small" style="margin-bottom:12px">${T('Our team reviews every report within 24h. They will be unmatched and blocked instantly.')}</div>
     <div class="setcard" style="margin:0 0 14px">${reasons.map(r=>`<button class="mprow" onclick="reportProofAsk('${r.key}')">
       <span class="mico ${r.tint}" style="position:relative">${IC(r.i,18)}${r.badge?`<span style="position:absolute;bottom:-3px;right:-3px;width:15px;height:15px;border-radius:50%;background:#fff;color:#c3345a;display:grid;place-items:center;box-shadow:0 2px 6px rgba(0,0,0,.25)">${IC('x',9)}</span>`:''}</span>
       <span class="mtxt"><b>${r.t}</b><div>${r.d}</div></span>
       <span class="chev">›</span></button>`).join('')}</div>
-    <button class="btn btn-line" onclick="hide(\'genSheet\')">Cancel</button>`;
+    <button class="btn btn-line" onclick="hide(\'genSheet\')">${T('Cancel')}</button>`;
   show('genSheet');
 }
 function reportProofAsk(reason){
   const mid=R.chatWith, m=L.matches.find(x=>x.mid===mid); if(!m)return;
   const messages=(L.chats[mid]||[]).map((x,i)=>({x,i})).filter(o=>o.x&&o.x.who==='msg'&&o.x.text).slice(-30);
-  $('genBody').innerHTML=`<div class="h2" style="margin-bottom:4px">Send one proof message?</div>
-    <div class="mut small" style="margin-bottom:12px">Choose at most one text message for the admin team. You can also report without attaching proof.</div>
-    <div style="max-height:280px;overflow:auto">${messages.length?messages.map(o=>`<button class="btn btn-line" style="margin-bottom:8px;text-align:start;line-height:1.45" onclick="doUnmatch(true,'${reason}',${o.i})"><b>${o.x.me?'You':proofEsc(m.name)}</b><br>${proofEsc(o.x.text)}</button>`).join(''):'<div class="mut small" style="padding:10px 0">No text messages are available in this conversation.</div>'}</div>
-    <button class="btn btn-grad" onclick="doUnmatch(true,'${reason}',null)">Report without proof</button>
+  $('genBody').innerHTML=`<div class="h2" style="margin-bottom:4px">${T('Send one proof message?')}</div>
+    <div class="mut small" style="margin-bottom:12px">${T('Choose at most one text message for the admin team. You can also report without attaching proof.')}</div>
+    <div style="max-height:280px;overflow:auto">${messages.length?messages.map(o=>`<button class="btn btn-line" style="margin-bottom:8px;text-align:start;line-height:1.45" onclick="doUnmatch(true,'${reason}',${o.i})"><b>${o.x.me?T('You'):proofEsc(m.name)}</b><br>${proofEsc(o.x.text)}</button>`).join(''):'<div class="mut small" style="padding:10px 0">No text messages are available in this conversation.</div>'}</div>
+    <button class="btn btn-grad" onclick="doUnmatch(true,'${reason}',null)">${T('Report without proof')}</button>
     <div style="height:8px"></div><button class="btn btn-line" onclick="hide(\'genSheet\')">Cancel</button>`;
   show('genSheet');
 }
@@ -3106,7 +3143,12 @@ async function doUnmatch(reported,reason,proofIndex){
         const proofKey=(source&&source.key&&!String(source.key).startsWith('local_'))?source.key:null;
         const rid=ref('reports').push().key;
         await ref('reports/'+rid).set({from:uid,against:peerId,reason:reason||'report',mid,ts:Date.now(),status:'open',proofKey:proofKey||null});
-        if(proofKey){ try{ await ref('reportProof/'+rid).set({from:uid,mid:mid,key:proofKey,text:String(source.text||'').slice(0,1200),ts:source.ts||Date.now()}); }catch(e){ console.warn('proof lock',e); } }
+        if(proofKey){ try{
+          const live=await ref('chats/'+mid+'/'+proofKey).once('value');
+          const lv=live.val()||{};
+          const locked=String(lv.text||'').slice(0,1200);
+          if(locked) await ref('reportProof/'+rid).set({from:uid,mid:mid,key:proofKey,text:locked,ts:lv.ts||Date.now()});
+        }catch(e){ console.warn('proof lock',e); } }
       }
       // tombstone: THEIR app deletes the match too on next sync (locks safe — only members can write the match)
       await ref('matches/'+mid).set({dead:1,a:uid,b:peerId,by:uid,ts:Date.now()}).catch(()=>{});
@@ -3150,21 +3192,21 @@ function renderFame(){
     <div class="streakfire goldhero" style="background:linear-gradient(45deg,#1a1428,#241019);border-color:#6b4a9a">
       <div class="gcr" style="background:linear-gradient(45deg,#3a2460,#241019);color:#e8d4ff">${IC('medal',42)}</div>
       <div style="flex:1"><b class="h1" style="font-size:24px">${T('Fame')}</b>
-        <div class="mut small">${T('Be seen first — in every deck, worldwide.')}</div></div>
+        <div class="mut small">${T('Always featured worldwide')}</div></div>
     </div>
     <div class="card small" style="line-height:1.65;margin-bottom:12px">
       ${T('The public Fame catalogue opens when Tayripages reaches')} <b>1,000,000</b> ${T('members')}.
       ${T('Until then, Fame is invitation-only. If you want to be featured now, request a founding placement — we review each profile by hand.')}
     </div>
     <div class="card" style="margin-bottom:12px">
-      <b class="small">${T('Worldwide feature')}</b>
-      <div class="mut tiny" style="margin:6px 0 10px">${T('Your card is placed at the front of every member’s deck, four times in one month (once each week). Separate from GOLD — GOLD unlocks tools; Fame is visibility.')}</div>
+      <b class="small">${T('Worldwide presence')}</b>
+      <div class="mut tiny" style="margin:6px 0 10px">${T('One full week at the front of every deck, worldwide. Members meet you again and again — not a one-off flash. GOLD unlocks tools; Fame is presence.')}</div>
       <div class="perkrow">${IC('globe',18)}<span>${T('Every country, every deck')}</span></div>
-      <div class="perkrow">${IC('medal',18)}<span>${T('4 weekly features / 30 days')}</span></div>
-      <div class="perkrow">${IC('shield',18)}<span>${T('Manual review — quality over volume')}</span></div>
+      <div class="perkrow">${IC('medal',18)}<span>${T('Seven days of uninterrupted presence')}</span></div>
+      <div class="perkrow">${IC('shield',18)}<span>${T('Everyone sees you multiple times')}</span></div>
       <div class="divider"></div>
       <div class="spread"><span class="mut small">${T('List price')}</span><b>$ ${F.usd||1000}</b></div>
-      <div class="mut tiny" style="margin-top:6px">${T('Price and weekly drops are set on the server. GOLD is a different product.')}</div>
+      <div class="mut tiny" style="margin-top:6px">${T('Price is set on the server. GOLD is a different product.')}</div>
     </div>
     ${live?`<div class="card" style="border-color:#c9a227"><b>${T('You are featured this cycle')}</b><div class="mut tiny">${T('Your profile leads decks worldwide until this month’s four features complete.')}</div></div>`:''}
     ${pend.length?`<div class="card small" style="margin-top:10px;background:#241a08;border-color:#7a5514;color:#e8c96e">${T('Founding request under review.')} ${T('Reference')}: <b>${pend.map(o=>o.ref).join(', ')}</b></div>`:''}
@@ -3181,7 +3223,7 @@ function buyFame(){
   const refid='FAME-'+uid.slice(-4).toUpperCase()+'-'+Date.now().toString(36).toUpperCase();
   $('bankBody').innerHTML='<div style="text-align:center;padding:4px 0 8px"><div class="gcr" style="background:linear-gradient(45deg,#3a2460,#241019);color:#e8d4ff">'+IC('medal',40)+'</div>'
     +'<div class="h2" style="margin-top:8px">'+T('Fame')+' — $'+F.usd+'</div>'
-    +'<div class="mut small">'+T('Founding worldwide feature · 4 drops this month')+'</div></div>'
+    +'<div class="mut small">'+T('One week featured worldwide — everyone sees you, more than once')+'</div></div>'
     +'<div class="bankblock">'+T('Transfer details')+'<br>'
     +T('Bank')+': <b>'+c.bank+'</b><br>'
     +T('Beneficiary')+': <b>'+c.accountName+'</b><br>'
@@ -3217,7 +3259,7 @@ function renderWallet(){
     <div class="card"><b class="small">${T('Your superpowers')}</b><div class="divider" style="margin:10px 0"></div>
       ${goldPerks().map(p=>`<div class="perkrow">${IC(p[1],18)}<span>${p[0]}</span><b class="gldtxt">${T('ON')}</b></div>`).join('')}
     </div>
-    <div class="mut tiny" style="text-align:center;padding:14px">$${G.usd||9} ${T('one-time')} · ${T('Support:')} ${TAYRI_CONFIG.company.supportEmail}</div>`
+    <div class="mut tiny" style="text-align:center;padding:14px">$${G.usd||20} ${T('one-time')} · ${T('Support:')} ${TAYRI_CONFIG.company.supportEmail}</div>`
     + referralGoldCard()
   : `<div class="streakfire goldhero">
       <div class="gcr">${IC('crown',42)}</div>
@@ -3229,7 +3271,7 @@ function renderWallet(){
     </div>
     ${pend.length?`<div class="card small" style="margin-top:10px;background:#241a08;border-color:#7a5514;color:#e8c96e">${T('Payment under validation — GOLD activates by itself when approved. Ref:')} <b>${pend.map(o=>o.ref).join(', ')}</b></div>`:''}
     <div style="height:12px"></div>
-    <button class="btn btn-grad goldcta" onclick="buyGold()">${IC('crown',18)} ${T('Get GOLD')} · $${G.usd||9} — ${T('once, forever')}</button>
+    <button class="btn btn-grad goldcta" onclick="buyGold()">${IC('crown',18)} ${T('Get GOLD')} · $${G.usd||20} — ${T('once, forever')}</button>
     <div class="mut tiny" style="text-align:center;padding:14px">${T('Bank transfer today · Al Barid & CMI cards soon')}</div>`
     + referralGoldCard();
 }
@@ -3239,7 +3281,7 @@ function renderWallet(){
 /* ============ 🛡️ SHEETS THAT ANSWER — safety, help, close by tap-outside ============ */
 function ruleLine(t){ return `<div class="ruleli">${IC('check',14)}<span>${t}</span></div>`; }
 function openRules(){
-  const EN=['One rule above all: be polite and respectful — you are talking to a real human.','18+ only. One real you: your own photos, your real identity. No fakes, no impersonation.','Not allowed: harassment or hate, scams or asking for money, selling services, nude or violent content, advertising spam.','The admin may warn, block, or permanently ban any account that breaks these rules. A ban removes you from Tayripages for everyone, and admin decisions are final.','Payment: Tayripages GOLD is a one-time digital activation ($9). Once GOLD is activated on your account, it is final: no refunds, no transfers to another account — even if the account is later banned for breaking these rules. A transfer screenshot may be requested as proof.','Safety: Tayripages never asks for your password or codes. Never send money to someone you met here. First date: a public place, and tell a friend.','Privacy: Google sign-in only proves you are real — we never read your emails, we never post for you. Your profile is visible to other members; you can ask support to delete it.','Disclaimer — Liability: Tayripages is a platform for real connections. We are not responsible for any event, incident, harm, loss or dispute occurring inside or outside the app, before, during or after a meeting. Each member is solely responsible for their own choices, actions and interactions. Use at your own discretion. In case of doubt, meet in public and inform a trusted person.'];
+  const EN=['One rule above all: be polite and respectful — you are talking to a real human.','18+ only. One real you: your own photos, your real identity. No fakes, no impersonation.','Not allowed: harassment or hate, scams or asking for money, selling services, nude or violent content, advertising spam.','The admin may warn, block, or permanently ban any account that breaks these rules. A ban removes you from Tayripages for everyone, and admin decisions are final.','Payment: Tayripages GOLD is a one-time digital activation ($20). Once GOLD is activated on your account, it is final: no refunds, no transfers to another account — even if the account is later banned for breaking these rules. A transfer screenshot may be requested as proof.','Safety: Tayripages never asks for your password or codes. Never send money to someone you met here. First date: a public place, and tell a friend.','Privacy: Google sign-in only proves you are real — we never read your emails, we never post for you. Your profile is visible to other members; you can ask support to delete it.','Disclaimer — Liability: Tayripages is a platform for real connections. We are not responsible for any event, incident, harm, loss or dispute occurring inside or outside the app, before, during or after a meeting. Each member is solely responsible for their own choices, actions and interactions. Use at your own discretion. In case of doubt, meet in public and inform a trusted person.'];
   const lst= EN.map(x=>T(x));
   const sup=(typeof TAYRI_CONFIG!=='undefined'&&TAYRI_CONFIG.company&&TAYRI_CONFIG.company.supportEmail)||'';
   $('genBody').innerHTML=`<div class="h2" style="display:flex;align-items:center;gap:8px">${IC('shield',21)} ${T('Tayripages Rules')}</div>
@@ -3299,6 +3341,52 @@ function previewMe(){
   <button class="btn btn-line" onclick="hide(\'genSheet\')">${T('Close')}</button>`;
   show('genSheet');
 }
+function storyInsightsHtml(){
+  const views=L.storyViews||{};
+  const n=Object.keys(views).length;
+  const countLine=`<div class="spread" style="margin-top:10px"><span class="mut small">${IC('person',13)} ${T('Who viewed your story')}</span><b>${n}</b></div>`;
+  if(!goldActive()){
+    return countLine+`<button class="btn btn-line" style="margin-top:8px" onclick="openGold('likesYou')">${IC('crown',14)} ${T('Crush zone is GOLD — mark who you care about')}</button>`;
+  }
+  const cr=L.crushes||{};
+  const hits=Object.keys(views).filter(id=>!!cr[id]);
+  const names=hits.map(id=>{ const p=personOf(id); return (p&&p.name)||T('Someone'); });
+  const crushLine=names.length
+    ? `<div class="mut small" style="margin-top:8px">${IC('heart',13)} ${T('Crush viewed your story')}: <b>${names.map(n=>n.replace(/[<>]/g,'')).join(', ')}</b></div>`
+    : `<div class="mut tiny" style="margin-top:8px">${T('No crush has viewed this story yet')}</div>`;
+  return countLine+crushLine+`<button class="btn btn-line" style="margin-top:8px" onclick="openCrushSheet()">${IC('heart',14)} ${T('Crush zone')}</button>`;
+}
+function openCrushSheet(){
+  const cr=L.crushes||{};
+  const hid=L.storyHide||{};
+  const list=realMatches();
+  $('genBody').innerHTML=`<div class="h2" style="margin-bottom:6px">${IC('heart',20)} ${T('Crush zone')}</div>
+    <div class="mut small" style="margin-bottom:12px">${T('Mark matches you care about. If they open your story, you will see their name — GOLD only. Hide your story from anyone here.')}</div>
+    ${goldActive()?'':`<button class="btn btn-line" style="margin-bottom:10px" onclick="openGold('likesYou')">${IC('crown',14)} ${T('Crush names are GOLD — hide story is free')}</button>`}
+    <div class="setcard">${list.length?list.map(m=>{
+      const on=!!cr[m.peer]; const ho=!!hid[m.peer];
+      const p=personOf(m.peer)||{};
+      const name=(p.name||m.name||T('Someone')).replace(/[<>]/g,'');
+      return `<div class="mprow" style="align-items:flex-start"><span class="mico ${on?'mic-e':'mic-g'}">${IC(on?'heart':'person',18)}</span><span class="mtxt" style="flex:1"><b>${name}</b><div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px"><button class="pill ${on?'pon':''}" onclick="toggleCrush('${m.peer}')">${IC('heart',12)} ${on?T('Crush'):T('Add crush')}</button><button class="pill ${ho?'pon':''}" onclick="toggleStoryHide('${m.peer}')">${IC('ban',12)} ${ho?T('Story hidden'):T('Hide story from them')}</button></div></span></div>`;
+    }).join(''):`<div class="mut small">${T('Match someone first — then add them here')}</div>`}</div>
+    <button class="btn btn-line" onclick="hide('genSheet')">${T('Close')}</button>`;
+  show('genSheet');
+}
+async function toggleCrush(peer){
+  if(!peer) return;
+  if(!goldActive()) return openGold('likesYou');
+  L.crushes=L.crushes||{};
+  if(L.crushes[peer]){ delete L.crushes[peer]; try{ await ref('crushes/'+uid+'/'+peer).remove(); }catch(e){} }
+  else { L.crushes[peer]=true; try{ await ref('crushes/'+uid+'/'+peer).set(true); }catch(e){} }
+  save(); openCrushSheet();
+}
+async function toggleStoryHide(peer){
+  if(!peer) return;
+  L.storyHide=L.storyHide||{};
+  if(L.storyHide[peer]){ delete L.storyHide[peer]; try{ await ref('storyHide/'+uid+'/'+peer).remove(); }catch(e){} }
+  else { L.storyHide[peer]=true; try{ await ref('storyHide/'+uid+'/'+peer).set(true); }catch(e){} }
+  save(); openCrushSheet();
+}
 function renderProfile(){
   if(!L.me){ $('profileWrap').innerHTML=''; return; }
   const maxPh=(TAYRI_CONFIG.photos&&TAYRI_CONFIG.photos.maxPhotos)||4;
@@ -3312,7 +3400,7 @@ function renderProfile(){
         <div class="nm h2" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">${L.me.name}, ${L.me.age} ${VB(L.verified)} <span class="phbadge ${L.verified?'blue':''}">${L.verified?T('VERIFIED'):(mp?T('PHOTO PROFILE'):T('GOOGLE VERIFIED'))}</span></div>
         <div class="mut small" style="margin:4px 0">${IC('pin',13)} ${L.me.city}</div>
         <div class="small">${L.me.bio}</div>
-        <div class="row" style="flex-wrap:wrap;gap:6px;margin-top:8px">${L.me.tags.map(t=>`<span class="chip" style="font-size:11px;display:inline-flex;align-items:center;gap:5px">${TIC(t,12)}${tagTxt(t)}</span>`).join('')}</div>
+        <div class="row" style="flex-wrap:wrap;gap:6px;margin-top:8px">${L.me.tags.map(t=>`<span class="chip" style="font-size:11px;display:inline-flex;align-items:center;gap:5px">${TIC(t,12)}${T(tagTxt(t))}</span>`).join('')}</div>
         ${extraInfosHtml(L.me) ? '<div class="row" style="flex-wrap:wrap;gap:6px;margin-top:10px">' + extraInfosHtml(L.me) + '</div>' : ''}
       </div>
     </div>
@@ -3327,19 +3415,20 @@ function renderProfile(){
       </div>
       <div class="card" style="margin-bottom:10px">
         <div class="spread"><b class="small">${T('My story')}</b>${storyFresh(STORY[uid])?'<span class="pill" style="background:var(--grad);color:#fff;box-shadow:0 0 12px 4px rgba(255,94,138,.7)">LIVE · 24h</span>':''}</div>
-        <div class="mut tiny" style="margin:4px 0 10px">${T('Up to 3 stories, 24 hours each. Matches tap the glow on your chat avatar.')}</div>
+        <div class="mut tiny" style="margin:4px 0 10px">${T('One photo, 24 hours. A glowing ring appears around your chat avatar — your matches tap it to view.')}</div>
         <div class="mysrc">
           ${storyFresh(STORY[uid])
             ?`<div class="mystory-ring"><img src="${STORY[uid].img}" alt="my story" style="width:100%;height:100%;border-radius:50%;object-fit:cover"></div>`
             :`<button class="story-add-btn" onclick="pickStory()">${IC('plus',28)}</button>`}
-          <div style="flex:1"><b class="small">${storyFresh(STORY[uid])?'✨ Your story is glowing':'Add your story'}</b>
-            <div class="mut tiny" style="margin:3px 0 8px">${storyFresh(STORY[uid])?'Visible to your matches — tap your chat avatar to preview':'One tap — your matches see the glow. Let your light be seen 💛'}</div>
-            <button class="pill ${storyFresh(STORY[uid])?'':'pon'}" onclick="pickStory()" style="${storyFresh(STORY[uid])?'':'background:var(--grad);color:#fff'}">${storyFresh(STORY[uid])?'Replace story':'＋ Add story'}</button></div>
+          <div style="flex:1"><b class="small">${storyFresh(STORY[uid])?T('Your story is glowing'):T('Add your story')}</b>
+            <div class="mut tiny" style="margin:3px 0 8px">${storyFresh(STORY[uid])?T('Visible to your matches — tap your chat avatar to preview'):T('One tap — your matches see the glow. Let your light be seen')}</div>
+            <button class="pill ${storyFresh(STORY[uid])?'':'pon'}" onclick="pickStory()" style="${storyFresh(STORY[uid])?'':'background:var(--grad);color:#fff'}">${storyFresh(STORY[uid])?T('Replace story'):T('Add story')}</button></div>
         </div>
-        <div class="addstory-quote">“Show your light today. A single story can start a beautiful conversation ✨”</div>
+        <div class="addstory-quote">“${T('Show your light today. A single story can start a beautiful conversation')}”</div>
+        ${storyInsightsHtml()}
       </div>
       <div class="card" style="margin-bottom:10px">
-        <div class="spread"><b class="small">My Tayri ID</b><button class="copybtn" onclick="copyMyId()">COPY</button></div>
+        <div class="spread"><b class="small">${T('My Tayri ID')}</b><button class="copybtn" onclick="copyMyId()">${T('COPY')}</button></div>
         <div class="idBig" style="text-align:center;margin:6px 0 2px">${L.myCode||'· · · · ·'}</div>
         <div class="mut tiny" style="text-align:center">${T('Your personal Tayripages number — unique and it never changes. Share it so a friend can find you.')}</div>
         <div class="divider" style="margin:12px 0"></div>
@@ -3355,7 +3444,7 @@ function renderProfile(){
         <div class="divider" style="margin:12px 0"></div>
         <b class="small">${T('🎁 Gift GOLD to a match')}</b>
         <div class="mut tiny" style="margin:4px 0 8px">${T('Choose one of your matches — they get GOLD instantly too. Combined with ID gifting in one place.')}</div>
-        <div class="row"><select class="inp" id="giftMatchSel" style="flex:1"><option value="">${T('Choose a match')}</option>${L.matches.map(m=>'<option value="'+m.peer+'">'+m.name+'</option>').join('')}</select>
+        <div class="row"><select class="inp" id="giftMatchSel" style="flex:1"><option value="">${T('Choose a match')}</option>${realMatches().map(m=>'<option value="'+m.peer+'">'+(m.name||T('Someone'))+'</option>').join('')}</select>
         <button class="pill" style="padding:14px 18px;flex:none;background:var(--grad);color:#fff" onclick="giftGoldToMatch()">${T('Gift GOLD')}</button></div>
       </div>
       <div class="seclab" data-t="This week">This week</div>
@@ -3376,8 +3465,8 @@ function renderProfile(){
         <button class="mprow" onclick="openAvSheet()"><div class="mico mic-c">${IC('person',22)}</div><div class="mtxt"><b>${T('Avatar art')}</b><div>${T('Pick your vibe — your photo always wins')}</div></div><span class="pill">${T('8 arts')}</span></button>
         <button class="mprow" onclick="toggleGeo()"><div class="mico mic-c">${IC('pin',22)}</div><div class="mtxt"><b>${T('Real distance (GPS)')}</b><div>${L.geo?T('Tap to turn OFF — you control your location'):T('Real kilometres — always free')}</div></div><span class="pill ${L.geo?'pon':''}">${L.geo?T('ON · tap to stop'):T('Turn on')}</span></button>
         <button class="mprow" onclick="location.href='video.html'"><div class="mico mic-e">${IC('video',22)}</div><div class="mtxt"><b>${T('Instant video')}</b><div>${T('Meet someone live — free')}</div></div><span class="chev">›</span></button>
-        <button class="mprow" onclick="location.href='stream.html'"><div class="mico mic-d">${IC('video',22)}</div><div class="mtxt"><b>${T('Live stream')}</b><div id="liveCntLine">${T('Watch or go live — gifts, 30% to Tayripages')}</div></div><span class="pill" id="liveCntPill">LIVE</span></button>
-        <button class="mprow" onclick="location.href='influencers.html'"><div class="mico mic-h">${IC('medal',22)}</div><div class="mtxt"><b>${T('Muse House')}</b><div>${T('Turn your spark into a circle — invite, earn, rise')}</div></div><span class="chev">›</span></button>
+        <button class="mprow" onclick="location.href='stream.html'"><div class="mico mic-d">${IC('video',22)}</div><div class="mtxt"><b>${T('Live stream')} <span class="pill" style="margin-inline-start:6px">${T('beta')}</span></b><div id="liveCntLine">${T('Watch or go live — gifts, 30% to Tayripages')}</div></div><span class="pill" id="liveCntPill">${T('LIVE')}</span></button>
+        <button class="mprow" onclick="openCrushSheet()"><div class="mico mic-e">${IC('heart',22)}</div><div class="mtxt"><b>${T('Crush zone')}</b><div>${T('Know if they viewed your story · hide from anyone')}</div></div><span class="chev">›</span></button>
 
         <button class="mprow" onclick="toggleNotif()"><div class="mico mic-f">${IC('bell',22)}</div><div class="mtxt"><b>${T('In-app notifications')}</b><div>${T('Toasts while the app is open')}</div></div><div class="toggle ${L.notif===false?'':'on'}" id="notifT"></div></button>
         <button class="mprow" onclick="openSafety()"><div class="mico mic-g">${IC('shield',22)}</div><div class="mtxt"><b>${T('Safety center')}</b><div>${T('Block, report, dating tips')}</div></div><span class="chev">›</span></button>
@@ -3413,17 +3502,30 @@ async function resetAll(){ /* one tap = logged out. No popup, no drama — the c
   localStorage.removeItem('zwin_local');
   try{ await Promise.race([firebase.auth().signOut(),new Promise(r=>setTimeout(r,1200))]); }catch(e){}
   location.reload(); }
+function FICON(v){
+  const M={Student:'book',Employee:'briefcase',Entrepreneur:'spark',Freelance:'sliders',Unemployed:'person',Retired:'medal',
+    'High School':'book',Bachelor:'book',Master:'book',PhD:'medal',
+    Single:'heart',Divorced:'heart',Widowed:'heart',Separated:'heart',
+    Slim:'person',Average:'person',Athletic:'flame',Curvy:'person',Muscular:'flame',
+    'Below $500':'cash','$500–$1,000':'cash','$1,000–$2,000':'cash','Above $2,000':'cash','Prefer not to say':'dots',
+    Never:'ban',Sometimes:'spark',Often:'alert',Socially:'wine',
+    Marriage:'heart','Serious relationship':'heart',Friendship:'chat',Other:'dots',
+    Muslim:'shield',Christian:'shield',Jewish:'shield'};
+  return M[v]||'check';
+}
 function extraInfosHtml(p){
-  const fields=[
-    [p.profession,'person'],[p.education,'check'],[p.relation,'heart'],[p.height? p.height+' cm':'','sliders'],[p.body,'person'],[p.income,'cash'],[p.smoke,'ban'],[p.drink,'spark'],[p.religion,'shield'],[p.intent,'flag']
-  ];
-  return fields.filter(f=>f[0]).map(f=>`<span class="chip" style="font-size:11px;display:inline-flex;align-items:center;gap:5px">${IC(f[1],12)} ${f[0]}</span>`).join('');
+  const rows=[];
+  const push=(val,ic)=>{ if(!val)return; rows.push('<span class="chip" style="font-size:11px;display:inline-flex;align-items:center;gap:5px">'+IC(ic||FICON(val),12)+' '+T(val)+'</span>'); };
+  push(p.profession); push(p.education); push(p.relation);
+  if(p.height) rows.push('<span class="chip" style="font-size:11px;display:inline-flex;align-items:center;gap:5px">'+IC('sliders',12)+' '+p.height+' '+T('cm')+'</span>');
+  push(p.body); push(p.income); push(p.smoke); push(p.drink); push(p.religion); push(p.intent);
+  return rows.join('');
 }
 function paintGold(){ const el=$('goldTop'); if(el)el.textContent=goldActive()?T('GOLD'):T('GO GOLD'); }
 
 /* ============ INIT ============ */
 setTimeout(()=>{ const dk=$('deck'); if(AUTHED&&R.tab==='discover'&&dk&&!dk.children.length){ try{paintDeck();}catch(e){} } }, 5200);
-const TAYRI_BUILD='v37'; /* bump this number on every release — every phone self-updates once, no cache games */
+const TAYRI_BUILD='v33'; /* bump this number on every release — every phone self-updates once, no cache games */
 try{
   if(!sessionStorage.getItem('tayri_boot_'+TAYRI_BUILD)){
     sessionStorage.setItem('tayri_boot_'+TAYRI_BUILD,'1');
