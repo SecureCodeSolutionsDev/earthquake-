@@ -29,6 +29,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <script src="tayri-config.js"></script>
 <script src="tayri-lock.js"></script>
+<script src="tayri-privacy.js"></script>
 <script src="tayri-i18n.js"></script>
 <script src="filters/tayri-filters.bundle.js"></script>
 <script src="img-pack-1.js"></script>
@@ -242,7 +243,12 @@ body.bootwait #bootSplash{display:flex}
 .mov .duo .ma img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .storyv-rep{position:absolute;top:8px;inset-inline-start:10px;z-index:5;color:#fff;background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.3);border-radius:999px;padding:6px 10px;font-size:11px;font-weight:800}
 .storyv-x{position:absolute;top:4px;inset-inline-end:10px;color:#fff;font-size:24px;z-index:5;text-shadow:0 1px 6px rgba(0,0,0,.7);padding:8px}
-.storyv-pause{position:absolute;bottom:128px;left:50%;transform:translateX(-50%);z-index:8;background:rgba(0,0,0,.55);border:1.5px solid rgba(255,255,255,.55);color:#fff;border-radius:999px;padding:10px 22px;font-size:13px;font-weight:800;min-width:88px}
+.storyv-pause{position:absolute;bottom:86px;inset-inline-end:16px;left:auto;transform:none;z-index:8;width:44px;height:44px;border-radius:50%;background:rgba(8,3,10,.45);border:1.5px solid rgba(255,255,255,.45);color:#fff;padding:0;font-size:11px;font-weight:800;backdrop-filter:blur(8px);display:grid;place-items:center}
+.noshot,.noshot img,.storyv-card img,.pcard .ph img,.dcard .ph img{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.once-ph{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:14px 16px;border-radius:16px;background:rgba(255,94,138,.12);border:1px dashed var(--line);font-size:12px;font-weight:800;max-width:220px}
+.sv-thumbs{display:flex;gap:8px;align-items:center;margin-top:10px}
+.sv-thumb{width:56px;height:72px;border-radius:12px;object-fit:cover;border:2px solid var(--line)}
+.sv-add{width:56px;height:72px;border-radius:12px;border:1.5px dashed var(--pk);display:grid;place-items:center;color:var(--pk);background:var(--soft)}
 .mov h1{font-size:40px;font-weight:900;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;animation:pop .5s ease}
 .mov .duo{display:flex;gap:0;margin:18px 0 6px}
 .mov .duo .ma{width:118px;height:118px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:56px;border:4px solid #fff;box-shadow:0 14px 34px rgba(0,0,0,.4)}
@@ -356,16 +362,7 @@ html{background:#08030a}
 .gcr{width:76px;height:76px;border-radius:26px;background:linear-gradient(45deg,#5a3c0a,#33240a);color:var(--gold);display:flex;align-items:center;justify-content:center;box-shadow:0 16px 40px rgba(242,193,78,.25);flex:none}
 .gcr.big{width:92px;height:92px;margin:0 auto;box-shadow:0 20px 52px rgba(242,193,78,.35)}
 .goldhero{align-items:center}
-.perkrow{display:flex;align-items:center;gap:12px;padding:11px 2px;border-bottom:1px solid var(--line);font-size:14px;font-weight:700}
-.perkrow:last-child{border:none}
-.perkrow>svg,.perkrow>.icnsvg{color:var(--gold);flex:none}
-.perkrow>span{flex:1}
-.goldcta{background:linear-gradient(45deg,#f2c14e,#ff9d5c);color:#2a1500;box-shadow:0 14px 34px rgba(242,178,78,.35);letter-spacing:.3px}
-.pkline{margin:6px 0 2px;color:var(--pk);font-weight:900;font-size:14px}
-.quota{padding:0 18px 6px;font-size:11.5px;font-weight:800;color:var(--mut);display:flex;justify-content:flex-end;gap:6px;align-items:center}
-.quota svg{color:var(--pk)}
-.streakfire .h1{color:var(--gold)}
-.referral-card{border:1px solid #f0d394;background:linear-gradient(145deg,#fffdf3,#fff8df);color:#5f4a1c}.referral-head{display:flex;align-items:center;gap:9px;font-weight:950;color:#8d6100}.referral-icon{width:34px;height:34px;border-radius:12px;background:linear-gradient(45deg,#f2c14e,#ff9d5c);display:grid;place-items:center;color:#fff;font-size:18px}.referral-progress{height:8px;border-radius:99px;background:#f2e4bb;overflow:hidden;margin:10px 0 5px}.referral-progress i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#f2c14e,#ff8a5c)}.referral-actions{display:flex;gap:8px;margin-top:10px}.referral-actions .btn{flex:1;padding:11px;font-size:12px}
+.perkrow{display:flex;align-items:center;gap:12px;padding:11pxight:34px;border-radius:12px;background:linear-gradient(45deg,#f2c14e,#ff9d5c);display:grid;place-items:center;color:#fff;font-size:18px}.referral-progress{height:8px;border-radius:99px;background:#f2e4bb;overflow:hidden;margin:10px 0 5px}.referral-progress i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#f2c14e,#ff8a5c)}.referral-actions{display:flex;gap:8px;margin-top:10px}.referral-actions .btn{flex:1;padding:11px;font-size:12px}
 
 
 /* ---------- TAYRIPAGES AUTH — cinematic full-bleed photograph ---------- */
@@ -573,6 +570,11 @@ body.preauth.authno #scr-auth{display:block!important}
 <div id="toasts"></div>
 
 <!-- ==================== AUTH (google sign-in) ==================== -->
+<section cl"0" stop-color="#ff5f8f"/><stop offset="1" stop-color="#c81d5e"/></linearGradient></defs><path d="M12 21s-7.5-4.7-10-9.3C.4 8.6 2.2 4.5 6 4.1c2-.2 3.9.8 6 3.1 2.1-2.3 4-3.3 6-3.1 3.8.4 5.6 4.5 4 7.6C19.5 16.3 12 21 12 21z"/></svg><div style="font-weight:900;font-size:19px;letter-spacing:.3px">Tayripages</div><div class="bootspin"></div></div>
+<div class="app">
+<div id="toasts"></div>
+
+<!-- ==================== AUTH (google sign-in) ==================== -->
 <section class="scr" id="scr-auth">
   <div class="authwrap">
     <div class="authbg" id="authBgLayer"></div>
@@ -581,8 +583,10 @@ body.preauth.authno #scr-auth{display:block!important}
       <div class="authlogo"><span class="mslot" data-m="flame" data-em="🔥" data-px="46">🔥</span></div>
       <div class="authname grad-txt">Tayripages</div>
       <div class="brand-meaning" style="font-size:11px;margin-top:2px;color:rgba(255,255,255,.82)" data-t="Tayri — the Tamazight word for love.">Tayri — the Tamazight word for love.</div>
-      <!-- auth heading removed for clean look -->
-      <!-- auth sub removed for clean look -->
+      <div class="privstrip" id="privStrip">
+        <div class="privkicker" data-t="Date with privacy">Date with privacy</div>
+        <div class="privline" data-t="Photos and stories are shielded — no save, no casual screenshot, view-once chat photos.">Photos and stories are shielded — no save, no casual screenshot, view-once chat photos.</div>
+      </div>
       <button class="btn gbtn" id="btnGoogle" onclick="googleIn()" style="font-size:15.5px">
         <svg width="20" height="20" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.1H42V20H24v8h11.3c-1.6 4.7-6.1 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3l5.7-5.7C34 6.1 29.3 4 24 4 13 4 4 13 4 24s9 20 20 20 20-9 20-20c0-1.3-.1-2.7-.4-3.9z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.9 1.2 8 3l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.1H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C41 35.4 44 30.2 44 24c0-1.3-.1-2.7-.4-3.9z"/></svg>
         <span data-t="Continue with Google">Continue with Google</span>
@@ -692,6 +696,8 @@ body.preauth.authno #scr-auth{display:block!important}
     <div class="chatfoot" style="border-top:1px solid var(--line)">
       <div class="freebar" id="freeBar"></div>
       <div class="chatrow">
+        <button class="chip" style="padding:10px;flex:none" onclick="pickChatImage()" title="Photo">${IC?IC('camera',18):'📷'}</button>
+        <button class="chip" style="padding:10px;flex:none" id="chatMicBtn" onclick="toggleChatAudio()" title="Voice">${IC?IC('mic',18):'🎤'}</button>
         <input id="chatIn" data-tph="Say something nice…" placeholder="Say something nice…" onkeydown="if(event.key==='Enter')sendMsg()" oninput="typingNow()">
         <button class="sendbtn" onclick="sendMsg()"><span class="mslot" data-m="send" data-em="➤" data-px="19">➤</span></button>
       </div>
@@ -713,17 +719,17 @@ body.preauth.authno #scr-auth{display:block!important}
 </div>
 
 <!-- story viewer — tap outside to close -->
-<div class="storyv" id="storyV" onclick="closeStory()">
+<div class="storyv noshot" id="storyV" onclick="closeStory()">
   <div class="storyv-card" onclick="event.stopPropagation()">
     <div class="storyv-prog" id="storyBars"></div>
     <button class="storyv-rep" type="button" data-t="Report" onclick="event.stopPropagation();reportStory()">Report</button>
-    <button type="button" class="storyv-pause" id="svPause" onclick="event.stopPropagation();toggleStoryPause()">Pause</button>
     <div class="storyv-x" onclick="closeStory()">✕</div>
     <div class="storyv-head"><b id="svName"></b><span id="svTime"></span></div>
-    <img id="svImg" alt="">
+    <img id="svImg" class="noshot" alt="">
     <div class="storyv-foot">
       <div class="sv-cap" id="svCap"></div>
       <div class="sv-act">
+        <button type="button" class="storyv-pause" id="svPause" onclick="event.stopPropagation();toggleStoryPause()" aria-label="Pause">❚❚</button>
         <input id="svNote" maxlength="120" placeholder="Reply to this story…">
         <button class="sv-heart" id="svLike" aria-label="Send like"><svg width="21" height="21" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M12 21S3.6 15.5 3.6 9.8C3.6 6.7 5.9 4.5 8.6 4.5c1.5 0 2.8.75 3.4 1.9.6-1.15 1.9-1.9 3.4-1.9 2.7 0 5 2.2 5 5.3C20.4 15.5 12 21 12 21z"/></svg></button>
       </div>
@@ -788,10 +794,7 @@ function IC(n,px){ const P={
   bell:'M12 2a6 6 0 0 0-6 6c0 4.42-1.5 5.9-2.05 6.86-.28.49.06 1.14.65 1.14h14.8c.59 0 .93-.65.65-1.14C19.5 13.9 18 12.42 18 8a6 6 0 0 0-6-6zm0 20a2.2 2.2 0 0 0 2.2-2.2H9.8A2.2 2.2 0 0 0 12 22z',
   shield:'M12 2 4.5 4.8v6.1c0 4.9 3.2 9.5 7.5 11.1 4.3-1.6 7.5-6.2 7.5-11.1V4.8L12 2z',
   chat:'M4 3h16a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H8.4L4.4 21a.9.9 0 0 1-1.4-.74V5a2 2 0 0 1 2-2z',
-  camera:'M9.2 4 8 6H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-4l-1.2-2H9.2zM12 9a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9z',
-  heart:'M12 21S3.6 15.5 3.6 9.8C3.6 6.7 5.9 4.5 8.6 4.5c1.5 0 2.8.75 3.4 1.9.6-1.15 1.9-1.9 3.4-1.9 2.7 0 5 2.2 5 5.3C20.4 15.5 12 21 12 21z',
-  spark:'M12 2l2.1 6.7L21 11l-6.9 2.3L12 20l-2.1-6.7L3 11l6.9-2.3L12 2z',
-  rew:'M12 5V1L7 6l5 5V7c3.31 0 6 2.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z',
+  camera:'M9.2 4 8 6H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a.69 6 6s-2.69 6-6 6-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8z',
   check:'M9.55 16.7 4.85 12l-1.41 1.41 6.11 6.11L20.6 8.47l-1.41-1.41z',
   globe:'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 2c1.62 2.05 2.55 4.9 2.55 8s-.93 5.95-2.55 8c-1.62-2.05-2.55-4.9-2.55-8S10.38 6.05 12 4zM4.3 11h15.4M4.3 15h15.4',
   sliders:'M3 17v2h6v-2H3zM3 5v2h10V5H3zm10 16v-2h8v-2h-8v-2h-2v6h2zM7 9v2H3v2h4v2h2V9H7zm14 4v-2H11v2h10zm-6-4h2V7h4V5h-4V3h-2v6z',
@@ -1662,8 +1665,8 @@ function runStoryTimer(){
   window._svT=setTimeout(()=>storyNext(), svLeft);
 }
 function toggleStoryPause(){
-  if(svPaused){ svPaused=0; const btn=$('svPause'); if(btn)btn.textContent=T('Pause'); runStoryTimer(); }
-  else { svPaused=1; svLeft=Math.max(400, svLeft-(Date.now()-svStart)); clearTimeout(window._svT); const bar=document.querySelector('#storyBars i[data-si="'+svIx+'"] b'); if(bar) bar.style.transition='none'; const btn=$('svPause'); if(btn)btn.textContent=T('Play'); }
+  if(svPaused){ svPaused=0; const btn=$('svPause'); if(btn)btn.textContent='❚❚'; runStoryTimer(); }
+  else { svPaused=1; svLeft=Math.max(400, svLeft-(Date.now()-svStart)); clearTimeout(window._svT); const bar=document.querySelector('#storyBars i[data-si="'+svIx+'"] b'); if(bar) bar.style.transition='none'; const btn=$('svPause'); if(btn)btn.textContent='▶'; }
 }
 function storyNext(){ if(svIx<svItems.length-1){ svIx++; svLeft=8000; svPaused=0; paintStoryFrame(); runStoryTimer(); } else closeStory(); }
 function storyPrev(){ if(svIx>0){ svIx--; svLeft=8000; svPaused=0; paintStoryFrame(); runStoryTimer(); } }
@@ -1716,7 +1719,7 @@ function pickStory(){
   if (now - _uploadSpam.last < 5000) { toast(T('Please wait 5 seconds between uploads')); return; }
   _uploadSpam.last = now;
   const live=storyList(STORY[uid]);
-  if(live.length>=5){ toast(T('You can keep 5 live stories — like Instagram')); return; }
+  if(live.length>=3){ toast(T('You can keep 3 live stories at once')); return; }
   const inp=document.createElement('input'); inp.type='file'; inp.accept='image/*';
   inp.onchange=async()=>{ const f=inp.files&&inp.files[0]; if(!f)return;
     toast(T('Polishing your photo…'));
@@ -1752,7 +1755,7 @@ async function publishStory(){
     const id='s'+Date.now().toString(36);
     items[id]={img:data,ts:Date.now(),caption:cap||''};
     const fresh=Object.entries(items).filter(([,x])=>x&&x.img&&Date.now()-(+x.ts||0)<86400000).sort((a,b)=>(a[1].ts||0)-(b[1].ts||0));
-    while(fresh.length>5) fresh.shift();
+    while(fresh.length>3) fresh.shift();
     const map={}; fresh.forEach(([k,v])=>{ map[k]=v; });
     const last=fresh[fresh.length-1][1];
     const out={img:last.img,ts:last.ts,name:String(L.me.name||'').slice(0,36),items:map};
@@ -2516,7 +2519,7 @@ function boostChip(){
 function cardHtml(p,i){
   const isSuper=(L.likesYou.find(x=>x.uid===p.id&&x.d==='super'));
   const badge=i===0?(isSuper?`<div class="vbadge super">${T('SUPER LIKED YOU')}</div>`:p.fresh?`<div class="vbadge new">${T('NEW HERE')}</div>`:''):'';
-  return `<div class="dcard" data-id="${p.id}" style="z-index:${10-i};transform:scale(${1-i*0.045}) translateY(${i*10}px)">
+  return `<div class="dcard noshot" data-id="${p.id}" style="z-index:${10-i};transform:scale(${1-i*0.045}) translateY(${i*10}px)">
     <div class="ph avcover" style="background:${grad(p.gi)};background-image:url('${avaURI(p)}')"></div>
     <div class="pdots hidden" data-pdots></div>
     ${i===0?`<button class="rptbtn" onpointerdown="event.stopPropagation()" onpointerup="event.stopPropagation()" onclick="reportDeckAsk('${p.id}')">${IC('flag',12)}<span>${T('Report')}</span></button>`:''}
@@ -2859,7 +2862,15 @@ function bubbleHtml(m,index){
   if(!m.key)m.key='local_'+(m.ts||Date.now())+'_'+(index||0);
   const tm=new Date(m.ts).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
   const key=encodeURIComponent(m.key);
-  return `<div class="bub ${m.me?'me':'them'}" data-msg-key="${key}" onclick="messageMenu('${key}')">${m.text}<span class="tm">${m.me&&m.read?'✓✓ read · ':''}${tm} · tap for options</span></div>`;
+  let inner='';
+  if(m.img){
+    if(m.opened&&!m.me) inner=`<div class="once-ph">${IC('camera',18)} ${T('Opened · removed')}</div>`;
+    else if(m.me) inner=`<div class="once-ph">${IC('camera',18)} ${T('Photo · view once')}</div>`;
+    else inner=`<button class="once-ph" onclick="event.stopPropagation();openOnceImage('${key}')">${IC('camera',18)} ${T('Tap to view once')}</button>`;
+  } else if(m.audio){
+    inner=`<audio controls preload="none" src="${m.audio}" style="max-width:200px"></audio>`;
+  } else inner=proofEsc(m.text||'');
+  return `<div class="bub ${m.me?'me':'them'}" data-msg-key="${key}" onclick="messageMenu('${key}')">${inner}<span class="tm">${m.me&&m.read?'✓✓ read · ':''}${tm} · ${T('tap for options')}</span></div>`;
 }
 function pushBubble(m){ $('chatBody').insertAdjacentHTML('beforeend',bubbleHtml(m,(L.chats[R.chatWith]||[]).length-1)); scrollChat(); }
 function scrollChat(){ $('chatBody').scrollTop=1e7; }
@@ -2869,7 +2880,7 @@ function addMsg(mid,who,obj,meFlag){
 }
 function messageMenu(encodedKey){
   const key=decodeURIComponent(encodedKey||''); const mid=R.chatWith; const m=(L.chats[mid]||[]).find(x=>x.key===key); if(!m||m.who!=='msg')return;
-  const own=!!m.me||m.from===uid; const canEveryone=own&&!String(key).startsWith('local_')&&!String(key).startsWith('sim_');
+  const own=!!m.me||m.from===uid; const canEveryone=own;
   $('genBody').innerHTML=`<div class="h2" style="margin-bottom:8px">${T('Message options')}</div>
     <div class="card small" style="line-height:1.45;margin-bottom:10px">${proofEsc(m.text)}</div>
     <div class="mut tiny" style="margin-bottom:10px">${T('Choose carefully. Deletions cannot be undone.')}</div>
@@ -2880,7 +2891,7 @@ function messageMenu(encodedKey){
 }
 async function confirmDeleteMessage(scope,encodedKey){
   const key=decodeURIComponent(encodedKey||''), mid=R.chatWith; const m=(L.chats[mid]||[]).find(x=>x.key===key); if(!m)return;
-  const text=scope==='everyone'?'Unsend this message for everyone? It will be removed from the conversation permanently.':'Delete this message only from your view? The other person will still see it.';
+  const text=scope==='everyone'?T('Unsend this message for everyone? It will be removed from the conversation permanently.'):T('Delete this message only from your view? The other person will still see it.');
   if(!window.confirm(text))return;
   if(scope==='everyone'){
     if(!m.me&&m.from!==uid)return toast('You can only unsend your own message.');
@@ -2919,6 +2930,77 @@ async function sendMsg(){
     await DB.ref('wasla_dating').update(upd);
   }catch(e){ toast('Message could not be sent.','err'); } }
   if(p&&p.sim)botReply(mid,p);
+}
+function chatImgCount(mid){
+  return (L.chats[mid]||[]).filter(x=>x&&x.img&&(x.me||x.from===uid)).length;
+}
+function pickChatImage(){
+  const mid=R.chatWith; if(!mid)return;
+  if(chatImgCount(mid)>=3) return toast(T('Max 3 photos in this chat'));
+  const inp=document.createElement('input'); inp.type='file'; inp.accept='image/*';
+  inp.onchange=async()=>{ const f=inp.files&&inp.files[0]; if(!f)return;
+    try{
+      const data=await compressImage(f);
+      if(String(data).length>280000) return toast(T('Photo too large — try another'));
+      await pushChatMedia(mid,{text:'📷',img:data,once:true});
+    }catch(e){ toast(T('That photo didn’t work — try another one')); }
+  };
+  inp.click();
+}
+let _rec=null,_recChunks=[],_recT=null;
+function toggleChatAudio(){
+  if(_rec){ try{ _rec.stop(); }catch(e){} return; }
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia) return toast(T('Voice not available here'));
+  navigator.mediaDevices.getUserMedia({audio:true}).then(stream=>{
+    _recChunks=[];
+    _rec=new MediaRecorder(stream,{mimeType:MediaRecorder.isTypeSupported('audio/webm;codecs=opus')?'audio/webm;codecs=opus':''});
+    _rec.ondataavailable=e=>{ if(e.data&&e.data.size) _recChunks.push(e.data); };
+    _rec.onstop=async()=>{
+      stream.getTracks().forEach(t=>t.stop());
+      clearTimeout(_recT); _rec=null;
+      const blob=new Blob(_recChunks,{type:'audio/webm'});
+      if(blob.size>55000) return toast(T('Voice note too heavy for this chat'));
+      const fr=new FileReader();
+      fr.onload=async()=>{ await pushChatMedia(R.chatWith,{text:'🎤',audio:fr.result}); };
+      fr.readAsDataURL(blob);
+    };
+    _rec.start();
+    toast(T('Recording… tap again to send (max 10s)'));
+    _recT=setTimeout(()=>{ try{ _rec&&_rec.stop(); }catch(e){} },10000);
+  }).catch(()=>toast(T('Microphone permission is needed')));
+}
+async function pushChatMedia(mid,extra){
+  if(!mid||!L.me)return;
+  const m=L.matches.find(x=>x.mid===mid); if(!m)return;
+  const gold=goldActive();
+  if(!DEMO){ try{ await syncFreeLeft(mid); }catch(e){} }
+  let left=(typeof L.freeLeft[mid]==='number'?L.freeLeft[mid]:C.freeChatMsgs);
+  if(!gold&&left<=0) return openGold('chat');
+  const sr=(!DEMO)?ref('chats/'+mid).push():null;
+  const msg={who:'msg',me:true,from:uid,key:sr?sr.key:('local_'+Date.now()),ts:Date.now(),...extra};
+  (L.chats[mid]=L.chats[mid]||[]).push(msg);
+  if(!gold) L.freeLeft[mid]=left-1;
+  save(); if(R.chatWith===mid) pushBubble(msg);
+  if(sr){
+    const payload={from:uid,fromName:L.me.name,text:extra.text||'📷',ts:msg.ts};
+    if(extra.img) payload.img=extra.img;
+    if(extra.audio) payload.audio=extra.audio;
+    if(extra.once) payload.once=true;
+    const upd={}; upd['chats/'+mid+'/'+sr.key]=payload;
+    if(!gold) upd['chatMeta/'+mid+'/freeLeft/'+uid]=L.freeLeft[mid];
+    try{ await DB.ref('wasla_dating').update(upd); }catch(e){ toast(T('Message could not be sent.'),'err'); }
+  }
+}
+async function openOnceImage(encodedKey){
+  const key=decodeURIComponent(encodedKey||''); const mid=R.chatWith;
+  const m=(L.chats[mid]||[]).find(x=>x.key===key); if(!m||!m.img)return;
+  const w=window.open('','_blank');
+  if(w){ w.document.write('<title>Photo</title><body style="margin:0;background:#000;display:grid;place-items:center"><img src="'+m.img+'" style="max-width:100%;max-height:100vh"></body>'); }
+  m.opened=true; m.img=null; save();
+  if(!DEMO&&key&&!String(key).startsWith('local_')){
+    try{ await ref('chats/'+mid+'/'+key+'/img').remove(); await ref('chats/'+mid+'/'+key+'/opened').set(true); }catch(e){}
+  }
+  paintMsgs();
 }
 function botReply(mid,p){
   const gifted=(L.gifts[p.id]||0);
@@ -3033,7 +3115,9 @@ function chatMenu(){
     <div style="height:8px"></div>
     <button class="btn btn-line" onclick="unmatchAsk()">${T('Unmatch')}</button>
     <div style="height:8px"></div>
-    <button class="btn btn-line" style="color:#ff7a7a" onclick="reportAsk()">${IC('flag',15)} ${T('Report & block')}</button>`;
+    <button class="btn btn-line" onclick="blockAsk()">${IC('ban',15)} ${T('Block')}</button>
+    <div style="height:8px"></div>
+    <button class="btn btn-line" style="color:#ff7a7a" onclick="reportAsk()">${IC('flag',15)} ${T('Report')}</button>`;
   show('genSheet');
 }
 /* 🎨 chat comfort — colorblind-friendly palettes + dark chat */
@@ -3126,12 +3210,24 @@ function reportProofAsk(reason){
   const messages=(L.chats[mid]||[]).map((x,i)=>({x,i})).filter(o=>o.x&&o.x.who==='msg'&&o.x.text).slice(-30);
   $('genBody').innerHTML=`<div class="h2" style="margin-bottom:4px">${T('Send one proof message?')}</div>
     <div class="mut small" style="margin-bottom:12px">${T('Choose at most one text message for the admin team. You can also report without attaching proof.')}</div>
-    <div style="max-height:280px;overflow:auto">${messages.length?messages.map(o=>`<button class="btn btn-line" style="margin-bottom:8px;text-align:start;line-height:1.45" onclick="doUnmatch(true,'${reason}',${o.i})"><b>${o.x.me?T('You'):proofEsc(m.name)}</b><br>${proofEsc(o.x.text)}</button>`).join(''):'<div class="mut small" style="padding:10px 0">No text messages are available in this conversation.</div>'}</div>
-    <button class="btn btn-grad" onclick="doUnmatch(true,'${reason}',null)">${T('Report without proof')}</button>
+    <div style="max-height:280px;overflow:auto">${messages.length?messages.map(o=>`<button class="btn btn-line" style="margin-bottom:8px;text-align:start;line-height:1.45" onclick="doReportOnly('${reason}',${o.i})"><b>${o.x.me?T('You'):proofEsc(m.name)}</b><br>${proofEsc(o.x.text)}</button>`).join(''):'<div class="mut small" style="padding:10px 0">No text messages are available in this conversation.</div>'}</div>
+    <button class="btn btn-grad" onclick="doReportOnly('${reason}',null)">${T('Report without proof')}</button>
     <div style="height:8px"></div><button class="btn btn-line" onclick="hide(\'genSheet\')">Cancel</button>`;
   show('genSheet');
 }
-async function doUnmatch(reported,reason,proofIndex){
+async function doReportOnly(reason,proofIndex){
+  await doUnmatch(true,reason,proofIndex,true);
+}
+function blockAsk(){
+  const m=L.matches.find(m=>m.mid===R.chatWith); if(!m)return;
+  $('genBody').innerHTML=`<div class="h2">${T('Block')} ${proofEsc(m.name)}?</div>
+    <div class="mut small" style="margin:8px 0 14px">${T('They leave your matches and cannot message you. This is not a report.')}</div>
+    <button class="btn btn-grad" onclick="doUnmatch(false)">${T('Block')}</button>
+    <div style="height:8px"></div>
+    <button class="btn btn-line" onclick="hide('genSheet')">${T('Cancel')}</button>`;
+  show('genSheet');
+}
+async function doUnmatch(reported,reason,proofIndex,keepMatch){
   if(reported && !canAdminRequest('report', 5000)) return;
   hide('genSheet');
   const mid=R.chatWith; const m=L.matches.find(m=>m.mid===mid); if(!m)return;
@@ -3150,6 +3246,7 @@ async function doUnmatch(reported,reason,proofIndex){
           if(locked) await ref('reportProof/'+rid).set({from:uid,mid:mid,key:proofKey,text:locked,ts:lv.ts||Date.now()});
         }catch(e){ console.warn('proof lock',e); } }
       }
+      if(keepMatch){ toast(T('Report sent — you can still Block separately')); return; }
       // tombstone: THEIR app deletes the match too on next sync (locks safe — only members can write the match)
       await ref('matches/'+mid).set({dead:1,a:uid,b:peerId,by:uid,ts:Date.now()}).catch(()=>{});
       await ref('userMatches/'+uid+'/'+mid).remove().catch(()=>{});
@@ -3325,7 +3422,7 @@ document.querySelectorAll('.mback').forEach(b=>b.addEventListener('click',e=>{ i
 function previewMe(){
   if(!L.me)return toast('Create your profile first');
   const mp=(L.me.photos||[]).filter(Boolean)[0]||null; const tags=(L.me.tags||[]).slice(0,4);
-  $('genBody').innerHTML=`<div style="border-radius:22px;overflow:hidden;position:relative;box-shadow:0 16px 40px rgba(0,0,0,.55)">
+  $('genBody').innerHTML=`<div class="noshot" style="border-radius:22px;overflow:hidden;position:relative;box-shadow:0 16px 40px rgba(0,0,0,.55)">
     <div style="height:330px;background:${grad(L.me.gi)};display:flex;align-items:center;justify-content:center;font-size:110px;position:relative;overflow:hidden">${mp?`<img src="${mp}" style="width:100%;height:100%;object-fit:cover" alt="my photo">`:`<i class="avart" style="background-image:url('${avaURI({id:uid,av:L.me.av})}')"></i>`}</div>
     <div style="position:absolute;inset-inline:0;bottom:58px;padding:14px;background:linear-gradient(transparent,rgba(8,3,10,.9) 82%);color:#fff">
       <div style="font-size:24px;font-weight:900;display:flex;align-items:center;gap:8px">${L.me.name}, ${L.me.age} ${VB(L.verified)}</div>
@@ -3415,15 +3512,12 @@ function renderProfile(){
       </div>
       <div class="card" style="margin-bottom:10px">
         <div class="spread"><b class="small">${T('My story')}</b>${storyFresh(STORY[uid])?'<span class="pill" style="background:var(--grad);color:#fff;box-shadow:0 0 12px 4px rgba(255,94,138,.7)">LIVE · 24h</span>':''}</div>
-        <div class="mut tiny" style="margin:4px 0 10px">${T('One photo, 24 hours. A glowing ring appears around your chat avatar — your matches tap it to view.')}</div>
-        <div class="mysrc">
-          ${storyFresh(STORY[uid])
-            ?`<div class="mystory-ring"><img src="${STORY[uid].img}" alt="my story" style="width:100%;height:100%;border-radius:50%;object-fit:cover"></div>`
-            :`<button class="story-add-btn" onclick="pickStory()">${IC('plus',28)}</button>`}
-          <div style="flex:1"><b class="small">${storyFresh(STORY[uid])?T('Your story is glowing'):T('Add your story')}</b>
-            <div class="mut tiny" style="margin:3px 0 8px">${storyFresh(STORY[uid])?T('Visible to your matches — tap your chat avatar to preview'):T('One tap — your matches see the glow. Let your light be seen')}</div>
-            <button class="pill ${storyFresh(STORY[uid])?'':'pon'}" onclick="pickStory()" style="${storyFresh(STORY[uid])?'':'background:var(--grad);color:#fff'}">${storyFresh(STORY[uid])?T('Replace story'):T('Add story')}</button></div>
+        <div class="mut tiny" style="margin:4px 0 10px">${T('Up to 3 stories, 24 hours each. Matches tap the glow on your chat avatar.')}</div>
+        <div class="sv-thumbs">
+          ${storyList(STORY[uid]).map(it=>`<img class="sv-thumb noshot" src="${it.img}" alt="">`).join('')}
+          ${storyList(STORY[uid]).length<3?`<button class="sv-add" onclick="pickStory()">${IC('plus',18)}</button>`:''}
         </div>
+        <div class="mut tiny" style="margin:8px 0 0">${storyList(STORY[uid]).length}/3 · ${T('Add another while you have a slot — each one disappears after a day.')}</div>
         <div class="addstory-quote">“${T('Show your light today. A single story can start a beautiful conversation')}”</div>
         ${storyInsightsHtml()}
       </div>
@@ -3467,6 +3561,7 @@ function renderProfile(){
         <button class="mprow" onclick="location.href='video.html'"><div class="mico mic-e">${IC('video',22)}</div><div class="mtxt"><b>${T('Instant video')}</b><div>${T('Meet someone live — free')}</div></div><span class="chev">›</span></button>
         <button class="mprow" onclick="location.href='stream.html'"><div class="mico mic-d">${IC('video',22)}</div><div class="mtxt"><b>${T('Live stream')} <span class="pill" style="margin-inline-start:6px">${T('beta')}</span></b><div id="liveCntLine">${T('Watch or go live — gifts, 30% to Tayripages')}</div></div><span class="pill" id="liveCntPill">${T('LIVE')}</span></button>
         <button class="mprow" onclick="openCrushSheet()"><div class="mico mic-e">${IC('heart',22)}</div><div class="mtxt"><b>${T('Crush zone')}</b><div>${T('Know if they viewed your story · hide from anyone')}</div></div><span class="chev">›</span></button>
+        <button class="mprow" onclick="location.href='influencers.html'"><div class="mico mic-d">${IC('medal',22)}</div><div class="mtxt"><b>${T('Muse House')}</b><div>${T('Turn your spark into a circle — invite, earn, rise')}</div></div><span class="chev">›</span></button>
 
         <button class="mprow" onclick="toggleNotif()"><div class="mico mic-f">${IC('bell',22)}</div><div class="mtxt"><b>${T('In-app notifications')}</b><div>${T('Toasts while the app is open')}</div></div><div class="toggle ${L.notif===false?'':'on'}" id="notifT"></div></button>
         <button class="mprow" onclick="openSafety()"><div class="mico mic-g">${IC('shield',22)}</div><div class="mtxt"><b>${T('Safety center')}</b><div>${T('Block, report, dating tips')}</div></div><span class="chev">›</span></button>
@@ -3525,7 +3620,7 @@ function paintGold(){ const el=$('goldTop'); if(el)el.textContent=goldActive()?T
 
 /* ============ INIT ============ */
 setTimeout(()=>{ const dk=$('deck'); if(AUTHED&&R.tab==='discover'&&dk&&!dk.children.length){ try{paintDeck();}catch(e){} } }, 5200);
-const TAYRI_BUILD='v33'; /* bump this number on every release — every phone self-updates once, no cache games */
+const TAYRI_BUILD='v36'; /* bump this number on every release — every phone self-updates once, no cache games */
 try{
   if(!sessionStorage.getItem('tayri_boot_'+TAYRI_BUILD)){
     sessionStorage.setItem('tayri_boot_'+TAYRI_BUILD,'1');
