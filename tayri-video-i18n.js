@@ -116,7 +116,17 @@ window.TAYRI_VIDEO_I18N={
     "Private feedback saved. Thank you.": "Private feedback saved. Thank you.",
     "Feedback could not be saved. Try again later.": "Feedback could not be saved. Try again later.",
     "Call": "Call",
-    "Loading mutual matches…": "Loading mutual matches…"
+    "Loading mutual matches…": "Loading mutual matches…",
+    "Report photos": "Report photos",
+    "Fake, stolen, or inappropriate photos": "Fake, stolen, or inappropriate photos",
+    "Report bio": "Report bio",
+    "Scam, harassment, or spam in the bio text": "Scam, harassment, or spam in the bio text",
+    "Report photo and bio": "Report photo and bio",
+    "The whole profile looks fraudulent": "The whole profile looks fraudulent",
+    "User appears to be under 18": "User appears to be under 18",
+    "Choose what to report — the admin team receives it with the actual evidence.": "Choose what to report — the admin team receives it with the actual evidence.",
+    "Shown everywhere until you add a photo — your real photo always wins.": "Shown everywhere until you add a photo — your real photo always wins.",
+    "No user to report": "No user to report"
   },
   "fr": {
     "Beauty Queen": "Reine de beauté",
@@ -234,7 +244,17 @@ window.TAYRI_VIDEO_I18N={
     "Private feedback saved. Thank you.": "Avis privé enregistré. Merci.",
     "Feedback could not be saved. Try again later.": "Avis non enregistré. Réessaie plus tard.",
     "Call": "Appeler",
-    "Loading mutual matches…": "Chargement des matchs mutuels…"
+    "Loading mutual matches…": "Chargement des matchs mutuels…",
+    "Report photos": "Signaler les photos",
+    "Fake, stolen, or inappropriate photos": "Photos fausses, volées ou inappropriées",
+    "Report bio": "Signaler la bio",
+    "Scam, harassment, or spam in the bio text": "Arnaque, harcèlement ou spam dans la bio",
+    "Report photo and bio": "Signaler photo et bio",
+    "The whole profile looks fraudulent": "Tout le profil semble frauduleux",
+    "User appears to be under 18": "La personne semble avoir moins de 18 ans",
+    "Choose what to report — the admin team receives it with the actual evidence.": "Choisis quoi signaler — l’équipe reçoit les preuves réelles.",
+    "Shown everywhere until you add a photo — your real photo always wins.": "Visible partout tant que tu n’as pas de photo — ta vraie photo gagne toujours.",
+    "No user to report": "Personne à signaler"
   },
   "ar": {
     "Beauty Queen": "ملكة جمال",
@@ -290,7 +310,7 @@ window.TAYRI_VIDEO_I18N={
     "Choose a spontaneous random connection or call someone you already matched with. Your camera connects directly to another Tayripages member — Firebase only coordinates the handshake; it never carries your video.": "اختار اتصال عشوائي أو اتصل بتطابق. الكاميرا كتمشي مباشرة للعضو الآخر — Firebase غير كينسّق، ما كينقلش الفيديو.",
     "Checking your secure connection…": "كنتحققو من الاتصال الآمن…",
     "Random instant video": "فيديو فوري عشوائي",
-    "Video with a match": "فيديو مع تطابق",
+    "Video with a match": "فيديو مع توافق",
     "GOLD": "GOLD",
     "Filters": "فلاتر",
     "FREE": "مجاني",
@@ -352,7 +372,17 @@ window.TAYRI_VIDEO_I18N={
     "Private feedback saved. Thank you.": "تحفظ التقييم. شكراً.",
     "Feedback could not be saved. Try again later.": "ما تحفظش التقييم. عاود من بعد.",
     "Call": "اتصال",
-    "Loading mutual matches…": "كنحمّلو التطابقات…"
+    "Loading mutual matches…": "كنحمّلو التطابقات…",
+    "Report photos": "بلّغ على الصور",
+    "Fake, stolen, or inappropriate photos": "صور مزيفة أو مسروقة أو غير لائقة",
+    "Report bio": "بلّغ على النبذة",
+    "Scam, harassment, or spam in the bio text": "نصب أو تحرش أو سبام فالنبذة",
+    "Report photo and bio": "بلّغ على الصورة والنبذة",
+    "The whole profile looks fraudulent": "البروفايل كامل باين مزور",
+    "User appears to be under 18": "يبدو أنه أقل من 18",
+    "Choose what to report — the admin team receives it with the actual evidence.": "اختار شنو تبلغ — الإدارة كتوصلها بالدليل الحقيقي.",
+    "Shown everywhere until you add a photo — your real photo always wins.": "كيبان فكل بلاصة حتى تزيد صورة — صورتك الحقيقية هي اللي كتربح.",
+    "No user to report": "ما كاينش شكون تبلغ عليه"
   },
   "es": {
     "Beauty Queen": "Reina de belleza",
@@ -470,7 +500,17 @@ window.TAYRI_VIDEO_I18N={
     "Private feedback saved. Thank you.": "Feedback privado guardado. Gracias.",
     "Feedback could not be saved. Try again later.": "No se guardó el feedback. Inténtalo luego.",
     "Call": "Llamar",
-    "Loading mutual matches…": "Cargando matches mutuos…"
+    "Loading mutual matches…": "Cargando matches mutuos…",
+    "Report photos": "Denunciar fotos",
+    "Fake, stolen, or inappropriate photos": "Fotos falsas, robadas o inapropiadas",
+    "Report bio": "Denunciar la bio",
+    "Scam, harassment, or spam in the bio text": "Estafa, acoso o spam en la bio",
+    "Report photo and bio": "Denunciar foto y bio",
+    "The whole profile looks fraudulent": "Todo el perfil parece fraudulento",
+    "User appears to be under 18": "Parece menor de 18",
+    "Choose what to report — the admin team receives it with the actual evidence.": "Elige qué denunciar — el equipo recibe la prueba real.",
+    "Shown everywhere until you add a photo — your real photo always wins.": "Se ve en todas partes hasta que añades una foto — tu foto real siempre gana.",
+    "No user to report": "Nadie a quien denunciar"
   },
   "pt": {
     "Beauty Queen": "Rainha da beleza",
@@ -588,7 +628,17 @@ window.TAYRI_VIDEO_I18N={
     "Private feedback saved. Thank you.": "Feedback privado guardado. Obrigado.",
     "Feedback could not be saved. Try again later.": "Não deu para guardar. Tenta mais tarde.",
     "Call": "Ligar",
-    "Loading mutual matches…": "A carregar matches mútuos…"
+    "Loading mutual matches…": "A carregar matches mútuos…",
+    "Report photos": "Denunciar fotos",
+    "Fake, stolen, or inappropriate photos": "Fotos falsas, roubadas ou impróprias",
+    "Report bio": "Denunciar a bio",
+    "Scam, harassment, or spam in the bio text": "Burla, assédio ou spam na bio",
+    "Report photo and bio": "Denunciar foto e bio",
+    "The whole profile looks fraudulent": "O perfil todo parece fraudulento",
+    "User appears to be under 18": "Parece ter menos de 18",
+    "Choose what to report — the admin team receives it with the actual evidence.": "Escolhe o que denunciar — a equipa recebe a prova real.",
+    "Shown everywhere until you add a photo — your real photo always wins.": "Vê-se em todo o lado até adicionares uma foto — a tua foto real ganha sempre.",
+    "No user to report": "Ninguém para denunciar"
   },
   "ru": {
     "Beauty Queen": "Королева красоты",
@@ -706,7 +756,17 @@ window.TAYRI_VIDEO_I18N={
     "Private feedback saved. Thank you.": "Отзыв сохранён. Спасибо.",
     "Feedback could not be saved. Try again later.": "Отзыв не сохранился. Позже ещё раз.",
     "Call": "Звонок",
-    "Loading mutual matches…": "Загрузка взаимных пар…"
+    "Loading mutual matches…": "Загрузка взаимных пар…",
+    "Report photos": "Пожаловаться на фото",
+    "Fake, stolen, or inappropriate photos": "Поддельные, украденные или неприемлемые фото",
+    "Report bio": "Пожаловаться на описание",
+    "Scam, harassment, or spam in the bio text": "Мошенничество, травля или спам в описании",
+    "Report photo and bio": "Пожаловаться на фото и описание",
+    "The whole profile looks fraudulent": "Весь профиль выглядит поддельным",
+    "User appears to be under 18": "Похоже, младше 18",
+    "Choose what to report — the admin team receives it with the actual evidence.": "Выберите, на что жаловаться — команда получит настоящее доказательство.",
+    "Shown everywhere until you add a photo — your real photo always wins.": "Видно везде, пока нет фото — настоящее фото всегда побеждает.",
+    "No user to report": "Некого жаловаться"
   },
   "zh": {
     "Beauty Queen": "选美女王",
@@ -824,6 +884,16 @@ window.TAYRI_VIDEO_I18N={
     "Private feedback saved. Thank you.": "私密反馈已保存。谢谢。",
     "Feedback could not be saved. Try again later.": "反馈未能保存。请稍后再试。",
     "Call": "呼叫",
-    "Loading mutual matches…": "正在加载互相配对…"
+    "Loading mutual matches…": "正在加载互相配对…",
+    "Report photos": "举报照片",
+    "Fake, stolen, or inappropriate photos": "虚假、盗用或不妥照片",
+    "Report bio": "举报简介",
+    "Scam, harassment, or spam in the bio text": "简介中的诈骗、骚扰或垃圾信息",
+    "Report photo and bio": "举报照片和简介",
+    "The whole profile looks fraudulent": "整个资料看起来像欺诈",
+    "User appears to be under 18": "看起来未满 18 岁",
+    "Choose what to report — the admin team receives it with the actual evidence.": "选择举报内容 — 管理团队会收到真实证据。",
+    "Shown everywhere until you add a photo — your real photo always wins.": "在添加照片之前会到处显示 — 真实照片始终优先。",
+    "No user to report": "没有可举报的人"
   }
 };

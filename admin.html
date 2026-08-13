@@ -6,7 +6,6 @@
 <meta name="theme-color" content="#160d12">
 <title>Tayripages HQ — Company Dashboard</title>
 <script src="tayri-config.js"></script>
-<script src="tayri-lock.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
@@ -76,8 +75,7 @@ tr:last-child td{border-bottom:none}
     <div class="logo" style="margin:0 auto 12px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg></div>
     <div class="h2">Tayripages HQ</div>
     <div class="mut small" style="margin:6px 0 14px">Company dashboard — enter admin PIN</div>
-    <input class="inp" id="pinIn" type="password" inputmode="text" autocomplete="off" placeholder="PIN" style="text-align:center;font-size:22px;letter-spacing:6px;width:220px;margin:0 auto;display:block" onkeydown="if(event.key==='Enter')tryPin()">
-    <div id="pinErr" class="mut small" style="color:#ff8a8a;text-align:center;margin-top:8px;min-height:18px"></div>
+    <input class="inp" id="pinIn" type="password" inputmode="numeric" placeholder="••••" style="text-align:center;font-size:22px;letter-spacing:6px;width:160px;margin:0 auto;display:block" onkeydown="if(event.key==='Enter')tryPin()">
     <div style="height:12px"></div>
     <button class="btn btn-g" style="width:100%;padding:14px;font-size:15px;font-weight:900" onclick="tryPin()">Continue</button>
   </div>
@@ -217,14 +215,11 @@ let PIN_OK = false;
 
 function tryPin(){
   const val = ($('pinIn').value||'').trim();
-  const expect = String((TAYRI_CONFIG&&TAYRI_CONFIG.adminPin)||'').trim();
-  const err=$('pinErr');
-  if(!val || val !== expect){
-    if(err) err.textContent='Wrong PIN — check tayri-config.js (adminPin).';
+  if(val !== TAYRI_CONFIG.adminPin){
     toast('Wrong PIN','err');
+    $('pinIn').value='';
     return;
   }
-  if(err) err.textContent='';
   PIN_OK = true;
   if(!tayriCloudReady()){ enter(); return; }
   

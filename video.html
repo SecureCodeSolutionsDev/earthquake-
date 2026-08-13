@@ -517,7 +517,9 @@ svg{display:inline-block}
         const peer=ms.a===uid?ms.b:ms.a;
         if(!peer) return null;
         const profile=(await root('users/'+peer).once('value')).val()||{};
-        return {mid,peer,name:profile.name||'Tayripages member'};
+        const nm=profile.name||'';
+        if(peer==='admin'||String(peer).indexOf('admin_')===0||/^admin$/i.test(nm)) return null;
+        return {mid,peer,name:nm||T('Someone')};
       }));
       matchData=rows.filter(Boolean);
       renderMatches();
@@ -533,8 +535,8 @@ svg{display:inline-block}
     selectedPeer=m.peer; selectedPeerName=m.name; renderMatches(); renderStartButton(); setStatus('Ready to call '+m.name+'.','good');
   }
   async function reportVideoUser(){
-  if(!currentPeer) return toast('No user to report');
-  const reason = prompt('Report reason:\n1: Under 18\n2: Fake profile\n3: Nudity/Harassment\n4: Scam\nEnter number or text:');
+  if(!currentPeer) return toast(T('No user to report'));
+  const reason = prompt(T('Report')+':\n1: '+T('Under 18')+'\n2: '+T('Fake profile')+'\n3: '+T('Inappropriate content')+'\n4: '+T('Money or scam'));
   if(!reason) return;
   const labels={ '1':'Under 18 — minor (video)', '2':'Fake profile (video)', '3':'Inappropriate content (video)', '4':'Scam (video)'};
   const finalReason = labels[reason.trim()] || reason.trim().slice(0,200);
@@ -762,7 +764,7 @@ async function init(){
     if(searching) return;
     try{
       await ensureMedia();
-      searching=true; closing=false; show(videos,true); show(document.getElementById('proControls'),true); show(startBtn,falsn,false); show(endBtn,false); show(mediaActions,true); show($('callChat'),true); show(modeTabs,false); show(proFilterPanel,false); remoteEmpty.classList.remove('hidden'); applyProSettings();
+      searching=true; closing=false; show(videos,true); show(document.getElementById('proControls'),true); show(startBtn,false); show(skipBtn,false); show(endBtn,false); show(mediaActions,true); show($('callChat'),true); show(modeTabs,false); show(proFilterPanel,false); remoteEmpty.classList.remove('hidden'); applyProSettings();
       setStatus('Opening a private room for '+selectedPeerName+'…','good');
       wirePairs();
       const sorted=[uid,selectedPeer].sort();

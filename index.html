@@ -242,7 +242,7 @@ body.bootwait #bootSplash{display:flex}
 .mov .duo .ma img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .storyv-rep{position:absolute;top:8px;inset-inline-start:10px;z-index:5;color:#fff;background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.3);border-radius:999px;padding:6px 10px;font-size:11px;font-weight:800}
 .storyv-x{position:absolute;top:4px;inset-inline-end:10px;color:#fff;font-size:24px;z-index:5;text-shadow:0 1px 6px rgba(0,0,0,.7);padding:8px}
-.storyv-pause{position:absolute;top:36px;left:50%;transform:translateX(-50%);z-index:6;background:rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.4);color:#fff;border-radius:999px;padding:6px 14px;font-size:11px;font-weight:800}
+.storyv-pause{position:absolute;bottom:128px;left:50%;transform:translateX(-50%);z-index:8;background:rgba(0,0,0,.55);border:1.5px solid rgba(255,255,255,.55);color:#fff;border-radius:999px;padding:10px 22px;font-size:13px;font-weight:800;min-width:88px}
 .mov h1{font-size:40px;font-weight:900;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;animation:pop .5s ease}
 .mov .duo{display:flex;gap:0;margin:18px 0 6px}
 .mov .duo .ma{width:118px;height:118px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:56px;border:4px solid #fff;box-shadow:0 14px 34px rgba(0,0,0,.4)}
@@ -717,9 +717,9 @@ body.preauth.authno #scr-auth{display:block!important}
   <div class="storyv-card" onclick="event.stopPropagation()">
     <div class="storyv-prog" id="storyBars"></div>
     <button class="storyv-rep" type="button" data-t="Report" onclick="event.stopPropagation();reportStory()">Report</button>
+    <button type="button" class="storyv-pause" id="svPause" onclick="event.stopPropagation();toggleStoryPause()">Pause</button>
     <div class="storyv-x" onclick="closeStory()">✕</div>
-    <div class="storyv-head"><b id="svName"></b><span id="svTime"></span>
-      <button type="button" id="svPause" onclick="toggleStoryPause()" style="margin-inline-start:8px;background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.35);color:#fff;border-radius:999px;padding:5px 10px;font-size:11px;font-weight:800">Pause</button></div>
+    <div class="storyv-head"><b id="svName"></b><span id="svTime"></span></div>
     <img id="svImg" alt="">
     <div class="storyv-foot">
       <div class="sv-cap" id="svCap"></div>
@@ -960,7 +960,7 @@ function obAv(n){ OB.data.av=n; paintOb(); }
 /* 👤 Me-page avatar picker */
 function openAvSheet(){ const cur=(L.me.av!=null?L.me.av:avHash(uid)%8);
   $('genBody').innerHTML=`<div class="h2" style="margin-bottom:4px">${T('Your avatar art')}</div>
-  <div class="mut tiny" style="margin-bottom:8px">Shown everywhere until you add a photo — your real photo always wins.</div>
+  <div class="mut tiny" style="margin-bottom:8px">${T('Shown everywhere until you add a photo — your real photo always wins.')}</div>
   <div class="emojirow">${avaGridHTML(cur,'setMyAv')}</div>
   <div style="height:8px"></div><button class="btn btn-line" onclick="hide(\'genSheet\')">${T('Close')}</button>`; show('genSheet'); }
 function setMyAv(n){ L.me.av=n; save(); if(!DEMO)syncMe(); hide('genSheet'); toast('Avatar updated 💛'); if(R.tab==='profile')renderProfile(); }
@@ -1579,15 +1579,15 @@ function openDeckProfile(pid){
 function reportDeckAsk(pid){
   const p=R.deck.find(x=>x.id===pid)||personOf(pid); if(!p)return;
   const opts=[
-    {i:'camera',tint:'mic-d',t:'Report photos',d:'Fake, stolen, or inappropriate photos',type:'photo'},
-    {i:'alert',tint:'mic-c',t:'Report bio',d:'Scam, harassment, or spam in the bio text',type:'bio'},
-    {i:'flag',tint:'mic-e',t:'Report photo and bio',d:'The whole profile looks fraudulent',type:'both'},
-    {i:'ban',tint:'mic-h',t:'Under 18',d:'User appears to be under 18',type:'under18'}
+    {i:'camera',tint:'mic-d',t:T('Report photos'),d:T('Fake, stolen, or inappropriate photos'),type:'photo'},
+    {i:'alert',tint:'mic-c',t:T('Report bio'),d:T('Scam, harassment, or spam in the bio text'),type:'bio'},
+    {i:'flag',tint:'mic-e',t:T('Report photo and bio'),d:T('The whole profile looks fraudulent'),type:'both'},
+    {i:'ban',tint:'mic-h',t:T('Under 18'),d:T('User appears to be under 18'),type:'under18'}
   ];
-  $('genBody').innerHTML=`<div class="h2" style="margin-bottom:4px">Report ${proofEsc(p.name)}</div>
-    <div class="mut small" style="margin-bottom:12px">Choose what to report — the admin team receives it with the actual evidence.</div>
+  $('genBody').innerHTML=`<div class="h2" style="margin-bottom:4px">${T('Report')} ${proofEsc(p.name)}</div>
+    <div class="mut small" style="margin-bottom:12px">${T('Choose what to report — the admin team receives it with the actual evidence.')}</div>
     <div class="setcard" style="margin:0 0 14px">${opts.map(o=>`<button class="mprow" onclick="doReportDeck('${pid}','${o.type}')"><span class="mico ${o.tint}">${IC(o.i,18)}</span><span class="mtxt"><b>${o.t}</b><div>${o.d}</div></span><span class="chev">›</span></button>`).join('')}</div>
-    <button class="btn btn-line" onclick="hide(\'genSheet\')">Cancel</button>`;
+    <button class="btn btn-line" onclick="hide(\'genSheet\')">${T('Cancel')}</button>`;
   show('genSheet');
 }
 async function doReportDeck(pid,type){
@@ -2329,12 +2329,12 @@ function paintOb(){
      <button class="btn btn-grad" onclick="obNext(3)">${OB.photo?T('Continue'):T('Continue with an avatar instead')}</button></div>`,
    ()=>`<div class="obstep">
      <div class="h2">${T('Your vibe')}</div>
-     <textarea class="inp" id="obBio" maxlength="140" placeholder="${T('A line that sounds like you… (funny > perfect)')}">${d.bio}</textarea>
+     <textarea class="inp" id="obBio" maxlength="140" placeholder="${T('A line that sounds like you… (funny > perfect)')}">${(!d.bio||/^New here/.test(d.bio))?T('New here — say hi and surprise me'):d.bio}</textarea>
      <div class="mut small">${T('Pick 3–4 interests (better matches):')}</div>
-     <div class="tagwrap">${TAGS.map(t=>`<button class="tchip ${d.tags.includes(t)?'on':''}" onclick="obTag('${t}')">${TIC(t)}${t}</button>`).join('')}</div>
+     <div class="tagwrap">${TAGS.map(t=>`<button class="tchip ${d.tags.includes(t)?'on':''}" onclick="obTag('${t}')">${TIC(t)}${T(tagTxt(t))}</button>`).join('')}</div>
      <div class="mut small">${T('Your avatar art')}</div>
      <div class="emojirow">${avaGridHTML(d.av,'obAv')}</div>
-     <div class="mut small">Card color</div>
+     <div class="mut small">${T('Card color')}</div>
      <div class="gradrow">${[0,1,2,3,4,5,6,7].map(i=>`<button class="gradpick ${d.gi===i?'on':''}" style="background:${grad(i)}" onclick="OB.data.gi=${i};paintOb()"></button>`).join('')}</div>
      <button class="btn btn-grad" onclick="obNext(4)">${T('Continue →')}</button></div>`,
    ()=>`<div class="obstep">
@@ -2398,7 +2398,10 @@ async function obFinish(){
   if(_prof && (!_prof.value||!_edu.value||!_rel.value||!_height.value||!_body.value||!_income.value||!_smoke.value||!_drink.value||!_relig.value||!_intent.value)){
     return toast('Please fill all fields — they help the right match find you 💛');
   }
-  const _rawBio=$('obBio')?$('obBio').value.trim():'New here — say hi and surprise me 💛'; if(_rawBio && !isCleanOrWarn(_rawBio)) return; if(_rawBio) OB.data.bio=_rawBio;
+  const _defBio=T('New here — say hi and surprise me');
+  const _rawBio=$('obBio')?$('obBio').value.trim():'';
+  if(_rawBio && !isCleanOrWarn(_rawBio)) return;
+  if(_rawBio) OB.data.bio=_rawBio; else if(!OB.data.bio) OB.data.bio=_defBio;
   if(OB.data.tags.length<2)return toast('Pick at least 2 interests ✨');
   const firstProfile=!L.createdAt;
   L.me={...OB.data,uid,country:countryOf(OB.data.city||'Casablanca')}; L.createdAt=Date.now();
@@ -2627,6 +2630,25 @@ function maybeIncoming(){
 
 /* ============ MATCH ============ */
 function matchIdOf(a,b){return [a,b].sort().join('_')}
+function isStaffPeer(id,name){
+  const s=String(id||'').toLowerCase();
+  const n=String(name||'').toLowerCase().trim();
+  return s==='admin'||s.startsWith('admin_')||n==='admin'||n==='tayripages hq'||n==='tayripages';
+}
+function realMatches(){
+  const uniq=new Map();
+  for(const m of (L.matches||[])){
+    if(!m||!m.peer||m.peer===uid) continue;
+    const p=personOf(m.peer)||{};
+    if(isStaffPeer(m.peer, p.name||m.name)) continue;
+    const k=String(p.name||m.name||'').toLowerCase().trim()+'|'+(p.city||'').toLowerCase()||m.peer;
+    const old=uniq.get(k);
+    const score=(VD[m.peer]?10:0)+((L.chats[m.mid]||[]).length);
+    const oldScore=old?((VD[old.peer]?10:0)+((L.chats[old.mid]||[]).length)):-1;
+    if(!old||score>=oldScore) uniq.set(k,m);
+  }
+  return [...uniq.values()];
+}
 async function makeMatch(p){
   const mid=matchIdOf(uid,p.id);
   if(L.matches.find(m=>m.mid===mid))return;
@@ -2720,24 +2742,10 @@ async function goldMatchBack(pid){
 function unreadTotal(){ return Object.values(L.unread||{}).reduce((a,b)=>a+b,0); }
 function renderMatches(){
   // One chat per person: same UID, or same name+city (second Google login looks like two people)
-  const uniq=new Map();
-  for(const m of (L.matches||[])){
-    if(!m||!m.peer||m.peer===uid) continue;
-    const p=personOf(m.peer)||{};
-    const k=m.peer==='admin'?'admin':(String(p.name||m.name||'').toLowerCase().trim()+'|'+(p.city||'').toLowerCase()||m.peer);
-    const old=uniq.get(k);
-    const score=(VD[m.peer]?10:0)+((L.chats[m.mid]||[]).length);
-    const oldScore=old?((VD[old.peer]?10:0)+((L.chats[old.mid]||[]).length)): -1;
-    if(!old||score>=oldScore) uniq.set(k,m);
-  }
-  L.matches = [...uniq.values()];
-  try{ localStorage.setItem('zwin_local',JSON.stringify(L)); }catch(e){}
-
+  const dedupedMatches=realMatches();
   const mRowEl = $('mRow');
   const chatListEl = $('chatList');
   if(!mRowEl || !chatListEl) return;
-
-  const dedupedMatches=L.matches;
   const freshMs=dedupedMatches.filter(m => m.peer !== 'admin' && hasStory(m.peer)).slice(0,8);
   mRowEl.innerHTML=freshMs.length? freshMs.map((m,i)=>`<button class="mnew" data-mc="${m.mid}" onclick="${hasStory(m.peer)?`openStory('${m.peer}')`:`openChat('${m.mid}')`}">
     <div class="av ${hasStory(m.peer)?'story-hot':''}"><div class="avcover" style="background:${grad(m.gi)};background-image:url('${avaURI({id:m.peer,av:peerAv(m.peer)})}')"></div>${hasStory(m.peer)?'<span class="storydot"></span>':''}</div><span>${m.name}</span></button>`).join('')
@@ -3351,7 +3359,7 @@ function storyInsightsHtml(){
 function openCrushSheet(){
   const cr=L.crushes||{};
   const hid=L.storyHide||{};
-  const list=(L.matches||[]).filter(m=>m&&m.peer&&m.peer!==uid);
+  const list=realMatches();
   $('genBody').innerHTML=`<div class="h2" style="margin-bottom:6px">${IC('heart',20)} ${T('Crush zone')}</div>
     <div class="mut small" style="margin-bottom:12px">${T('Mark matches you care about. If they open your story, you will see their name — GOLD only. Hide your story from anyone here.')}</div>
     ${goldActive()?'':`<button class="btn btn-line" style="margin-bottom:10px" onclick="openGold('likesYou')">${IC('crown',14)} ${T('Crush names are GOLD — hide story is free')}</button>`}
@@ -3436,7 +3444,7 @@ function renderProfile(){
         <div class="divider" style="margin:12px 0"></div>
         <b class="small">${T('🎁 Gift GOLD to a match')}</b>
         <div class="mut tiny" style="margin:4px 0 8px">${T('Choose one of your matches — they get GOLD instantly too. Combined with ID gifting in one place.')}</div>
-        <div class="row"><select class="inp" id="giftMatchSel" style="flex:1"><option value="">${T('Choose a match')}</option>${L.matches.map(m=>'<option value="'+m.peer+'">'+m.name+'</option>').join('')}</select>
+        <div class="row"><select class="inp" id="giftMatchSel" style="flex:1"><option value="">${T('Choose a match')}</option>${realMatches().map(m=>'<option value="'+m.peer+'">'+(m.name||T('Someone'))+'</option>').join('')}</select>
         <button class="pill" style="padding:14px 18px;flex:none;background:var(--grad);color:#fff" onclick="giftGoldToMatch()">${T('Gift GOLD')}</button></div>
       </div>
       <div class="seclab" data-t="This week">This week</div>
