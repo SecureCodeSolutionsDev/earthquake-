@@ -1355,7 +1355,7 @@ async function syncMe(){
   // likes index
   ref('incoming/'+uid).limitToLast(50).on('child_added',s=>{
     const from=s.key, d=s.val(); if(!d||L.seen['lk'+from])return; L.seen['lk'+from]=1;
-    if(!L.swiped[from]){ L.likesYou.unshift({uid:from,d:d.d,ts:d.ts}); save();
+    if(!L.swiped[from]){ L.likesYou.unshift({uid:from,d:d.d,ts:d.ts}); save(); R.cacheTs=0; if(R.tab==='discover') setTimeout(()=>loadDeck().catch(()=>paintDeck()),400);
       if(!L.seen['nt'+from]){L.seen['nt'+from]=1; toast(d.d==='super'?'✨ Someone SUPER liked you!':'😍 Someone new likes you!');} }
     // 🔐 mutual like? Build MY side of the match myself — locks never cross-write
     if(d.d!=='pass'&&L.swiped[from]&&L.swiped[from].d!=='pass'&&!L.matches.find(m=>m.peer===from)){
@@ -1437,31 +1437,29 @@ async function cloudDiscover(){
       return (a.km==null?9999:a.km)-(b.km==null?9999:b.km);
     });
   }
-  // TINDER-LIKE SCORING: boost + verified + hasPhoto + fresh + lastSeen + distance + jitter
+  const likedAt={};
+  (L.likesYou||[]).forEach(x=>{ if(x&&x.uid&&x.d!=='pass') likedAt[x.uid]=+(x.ts||0); });
   const scored=pool.map(p=>{
     let s=0;
+    if(likedAt[p.id]!=null) s+=10000;
     if(p.boostUntil&&p.boostUntil>now) s+=100;
     if(p.verified) s+=30;
     if(p.hasPhoto) s+=20; else s-=50;
     if(p.fresh) s+=10;
     if(p.lastSeen&&p.lastSeen>now-86400000) s+=15;
-    if(p.km!=null) s-= Math.min(30, p.km*0.4); // distance penalty, max -30
-    // if previously passed long ago, lower score so they appear later
+    if(p.km!=null) s-= Math.min(30, p.km*0.4);
     const sw=L.swiped[p.id];
-    if(sw && sw.d==='pass' && (now-(sw.ts||0))>7*86400000) s-=15;
-    if(sw && (sw.d==='like'||sw.d==='super') && (now-(sw.ts||0))>30*86400000) s-=25;
-    s+= Math.random()*10; // jitter for exploration
-    return {...p, _score:s};
+    if(sw && sw.d==='pass') s-=400;
+    if(sw && (sw.d==='like'||sw.d==='super')) s-=800;
+    if(!sw) s+=80;
+    s+= Math.random()*8;
+    return {...p, _score:s, _likedAt:likedAt[p.id]};
   });
-  // sort by score desc
-  scored.sort((a,b)=>b._score-a._score);
-  // small shuffle within top 20 to avoid deterministic order (Tinder does stochastic)
-  for(let i=0;i<Math.min(20,scored.length-1);i++){
-    if(Math.random()<0.35){
-      const j=i+1+Math.floor(Math.random()*3);
-      if(j<scored.length){ const tmp=scored[i]; scored[i]=scored[j]; scored[j]=tmp; }
-    }
-  }
+  scored.sort((a,b)=>{
+    if((a._likedAt!=null)!=(b._likedAt!=null)) return a._likedAt!=null?-1:1;
+    if(a._likedAt!=null&&b._likedAt!=null) return a._likedAt-b._likedAt;
+    return b._score-a._score;
+  });
   pool=scored;
   R.usersCache=pool; R.cacheTs=now;
   return pool;
@@ -2530,16 +2528,38 @@ async function loadDeck(){
   let cloudPool=[];
   if(!DEMO){ try{ cloudPool=await cloudDiscover(); }catch(e){} }
   const all=[...cloudPool,...demoPool.filter(p=>!cloudPool.find(c=>c.name===p.name))];
-  R.deck=all.filter(p=>p&&p.id&&p.id!==uid&&!(L.swiped&&L.swiped[p.id]));
+  const matched=new Set((L.matches||[]).map(m=>m&&m.peer).filter(Boolean));
+  const likedAt={};
+  (L.likesYou||[]).forEach(x=>{ if(x&&x.uid&&x.d!=='pass'&&!matched.has(x.uid)) likedAt[x.uid]=+(x.ts||1); });
+  let pool=all.filter(p=>p&&p.id&&p.id!==uid&&!matched.has(p.id));
   const sc=matchScope();
   const mine=String((typeof myCountry==='function'&&myCountry())||'').toLowerCase();
   if(sc!=='global'&&sc!=='passport'){
-    const loc=R.deck.filter(p=>sameLocale(p)||peerCountry(p).toLowerCase()===mine);
-    if(loc.length) R.deck=loc;
+    const loc=pool.filter(p=>sameLocale(p)||peerCountry(p).toLowerCase()===mine);
+    if(loc.length) pool=loc;
   } else if(sc==='passport'){
     const c=String(F().country||'').toLowerCase();
-    R.deck=R.deck.filter(p=>peerCountry(p).toLowerCase()===c);
+    pool=pool.filter(p=>peerCountry(p).toLowerCase()===c);
   }
+  const byId=new Map(pool.map(p=>[p.id,p]));
+  const likers=[], fresh=[], skipped=[];
+  byId.forEach(p=>{
+    const sw=L.swiped&&L.swiped[p.id];
+    if(likedAt[p.id]!=null && !sw) likers.push(p);
+    else if(!sw) fresh.push(p);
+    else if(sw.d==='pass' && (Date.now()-(sw.ts||0))>86400000) skipped.push(p);
+  });
+  likers.sort((a,b)=>(likedAt[a.id]||0)-(likedAt[b.id]||0));
+  fresh.sort(()=>Math.random()-0.5);
+  const ordered=[];
+  let li=0, fi=0;
+  while(li<likers.length){
+    ordered.push(likers[li++]);
+    if(fi<fresh.length && (li%3===0)) ordered.push(fresh[fi++]);
+  }
+  while(fi<fresh.length) ordered.push(fresh[fi++]);
+  if(!ordered.length) skipped.sort((a,b)=>((L.swiped[a.id]||{}).ts||0)-((L.swiped[b.id]||{}).ts||0)).forEach(p=>ordered.push(p));
+  R.deck=ordered;
   try{ await pinFamous(R.deck); }catch(e){}
   paintDeck();
   maybeIncoming();
@@ -3466,10 +3486,8 @@ function previewMe(){
 }
 function storyInsightsHtml(){
   const views=L.storyViews||{};
-  const n=Object.keys(views).length;
-  const countLine=`<div class="spread" style="margin-top:10px"><span class="mut small">${IC('person',13)} ${T('Who viewed your story')}</span><b>${n}</b></div>`;
   if(!goldActive()){
-    return countLine+`<button class="btn btn-line" style="margin-top:8px" onclick="openGold('likesYou')">${IC('crown',14)} ${T('Crush zone is GOLD — mark who you care about')}</button>`;
+    return `<button class="btn btn-line" style="margin-top:8px" onclick="openGold('likesYou')">${IC('crown',14)} ${T('Crush zone is GOLD — mark who you care about')}</button>`;
   }
   const cr=L.crushes||{};
   const hits=Object.keys(views).filter(id=>!!cr[id]);
@@ -3477,7 +3495,7 @@ function storyInsightsHtml(){
   const crushLine=names.length
     ? `<div class="mut small" style="margin-top:8px">${IC('heart',13)} ${T('Crush viewed your story')}: <b>${names.map(n=>n.replace(/[<>]/g,'')).join(', ')}</b></div>`
     : `<div class="mut tiny" style="margin-top:8px">${T('No crush has viewed this story yet')}</div>`;
-  return countLine+crushLine+`<button class="btn btn-line" style="margin-top:8px" onclick="openCrushSheet()">${IC('heart',14)} ${T('Crush zone')}</button>`;
+  return crushLine+`<button class="btn btn-line" style="margin-top:8px" onclick="openCrushSheet()">${IC('heart',14)} ${T('Crush zone')}</button>`;
 }
 function openCrushSheet(){
   const cr=L.crushes||{};
