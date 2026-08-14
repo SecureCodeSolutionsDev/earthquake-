@@ -478,8 +478,8 @@ function paintRp(rows){
   const sorted=rows.sort((a,b)=>(b[1].ts||0)-(a[1].ts||0)).slice(0,60);
   const html=sorted.map(([id,r])=>{
     const locked=(D.reportProof||{})[id];
-    const ptxt=(locked&&locked.text)||(r.proof&&r.proof.text)||'';
-    const p=ptxt?`<div style="margin-top:6px;padding:8px;border-radius:9px;background:#160d12;color:#ffd8e5;font-size:12px;line-height:1.45"><b>PROOF (server-locked)</b><br>${eh(ptxt)}<div class="mut tiny">${eh(r.proofKey||(locked&&locked.key)||'')}</div></div>`:'<span class="mut tiny">No server proof</span>';
+    const ptxt=(locked&&locked.text)||'';
+    const p=ptxt?`<div style="margin-top:6px;padding:8px;border-radius:9px;background:#160d12;color:#ffd8e5;font-size:12px;line-height:1.45"><b>PROOF (server-locked)</b><br>${eh(ptxt)}<div class="mut tiny">${eh(r.proofKey||(locked&&locked.key)||'')}</div></div>`:'<span class="mut tiny">No server-locked chat proof</span>';
     const ev=r.evidence?`<div style="margin-top:6px;padding:9px;border-radius:10px;background:#1a0e18;border:1px solid #37202e;font-size:11.5px">
       <b style="color:var(--warn)">EVIDENCE (${eh(r.evidence.type||'profile')})</b> <span class="mut tiny">${eh(r.evidence.name||'')} · ${eh(r.evidence.city||'')} · age ${eh(String(r.evidence.age||''))}</span>
       ${Array.isArray(r.evidence.photos)&&r.evidence.photos.length?'<div style="display:flex;gap:6px;margin-top:7px;flex-wrap:wrap">'+r.evidence.photos.slice(0,3).map(u=>`<img src="${u}" style="width:72px;height:96px;object-fit:cover;border-radius:9px;border:1px solid #4a273a">`).join('')+'</div>':''}
@@ -495,11 +495,28 @@ function paintRp(rows){
           <code style="color:#ffd8e5;word-break:break-all">${eh(aid)}</code>
           <button class="btn btn-line" style="padding:4px 8px" onclick="navigator.clipboard.writeText('${eh(aid)}');toast('UID copied')">Copy ID</button>
         </div>
-      </div>${p}${ev}</td><td class="mut tiny">${ts(r.ts)}<div class="badge ${reviewed?'b-done':'b-live'}" style="margin-top:5px">${reviewed?'reviewed':'open'}</div></td><td style="text-align:end"><button class="btn btn-r" onclick="banUser('${eh(aid)}')">Ban user</button> <button class="btn" style="background:rgba(74,168,255,.15);color:#4aa8ff;border:1px solid rgba(74,168,255,.3)" onclick="messageUser('${eh(aid)}')">✉️</button> ${reviewed?'':`<button class="btn btn-g" onclick="reviewReport('${id}')">Mark reviewed</button>`} <button class="btn btn-line" onclick="dismissRp('${id}')">Dismiss</button></td></tr>`;
+      </div>${p}${ev}</td><td class="mut tiny">${ts(r.ts)}<div class="badge ${reviewed?'b-done':'b-live'}" style="margin-top:5px">${reviewed?'reviewed':'open'}</div></td><td style="text-align:end"><button class="btn btn-r" onclick="banUser('${eh(aid)}')">Ban user</button> <button class="btn btn-line" onclick="removeReportPhoto('${eh(aid)}','${id}')">Remove photo · keep account</button> <button class="btn" style="background:rgba(74,168,255,.15);color:#4aa8ff;border:1px solid rgba(74,168,255,.3)" onclick="messageUser('${eh(aid)}')">✉️</button> ${reviewed?'':`<button class="btn btn-g" onclick="reviewReport('${id}')">Mark reviewed</button>`} <button class="btn btn-line" onclick="dismissRp('${id}')">Dismiss</button></td></tr>`;
   }).join('');
   $('tblRp').innerHTML='<tbody>'+(sorted.length?'<tr><th>Report and evidence</th><th>When/status</th><th></th></tr>'+html:'<tr><td class="mut">No reports — healthy community.</td></tr>')+'</tbody>';
 }
 
+async function removeReportPhoto(uid,rid){
+  if(!uid||!confirm('Remove reported photo(s) and keep this account? A warning is sent. No ban.')) return;
+  try{
+    const ev=((D.reports||{})[rid]||{}).evidence||{};
+    const slots=Array.isArray(ev.slots)&&ev.slots.length?ev.slots:['p0','p1','p2'];
+    const upd={};
+    slots.forEach(k=>{ upd['photos/'+uid+'/'+k]=null; });
+    upd['users/'+uid+'/hasPhoto']=0;
+    await DB.ref('wasla_dating').update(upd);
+    await DB.ref('wasla_dating/adminMessages/'+uid).push({
+      text:'A photo was removed to keep Tayripages safe. Your account stays open. Please follow the rules.',
+      from:'admin', by:(firebase.auth().currentUser||{}).uid||'admin', ts:Date.now(), adminOnly:true, reason:'photo-removed'
+    });
+    if(rid) await ref('reports/'+rid).update({status:'reviewed',photoRemoved:true,reviewedAt:Date.now()});
+    toast('Photo removed — account kept — warning sent');
+  }catch(e){ toast('Remove photo failed: '+(e.code||e.message),'err'); }
+}
 async function reviewReport(id){
   try{ await ref('reports/'+id).update({status:'reviewed',reviewedAt:Date.now(),reviewedBy:firebase.auth().currentUser.uid}); toast('Report marked reviewed'); }
   catch(e){ toast('Could not mark report reviewed: '+(e.code||'permission denied'),'err'); }

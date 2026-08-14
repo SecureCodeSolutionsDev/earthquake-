@@ -570,6 +570,15 @@ body.preauth.authno #scr-auth{display:block!important}
 /* soft-privacy */
 img,video,canvas{-webkit-user-drag:none;user-select:none;-webkit-touch-callout:none}
 .dcard .ph img,.storyv-card img,.pcard .ph img,.lkcard .ph img,.snapiv img{pointer-events:none}
+.socrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.socbtn{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:12px;color:#fff}
+.socbtn svg{width:20px;height:20px;fill:currentColor}
+.soc-ig{background:radial-gradient(circle at 30% 107%,#fdf497 0,#fd5949 45%,#d6249f 60%,#285AEB 90%)}
+.soc-fb{background:#1877F2}
+.soc-yt{background:#FF0000}
+.soc-tt{background:#010101}
+.soc-x{background:#0f1419}
+.soc-wb{background:#E6162D}
 </style>
 </head>
 <body class="preauth bootwait">
@@ -829,6 +838,26 @@ function FICON(v){
     Marriage:'heart','Serious relationship':'heart',Friendship:'chat',Other:'dots',
     Muslim:'shield',Christian:'shield',Jewish:'shield'};
   return M[v]||'check';
+}
+function socialNorm(kind,v){
+  v=String(v||'').trim(); if(!v) return '';
+  if(/^https?:\/\//i.test(v)) return v;
+  const h=v.replace(/^@/,'').replace(/^\/+/, '');
+  return ({ig:'https://instagram.com/',fb:'https://facebook.com/',yt:'https://youtube.com/@',tt:'https://www.tiktok.com/@',x:'https://x.com/',wb:'https://weibo.com/u/'}[kind]||'')+h;
+}
+function socialHtml(p){
+  const s=(p&&p.social)||{};
+  const items=[['ig',s.ig],['fb',s.fb],['yt',s.yt],['tt',s.tt],['x',s.x],['wb',s.wb]].filter(([,v])=>v);
+  if(!items.length) return '';
+  const ic={
+    ig:'<svg viewBox="0 0 24 24"><path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm5 5.2A4.8 4.8 0 1 0 16.8 12 4.8 4.8 0 0 0 12 7.2zm6.4-.9a1.1 1.1 0 1 0 1.1 1.1 1.1 1.1 0 0 0-1.1-1.1z"/></svg>',
+    fb:'<svg viewBox="0 0 24 24"><path d="M14 9h3V6h-3c-2.2 0-4 1.8-4 4v2H8v3h2v7h3v-7h2.6l.4-3H13v-2c0-.6.4-1 1-1z"/></svg>',
+    yt:'<svg viewBox="0 0 24 24"><path d="M23 12.2s0-3.2-.4-4.6c-.2-.9-.9-1.6-1.8-1.8C19.2 5.4 12 5.4 12 5.4s-7.2 0-8.8.4c-.9.2-1.6.9-1.8 1.8C1 9 1 12.2 1 12.2s0 3.2.4 4.6c.2.9.9 1.6 1.8 1.8 1.6.4 8.8.4 8.8.4s7.2 0 8.8-.4c.9-.2 1.6-.9 1.8-1.8.4-1.4.4-4.6.4-4.6zM9.8 15.5v-6.6l6.2 3.3-6.2 3.3z"/></svg>',
+    tt:'<svg viewBox="0 0 24 24"><path d="M14.5 3c.4 2.6 1.9 4.3 4.5 4.6v3c-1.5 0-2.9-.5-4.1-1.3v6.5A6.8 6.8 0 1 1 8 9.2v3.1a3.7 3.7 0 1 0 2.6 3.5V3h3.9z"/></svg>',
+    x:'<svg viewBox="0 0 24 24"><path d="M14.7 10.3 22 2h-2.2l-6.3 7.2L8.4 2H2l7.7 11.1L2 22h2.2l6.9-7.9L15.5 22H22l-7.3-11.7zm-2.4 2.8-.8-1.1L5 3.5h2.7l5.1 7.3.8 1.1 6.7 9.6h-2.7l-5.3-7.7z"/></svg>',
+    wb:'<svg viewBox="0 0 24 24"><path d="M9.8 7.6c3.7-.6 7.4 2 8.2 5.7.3 1.3 0 2.7-.7 3.8C15.8 19.7 11 21 7.4 19.3 3.4 17.4 2 12.8 4.3 9.6c1.3-1.8 3.4-2.7 5.5-2zM7.2 16.6c2.3 1.3 5.5.6 6.7-1.6.9-1.7.2-3.7-1.7-4.5-2.1-.9-4.8-.1-5.8 1.8-.8 1.6-.1 3.3.8 4.3zm9.7-8.6 1.5.4-.4 1.5 1.3.8 1.1-1.2 1.5.3-.3-1.5 1.2-1.1-1.5-.4.4-1.5-1.3-.8-1.1 1.2-1.5-.3.3 1.5-1.2 1.1z"/></svg>'
+  };
+  return '<div class="socrow">'+items.map(([k,v])=>'<a class="socbtn soc-'+k+'" href="'+socialNorm(k,v)+'" target="_blank" rel="noopener noreferrer" aria-label="'+k+'">'+ic[k]+'</a>').join('')+'</div>';
 }
 function extraInfosHtml(p){
   const rows=[];
@@ -1170,7 +1199,7 @@ function restoreMe(){
       L.me={ name:p.name, age:p.age||22, g:p.g||'', into:(Array.isArray(p.into)&&p.into.length?p.into.slice(0,2):['w','m']),
         city:p.city||'Casablanca', country:p.country||countryOf(p.city||'Casablanca'), bio:p.bio||'', tags:(Array.isArray(p.tags)?p.tags.slice(0,4):[]),
         em:p.em||'😊', gi:(p.gi!=null?p.gi:0), av:(p.av!=null?p.av:null), uid:uid, photos:[],
-        profession:p.profession||'',education:p.education||'',relation:p.relation||'',kids:p.kids||'',height:p.height||'',body:p.body||'',income:p.income||'',smoke:p.smoke||'',drink:p.drink||'',religion:p.religion||'',intent:p.intent||'' };
+        profession:p.profession||'',education:p.education||'',relation:p.relation||'',kids:p.kids||'',height:p.height||'',body:p.body||'',income:p.income||'',smoke:p.smoke||'',drink:p.drink||'',religion:p.religion||'',intent:p.intent||'',social:p.social||{} };
       L.createdAt=p.createdAt||Date.now();
       save();
       // Ensure gold/verified/likes listeners are set up now that L.me exists
@@ -1287,7 +1316,8 @@ async function syncMe(){
         geo:(L.geo&&L.geo.la!=null)?{la:L.geo.la,lo:L.geo.lo}:null,
         country: (typeof myCountry==='function'?myCountry():(L.me&&L.me.country)||''),
         email: myEmail,
-        profession:L.me.profession||'',education:L.me.education||'',relation:L.me.relation||'',kids:L.me.kids||'',height:L.me.height||'',body:L.me.body||'',income:L.me.income||'',smoke:L.me.smoke||'',drink:L.me.drink||'',religion:L.me.religion||'',intent:L.me.intent||''
+        profession:L.me.profession||'',education:L.me.education||'',relation:L.me.relation||'',kids:L.me.kids||'',height:L.me.height||'',body:L.me.body||'',income:L.me.income||'',smoke:L.me.smoke||'',drink:L.me.drink||'',religion:L.me.religion||'',intent:L.me.intent||'',
+        social:L.me.social||{}
       });
       if(myEmail){ try{ await ref('userEmails/'+uid).set(myEmail); }catch(e){} }
     }catch(e){ console.warn('syncMe profile update failed',e); }
@@ -1577,6 +1607,7 @@ function openDeckProfile(pid){
     <div class="small" style="margin:2px 2px 10px;line-height:1.6">${proofEsc(p.bio||'')||'<span class="mut">No bio yet</span>'}</div>
     ${tags.length?`<div style="display:flex;gap:6px;flex-wrap:wrap;margin:0 2px 12px">${tags.map(t=>`<span style="background:var(--card2);border:1px solid var(--line);padding:6px 11px;border-radius:999px;font-size:11.5px;font-weight:700;display:inline-flex;align-items:center;gap:5px">${TIC(t,12)}${tagTxt(t)}</span>`).join('')}</div>`:''}
     ${extraInfosHtml(p) ? '<div style="display:flex;gap:6px;flex-wrap:wrap;margin:0 2px 12px">' + extraInfosHtml(p) + '</div>' : ''}
+    ${socialHtml(p)}
     <div class="setcard" style="margin:0 0 12px"><button class="mprow" onclick="reportDeckAsk('${pid}')"><div class="mico mic-e">${IC('flag',18)}</div><div class="mtxt"><b>Report this profile</b><div>Photo, bio, or both — sent to admin with evidence</div></div><span class="chev">›</span></button></div>
     <button class="btn btn-line" onclick="hide(\'genSheet\')">${T('Close')}</button>`;
     show('genSheet');
@@ -1598,14 +1629,16 @@ function reportDeckAsk(pid){
 }
 async function doReportDeck(pid,type){
   if(!canAdminRequest('report_'+pid, 8000)) return;
-  const p=R.deck.find(x=>x.id===pid)||personOf(pid); if(!p)return;
   hide('genSheet');
-  const labels={photo:'Inappropriate or fake photos (deck report)',bio:'Inappropriate bio text (deck report)',both:'Fake profile — photo + bio (deck report)'};
+  const labels={photo:'Inappropriate or fake photos (deck report)',bio:'Inappropriate bio text (deck report)',both:'Fake profile — photo + bio (deck report)',under18:'Under 18 (deck report)'};
   try{
     if(!DEMO){
-      let urls=photoCacheAll[pid]; if(!urls)urls=await new Promise(res=>ensurePhotosAll(p,res))||[];
+      const [ps,us]=await Promise.all([ref('photos/'+pid).once('value'), ref('users/'+pid).once('value')]);
+      const raw=ps.val()||{};
+      const urls=['p0','p1','p2','p3','p4','p5'].map(k=>raw[k]).filter(x=>typeof x==='string'&&x.length>50).slice(0,3);
+      const u=us.val()||{};
       await ref('reports').push({from:uid,against:pid,reason:labels[type]||labels.both,ts:Date.now(),status:'open',proof:null,
-        evidence:{type:type,photos:(urls||[]).slice(0,3),bio:String(p.bio||'').slice(0,300),name:p.name||'',city:p.city||'',age:p.age||''}});
+        evidence:{type:type,photos:urls,slots:['p0','p1','p2','p3','p4','p5'].filter(k=>raw[k]).slice(0,3),bio:String(u.bio||'').slice(0,300),name:String(u.name||'').slice(0,40),city:String(u.city||'').slice(0,40),age:u.age||''}});
     }
   }catch(e){ toast('Could not send the report — try again'); return; }
   toast('Report sent with evidence — our team reviews within 24h');
@@ -2314,9 +2347,9 @@ function paintFiltChip(){ const b=$('filtChip'); if(!b)return;
   else { b.style.background=''; b.style.color=''; b.style.borderColor=''; } }
 
 /* ============ ONBOARDING ============ */
-const OB={step:0,photo:'',data:{name:'',age:22,g:'',into:[],city:'Casablanca',bio:'',tags:[],em:'😊',gi:0,av:null, profession:'',education:'',relation:'',kids:'',height:'',body:'',income:'',smoke:'',drink:'',religion:'',intent:''}};
+const OB={step:0,photo:'',data:{name:'',age:22,g:'',into:[],city:'Casablanca',bio:'',tags:[],em:'😊',gi:0,av:null, profession:'',education:'',relation:'',kids:'',height:'',body:'',income:'',smoke:'',drink:'',religion:'',intent:'',social:{}}};
 function startOnboard(){ if(!AUTHED){ showAuth(); return; }
-  OB.step=0; OB.photo=''; OB.data={name:'',age:22,g:'',into:[],city:'Casablanca',bio:'',tags:[],em:'😊',gi:0,av:avHash(uid)%8}; paintOb();
+  OB.step=0; OB.photo=''; OB.data={name:'',age:22,g:'',into:[],city:'Casablanca',bio:'',tags:[],em:'😊',gi:0,av:avHash(uid)%8,social:{}}; paintOb();
   showTab('onboard');
 }
 const WORLD_CITIES=['Casablanca', 'Rabat', 'Marrakech', 'Tangier', 'Agadir', 'Fès', 'Meknès', 'Oujda', 'Laâyoune', 'Al Hoceima', 'Essaouira', 'Chefchaouen', 'Algiers', 'Oran', 'Tunis', 'Paris', 'Marseille', 'Lyon', 'Toulouse', 'Brussels', 'Geneva', 'Madrid', 'Barcelona', 'Valencia', 'London', 'Amsterdam', 'Berlin', 'Munich', 'Rome', 'Milan', 'Lisbon', 'Cairo', 'Istanbul', 'Dubai', 'Abu Dhabi', 'Doha', 'Riyadh', 'Jeddah', 'Dakar', 'Abidjan', 'Lagos', 'Nairobi', 'New York', 'Los Angeles', 'Miami', 'Toronto', 'Montreal', 'Mexico City', 'São Paulo', 'Buenos Aires', 'Tokyo', 'Singapore', 'Bangkok', 'Seoul', 'Sydney', 'Mumbai', 'Jakarta'];
@@ -2399,6 +2432,14 @@ function paintOb(){
      <div class="tagwrap" style="margin:6px 0 10px">${obPick('religion','Muslim')}${obPick('religion','Christian')}${obPick('religion','Jewish')}${obPick('religion','Other')}${obPick('religion','Prefer not to say')}</div>
      <div class="mut small">${T('Looking for')}</div>
      <div class="tagwrap" style="margin:6px 0 10px">${obPick('intent','Marriage')}${obPick('intent','Serious relationship')}${obPick('intent','Friendship')}${obPick('intent','Other')}</div>
+     <div class="mut small">${T('Social links (optional)')}</div>
+     <div class="mut tiny" style="margin:0 0 8px">${T('Username or full link. Only the networks you fill will show as official buttons.')}</div>
+     <input class="inp" id="obIg" placeholder="${T('Instagram')} @user" value="${(d.social&&d.social.ig)||''}" oninput="OB.data.social=OB.data.social||{};OB.data.social.ig=this.value">
+     <input class="inp" id="obFb" placeholder="${T('Facebook')}" value="${(d.social&&d.social.fb)||''}" oninput="OB.data.social=OB.data.social||{};OB.data.social.fb=this.value">
+     <input class="inp" id="obYt" placeholder="${T('YouTube')}" value="${(d.social&&d.social.yt)||''}" oninput="OB.data.social=OB.data.social||{};OB.data.social.yt=this.value">
+     <input class="inp" id="obTt" placeholder="${T('TikTok')} @user" value="${(d.social&&d.social.tt)||''}" oninput="OB.data.social=OB.data.social||{};OB.data.social.tt=this.value">
+     <input class="inp" id="obXx" placeholder="${T('X (Twitter)')} @user" value="${(d.social&&d.social.x)||''}" oninput="OB.data.social=OB.data.social||{};OB.data.social.x=this.value">
+     <input class="inp" id="obWb" placeholder="${T('Weibo')}" value="${(d.social&&d.social.wb)||''}" oninput="OB.data.social=OB.data.social||{};OB.data.social.wb=this.value">
      <div style="height:6px"></div>
      <button class="btn btn-grad" onclick="obFinish()">${T('Start swiping')}</button>
      <div class="mut tiny" style="text-align:center;margin-top:6px">${T('All fields required — helps matches know you, shown on your profile.')}</div>
@@ -2453,7 +2494,7 @@ async function obFinish(){
   if(!DEMO){ syncMe(); if(firstProfile)processReferral().then(loadReferralStatus).catch(()=>{}); }
   showTab('discover'); loadDeck().catch(e=>{ console.warn('deck',e); paintDeck(); });
 }
-function editProfile(){ OB.data={...L.me}; OB.step=1; paintOb(); showTab('onboard'); }
+function editProfile(){ OB.data={...L.me,social:Object.assign({},(L.me&&L.me.social)||{})}; OB.step=1; paintOb(); showTab('onboard'); }
 
 /* ============ TABS ============ */
 const TABS=[['discover','🔥','Discover'],['likes','😍','Liked you'],['matches','💬','Matches'],['fame','✨','Fame'],['wallet','👑','GOLD'],['profile','✨','Me']];
@@ -2478,7 +2519,7 @@ function showTab(t){
   if(t==='discover'){ $('demoSlot').innerHTML=DEMO?`<div class="demobanner">⚡ DEMO MODE — Firebase not set up yet (see README.md). Everyone here is a starter profile; connect the free cloud to meet real people.</div>`:'';
     paintGeoSlot(); paintNearChip(); paintFiltChip(); paintLikesPill(); }
 }
-function paintBadges(){ renderTabbar(); }
+function paintBadges(){ renderTabbar(); paintUnreadChrome(); }
 
 /* ============ DISCOVERY DECK ============ */
 async function loadDeck(){
@@ -2780,7 +2821,25 @@ async function goldMatchBack(pid){
 }
 
 /* ============ MATCHES LIST ============ */
-function unreadTotal(){ return Object.values(L.unread||{}).reduce((a,b)=>a+b,0); }
+function recountUnread(mid){
+  if(!mid) return 0;
+  if(R.chatWith===mid){ L.unread[mid]=0; return 0; }
+  const readAt=+(L.readAt&&L.readAt[mid])||0;
+  const n=(L.chats[mid]||[]).filter(m=>m&&m.who==='msg'&&!m.me&&!m.adminOnly&&(m.ts||0)>readAt).length;
+  L.unread[mid]=n; return n;
+}
+function unreadTotal(){
+  const keep=new Set((typeof realMatches==='function'?realMatches():(L.matches||[])).map(m=>m&&m.mid).filter(Boolean));
+  let n=0;
+  Object.entries(L.unread||{}).forEach(([mid,c])=>{
+    if(keep.has(mid) || String(mid).startsWith('admin_')) n+=(+c||0);
+  });
+  return n;
+}
+function paintUnreadChrome(){
+  const n=unreadTotal();
+  try{ document.title=n?('('+n+') Tayripages'):'Tayripages — Where real connections begin'; }catch(e){}
+}
 function renderMatches(){
   // One chat per person: same UID, or same name+city (second Google login looks like two people)
   const dedupedMatches=realMatches();
@@ -2832,7 +2891,8 @@ function openChat(mid){
   try{
     const m=L.matches.find(m=>m.mid===mid); if(!m){ console.warn('openChat: match not found',mid); toast('Chat not ready — please wait a second'); return; }
     const p=personOf(m.peer); R.chatWith=mid;
-    L.unread[mid]=0; L.readAt[mid]=Date.now(); save();
+    L.readAt[mid]=Date.now(); L.unread[mid]=0; save(); paintUnreadChrome();
+    try{ if(!DEMO&&uid) ref('users/'+uid+'/chatRead/'+mid).set(L.readAt[mid]); }catch(e){}
     $('chAv').style.background=grad(m.gi); $('chAv').innerHTML='<i class="avart" style="background-image:url(\''+avaURI({id:m.peer,av:peerAv(m.peer)})+'\')"></i>';
     ensurePhoto(p,url=>{ if(url&&R.chatWith===mid){ $('chAv').style.background='none'; putImg($('chAv'),url); } });
     $('chName').innerHTML=`${m.name} ${VB(VD[m.peer])}${L.exclusive[mid]?'<span class="excl">✨ EXCLUSIVE</span>':''}`;
@@ -2993,7 +3053,7 @@ const BOOTLIVE=Date.now();
 let CHATW={};
 function watchChat(mid){
   if(DEMO||!mid||CHATW[mid])return; CHATW[mid]=1;
-  const q=ref('chats/'+mid).limitToLast(12);
+  const q=ref('chats/'+mid).limitToLast(40);
   q.on('child_added',s=>{
     const m=s.val(); if(!m||!m.text||m.sys)return; const key=s.key;
     if((L.wiped&&L.wiped[mid]) && (m.ts||0)<=L.wiped[mid])return;
@@ -3002,13 +3062,9 @@ function watchChat(mid){
     if((L.chats[mid]||[]).some(x=>x.key===key))return; // already have it (own send / history pull)
     (L.chats[mid]=L.chats[mid]||[]).push({who:'msg',text:String(m.text).slice(0,900),me:mine,from:m.from||'',key:key,ts:m.ts||Date.now()});
     L.chats[mid].sort((a,b)=>(a.ts||0)-(b.ts||0));
-    if(R.chatWith===mid){ L.readAt[mid]=Date.now(); paintMsgs(); }
-    else if(!mine&&(m.ts||0)>(L.readAt[mid]||0)){
-      L.unread[mid]=(L.unread[mid]||0)+1;
-      if(m.ts>BOOTLIVE-10000)toast(`💬 ${peerOf(mid)?peerOf(mid).name:'Match'}: ${String(m.text).slice(0,40)}…`);
-      paintBadges();
-    }
-    save();
+    if(R.chatWith===mid){ L.readAt[mid]=Date.now(); L.unread[mid]=0; paintMsgs(); try{ if(uid) ref('users/'+uid+'/chatRead/'+mid).set(L.readAt[mid]); }catch(e){} }
+    else if(!mine){ recountUnread(mid); if(m.ts>BOOTLIVE-8000)toast('💬 '+(peerOf(mid)?peerOf(mid).name:'Match')+': '+String(m.text).slice(0,40)+'…'); }
+    save(); paintBadges(); if(R.tab==='matches'&&R.chatWith!==mid) renderMatches();
   });
   q.on('child_removed',s=>{ // unsend works even while the chat is closed
     const key=s.key; L.chats[mid]=(L.chats[mid]||[]).filter(x=>x.key!==key); save();
@@ -3044,8 +3100,10 @@ function pullHistory(mid){
       L.seen['cm'+key]=1;
       (L.chats[mid]=L.chats[mid]||[]).push({who:'msg',text:String(m.text).slice(0,900),me:m.from===uid,from:m.from||'',key:key,ts:m.ts||Date.now()}); ch=true;
     });
-    if(ch){ L.chats[mid].sort((a,b)=>(a.ts||0)-(b.ts||0)); save(); }
+    if(ch){ L.chats[mid].sort((a,b)=>(a.ts||0)-(b.ts||0)); }
+    recountUnread(mid); save(); paintBadges();
     if(R.chatWith===mid)paintMsgs();
+    else if(R.tab==='matches') renderMatches();
   }).catch(()=>{});
 }
 let lastType=0;
@@ -3139,6 +3197,7 @@ function viewPeerProfile(){
     <div class="small" style="line-height:1.55">${p.bio||'No bio yet'}</div>
     <div class="row" style="flex-wrap:wrap;gap:6px;margin:10px 0 14px">${(p.tags||[]).map(t=>`<span class="chip" style="font-size:11px;display:inline-flex;align-items:center;gap:5px">${TIC(t,12)}${tagTxt(t)}</span>`).join('')}</div>
     ${extraInfosHtml(p) ? '<div class="row" style="flex-wrap:wrap;gap:6px;margin:0 0 14px">' + extraInfosHtml(p) + '</div>' : ''}
+    ${socialHtml(p)}
     <button class="btn btn-line" onclick="unmatchAsk()">${IC('x',15)} Unmatch</button>`;
   ensurePhoto(p,url=>{ if(url)putImg($('vpPh'),url); });
   show('genSheet');
@@ -3226,7 +3285,7 @@ async function doUnmatch(reported,reason,proofIndex){
   }
   L.matches=L.matches.filter(x=>x.mid!==mid);
   delete L.chats[mid]; delete L.freeLeft[mid]; delete L.unread[mid]; delete L.exclusive[mid];
-  save(); closeChat();
+  save(); paintUnreadChrome(); closeChat();
   toast(reported?'Reported & unmatched — you are safe here':'Unmatched. Onwards to better.');
 }
 
@@ -3466,6 +3525,7 @@ function renderProfile(){
         <div class="small">${L.me.bio}</div>
         <div class="row" style="flex-wrap:wrap;gap:6px;margin-top:8px">${L.me.tags.map(t=>`<span class="chip" style="font-size:11px;display:inline-flex;align-items:center;gap:5px">${TIC(t,12)}${T(tagTxt(t))}</span>`).join('')}</div>
         ${extraInfosHtml(L.me) ? '<div class="row" style="flex-wrap:wrap;gap:6px;margin-top:10px">' + extraInfosHtml(L.me) + '</div>' : ''}
+        ${socialHtml(L.me)}
       </div>
     </div>
     <div style="padding:4px 18px">
@@ -3592,7 +3652,7 @@ function paintGold(){ const el=$('goldTop'); if(el)el.textContent=goldActive()?T
 
 /* ============ INIT ============ */
 setTimeout(()=>{ const dk=$('deck'); if(AUTHED&&R.tab==='discover'&&dk&&!dk.children.length){ try{paintDeck();}catch(e){} } }, 5200);
-const TAYRI_BUILD='v39'; /* bump this number on every release — every phone self-updates once, no cache games */
+const TAYRI_BUILD='v41'; /* bump this number on every release — every phone self-updates once, no cache games */
 try{
   if(!sessionStorage.getItem('tayri_boot_'+TAYRI_BUILD)){
     sessionStorage.setItem('tayri_boot_'+TAYRI_BUILD,'1');
@@ -3611,6 +3671,20 @@ document.documentElement.dir=(L.lang==='ar')?'rtl':'ltr'; document.documentEleme
 skinLang();
 /* demo door removed — AUTH.onAuthStateChanged alone decides who enters (Google or nobody) */
 /* live mode: AUTH.onAuthStateChanged drives the boot — phone verify first, 🔐 locks on */
+function loadChatRead(){
+  if(DEMO||!uid||!DB) return;
+  if(window._chatReadOn) return; window._chatReadOn=1;
+  ref('users/'+uid+'/chatRead').on('value',s=>{
+    const m=s.val()||{};
+    L.readAt=L.readAt||{};
+    let ch=0;
+    Object.entries(m).forEach(([mid,ts])=>{
+      const n=+ts||0; if(n>(L.readAt[mid]||0)){ L.readAt[mid]=n; ch=1; }
+    });
+    (L.matches||[]).forEach(x=>{ if(x&&x.mid) recountUnread(x.mid); });
+    if(ch||true){ save(); paintBadges(); if(R.tab==='matches') renderMatches(); }
+  });
+}
 async function syncBadges(){
   if(DEMO||!L.me)return;
   // Deduplicate L.matches by mid and peer before syncing (fix duplication bug)
@@ -3645,7 +3719,9 @@ async function syncBadges(){
     syncFreeLeft(mid);
   }
   save();
-  L.matches.forEach(m=>{ try{watchChat(m.mid);}catch(e){} try{syncFreeLeft(m.mid);}catch(e){} }); // 📡 always-on chat watchers: instant messages after login
+  try{ loadChatRead(); }catch(e){}
+  L.matches.forEach(m=>{ try{watchChat(m.mid);}catch(e){} try{syncFreeLeft(m.mid);}catch(e){} try{recountUnread(m.mid);}catch(e){} });
+  paintBadges();
   refreshStories().catch(()=>{});
 }
 /* 🔒 cloud-firm free-message counter: permanent per user per match — 0 stays 0 until GOLD */
