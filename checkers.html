@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Tayripages · Checkers</title>
+<script src="tayri-config.js"></script>
+<script src="tayri-i18n.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;user-select:none}
+:root{--bg:#14080e;--card:#221018;--line:#3d2230;--txt:#fff4f8;--mut:#c9a3b4;--pk:#ff5e8a;--or:#ffb15c;--gold:#f2c14e}
+html,body{height:100%;background:radial-gradient(120% 80% at 50% -10%,#3a1524,#10060c 55%);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Georgia,serif}
+body{display:flex;justify-content:center}
+.app{width:100%;max-width:480px;min-height:100dvh;display:flex;flex-direction:column;padding:calc(8px + env(safe-area-inset-top)) 12px calc(12px + env(safe-area-inset-bottom))}
+.nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.nav a,.nav button{background:rgba(255,255,255,.06);border:1px solid var(--line);color:#ffd6e4;border-radius:999px;padding:8px 12px;font-weight:800;font-size:12px;text-decoration:none}
+.brand{text-align:center;font-weight:900;letter-spacing:-.4px}
+.brand span{display:block;font-size:11px;color:var(--mut);font-weight:600}
+.stage{flex:1;display:flex;flex-direction:column;min-height:0}
+.eloBar{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center;margin-bottom:8px}
+.who{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:8px 10px}
+.who .nm{font-weight:900;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.who .em{color:var(--gold);font-size:12px;font-weight:800}
+.vs{font-weight:900;color:var(--pk);font-size:12px}
+.boardShell{flex:1;display:grid;place-items:center;min-height:0}
+.frame{width:min(100%,calc(100dvh - 280px),440px);aspect-ratio:1;padding:12px;border-radius:22px;background:linear-gradient(160deg,#5a2a18,#2a120c 55%,#7a4630);box-shadow:0 24px 50px rgba(0,0,0,.5),inset 0 0 0 2px #e8c39a}
+.board{width:100%;height:100%;display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(8,1fr);border-radius:10px;overflow:hidden}
+.sq{position:relative}
+.sq.l{background:#f4dfc2}
+.sq.d{background:linear-gradient(160deg,#8a4b2e,#5c2d18)}
+.sq.hi{box-shadow:inset 0 0 0 3px #ffd36a}
+.sq.go::after,.sq.cap::after{content:"";position:absolute;inset:34%;border-radius:50%}
+.sq.go::after{background:#2fbf71;box-shadow:0 0 0 5px rgba(47,191,113,.22)}
+.sq.cap::after{background:#ff5e8a;box-shadow:0 0 0 5px rgba(255,94,138,.25)}
+.pc{position:absolute;inset:11%;border-radius:50%;transition:transform .16s}
+.pc.r{background:radial-gradient(circle at 32% 28%,#ffb3c7,#ff4e7e 58%,#9b163c);box-shadow:0 5px 0 #6d1028,0 8px 12px rgba(0,0,0,.35)}
+.pc.k{background:radial-gradient(circle at 32% 28%,#6d6d78,#1b1b22 58%,#050506);box-shadow:0 5px 0 #000,0 8px 12px rgba(0,0,0,.4)}
+.pc.king::after{content:"♛";position:absolute;inset:0;display:grid;place-items:center;color:#ffe7a8;font-size:clamp(14px,4.2vw,22px)}
+.status{text-align:center;font-weight:800;margin:8px 0 6px;min-height:20px;font-size:14px}
+.row{display:flex;gap:7px;flex-wrap:wrap}
+.btn{flex:1;border:0;border-radius:14px;padding:12px 8px;font-weight:900;font-size:12.5px}
+.pri{background:linear-gradient(45deg,var(--pk),var(--or));color:#fff}
+.sec{background:var(--card);color:var(--txt);border:1px solid var(--line)}
+.sheet{display:none;position:fixed;inset:0;background:rgba(8,3,6,.72);z-index:30;padding:16px;overflow:auto}
+.sheet.on{display:block}
+.card{max-width:460px;margin:6vh auto;background:#1d1016;border:1px solid var(--line);border-radius:20px;padding:16px}
+.card h2{margin-bottom:8px}
+.card p,li{font-size:14px;line-height:1.55;color:#f3dde6}
+.mrow{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);width:100%;background:none;color:inherit;text-align:start}
+.rk{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--line);font-size:13px}
+.think{position:absolute;top:14px;left:50%;transform:translateX(-50%);background:#11080c;border:1px solid var(--gold);color:var(--gold);padding:5px 10px;border-radius:999px;font-size:11px;font-weight:900;display:none}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="nav">
+    <a href="index.html" id="backA">‹ Tayri</a>
+    <div class="brand">Checkers<span id="subBrand">For two · or a sharp AI</span></div>
+    <button type="button" onclick="openSheet('guide')">?</button>
+  </div>
+  <div class="stage">
+    <div class="eloBar">
+      <div class="who"><div class="nm" id="meNm">You</div><div class="em" id="meElo">ELO 1200</div></div>
+      <div class="vs">VS</div>
+      <div class="who" style="text-align:end"><div class="nm" id="opNm">AI</div><div class="em" id="opElo">ELO —</div></div>
+    </div>
+    <div class="boardShell">
+      <div class="frame" style="position:relative">
+        <div class="think" id="think">…</div>
+        <div class="board" id="board"></div>
+      </div>
+    </div>
+    <div class="status" id="status"></div>
+    <div class="row">
+      <button class="btn pri" onclick="newGame('ai')">AI</button>
+      <button class="btn sec" onclick="openMatches()">Match</button>
+      <button class="btn sec" onclick="newGame('hot')">2P</button>
+      <button class="btn sec" onclick="undoMove()">Undo</button>
+    </div>
+    <div class="row" style="margin-top:7px">
+      <button class="btn sec" onclick="setDiff(4)">Easy</button>
+      <button class="btn sec" onclick="setDiff(6)">Smart</button>
+      <button class="btn sec" id="sndBtn" onclick="toggleSnd()">Sound</button>
+      <button class="btn sec" onclick="openRanks()">Ranks</button>
+    </div>
+  </div>
+</div>
+<div class="sheet" id="guide"><div class="card">
+  <h2 id="gTitle">How to play</h2>
+  <ol id="gList"></ol>
+  <button class="btn pri" style="width:100%;margin-top:12px" onclick="closeSheets()">OK</button>
+</div></div>
+<div class="sheet" id="matchSheet"><div class="card">
+  <h2 id="mTitle">Play a match</h2>
+  <div id="matchList"></div>
+  <button class="btn sec" style="width:100%;margin-top:10px" onclick="closeSheets()">Close</button>
+</div></div>
+<div class="sheet" id="rankSheet"><div class="card">
+  <h2 id="rTitle">Worldwide ranks</h2>
+  <div id="rankList"></div>
+  <button class="btn sec" style="width:100%;margin-top:10px" onclick="closeSheets()">Close</button>
+</div></div>
+<script>
+const I18N=window.TAYRI_I18N||{};
+const lang=(function(){try{return (JSON.parse(localStorage.getItem('zwin_local')||'{}').lang)||'en'}catch(e){return 'en'}})();
+function T(s){return (I18N[lang]&&I18N[lang][s])||s}
+const $=id=>document.getElementById(id);
+const N=8, DIRS={m:[[-1,-1],[-1,1]], k:[[-1,-1],[-1,1],[1,-1],[1,1]]};
+let board=[], turn=1, mode='ai', depth=6, sel=null, must=null, hist=[], over=false, snd=true, lock=false, ctx=null;
+let DB=null, AUTH=null, uid=null, myName='You', myElo=1200, rec={aiW:0,aiL:0,pW:0,pL:0};
+let room=null, unsub=null, opp={name:'AI',elo:null,uid:null};
+
+function unlockAudio(){
+  try{
+    ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();
+    if(ctx.state==='suspended') ctx.resume();
+  }catch(e){}
+}
+document.addEventListener('pointerdown', unlockAudio, {once:false});
+function tone(f,t,type,g){
+  if(!snd) return;
+  try{
+    unlockAudio(); if(!ctx) return;
+    const o=ctx.createOscillator(), a=ctx.createGain();
+    o.type=type; o.frequency.setValueAtTime(f,ctx.currentTime);
+    a.gain.setValueAtTime(g,ctx.currentTime);
+    a.gain.exponentialRampToValueAtTime(.0001,ctx.currentTime+t);
+    o.connect(a); a.connect(ctx.destination); o.start(); o.stop(ctx.currentTime+t+.02);
+  }catch(e){}
+}
+function sfx(k){
+  if(k==='move') tone(340,.09,'triangle',.08);
+  if(k==='jump'){ tone(160,.14,'sawtooth',.09); setTimeout(()=>tone(480,.1,'square',.07),80); }
+  if(k==='king') tone(560,.28,'sine',.1);
+  if(k==='win') [523,659,784].forEach((f,i)=>setTimeout(()=>tone(f,.22,'sine',.1),i*130));
+  if(k==='tap') tone(240,.05,'sine',.05);
+}
+
+function inb(r,c){return r>=0&&r<N&&c>=0&&c<N}
+function startPos(){
+  const b=Array.from({length:N},()=>Array(N).fill(0));
+  for(let r=0;r<3;r++) for(let c=0;c<N;c++) if((r+c)%2) b[r][c]=-1;
+  for(let r=5;r<8;r++) for(let c=0;c<N;c++) if((r+c)%2) b[r][c]=1;
+  return b;
+}
+function clone(b){return b.map(r=>r.slice())}
+function dirs(p){return Math.abs(p)===2?DIRS.k:(p>0?DIRS.m:[[1,-1],[1,1]])}
+function jumpsAt(b,r,c){
+  const p=b[r][c], out=[]; if(!p) return out;
+  for(const [dr,dc] of dirs(p)){
+    const r1=r+dr,c1=c+dc,r2=r+2*dr,c2=c+2*dc;
+    if(!inb(r2,c2)) continue;
+    const mid=b[r1][c1];
+    if(mid&&mid*p<0&&!b[r2][c2]) out.push({r,c,tr:r2,tc:c2,jr:r1,jc:c1,jump:1});
+  }
+  return out;
+}
+function stepsAt(b,r,c){
+  const p=b[r][c], out=[]; if(!p) return out;
+  for(const [dr,dc] of dirs(p)){
+    const r1=r+dr,c1=c+dc;
+    if(inb(r1,c1)&&!b[r1][c1]) out.push({r,c,tr:r1,tc:c1,jump:0});
+  }
+  return out;
+}
+function allMoves(b,side){
+  const js=[],st=[];
+  for(let r=0;r<N;r++) for(let c=0;c<N;c++){
+    if(b[r][c]*side<=0) continue;
+    js.push(...jumpsAt(b,r,c)); st.push(...stepsAt(b,r,c));
+  }
+  return js.length?js:st;
+}
+function applyMove(b,m){
+  const nb=clone(b), p=nb[m.r][m.c];
+  nb[m.r][m.c]=0; nb[m.tr][m.tc]=p;
+  if(m.jump) nb[m.jr][m.jc]=0;
+  if(p===1&&m.tr===0) nb[m.tr][m.tc]=2;
+  if(p===-1&&m.tr===7) nb[m.tr][m.tc]=-2;
+  return nb;
+}
+function count(b){let r=0,k=0; for(const row of b) for(const v of row){if(v>0)r++; if(v<0)k++;} return [r,k];}
+function evalB(b){
+  let s=0, mr=0, mk=0;
+  for(let r=0;r<N;r++) for(let c=0;c<N;c++){
+    const v=b[r][c]; if(!v) continue;
+    const side=v>0?1:-1, king=Math.abs(v)===2;
+    s+=side*(king?4.6:1.15);
+    s+=side*0.07*(v>0?(7-r):r);
+    if(c===0||c===7) s+=side*0.1;
+    if(r===7&&v>0) s+=0.12;
+    if(r===0&&v<0) s-=0.12;
+    if(side>0) mr+=stepsAt(b,r,c).length+jumpsAt(b,r,c).length*2;
+    else mk+=stepsAt(b,r,c).length+jumpsAt(b,r,c).length*2;
+  }
+  return s+(mr-mk)*0.08;
+}
+function minimax(b,d,a,beta,maxing){
+  const side=maxing?-1:1, ms=allMoves(b,side);
+  if(d<=0||!ms.length) return {s:!ms.length?(maxing?-900:900):evalB(b)};
+  let best=null, bestS=maxing?-1e9:1e9;
+  const ordered=ms.slice().sort((x,y)=>(y.jump||0)-(x.jump||0));
+  for(const m of ordered){
+    let nb=applyMove(b,m);
+    if(m.jump){
+      let more=jumpsAt(nb,m.tr,m.tc);
+      while(more.length){ const nx=more[0]; nb=applyMove(nb,nx); more=jumpsAt(nb,nx.tr,nx.tc); }
+    }
+    const {s}=minimax(nb,d-1,a,beta,!maxing);
+    if(maxing?s>bestS:s<bestS){bestS=s; best=m;}
+    if(maxing) a=Math.max(a,bestS); else beta=Math.min(beta,bestS);
+    if(beta<=a) break;
+  }
+  return {s:bestS,m:best};
+}
+
+function legalFrom(r,c){
+  const all=must?allMoves(board,turn).filter(m=>m.r===must.r&&m.c===must.c):allMoves(board,turn);
+  return all.filter(m=>m.r===r&&m.c===c);
+}
+function paint(){
+  const el=$('board'); el.innerHTML='';
+  const marks=sel?legalFrom(sel.r,sel.c):[];
+  for(let r=0;r<N;r++) for(let c=0;c<N;c++){
+    const sq=document.createElement('div');
+    sq.className='sq '+((r+c)%2?'d':'l');
+    if(sel&&sel.r===r&&sel.c===c) sq.classList.add('hi');
+    const mv=marks.find(m=>m.tr===r&&m.tc===c);
+    if(mv) sq.classList.add(mv.jump?'cap':'go');
+    const v=board[r][c];
+    if(v){ const p=document.createElement('div'); p.className='pc '+(v>0?'r':'k')+(Math.abs(v)===2?' king':''); sq.appendChild(p); }
+    sq.onclick=()=>tap(r,c);
+    el.appendChild(sq);
+  }
+  $('meNm').textContent=myName;
+  $('meElo').textContent='ELO '+myElo+' · AI '+rec.aiW+'-'+rec.aiL+' · P '+rec.pW+'-'+rec.pL;
+  $('opNm').textContent=opp.name;
+  $('opElo').textContent=opp.elo!=null?('ELO '+opp.elo):T('Practice');
+}
+function tap(r,c){
+  unlockAudio();
+  if(over||lock) return;
+  if(mode==='ai'&&turn<0) return;
+  if(mode==='net'&&mySide()!==turn) return;
+  if(sel){
+    const m=legalFrom(sel.r,sel.c).find(x=>x.tr===r&&x.tc===c);
+    if(m){ playMove(m); return; }
+  }
+  if(board[r][c]*turn>0){ sel={r,c}; sfx('tap'); paint(); }
+  else { sel=null; paint(); }
+}
+function playMove(m){
+  hist.push({b:clone(board),turn,must});
+  const before=board[m.r][m.c];
+  board=applyMove(board,m);
+  sfx(m.jump?'jump':'move');
+  if(Math.abs(before)===1&&Math.abs(board[m.tr][m.tc])===2) sfx('king');
+  if(m.jump){
+    const more=jumpsAt(board,m.tr,m.tc);
+    if(more.length){ must={r:m.tr,c:m.tc}; sel=must; paint(); $('status').textContent=T('Jump again'); pushNet(); return; }
+  }
+  must=null; sel=null; turn*=-1; paint();
+  if(endCheck()) { pushNet(true); return; }
+  pushNet();
+  if(mode==='ai'&&turn<0) aiGo();
+  else $('status').textContent=turn>0?T('Your turn'):T('Their turn');
+}
+function aiGo(){
+  lock=true; $('think').style.display='block'; $('status').textContent=T('AI is thinking');
+  setTimeout(()=>{
+    let cur=board, guard=10;
+    while(guard--){
+      const ms=must?jumpsAt(cur,must.r,must.c):allMoves(cur,-1);
+      if(!ms.length) break;
+      const pick=minimax(cur,depth,-1e9,1e9,true).m||ms[0];
+      cur=applyMove(cur,pick); sfx(pick.jump?'jump':'move');
+      if(pick.jump){ const more=jumpsAt(cur,pick.tr,pick.tc); if(more.length){ must={r:pick.tr,c:pick.tc}; continue; } }
+      break;
+    }
+    board=cur; must=null; turn=1; lock=false; $('think').style.display='none';
+    paint(); if(!endCheck()) $('status').textContent=T('Your turn');
+  },180);
+}
+function endCheck(){
+  const [cr,cb]=count(board);
+  const roseStuck=!cr||!allMoves(board,1).length;
+  const darkStuck=!cb||!allMoves(board,-1).length;
+  if(!roseStuck&&!darkStuck) return false;
+  over=true; sfx('win');
+  const roseWin=darkStuck;
+  if(mode==='ai'){ if(roseWin) rec.aiW++; else rec.aiL++; applyElo(roseWin?1:0, 1180+depth*20); }
+  else if(mode==='net'||mode==='hot'){ if(roseWin) rec.pW++; else rec.pL++; if(mode==='net'&&opp.elo) applyElo(roseWin=== (mySide()===1)?1:0, opp.elo); }
+  saveRec();
+  $('status').textContent=roseWin?T('Rose wins'):T('Dark wins');
+  return true;
+}
+function expected(a,b){ return 1/(1+Math.pow(10,(b-a)/400)); }
+function applyElo(score, other){
+  myElo=Math.round(Math.max(600, Math.min(2800, myElo+24*(score-expected(myElo,other)))));
+  cloudElo();
+}
+function saveRec(){ try{ localStorage.setItem('tayri_chk', JSON.stringify({elo:myElo,rec})); }catch(e){} }
+function loadRec(){ try{ const x=JSON.parse(localStorage.getItem('tayri_chk')||'{}'); if(x.elo) myElo=x.elo; if(x.rec) rec=Object.assign(rec,x.rec);}catch(e){} }
+
+function newGame(m){
+  mode=m||mode; if(mode!=='net'){ room=null; if(unsub){unsub();unsub=null;} }
+  if(mode==='ai') opp={name:T('Smart AI'),elo:1180+depth*20};
+  if(mode==='hot') opp={name:T('Friend on this phone'),elo:null};
+  board=startPos(); turn=1; sel=null; must=null; hist=[]; over=false; lock=false; paint();
+  $('status').textContent=T('Your turn');
+}
+function undoMove(){ if(mode==='net'||!hist.length||lock) return; const h=hist.pop(); board=h.b; turn=h.turn; must=h.must; sel=null; over=false; paint(); }
+function setDiff(d){ depth=d; if(mode==='ai'){ opp.elo=1180+depth*20; opp.name=d<=4?T('Easy AI'):T('Smart AI'); } paint(); $('status').textContent=d<=4?T('Easy AI'):T('Smart AI'); }
+function toggleSnd(){ snd=!snd; unlockAudio(); if(snd) sfx('tap'); $('sndBtn').textContent=snd?T('Sound on'):T('Sound off'); }
+
+function openSheet(id){ closeSheets(); $(id).classList.add('on'); }
+function closeSheets(){ document.querySelectorAll('.sheet').forEach(s=>s.classList.remove('on')); }
+
+function localMatches(){
+  try{
+    const L=JSON.parse(localStorage.getItem('zwin_local')||'{}');
+    return (L.matches||[]).filter(m=>m&&m.peer&&m.peer!=='admin'&&!String(m.peer).startsWith('admin'));
+  }catch(e){return []}
+}
+function openMatches(){
+  const list=localMatches();
+  $('matchList').innerHTML=list.length?list.map(m=>`<button class="mrow" onclick="inviteMatch('${m.peer}','${String(m.name||'Match').replace(/'/g,'')}')"><b>${m.name||T('Someone')}</b><span>${T('Invite')}</span></button>`).join(''):('<p>'+T('Match someone first in Tayripages')+'</p>');
+  openSheet('matchSheet');
+}
+function mySide(){ return room&&room.a===uid?1:-1; }
+function inviteMatch(peer,name){
+  if(!DB||!uid){ $('status').textContent=T('Sign in on Tayripages first'); closeSheets(); return; }
+  const id=[uid,peer].sort().join('_');
+  room={id,a:uid,b:peer};
+  opp={name:name,uid:peer,elo:null};
+  DB.ref('wasla_dating/checkersElo/'+peer).once('value').then(s=>{ const v=s.val(); if(v&&v.elo) opp.elo=v.elo; paint(); });
+  const state={board:board.flat(),turn:1,a:uid,b:peer,aName:myName,bName:name,ts:Date.now(),over:false};
+  DB.ref('wasla_dating/checkers/'+id).set(state);
+  listenRoom(id); mode='net'; closeSheets(); newGame('net');
+  DB.ref('wasla_dating/checkers/'+id).update({board:board.flat(),turn:1,over:false});
+  $('status').textContent=T('Waiting for your match');
+}
+function listenRoom(id){
+  if(unsub) unsub();
+  const ref=DB.ref('wasla_dating/checkers/'+id);
+  const cb=s=>{
+    const v=s.val(); if(!v||!v.board) return;
+    const nb=[]; for(let i=0;i<64;i+=8) nb.push(v.board.slice(i,i+8));
+    board=nb; turn=v.turn; over=!!v.over; sel=null; must=null; paint();
+    if(v.aName&&v.a===uid) myName=v.aName;
+    opp.name=v.a===uid? (v.bName||T('Match')):(v.aName||T('Match'));
+    if(!over) $('status').textContent=(mySide()===turn)?T('Your turn'):T('Their turn');
+  };
+  ref.on('value',cb); unsub=()=>ref.off('value',cb);
+}
+function pushNet(done){
+  if(mode!=='net'||!DB||!room) return;
+  DB.ref('wasla_dating/checkers/'+room.id).update({board:board.flat(),turn,over:!!done,ts:Date.now()});
+}
+
+async function cloudElo(){
+  if(!DB||!uid) { saveRec(); return; }
+  await DB.ref('wasla_dating/checkersElo/'+uid).set({elo:myElo,name:myName,aiW:rec.aiW,aiL:rec.aiL,pW:rec.pW,pL:rec.pL,ts:Date.now()});
+  saveRec();
+}
+function openRanks(){
+  const box=$('rankList'); box.innerHTML='…';
+  openSheet('rankSheet');
+  if(!DB){ box.innerHTML='<p>'+T('Sign in on Tayripages first')+'</p>'; return; }
+  DB.ref('wasla_dating/checkersElo').once('value').then(s=>{
+    const rows=Object.entries(s.val()||{}).map(([id,v])=>({id,...v})).sort((a,b)=>(b.elo||0)-(a.elo||0)).slice(0,40);
+    box.innerHTML=rows.length?rows.map((r,i)=>`<div class="rk"><span>#${i+1} ${r.name||r.id.slice(0,6)}</span><b>${r.elo||1200}</b></div>`).join(''):('<p>'+T('No ranks yet — play a rated game')+'</p>');
+  }).catch(()=>{ box.innerHTML='<p>'+T('Publish checkers Firebase rules')+'</p>'; });
+}
+
+function skin(){
+  $('subBrand').textContent=T('A light game for two — or a smart AI');
+  $('status').textContent=T('Your turn');
+  $('gTitle').textContent=T('How to play');
+  $('gList').innerHTML=[
+    T('Play on the dark squares only. Each side has 12 pieces.'),
+    T('Move forward one step diagonally to an empty square.'),
+    T('Jump an enemy to capture. If you can jump, you must.'),
+    T('Reach the last row to become a king. Kings move both ways.'),
+    T('Win when they have no pieces or no moves left.'),
+    T('Tap a piece, then tap a glowing square.')
+  ].map(x=>'<li>'+x+'</li>').join('');
+  $('mTitle').textContent=T('Play a match');
+  $('rTitle').textContent=T('Worldwide ranks');
+  $('sndBtn').textContent=T('Sound on');
+  document.documentElement.lang=lang;
+  document.documentElement.dir=lang==='ar'?'rtl':'ltr';
+}
+
+function bootCloud(){
+  try{
+    if(typeof tayriCloudReady==='function' && tayriCloudReady() && window.firebase){
+      if(!firebase.apps.length) firebase.initializeApp(TAYRI_CONFIG.firebase);
+      DB=firebase.database(); AUTH=firebase.auth();
+      AUTH.onAuthStateChanged(u=>{
+        if(!u) return;
+        uid=u.uid;
+        try{ const L=JSON.parse(localStorage.getItem('zwin_local')||'{}'); myName=(L.me&&L.me.name)||u.displayName||T('You'); }catch(e){}
+        DB.ref('wasla_dating/checkersElo/'+uid).once('value').then(s=>{
+          const v=s.val();
+          if(v){ myElo=v.elo||myElo; rec.aiW=v.aiW||rec.aiW; rec.aiL=v.aiL||rec.aiL; rec.pW=v.pW||rec.pW; rec.pL=v.pL||rec.pL; }
+          paint();
+        });
+        DB.ref('wasla_dating/checkers').orderByChild('b').equalTo(uid).limitToLast(3).once('value').then(s=>{
+          const m=s.val()||{};
+          const last=Object.entries(m).sort((a,b)=>(b[1].ts||0)-(a[1].ts||0))[0];
+          if(last&&!last[1].over){ room={id:last[0],a:last[1].a,b:last[1].b}; listenRoom(last[0]); mode='net'; }
+        }).catch(()=>{});
+      });
+    }
+  }catch(e){}
+}
+
+loadRec();
+skin();
+newGame('ai');
+bootCloud();
+</script>
+</body>
+</html>
