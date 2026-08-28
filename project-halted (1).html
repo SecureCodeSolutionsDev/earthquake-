@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Project Halted</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg:     #0d0d11;
+    --text:   #e8e8ed;
+    --muted:  #8b8b98;
+    --accent: #ef4444;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                 Helvetica, Arial, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  main {
+    max-width: 560px;
+    text-align: center;
+  }
+
+  .dot {
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    background: var(--accent);
+    margin: 0 auto 28px;
+    animation: pulse 2.4s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1;    transform: scale(1);   }
+    50%      { opacity: 0.3;  transform: scale(0.8); }
+  }
+
+  h1 {
+    font-size: 42px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    margin-bottom: 16px;
+  }
+
+  p {
+    color: var(--muted);
+    font-size: 18px;
+  }
+
+  .meta {
+    margin-top: 44px;
+    font-size: 14px;
+    color: var(--muted);
+  }
+
+  @media (max-width: 520px) {
+    h1 { font-size: 32px; }
+    p  { font-size: 16px; }
+  }
+</style>
+</head>
+<body>
+  <main>
+    <div class="dot"></div>
+    <h1>Project Halted</h1>
+    <p>We have decided to halt the project.</p>
+    <div class="meta">[Team / Name] &mdash; [Date]</div>
+  </main>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a3202f2ffb77f5c5',t:'MTc4Nzg4NzI3MA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
